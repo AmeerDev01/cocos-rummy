@@ -1,0 +1,50 @@
+{
+  "__version__": "3.0.7",
+  "builder": {
+    "options": {
+      "web-desktop": {
+        "configID": "f122e4",
+        "services": []
+      },
+      "android": {
+        "configID": "f122e4",
+        "services": []
+      },
+      "web-mobile": {
+        "configID": "f122e4",
+        "services": []
+      }
+    },
+    "taskOptionsMap": {
+      "1690204979640": {
+        "configID": "f122e4",
+        "services": []
+      },
+      "1690617741029": {
+        "configID": "f122e4",
+        "services": []
+      },
+      "1694419190933": {
+        "configID": "f122e4",
+        "services": [],
+        "__version__": "3.0.7"
+      },
+      "1698735549306": {
+        "configID": "f122e4",
+        "services": [],
+        "__version__": "3.0.7"
+      },
+      "1708507365057": {
+        "configID": "f122e4",
+        "services": [],
+        "__version__": "3.0.7"
+      }
+    },
+    "__version__": "1.3.5"
+  },
+  "builder-options": {
+    "configID": "f122e4",
+    "services": [],
+    "__version__": "3.0.7"
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "ver": "1.0.25",
+  "importer": "image",
+  "imported": true,
+  "uuid": "b418866a-9959-4efc-befe-f2ee2055a372",
+  "files": [
+    ".json",
+    ".png"
+  ],
+  "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "b418866a-9959-4efc-befe-f2ee2055a372@6c48a",
+      "displayName": "Gaji seumur hidup_ Menjadi VIP dan menerima uang seumur hidip",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "b418866a-9959-4efc-befe-f2ee2055a372",
+        "visible": false
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f9941": {
+      "importer": "sprite-frame",
+      "uuid": "b418866a-9959-4efc-befe-f2ee2055a372@f9941",
+      "displayName": "Gaji seumur hidup_ Menjadi VIP dan menerima uang seumur hidip",
+      "id": "f9941",
+      "name": "spriteFrame",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "trimX": 1,
+        "trimY": 0,
+        "width": 649,
+        "height": 29,
+        "rawWidth": 651,
+        "rawHeight": 29,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [
+            -324.5,
+            -14.5,
+            0,
+            324.5,
+            -14.5,
+            0,
+            -324.5,
+            14.5,
+            0,
+            324.5,
+            14.5,
+            0
+          ],
+          "indexes": [
+            0,
+            1,
+            2,
+            2,
+            1,
+            3
+          ],
+          "uv": [
+            1,
+            29,
+            650,
+            29,
+            1,
+            0,
+            650,
+            0
+          ],
+          "nuv": [
+            0.0015360983102918587,
+            0,
+            0.9984639016897081,
+            0,
+            0.0015360983102918587,
+            1,
+            0.9984639016897081,
+            1
+          ],
+          "minPos": [
+            -324.5,
+            -14.5,
+            0
+          ],
+          "maxPos": [
+            324.5,
+            14.5,
+            0
+          ]
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "b418866a-9959-4efc-befe-f2ee2055a372@6c48a",
+        "atlasUuid": ""
+      },
+      "ver": "1.0.11",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "fixAlphaTransparencyArtifacts": true,
+    "hasAlpha": true,
+    "type": "sprite-frame",
+    "redirect": "b418866a-9959-4efc-befe-f2ee2055a372@f9941"
+  }
+}
