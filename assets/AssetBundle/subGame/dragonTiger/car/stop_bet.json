@@ -1,0 +1,80 @@
+{
+"skeleton": {
+	"hash": "TBdWUcdgBxLiyCmSBMRUIV1f9gY",
+	"spine": "3.8.99",
+	"x": -1676.98,
+	"y": -91,
+	"width": 3432.12,
+	"height": 229.34,
+	"images": "./素材/",
+	"audio": "E:/新版UI/龙虎/动画源文件/开始"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "zuo", "parent": "root", "length": 161.38, "rotation": -1.06, "x": -1586.09, "y": 10.57 },
+	{ "name": "you", "parent": "root", "length": 137.48, "rotation": 178.75, "x": 1588.68, "y": 18.57 }
+],
+"slots": [
+	{ "name": "di", "bone": "root", "attachment": "LH_K8" },
+	{ "name": "zi", "bone": "root", "attachment": "Stop_BET" },
+	{ "name": "LH_HH2", "bone": "zuo", "attachment": "LH_HH2" },
+	{ "name": "LH_HD", "bone": "you", "attachment": "LH_HD" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"LH_HD": {
+				"LH_HD": { "x": 0.69, "y": -38.14, "rotation": -178.97, "width": 332, "height": 162 }
+			},
+			"LH_HH2": {
+				"LH_HH2": { "x": 79.46, "y": -13.29, "rotation": 0.63, "width": 339, "height": 156 }
+			},
+			"di": {
+				"LH_K8": { "y": 0.5, "width": 1190, "height": 183 }
+			},
+			"zi": {
+				"Stop_BET": { "x": 0.5, "width": 326, "height": 86 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"di": {
+				"color": [
+					{ "color": "ffffff00", "curve": 0.25, "c3": 0.75 },
+					{ "time": 0.1667, "color": "ffffffff" }
+				]
+			},
+			"zi": {
+				"color": [
+					{ "color": "ffffff00", "curve": 0.25, "c3": 0.75 },
+					{ "time": 0.1667, "color": "ffffffff" }
+				]
+			}
+		},
+		"bones": {
+			"root": {
+				"translate": [
+					{ "time": 1.1667 },
+					{ "time": 1.3333, "x": 2762.53 }
+				]
+			},
+			"you": {
+				"translate": [
+					{},
+					{ "time": 0.1667, "x": -1050.7, "y": 22.84 }
+				]
+			},
+			"zuo": {
+				"translate": [
+					{},
+					{ "time": 0.1667, "x": 970.73, "y": -17.98 }
+				]
+			}
+		}
+	}
+}
+}

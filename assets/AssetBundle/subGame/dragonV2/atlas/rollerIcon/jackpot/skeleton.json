@@ -1,0 +1,22 @@
+{
+"skeleton": { "hash": "+1329NjH/V7dvYlvaCTxhEhSU48", "spine": "3.8.99", "images": "E:/新版UI/追龙/切图/切图/图标", "audio": "" },
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "icon_lztb_tubiao_jp3", "bone": "root", "attachment": "icon_lztb_tubiao_jp3" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"icon_lztb_tubiao_jp3": {
+				"icon_lztb_tubiao_jp3": { "x": 15.16, "y": 1.45, "width": 144, "height": 126 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {}
+}
+}

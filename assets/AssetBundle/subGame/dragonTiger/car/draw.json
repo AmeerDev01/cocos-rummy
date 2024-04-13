@@ -1,0 +1,55 @@
+{
+"skeleton": {
+	"hash": "jSUoayCU1DK+GRe7miT3aspcw90",
+	"spine": "3.8.99",
+	"x": -111.87,
+	"y": -57.82,
+	"width": 234,
+	"height": 122,
+	"images": "./和英文/",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "bone", "parent": "root", "length": 51.04, "x": 4.63, "y": -2.69 }
+],
+"slots": [
+	{ "name": "图层 5", "bone": "root", "attachment": "1" },
+	{ "name": "图层 6", "bone": "bone", "attachment": "2" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"图层 5": {
+				"1": { "x": 0.5, "y": 0.5, "width": 158, "height": 58 }
+			},
+			"图层 6": {
+				"2": { "x": 0.5, "y": 5.87, "width": 234, "height": 122 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"图层 6": {
+				"color": [
+					{ "color": "ffffff00", "curve": 0.25, "c3": 0.75 },
+					{ "time": 0.1667, "color": "ffffffff", "curve": 0.25, "c3": 0.75 },
+					{ "time": 0.3333, "color": "ffffff00" }
+				]
+			}
+		},
+		"bones": {
+			"root": {
+				"scale": [
+					{ "x": 0.01, "y": 0.01, "curve": 0.25, "c3": 0.75 },
+					{ "time": 0.1667, "curve": "stepped" },
+					{ "time": 0.5 }
+				]
+			}
+		}
+	}
+}
+}

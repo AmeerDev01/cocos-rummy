@@ -1,0 +1,139 @@
+
+eff_spine_slot_dfdc_tl.png
+size: 1024,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+chuizi_yz
+  rotate: true
+  xy: 209, 52
+  size: 52, 61
+  orig: 52, 61
+  offset: 0, 0
+  index: -1
+cz_bu_d
+  rotate: false
+  xy: 392, 109
+  size: 57, 17
+  orig: 57, 17
+  offset: 0, 0
+  index: -1
+cz_bu_t
+  rotate: false
+  xy: 331, 80
+  size: 62, 24
+  orig: 62, 24
+  offset: 0, 0
+  index: -1
+cz_bz
+  rotate: true
+  xy: 392, 128
+  size: 37, 88
+  orig: 37, 88
+  offset: 0, 0
+  index: -1
+cz_bz_h
+  rotate: false
+  xy: 52, 4
+  size: 37, 11
+  orig: 37, 11
+  offset: 0, 0
+  index: -1
+cz_qiu1
+  rotate: false
+  xy: 272, 48
+  size: 57, 56
+  orig: 57, 56
+  offset: 0, 0
+  index: -1
+cz_qiu2
+  rotate: false
+  xy: 180, 48
+  size: 27, 24
+  orig: 27, 24
+  offset: 0, 0
+  index: -1
+cz_qiu3
+  rotate: false
+  xy: 180, 37
+  size: 10, 9
+  orig: 10, 9
+  offset: 0, 0
+  index: -1
+cz_sz
+  rotate: false
+  xy: 2, 2
+  size: 48, 13
+  orig: 48, 13
+  offset: 0, 0
+  index: -1
+di
+  rotate: false
+  xy: 209, 106
+  size: 181, 148
+  orig: 181, 148
+  offset: 0, 0
+  index: -1
+luo
+  rotate: false
+  xy: 392, 167
+  size: 92, 87
+  orig: 92, 87
+  offset: 0, 0
+  index: -1
+luo_glow
+  rotate: false
+  xy: 2, 74
+  size: 205, 180
+  orig: 205, 180
+  offset: 0, 0
+  index: -1
+yuanhuan01
+  rotate: false
+  xy: 486, 175
+  size: 88, 79
+  orig: 88, 79
+  offset: 0, 0
+  index: -1
+yuanhuan02
+  rotate: false
+  xy: 576, 175
+  size: 88, 79
+  orig: 88, 79
+  offset: 0, 0
+  index: -1
+yuanhuan03
+  rotate: false
+  xy: 666, 175
+  size: 88, 79
+  orig: 88, 79
+  offset: 0, 0
+  index: -1
+yuanhuan04
+  rotate: false
+  xy: 756, 175
+  size: 88, 79
+  orig: 88, 79
+  offset: 0, 0
+  index: -1
+yuanhuan05
+  rotate: false
+  xy: 846, 175
+  size: 88, 79
+  orig: 88, 79
+  offset: 0, 0
+  index: -1
+yuanhuan06
+  rotate: true
+  xy: 936, 166
+  size: 88, 79
+  orig: 88, 79
+  offset: 0, 0
+  index: -1
+zi
+  rotate: false
+  xy: 2, 17
+  size: 176, 55
+  orig: 176, 55
+  offset: 0, 0
+  index: -1

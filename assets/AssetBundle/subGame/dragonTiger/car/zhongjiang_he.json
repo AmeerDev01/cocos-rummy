@@ -1,0 +1,41 @@
+{
+"skeleton": {
+	"hash": "SV0nq5HtXLmapwP6Vr0mUcxQBLk",
+	"spine": "3.8.99",
+	"x": -157,
+	"y": -179,
+	"width": 314,
+	"height": 358,
+	"images": "E:/新版UI/龙虎/动画源文件/中奖区域",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "111", "bone": "root", "attachment": "333" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"111": {
+				"333": { "width": 314, "height": 358 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"111": {
+				"color": [
+					{ "color": "ffffff84" },
+					{ "time": 0.5, "color": "ffffffff" },
+					{ "time": 1, "color": "ffffff84" }
+				]
+			}
+		}
+	}
+}
+}

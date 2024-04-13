@@ -1,0 +1,53 @@
+{
+"skeleton": {
+	"hash": "xJjYTA0xIEyq1+dST/TY6K/i0ho",
+	"spine": "3.8.99",
+	"x": -38,
+	"y": -51,
+	"width": 77,
+	"height": 103,
+	"images": "E:/新版UI/鱼虾蟹/动画源文件/倒计时",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "骨骼", "parent": "root" }
+],
+"slots": [
+	{ "name": "47", "bone": "root", "attachment": "47" },
+	{ "name": "48", "bone": "骨骼", "attachment": "47" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"47": {
+				"47": { "x": 0.5, "y": 0.5, "width": 77, "height": 103 }
+			},
+			"48": {
+				"47": { "x": 0.5, "y": 0.5, "width": 77, "height": 103 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"48": {
+				"color": [
+					{ "color": "ffffffbb", "curve": 0.25, "c3": 0.75 },
+					{ "time": 1, "color": "ffffff00" }
+				]
+			}
+		},
+		"bones": {
+			"骨骼": {
+				"scale": [
+					{ "curve": 0.25, "c3": 0.75 },
+					{ "time": 1, "x": 3, "y": 3 }
+				]
+			}
+		}
+	}
+}
+}

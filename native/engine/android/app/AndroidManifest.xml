@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cocos.com.hugeWin777"
+    android:installLocation="auto">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!--Android Q之后不需要存储权限，完全使用MediaStore API来实现-->
+    <uses-permission
+            android:name="android.permission.READ_EXTERNAL_STORAGE"
+            android:maxSdkVersion="28" />
+    <uses-permission
+            android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+            android:maxSdkVersion="28" />
+
+<!--    震动权限-->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- 谷歌广告权限   -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+    <!--请求安装APK的权限-->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+
+    <application
+        android:extractNativeLibs="true"
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:usesCleartextTraffic="true"
+        android:icon="@mipmap/ic_launcher">
+
+        <!-- Tell CocosNativeActivity the name of our .so -->
+        <meta-data android:name="android.app.lib_name"
+            android:value="cocos" />
+        <meta-data android:name="android.app.package_code"
+            android:value="${PACKAGE_CODE}" />
+
+        <!--            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"-->
+        <activity
+            android:name="com.cocos.game.AppActivity"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
+            android:label="@string/app_name"
+            android:theme="@style/SplashStyle"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.cocos.lib.CocosEditBoxActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
+        <!--声明provider-->
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="${applicationId}.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/filepaths" />
+        </provider>
+
+        
+        <service
+                android:name="com.cocos.game.service.ExampleFCMService"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="appsflyer-dev-key" android:value="yimPC3Jd7hEA4d6AvctsPH"/>
+        <meta-data android:name="adjust.app.token" android:value="k7y12d8cl62o"/>
+        <meta-data android:name="adjust.register" android:value="sc7bef"/>
+        <meta-data android:name="adjust.login" android:value="qzo3bf"/>
+        <meta-data android:name="adjust.first-purchase" android:value="jv5em7"/>
+        <meta-data android:name="adjust.purchase" android:value="am05m5"/>
+        <meta-data android:name="adjust.first-pull-purchase" android:value="t9am42"/>
+        <meta-data android:name="adjust.pull-purchase" android:value="45qr0q"/>
+    </application>
+
+</manifest>

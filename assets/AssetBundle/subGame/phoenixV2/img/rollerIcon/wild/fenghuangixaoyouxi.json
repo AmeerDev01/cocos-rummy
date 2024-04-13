@@ -1,0 +1,83 @@
+{
+"skeleton": {
+	"hash": "uOhJ6tRII+wiuWIaZT/Ygkb4yGM",
+	"spine": "3.8.99",
+	"x": -104,
+	"y": -96,
+	"width": 208,
+	"height": 193,
+	"images": "E:/新版UI/凤凰/动画源文件/凤凰/小游戏凤凰",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "di", "bone": "root", "attachment": "yinying" },
+	{ "name": "zi", "bone": "root", "attachment": "zi1" },
+	{ "name": "kuang", "bone": "root" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"di": {
+				"yinying": { "x": 0.5, "width": 163, "height": 146 }
+			},
+			"kuang": {
+				"kuang1": { "y": 0.5, "width": 208, "height": 193 },
+				"kuang2": { "y": 0.5, "width": 208, "height": 193 },
+				"kuang3": { "y": 0.5, "width": 208, "height": 193 },
+				"kuang4": { "y": 0.5, "width": 208, "height": 193 },
+				"kuang5": { "y": 0.5, "width": 208, "height": 193 },
+				"kuang6": { "y": 0.5, "width": 208, "height": 193 },
+				"kuang7": { "y": 0.5, "width": 208, "height": 193 },
+				"kuang8": { "y": 0.5, "width": 208, "height": 193 }
+			},
+			"zi": {
+				"zi1": { "y": 0.5, "width": 208, "height": 193 },
+				"zi2": { "y": 0.5, "width": 208, "height": 193 },
+				"zi3": { "y": 0.5, "width": 208, "height": 193 },
+				"zi4": { "y": 0.5, "width": 208, "height": 193 },
+				"zi5": { "y": 0.5, "width": 208, "height": 193 },
+				"zi6": { "y": 0.5, "width": 208, "height": 193 },
+				"zi7": { "y": 0.5, "width": 208, "height": 193 },
+				"zi8": { "y": 0.5, "width": 208, "height": 193 },
+				"zi9": { "y": 0.5, "width": 208, "height": 193 },
+				"zi10": { "y": 0.5, "width": 208, "height": 193 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"kuang": {
+				"attachment": [
+					{ "name": "kuang1" },
+					{ "time": 0.0667, "name": "kuang2" },
+					{ "time": 0.1333, "name": "kuang3" },
+					{ "time": 0.2, "name": "kuang4" },
+					{ "time": 0.2667, "name": "kuang5" },
+					{ "time": 0.3333, "name": "kuang6" },
+					{ "time": 0.4, "name": "kuang7" },
+					{ "time": 0.4667, "name": "kuang8" }
+				]
+			},
+			"zi": {
+				"attachment": [
+					{ "time": 0.0667, "name": "zi2" },
+					{ "time": 0.1333, "name": "zi3" },
+					{ "time": 0.2, "name": "zi4" },
+					{ "time": 0.2667, "name": "zi5" },
+					{ "time": 0.3333, "name": "zi6" },
+					{ "time": 0.4, "name": "zi7" },
+					{ "time": 0.4667, "name": "zi8" },
+					{ "time": 0.5333, "name": "zi9" },
+					{ "time": 0.6, "name": "zi10" }
+				]
+			}
+		}
+	}
+}
+}

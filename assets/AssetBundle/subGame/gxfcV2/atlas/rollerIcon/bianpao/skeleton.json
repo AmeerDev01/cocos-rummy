@@ -1,0 +1,22 @@
+{
+"skeleton": { "hash": "tLZ5FvtzE75q04bLy30FlbDi4/4", "spine": "3.8.99", "images": "E:/新版UI/恭喜发财/切图/游戏/图标", "audio": "" },
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "icon_gxfc_tubiao_bianpao@2x", "bone": "root", "attachment": "icon_gxfc_tubiao_bianpao@2x" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"icon_gxfc_tubiao_bianpao@2x": {
+				"icon_gxfc_tubiao_bianpao@2x": { "width": 121, "height": 121 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {}
+}
+}

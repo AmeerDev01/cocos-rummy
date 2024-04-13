@@ -1,0 +1,51 @@
+{
+"skeleton": {
+	"hash": "fUZRn8u4H6x8ShbLPzfN9UAtLq4",
+	"spine": "3.8.99",
+	"x": -80,
+	"y": -73,
+	"width": 160,
+	"height": 146,
+	"images": "",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "baifa", "bone": "root", "attachment": "baifa8" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"baifa": {
+				"baifa1": { "width": 160, "height": 146 },
+				"baifa2": { "width": 160, "height": 146 },
+				"baifa3": { "width": 160, "height": 146 },
+				"baifa4": { "width": 160, "height": 146 },
+				"baifa5": { "width": 160, "height": 146 },
+				"baifa6": { "width": 160, "height": 146 },
+				"baifa8": { "width": 160, "height": 146 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"baifa": {
+				"attachment": [
+					{ "name": "baifa1" },
+					{ "time": 0.0667, "name": "baifa2" },
+					{ "time": 0.1333, "name": "baifa3" },
+					{ "time": 0.2, "name": "baifa4" },
+					{ "time": 0.2667, "name": "baifa6" },
+					{ "time": 0.3333, "name": "baifa8" },
+					{ "time": 0.6667, "name": "baifa8" }
+				]
+			}
+		}
+	}
+}
+}

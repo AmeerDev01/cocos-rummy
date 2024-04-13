@@ -1,0 +1,57 @@
+{
+"skeleton": {
+	"hash": "lMZjhAqBdyUiZZkdvaLT9dkdfQk",
+	"spine": "3.8.99",
+	"x": -139,
+	"y": -139,
+	"width": 278,
+	"height": 278,
+	"images": "",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "骨骼", "parent": "root" }
+],
+"slots": [
+	{ "name": "123", "bone": "root", "attachment": "13" },
+	{ "name": "21", "bone": "骨骼", "attachment": "guang7", "blend": "screen" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"21": {
+				"guang1": { "width": 278, "height": 278 },
+				"guang2": { "width": 278, "height": 278 },
+				"guang3": { "width": 278, "height": 278 },
+				"guang4": { "width": 278, "height": 278 },
+				"guang5": { "width": 278, "height": 278 },
+				"guang6": { "width": 278, "height": 278 },
+				"guang7": { "width": 278, "height": 278 }
+			},
+			"123": {
+				"13": { "x": 0.5, "width": 149, "height": 136 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"21": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 0.0333, "name": "guang1" },
+					{ "time": 0.0667, "name": "guang2" },
+					{ "time": 0.1, "name": "guang3" },
+					{ "time": 0.1333, "name": "guang4" },
+					{ "time": 0.1667, "name": "guang5" },
+					{ "time": 0.2, "name": "guang6" },
+					{ "time": 0.2333, "name": "guang7" }
+				]
+			}
+		}
+	}
+}
+}

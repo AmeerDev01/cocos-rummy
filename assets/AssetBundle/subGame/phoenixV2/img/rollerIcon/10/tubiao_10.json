@@ -1,0 +1,22 @@
+{
+"skeleton": { "hash": "U5zfEyqgiGt4ILrTIwrWGP6BgCo", "spine": "3.8.99", "images": "E:/新版UI/凤凰/切图/图标", "audio": "" },
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "icon_fenghuang_tubiao_10", "bone": "root", "attachment": "icon_fenghuang_tubiao_10" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"icon_fenghuang_tubiao_10": {
+				"icon_fenghuang_tubiao_10": { "width": 110, "height": 92 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {}
+}
+}

@@ -1,0 +1,55 @@
+{
+"skeleton": {
+	"hash": "tWoZ7f9R2iWAZn6ZVn3Cl9thGPc",
+	"spine": "3.8.99",
+	"x": -112,
+	"y": -87,
+	"width": 224,
+	"height": 175,
+	"images": "E:/新版UI/追龙/动画源文件/jp/素材",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "骨骼", "parent": "root" }
+],
+"slots": [
+	{ "name": "123", "bone": "root", "attachment": "icon_lztb_tubiao_jp" },
+	{ "name": "icon_lztb_tubiao_jp_1", "bone": "骨骼", "attachment": "icon_lztb_tubiao_jp_1" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"123": {
+				"icon_lztb_tubiao_jp": { "x": 0.5, "y": 0.5, "width": 165, "height": 135 }
+			},
+			"icon_lztb_tubiao_jp_1": {
+				"icon_lztb_tubiao_jp_1": { "y": 0.5, "width": 224, "height": 175 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"icon_lztb_tubiao_jp_1": {
+				"color": [
+					{ "color": "ffffff00" },
+					{ "time": 0.5, "color": "ffffffff" },
+					{ "time": 1, "color": "ffffff00" }
+				]
+			}
+		},
+		"bones": {
+			"root": {
+				"scale": [
+					{},
+					{ "time": 0.5, "x": 1.303, "y": 1.303 },
+					{ "time": 1 }
+				]
+			}
+		}
+	}
+}
+}

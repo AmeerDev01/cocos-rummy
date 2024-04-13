@@ -1,0 +1,97 @@
+{
+"skeleton": {
+	"hash": "M2nBODjPu3wirQgQiq6B/Af48H8",
+	"spine": "3.8.99",
+	"x": -104,
+	"y": -173.5,
+	"width": 208,
+	"height": 347,
+	"images": "C:/Users/Administrator/Desktop/huokuang",
+	"audio": "C:\\Users\\Administrator\\Desktop"
+},
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "hongyandakuang", "bone": "root", "attachment": "LZTB_huoyandakuang029", "blend": "screen" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"hongyandakuang": {
+				"LZTB_huoyandakuang000": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang001": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang002": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang003": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang004": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang005": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang006": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang007": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang008": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang009": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang010": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang011": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang012": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang013": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang014": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang015": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang016": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang017": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang018": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang019": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang020": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang021": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang022": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang023": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang024": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang025": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang026": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang027": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang028": { "width": 208, "height": 347 },
+				"LZTB_huoyandakuang029": { "width": 208, "height": 347 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"hongyandakuang": {
+				"attachment": [
+					{ "name": "LZTB_huoyandakuang000" },
+					{ "time": 0.0333, "name": "LZTB_huoyandakuang001" },
+					{ "time": 0.0667, "name": "LZTB_huoyandakuang002" },
+					{ "time": 0.1, "name": "LZTB_huoyandakuang003" },
+					{ "time": 0.1333, "name": "LZTB_huoyandakuang004" },
+					{ "time": 0.1667, "name": "LZTB_huoyandakuang005" },
+					{ "time": 0.2, "name": "LZTB_huoyandakuang006" },
+					{ "time": 0.2333, "name": "LZTB_huoyandakuang007" },
+					{ "time": 0.2667, "name": "LZTB_huoyandakuang008" },
+					{ "time": 0.3, "name": "LZTB_huoyandakuang009" },
+					{ "time": 0.3333, "name": "LZTB_huoyandakuang010" },
+					{ "time": 0.3667, "name": "LZTB_huoyandakuang011" },
+					{ "time": 0.4, "name": "LZTB_huoyandakuang012" },
+					{ "time": 0.4333, "name": "LZTB_huoyandakuang013" },
+					{ "time": 0.4667, "name": "LZTB_huoyandakuang014" },
+					{ "time": 0.5, "name": "LZTB_huoyandakuang015" },
+					{ "time": 0.5333, "name": "LZTB_huoyandakuang016" },
+					{ "time": 0.5667, "name": "LZTB_huoyandakuang017" },
+					{ "time": 0.6, "name": "LZTB_huoyandakuang018" },
+					{ "time": 0.6333, "name": "LZTB_huoyandakuang019" },
+					{ "time": 0.6667, "name": "LZTB_huoyandakuang020" },
+					{ "time": 0.7, "name": "LZTB_huoyandakuang021" },
+					{ "time": 0.7333, "name": "LZTB_huoyandakuang022" },
+					{ "time": 0.7667, "name": "LZTB_huoyandakuang023" },
+					{ "time": 0.8, "name": "LZTB_huoyandakuang024" },
+					{ "time": 0.8333, "name": "LZTB_huoyandakuang025" },
+					{ "time": 0.8667, "name": "LZTB_huoyandakuang026" },
+					{ "time": 0.9, "name": "LZTB_huoyandakuang027" },
+					{ "time": 0.9333, "name": "LZTB_huoyandakuang028" },
+					{ "time": 0.9667, "name": "LZTB_huoyandakuang029" }
+				]
+			}
+		}
+	}
+}
+}

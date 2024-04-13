@@ -1,0 +1,53 @@
+{
+"skeleton": {
+	"hash": "L6+aI534KZilDEp+Cr3ai18B2r8",
+	"spine": "3.8.99",
+	"x": -131,
+	"y": -271,
+	"width": 262,
+	"height": 542,
+	"images": "./加速框素材/",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "asdw", "bone": "root", "attachment": "jiasukuang_8" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"asdw": {
+				"jiasukuang_1": { "width": 262, "height": 542 },
+				"jiasukuang_2": { "width": 262, "height": 542 },
+				"jiasukuang_3": { "width": 262, "height": 542 },
+				"jiasukuang_4": { "width": 262, "height": 542 },
+				"jiasukuang_5": { "width": 262, "height": 542 },
+				"jiasukuang_6": { "width": 262, "height": 542 },
+				"jiasukuang_7": { "width": 262, "height": 542 },
+				"jiasukuang_8": { "width": 262, "height": 542 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"asdw": {
+				"attachment": [
+					{ "name": "jiasukuang_1" },
+					{ "time": 0.0667, "name": "jiasukuang_2" },
+					{ "time": 0.1333, "name": "jiasukuang_3" },
+					{ "time": 0.2, "name": "jiasukuang_4" },
+					{ "time": 0.2667, "name": "jiasukuang_5" },
+					{ "time": 0.3333, "name": "jiasukuang_6" },
+					{ "time": 0.4, "name": "jiasukuang_7" },
+					{ "time": 0.4667, "name": "jiasukuang_8" }
+				]
+			}
+		}
+	}
+}
+}

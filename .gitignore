@@ -1,0 +1,28 @@
+
+#///////////////////////////
+# Cocos Creator 3D Project
+#///////////////////////////
+library/
+temp/
+local/
+build/
+profiles/
+extensions/
+#native
+#//////////////////////////
+# NPM
+#//////////////////////////
+node_modules/
+hot-update-tools/
+#//////////////////////////
+# VSCode
+#//////////////////////////
+.vscode/
+
+#//////////////////////////
+# WebStorm
+#//////////////////////////
+.idea/
+settings/v2/packages/cocos-service.json
+assets/project.manifest
+assets/version.manifest

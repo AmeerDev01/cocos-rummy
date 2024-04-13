@@ -1,0 +1,57 @@
+{
+"skeleton": {
+	"hash": "aWegPb1vK91LWtLVJmI6ZnO6EEQ",
+	"spine": "3.8.99",
+	"x": -107.25,
+	"y": -44.11,
+	"width": 215.25,
+	"height": 223.5,
+	"images": "./素材/",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "骨骼", "parent": "root", "y": 21.58, "scaleX": 0.75, "scaleY": 0.75 },
+	{ "name": "骨骼2", "parent": "骨骼" }
+],
+"slots": [
+	{ "name": "guan", "bone": "骨骼2", "attachment": "guan" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"guan": {
+				"guan": { "x": 0.5, "y": 61.42, "width": 287, "height": 298 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"bones": {
+			"骨骼": {
+				"translate": [
+					{ "y": 116.2, "curve": 0.25, "c3": 0.75 },
+					{ "time": 0.3333 }
+				],
+				"scale": [
+					{ "x": 0.467, "y": 0.467, "curve": 0.25, "c3": 0.75 },
+					{ "time": 0.3333 }
+				]
+			},
+			"骨骼2": {
+				"rotate": [
+					{ "time": 0.8 },
+					{ "time": 1.3333, "angle": -68.96 }
+				],
+				"translate": [
+					{ "time": 0.8 },
+					{ "time": 1.3333, "x": 445.81, "y": 869.05, "curve": "stepped" },
+					{ "time": 2, "x": 445.81, "y": 869.05 }
+				]
+			}
+		}
+	}
+}
+}

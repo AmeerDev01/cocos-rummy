@@ -1,0 +1,78 @@
+{
+"skeleton": {
+	"hash": "MYYrV0fjjv6/ITEz51Zbt2pJD2c",
+	"spine": "3.8.99",
+	"x": -119,
+	"y": -118,
+	"width": 239,
+	"height": 236,
+	"images": "../银锭中奖/",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "骨骼", "parent": "root" }
+],
+"slots": [
+	{ "name": "1", "bone": "root", "attachment": "di" },
+	{ "name": "3", "bone": "root", "attachment": "9" },
+	{ "name": "2", "bone": "root", "attachment": "yinzi" },
+	{ "name": "光", "bone": "骨骼", "attachment": "光", "blend": "screen" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"1": {
+				"di": { "y": 0.5, "width": 138, "height": 135 }
+			},
+			"2": {
+				"yinzi": { "x": 0.5, "y": 0.5, "width": 149, "height": 125 }
+			},
+			"3": {
+				"1": { "width": 62, "height": 64 },
+				"2": { "x": 0.5, "y": 0.5, "width": 77, "height": 77 },
+				"3": { "y": 0.5, "width": 98, "height": 93 },
+				"4": { "x": 0.5, "y": 0.5, "width": 119, "height": 121 },
+				"5": { "x": 0.5, "y": 0.5, "width": 135, "height": 139 },
+				"6": { "x": 0.5, "y": 0.5, "width": 161, "height": 155 },
+				"7": { "width": 178, "height": 170 },
+				"8": { "x": 0.5, "y": 0.5, "width": 191, "height": 161 },
+				"9": { "y": 0.5, "width": 192, "height": 163 },
+				"10": { "x": 0.5, "width": 183, "height": 170 }
+			},
+			"光": {
+				"光": { "x": 0.5, "width": 239, "height": 236 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"3": {
+				"attachment": [
+					{ "name": "1" },
+					{ "time": 0.0667, "name": "2" },
+					{ "time": 0.1333, "name": "3" },
+					{ "time": 0.2, "name": "4" },
+					{ "time": 0.2667, "name": "5" },
+					{ "time": 0.3333, "name": "6" },
+					{ "time": 0.4, "name": "7" },
+					{ "time": 0.4667, "name": "8" },
+					{ "time": 0.5333, "name": "9" },
+					{ "time": 0.6, "name": "10" }
+				]
+			}
+		},
+		"bones": {
+			"骨骼": {
+				"scale": [
+					{ "x": 0.5, "y": 0.5, "curve": 0.25, "c3": 0.75 },
+					{ "time": 0.6, "x": 1.5, "y": 1.5 }
+				]
+			}
+		}
+	}
+}
+}
