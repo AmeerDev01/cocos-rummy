@@ -4,7 +4,7 @@ import { DEV } from 'cc/env'
 import { defaultLanguageType } from "../language/languagePkg"
 
 const envConfig = {
-  dev: ["https://jsconfig.rummyapp.cc/jsonConfig-test.json"],
+  dev: ["https://jsconfig.supfutce.com/jsonConfig-test.json"],
   advance: [`https://jsconfig.rummyapp.cc/jsonConfig-prod.json`],
   production: ["https://jsconfig.rummyapp.cc/jsonConfig-prod.json"]
 }
