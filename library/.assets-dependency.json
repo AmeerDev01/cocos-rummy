@@ -1,0 +1,617 @@
+{
+  "path": {
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/car/shop.plist": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/car/huang.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/fanye_1.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/fanye_1.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/fire.plist": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/fire.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/bangdingshouji_icon.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/bangdingshouji_icon.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/snow11.plist": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/snow.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/xinfeng.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/xinfeng.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/star.plist": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/stars.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/fonts/num_shop_num.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/fonts/num_shop_num_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/fonts/welcome_font.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/fonts/welcome_font_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/fonts/zi_shop_buy.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/fonts/zi_shop_buy_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/shoujibangding_ruchang.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/shoujibangding_ruchang.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/zhongjiangbox.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/zhongjiangbox.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/hot_jiaobiao.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/hot_jiaobiao.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/jackpot_biaozhi.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/jackpot_biaozhi.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/1.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/1.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/bangding.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/bangding.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/bangdingicon.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/bangdingicon.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/btn_referral.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/btn_referral.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/btn_vip.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/btn_vip.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/eff_spine_Higgsdominoo_dt.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/eff_spine_Higgsdominoo_dt.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/bax.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/bax.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/eff_spine_Higgsdominoo_js.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/eff_spine_Higgsdominoo_js.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/fanshui.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/fanshui.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/hongdian.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/hongdian.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/libaoicon.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/libaoicon.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/huodong.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/huodong.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/qd.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/qd.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/sc.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/sc.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/liwu.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/liwu.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/tishi_huxi.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/tishi_huxi.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/shopicon.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/shopicon.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/tixianicon.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/tixianicon.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxiputao.json": [
+      "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxiputao.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/lanzitubiaodonghua.json": [
+      "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/lanzitubiaodonghua.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxiboluo.json": [
+      "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxiboluo.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxixiaojiang.json": [
+      "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxixiaojiang.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxilanmei.json": [
+      "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxilanmei.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxixigua.json": [
+      "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxixigua.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/jidan.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/jidan.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/liulian.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/liulian.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/pdg.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/pdg.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/pjgb.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/pjgb.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/shuitong.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/shuitong.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/qian.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/qian.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/meigui.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/meigui.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/tuoxie.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/tuoxie.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/xihongshi.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/xihongshi.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/wen.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/wen.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/zhuantou.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/zhuantou.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/zhuaji.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/zhuaji.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/beli.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/beli.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/SPECIAL.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/SPECIAL.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/skeleton.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/skeleton.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/publicFont/shuzi_xiazhucishu.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/publicFont/shuzi_xiazhucishu_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/spine_guangquan.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/spine_guangquan.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/publicFont/shuzi_xiazhujine.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/publicFont/shuzi_xiazhujine_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/publicFont/shuzi_zhongjiangjine.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/publicFont/shuzi_zhongjiangjine_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/liwuxingguang.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/liwuxingguang.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/font/font_rate.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/font/font_rate_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/aixinshanshan.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/aixinshanshan.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/xingguangshanshan.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/xingguangshanshan.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/zhongjbj.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/zhongjbj.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/personalCenter/resource/font_bangding.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/personalCenter/resource/font_bangding_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/login/spine/logo.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/login/spine/logo.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/car/fanye_1.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/car/fanye_1.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/car/libao.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/car/libao.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/cutdownTime.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/cutdownTime_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/font_gift_3.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/font_gift_3_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/font_gift_5.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/font_gift_5_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/font_gift_word.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/font_gift_word_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/front_gift_1.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/front_gift_1_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/front_gift_4.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/font/front_gift_4_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandar/large/rk_bandar_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandar/large/rk_bandar_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandar/small/rk_bandar.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandar/small/rk_bandar.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandarQiuQiu/large/rukou_bdqiuqiu_big.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandarQiuQiu/large/rukou_bdqiuqiu_big.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandarQiuQiu/small/rukou_bdqiuqiu_big.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandarQiuQiu/small/rukou_bdqiuqiu_big.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/binaryStar/small/szj_rk.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/binaryStar/small/szj_rk.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/crash/large/Crash_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/crash/large/Crash_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/crash/small/Crash.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/crash/small/Crash.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/csrukou/large/csrukou.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/csrukou/large/csrukou.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/domino/small/domino.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/domino/small/domino.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/csrukou/small/rukou_caishen_xiao.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/csrukou/small/rukou_caishen_xiao.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/domino/large/rk_dmn_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/domino/large/rk_dmn_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragon/small/longrk.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragon/small/longrk.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragonTiger/large/rk_longhu_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragonTiger/large/rk_longhu_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragon/large/rk_long_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragon/large/rk_long_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragonTiger/small/longhurk.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragonTiger/small/longhurk.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fish/small/buyu_xiao.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fish/small/buyu_xiao.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/egypt/large/rk_aiji_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/egypt/large/rk_aiji_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fish/large/buyu.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fish/large/buyu.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/egypt/small/rk_aiji_s.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/egypt/small/rk_aiji_s.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fruits777/large/rk_shuiguo_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fruits777/large/rk_shuiguo_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fruits777/small/shuiguo.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fruits777/small/shuiguo.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/gxfc/small/gongxifacai02.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/gxfc/small/gongxifacai02.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/gxfc/large/rk_gxfc_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/gxfc/large/rk_gxfc_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/olympus/large/rk_leishen_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/olympus/large/rk_leishen_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/olympus/small/rk_leishen_xiao.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/olympus/small/rk_leishen_xiao.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/phoenix/large/rk_fenghuang_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/phoenix/large/rk_fenghuang_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/phoenix/small/fenghuangrk.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/phoenix/small/fenghuangrk.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/qiuqiu/large/qiuqiuda.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/qiuqiu/large/qiuqiuda.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/qiuqiu/small/qiuqiu.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/qiuqiu/small/qiuqiu.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/starlight/large/rukou_xggz_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/starlight/large/rukou_xggz_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/starlight/small/rukou_xggz_x.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/starlight/small/rukou_xggz_x.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/yxx/large/rk_yxx_da.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/yxx/large/rk_yxx_da.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/yxx/small/yxxrk.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/yxx/small/yxxrk.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/vip/resource/font/level_font.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/vip/resource/font/level_font_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/signIn/resource/car/qiandao_dailingqu.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/signIn/resource/car/qiandao_dailingqu.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/vip/resource/font/vip_num.fnt": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/vip/resource/font/vip_num_0.png"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/vip/resource/car/vipshengji.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/vip/resource/car/vipshengji.atlas"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/welcome/resource/car/huanying_lihua.json": [
+      "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/welcome/resource/car/huanying_lihua.atlas"
+    ]
+  },
+  "uuid": {
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/bangdingshouji_icon.json": [
+      "51a13b0b-8e66-4e96-a93d-fdbf8ec32e51@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/fanye_1.json": [
+      "beba2d99-f554-4863-b39d-a4a3d4871eed@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/shoujibangding_ruchang.json": [
+      "643993ef-ebc1-48c3-99a0-de444a40becb@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/animation/xinfeng.json": [
+      "671d1e1f-079c-4498-b6a9-d0eb81879e9a@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/hot_jiaobiao.json": [
+      "c45a7bde-0949-419f-8dbf-ae2693ee889a@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/jackpot_biaozhi.json": [
+      "2533c61f-5598-4c42-bbbc-0d93f6662c86@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/zhongjiangbox.json": [
+      "f8aeb86c-67c0-4e1d-8fc4-80cc48a794cc@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/1.json": [
+      "5256492a-899c-4291-8659-9807c0ee5ee0@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/bangding.json": [
+      "b7c53896-44cc-45f2-8deb-9af7b7e8a38c@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/bangdingicon.json": [
+      "75682ae3-6ec5-407d-b3ff-1501a1b0c25a@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/bax.json": [
+      "8b04704d-4994-4f39-ab8b-e6f3d650e3aa@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/btn_referral.json": [
+      "cda5715a-85c5-450b-ad9a-9338425ff7a7@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/btn_vip.json": [
+      "6a5ed262-d1df-49be-959b-949cb94302e8@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/eff_spine_Higgsdominoo_dt.json": [
+      "f7cd7ca5-5235-4866-a536-e8dfe0372a1a@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/eff_spine_Higgsdominoo_js.json": [
+      "6ca7f6c6-21d9-4b8d-911e-a8544abe6b34@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/fanshui.json": [
+      "c6871244-ecdd-4516-989e-af167e650351@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/hongdian.json": [
+      "2edf9803-32f1-4bdd-8870-ee6a8b9cf717@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/huodong.json": [
+      "7972eb09-252d-476e-8de0-b4aeddfe89bf@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/libaoicon.json": [
+      "3f142bb1-a28f-42d9-bb6e-92833d6ae3c9@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/liwu.json": [
+      "ad39864f-bf7f-4819-80e4-4e4215f0e19c@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/qd.json": [
+      "c768c5b5-d97e-4a99-a6f8-a4775102e022@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/sc.json": [
+      "9fa944b5-2922-4120-bfb7-96e92d06c8b4@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/shopicon.json": [
+      "26b78c36-6196-4a86-b34f-d26ae72c5386@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/tishi_huxi.json": [
+      "466b2d47-b3f3-4955-a271-301ba4a267ab@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/spines/tixianicon.json": [
+      "eef79e80-63a2-48c2-85ac-85985049b75c@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/lanzitubiaodonghua.json": [
+      "52c88cf6-090a-49a1-9b2c-9d7aa170b888@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxiboluo.json": [
+      "3d1050b9-21d5-4c37-b707-95dd048d5a86@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxilanmei.json": [
+      "e1efc2ea-85ef-4161-9aec-253926c9de9a@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxiputao.json": [
+      "120733f3-ab5c-4443-8b8f-218aac5e09f2@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxixiaojiang.json": [
+      "c9b64500-4c26-4c12-a3d8-b955d8951263@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/wheel/assets/moveIcon/xiaoyouxixigua.json": [
+      "1faaf731-af8b-4707-832a-fd96b59337ce@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/jidan.json": [
+      "343670d8-bfda-4d74-a20e-883a0e231539@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/liulian.json": [
+      "bcadc9c0-78cf-4ebb-b528-ea5449d8b1f3@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/meigui.json": [
+      "f06d8a3d-fabf-4fb6-a933-9ffdc609ee33@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/pdg.json": [
+      "aafcc5db-24de-4661-8b9c-206af788de1a@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/pjgb.json": [
+      "5878080e-789f-4348-9e00-f1070ee7ae29@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/qian.json": [
+      "f31f2f9e-17bb-41d0-aa95-6ae43fb989db@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/shuitong.json": [
+      "e7ad69bc-2710-4d98-84f1-ca2ede4181dd@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/tuoxie.json": [
+      "b128aaae-854d-4d8c-ac46-3a3fa23770b9@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/wen.json": [
+      "dff674ad-d678-485f-8942-b05b0bf8eb2a@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/xihongshi.json": [
+      "2b532e50-ce02-451c-b09f-9ba59d31be19@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/zhuaji.json": [
+      "d666cefd-19d8-4ea6-97a5-57e5cf1cb6d0@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/gift/car/zhuantou.json": [
+      "c133c3b4-354a-44f8-a0de-8ad64fbaa2ab@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/SPECIAL.json": [
+      "4ab13f57-756f-4746-be9e-a20e9fb639c8@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/beli.json": [
+      "5eff7d0f-8711-4ea4-a600-2f171d6f9e85@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/skeleton.json": [
+      "d2bcb9cc-b872-463f-a11a-1904e2ba12be@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/common/header/PublicSkeleton/spine_guangquan.json": [
+      "1f6bdbf6-28ec-4012-acea-eb5bed31ffbb@6c48a",
+      "a8f98996-955b-4158-a341-92b9e0b42daa@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/aixinshanshan.json": [
+      "541f7147-a363-4f11-a6e3-fb68bba69875@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/liwuxingguang.json": [
+      "0576dff2-b7b3-4a85-8b35-9e392fa75f0c@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/xingguangshanshan.json": [
+      "490fc7c5-d618-4d1d-8fa3-13b3f8abee8c@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/activity/car/zhongjbj.json": [
+      "73385074-41fd-46b0-bf7d-dae97c75f075@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/login/spine/logo.json": [
+      "27963203-56b9-4d6f-9179-b1b392d2c81c@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/car/fanye_1.json": [
+      "da048e35-bb66-45fa-8b5c-7884d5ab02e8@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/shop/car/libao.json": [
+      "63ab6473-f5b7-4aef-ae40-d590a2f9bf8d@6c48a",
+      "d404dd10-4e9c-48c8-a947-2b2699efcc1f@6c48a",
+      "bfa3f915-1648-46c6-915c-e0c91ce754b1@6c48a",
+      "09b17fea-093d-4b08-91fd-066034ee37d0@6c48a",
+      "4efd9ca8-daf6-4b55-b608-d3101ffd21e5@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandar/large/rk_bandar_da.json": [
+      "3acd431f-17ff-4a69-8adc-e52563516d4f@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandar/small/rk_bandar.json": [
+      "515f9a03-2e4f-4cb1-8587-1e1e6d4645eb@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandarQiuQiu/large/rukou_bdqiuqiu_big.json": [
+      "d4f3cfee-33dc-4c15-a38a-044a3edc04a7@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/bandarQiuQiu/small/rukou_bdqiuqiu_big.json": [
+      "75765db9-5fd1-4813-9dfd-71a03bb8da28@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/binaryStar/small/szj_rk.json": [
+      "85ce36bf-b9d4-4814-babf-a94094e3dc6f@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/crash/large/Crash_da.json": [
+      "f0f0b19d-dfbe-48b2-a9ad-9001c4f3cb6e@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/crash/small/Crash.json": [
+      "778ceb03-c9ff-4b0e-b4cb-987849b6f7be@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/csrukou/large/csrukou.json": [
+      "85718a60-6978-4347-94e2-73cce61f9ce0@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/csrukou/small/rukou_caishen_xiao.json": [
+      "0ca0efff-b7ba-49b5-843f-9adfc54f7a91@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/domino/large/rk_dmn_da.json": [
+      "c137e186-f4bd-44a9-bb32-583752b15b7f@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/domino/small/domino.json": [
+      "2e3e0976-a9f9-49cd-8b03-9874bd6eace8@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragon/large/rk_long_da.json": [
+      "03957243-9a65-42f1-bcc9-bd207406b5e9@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragon/small/longrk.json": [
+      "946753af-c059-48d4-b0ee-05ceb1f22852@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragonTiger/large/rk_longhu_da.json": [
+      "c370d503-ffcf-41c0-9602-48bbc1de9d68@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/dragonTiger/small/longhurk.json": [
+      "68e9568f-df51-412f-aa07-fd1b7fb92bb2@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/egypt/large/rk_aiji_da.json": [
+      "3fa633be-1148-4ccd-a658-784736bcd827@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/egypt/small/rk_aiji_s.json": [
+      "00d02c42-95af-451a-bbfc-506af2ef9666@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fish/large/buyu.json": [
+      "f09dba4c-c1ba-4d4a-94ed-b5ab923509b3@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fish/small/buyu_xiao.json": [
+      "80576bce-3a1c-4f81-a3ad-1efec442a4d1@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fruits777/large/rk_shuiguo_da.json": [
+      "17ae7ccb-5e35-47b2-bcfe-fc8a26493913@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/fruits777/small/shuiguo.json": [
+      "d018e8e9-f5a7-4f20-bbe9-b99c26be21ca@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/gxfc/large/rk_gxfc_da.json": [
+      "fac7897f-8643-4bb1-ae76-10f4213d11f9@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/gxfc/small/gongxifacai02.json": [
+      "4b55a7f8-51df-4e41-8efa-592052681b6d@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/olympus/large/rk_leishen_da.json": [
+      "fe3a3b49-0dd4-4df5-ab9b-3fabeeadf862@6c48a",
+      "656c6ff6-5c78-4ebd-890b-e0a5f7f91f69@6c48a",
+      "a3c7db90-d91a-49da-9688-40db0cf02703@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/olympus/small/rk_leishen_xiao.json": [
+      "df5a8a34-011c-4589-818e-8e15e47b8865@6c48a",
+      "bd216049-f7f8-42ae-8b02-e8d50443e536@6c48a",
+      "c35d189b-67a6-439f-8562-031b3c0f7898@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/phoenix/large/rk_fenghuang_da.json": [
+      "32a77cd9-ee8d-4fd8-aed7-291fbdca2e79@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/phoenix/small/fenghuangrk.json": [
+      "67fed66b-01e1-44b9-9925-88b439ce0f2f@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/qiuqiu/large/qiuqiuda.json": [
+      "d9a03595-2639-4a3e-89f9-cc83d0c543ed@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/qiuqiu/small/qiuqiu.json": [
+      "89b9e2ab-898f-462b-a219-48b714ca023e@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/starlight/large/rukou_xggz_da.json": [
+      "cd4bdf4e-a5a5-4557-bab5-ab0dde1b5a7d@6c48a",
+      "a0a5a555-69c7-43b9-80a6-1d50fff62b73@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/starlight/small/rukou_xggz_x.json": [
+      "ffb6a04c-fda3-4a34-b7e9-28f23fe1706a@6c48a",
+      "cb79c0e6-8890-4e92-9cd8-6bd6a070f1a0@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/yxx/large/rk_yxx_da.json": [
+      "7001a3a2-763a-4515-b5f2-bc72b84f403f@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/icon/yxx/small/yxxrk.json": [
+      "7aa7c041-7123-43ba-8e2f-5bbf8efe5008@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/signIn/resource/car/qiandao_dailingqu.json": [
+      "8a29dd85-9031-4529-8c85-9046238aef58@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/vip/resource/car/vipshengji.json": [
+      "7e88d11d-c298-4d20-881a-ba715f3f8147@6c48a"
+    ],
+    "/Users/geliang/web/dibai/hall/assets/AssetBundle/hall/welcome/resource/car/huanying_lihua.json": [
+      "5ec1ead1-80a7-48f3-bfc9-93b5f839ac86@6c48a"
+    ]
+  }
+}

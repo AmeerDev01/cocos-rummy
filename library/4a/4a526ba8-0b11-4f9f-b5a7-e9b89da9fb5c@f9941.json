@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "shuzi_zhongjiangjine_0",
+    "atlas": "",
+    "rect": {
+      "x": 2,
+      "y": 0,
+      "width": 241,
+      "height": 92
+    },
+    "offset": {
+      "x": -5.5,
+      "y": 82
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 256
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -120.5,
+        -46,
+        0,
+        120.5,
+        -46,
+        0,
+        -120.5,
+        46,
+        0,
+        120.5,
+        46,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        2,
+        256,
+        243,
+        256,
+        2,
+        164,
+        243,
+        164
+      ],
+      "nuv": [
+        0.0078125,
+        0.640625,
+        0.94921875,
+        0.640625,
+        0.0078125,
+        1,
+        0.94921875,
+        1
+      ],
+      "minPos": {
+        "x": -120.5,
+        "y": -46,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 120.5,
+        "y": 46,
+        "z": 0
+      }
+    },
+    "texture": "4a526ba8-0b11-4f9f-b5a7-e9b89da9fb5c@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

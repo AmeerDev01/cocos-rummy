@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "VIP7",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 51,
+      "height": 17
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 51,
+      "height": 17
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -25.5,
+        -8.5,
+        0,
+        25.5,
+        -8.5,
+        0,
+        -25.5,
+        8.5,
+        0,
+        25.5,
+        8.5,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        17,
+        51,
+        17,
+        0,
+        0,
+        51,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -25.5,
+        "y": -8.5,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 25.5,
+        "y": 8.5,
+        "z": 0
+      }
+    },
+    "texture": "661be3f4-b786-4d52-b1da-c6e1aa3890f9@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

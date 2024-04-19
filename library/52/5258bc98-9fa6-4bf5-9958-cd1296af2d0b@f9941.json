@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "ren",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 512,
+      "height": 379
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 512,
+      "height": 379
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -256,
+        -189.5,
+        0,
+        256,
+        -189.5,
+        0,
+        -256,
+        189.5,
+        0,
+        256,
+        189.5,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        379,
+        512,
+        379,
+        0,
+        0,
+        512,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -256,
+        "y": -189.5,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 256,
+        "y": 189.5,
+        "z": 0
+      }
+    },
+    "texture": "5258bc98-9fa6-4bf5-9958-cd1296af2d0b@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

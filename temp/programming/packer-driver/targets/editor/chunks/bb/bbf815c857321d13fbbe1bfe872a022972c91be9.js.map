@@ -1,0 +1,1 @@
+{"version":3,"sources":["file:///Users/geliang/web/dibai/hall/assets/script/subGame/phoenix/Slot/Repositories/BaseRepository.ts"],"names":["BaseRepository","constructor"],"mappings":";;;iBAAaA,c;;;;;;;;;;;;;gCAAAA,c,GAAN,MAAMA,cAAN,CAAqB;AACxBC,QAAAA,WAAW,GAAG,CACb;;AAFuB,O","sourcesContent":["export class BaseRepository {\r\n    constructor() {\r\n    }\r\n\r\n}\r\n"]}

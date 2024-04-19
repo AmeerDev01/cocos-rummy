@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "icon_dt_xinxi_yinyue",
+    "atlas": "",
+    "rect": {
+      "x": 1,
+      "y": 0,
+      "width": 29,
+      "height": 26
+    },
+    "offset": {
+      "x": 0.5,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 30,
+      "height": 26
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -14.5,
+        -13,
+        0,
+        14.5,
+        -13,
+        0,
+        -14.5,
+        13,
+        0,
+        14.5,
+        13,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        1,
+        26,
+        30,
+        26,
+        1,
+        0,
+        30,
+        0
+      ],
+      "nuv": [
+        0.03333333333333333,
+        0,
+        1,
+        0,
+        0.03333333333333333,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -14.5,
+        "y": -13,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 14.5,
+        "y": 13,
+        "z": 0
+      }
+    },
+    "texture": "9fc6ea74-148d-4799-a4c0-d35efe4ae7dd@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

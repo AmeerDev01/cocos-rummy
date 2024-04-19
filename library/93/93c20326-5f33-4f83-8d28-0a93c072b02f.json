@@ -1,0 +1,188 @@
+{
+  "__type__": "sp.SkeletonData",
+  "_name": "btn_vip",
+  "_objFlags": 0,
+  "_native": "",
+  "_skeletonJson": {
+    "skeleton": {
+      "hash": "p3CS7aCThv8RbNTThHlKg7HjD68",
+      "spine": "3.8.99",
+      "x": -46.52,
+      "y": -49,
+      "width": 93.52,
+      "height": 98,
+      "images": "",
+      "audio": ""
+    },
+    "bones": [
+      {
+        "name": "root"
+      },
+      {
+        "name": "hg",
+        "parent": "root",
+        "x": -1.5
+      },
+      {
+        "name": "z2",
+        "parent": "root",
+        "length": 22.56,
+        "rotation": 139.71,
+        "x": -22.86,
+        "y": -8.49
+      },
+      {
+        "name": "z3",
+        "parent": "root",
+        "length": 22.52,
+        "rotation": 48.37,
+        "x": 22.02,
+        "y": -9.8
+      }
+    ],
+    "slots": [
+      {
+        "name": "di",
+        "bone": "root",
+        "attachment": "di"
+      },
+      {
+        "name": "you",
+        "bone": "z3",
+        "attachment": "you"
+      },
+      {
+        "name": "zuo",
+        "bone": "z2",
+        "attachment": "zuo"
+      },
+      {
+        "name": "hg",
+        "bone": "hg",
+        "attachment": "hg"
+      },
+      {
+        "name": "s",
+        "bone": "root",
+        "attachment": "VIP"
+      }
+    ],
+    "skins": [
+      {
+        "name": "default",
+        "attachments": {
+          "di": {
+            "di": {
+              "x": 0.5,
+              "width": 91,
+              "height": 96
+            }
+          },
+          "hg": {
+            "hg": {
+              "x": -0.06,
+              "y": 4.11,
+              "width": 55,
+              "height": 50
+            }
+          },
+          "s": {
+            "VIP": {
+              "x": -1.68,
+              "y": -16.27,
+              "width": 42,
+              "height": 24
+            }
+          },
+          "you": {
+            "you": {
+              "x": 8.59,
+              "y": -2.1,
+              "rotation": -48.3,
+              "width": 32,
+              "height": 39
+            }
+          },
+          "zuo": {
+            "zuo": {
+              "x": 8.71,
+              "y": 1.58,
+              "rotation": -139.71,
+              "width": 32,
+              "height": 39
+            }
+          }
+        }
+      }
+    ],
+    "animations": {
+      "animation": {
+        "bones": {
+          "z2": {
+            "rotate": [
+              {},
+              {
+                "time": 0.3333,
+                "angle": 5.61
+              },
+              {
+                "time": 0.6667
+              },
+              {
+                "time": 1,
+                "angle": 5.61
+              },
+              {
+                "time": 1.3333
+              }
+            ]
+          },
+          "z3": {
+            "rotate": [
+              {},
+              {
+                "time": 0.3333,
+                "angle": -6.49
+              },
+              {
+                "time": 0.6667
+              },
+              {
+                "time": 1,
+                "angle": -6.49
+              },
+              {
+                "time": 1.3333
+              }
+            ]
+          },
+          "hg": {
+            "translate": [
+              {
+                "time": 0.5
+              },
+              {
+                "time": 0.6667,
+                "y": 4.11
+              },
+              {
+                "time": 0.8333
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "textures": [
+    {
+      "__uuid__": "6a5ed262-d1df-49be-959b-949cb94302e8@6c48a",
+      "__expectedType__": "cc.Texture2D"
+    }
+  ],
+  "textureNames": [
+    "btn_vip.png"
+  ],
+  "scale": 1,
+  "_atlasText": "\r\nbtn_vip.png\r\nsize: 256,128\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\nVIP\r\n  rotate: false\r\n  xy: 2, 2\r\n  size: 42, 24\r\n  orig: 42, 24\r\n  offset: 0, 0\r\n  index: -1\r\ndi\r\n  rotate: false\r\n  xy: 2, 28\r\n  size: 91, 96\r\n  orig: 91, 96\r\n  offset: 0, 0\r\n  index: -1\r\nhg\r\n  rotate: true\r\n  xy: 95, 69\r\n  size: 55, 50\r\n  orig: 55, 50\r\n  offset: 0, 0\r\n  index: -1\r\nyou\r\n  rotate: false\r\n  xy: 95, 28\r\n  size: 32, 39\r\n  orig: 32, 39\r\n  offset: 0, 0\r\n  index: -1\r\nzuo\r\n  rotate: false\r\n  xy: 129, 28\r\n  size: 32, 39\r\n  orig: 32, 39\r\n  offset: 0, 0\r\n  index: -1\r\n"
+}

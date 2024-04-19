@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "img_shop_line",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 210,
+      "height": 2
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 210,
+      "height": 2
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -105,
+        -1,
+        0,
+        105,
+        -1,
+        0,
+        -105,
+        1,
+        0,
+        105,
+        1,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        2,
+        210,
+        2,
+        0,
+        0,
+        210,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -105,
+        "y": -1,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 105,
+        "y": 1,
+        "z": 0
+      }
+    },
+    "texture": "0544b328-da81-4e15-8adc-226fc3bd10f7@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

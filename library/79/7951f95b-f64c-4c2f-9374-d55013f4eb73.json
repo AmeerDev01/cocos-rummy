@@ -1,0 +1,63 @@
+{
+  "__type__": "cc.JsonAsset",
+  "_name": "config",
+  "_objFlags": 0,
+  "_native": "",
+  "json": [
+    {
+      "gameId": 1,
+      "bundleName": "binaryStar",
+      "md5": ""
+    },
+    {
+      "gameId": 2,
+      "bundleName": "domino",
+      "md5": ""
+    },
+    {
+      "gameId": 3,
+      "bundleName": "fruit777",
+      "md5": "5449e"
+    },
+    {
+      "gameId": 4,
+      "bundleName": "qiuqiu",
+      "md5": ""
+    },
+    {
+      "gameId": 5,
+      "bundleName": "Crash",
+      "md5": ""
+    },
+    {
+      "gameId": 6,
+      "bundleName": "godWealth",
+      "md5": "538a4"
+    },
+    {
+      "gameId": 7,
+      "bundleName": "gxfc",
+      "md5": "4f619"
+    },
+    {
+      "gameId": 8,
+      "bundleName": "egypt",
+      "md5": ""
+    },
+    {
+      "gameId": 9,
+      "bundleName": "dragon",
+      "md5": ""
+    },
+    {
+      "gameId": 10,
+      "bundleName": "phoenix",
+      "md5": ""
+    },
+    {
+      "gameId": 11,
+      "bundleName": "yxx",
+      "md5": ""
+    }
+  ]
+}

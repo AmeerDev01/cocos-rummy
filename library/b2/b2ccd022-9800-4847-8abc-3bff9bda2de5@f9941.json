@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "lgoin_close",
+    "atlas": "",
+    "rect": {
+      "x": 2,
+      "y": 0,
+      "width": 104,
+      "height": 79
+    },
+    "offset": {
+      "x": 1,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 106,
+      "height": 79
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -52,
+        -39.5,
+        0,
+        52,
+        -39.5,
+        0,
+        -52,
+        39.5,
+        0,
+        52,
+        39.5,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        2,
+        79,
+        106,
+        79,
+        2,
+        0,
+        106,
+        0
+      ],
+      "nuv": [
+        0.018867924528301886,
+        0,
+        1,
+        0,
+        0.018867924528301886,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -52,
+        "y": -39.5,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 52,
+        "y": 39.5,
+        "z": 0
+      }
+    },
+    "texture": "b2ccd022-9800-4847-8abc-3bff9bda2de5@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

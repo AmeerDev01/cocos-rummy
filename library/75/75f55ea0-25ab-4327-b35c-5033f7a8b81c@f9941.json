@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bjinbi_big",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 1,
+      "width": 68,
+      "height": 70
+    },
+    "offset": {
+      "x": -0.5,
+      "y": -0.5
+    },
+    "originalSize": {
+      "width": 69,
+      "height": 71
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -34,
+        -35,
+        0,
+        34,
+        -35,
+        0,
+        -34,
+        35,
+        0,
+        34,
+        35,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        70,
+        68,
+        70,
+        0,
+        0,
+        68,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        0.9855072463768116,
+        0,
+        0,
+        0.9859154929577465,
+        0.9855072463768116,
+        0.9859154929577465
+      ],
+      "minPos": {
+        "x": -34,
+        "y": -35,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 34,
+        "y": 35,
+        "z": 0
+      }
+    },
+    "texture": "75f55ea0-25ab-4327-b35c-5033f7a8b81c@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

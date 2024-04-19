@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "huodongye_dibuzhuangshi",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 305,
+      "width": 840,
+      "height": 245
+    },
+    "offset": {
+      "x": 0,
+      "y": -152.5
+    },
+    "originalSize": {
+      "width": 840,
+      "height": 550
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -420,
+        -122.5,
+        0,
+        420,
+        -122.5,
+        0,
+        -420,
+        122.5,
+        0,
+        420,
+        122.5,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        245,
+        840,
+        245,
+        0,
+        0,
+        840,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.44545454545454544,
+        1,
+        0.44545454545454544
+      ],
+      "minPos": {
+        "x": -420,
+        "y": -122.5,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 420,
+        "y": 122.5,
+        "z": 0
+      }
+    },
+    "texture": "96fc9725-ac33-4395-a0dd-dfcdffd3df32@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

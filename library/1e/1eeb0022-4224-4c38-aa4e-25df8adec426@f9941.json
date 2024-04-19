@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "word_shop_va1",
+    "atlas": "",
+    "rect": {
+      "x": 1,
+      "y": 0,
+      "width": 45,
+      "height": 28
+    },
+    "offset": {
+      "x": 0.5,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 46,
+      "height": 28
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -22.5,
+        -14,
+        0,
+        22.5,
+        -14,
+        0,
+        -22.5,
+        14,
+        0,
+        22.5,
+        14,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        1,
+        28,
+        46,
+        28,
+        1,
+        0,
+        46,
+        0
+      ],
+      "nuv": [
+        0.021739130434782608,
+        0,
+        1,
+        0,
+        0.021739130434782608,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -22.5,
+        "y": -14,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 22.5,
+        "y": 14,
+        "z": 0
+      }
+    },
+    "texture": "1eeb0022-4224-4c38-aa4e-25df8adec426@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

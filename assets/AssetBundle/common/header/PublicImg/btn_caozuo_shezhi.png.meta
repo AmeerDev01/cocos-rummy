@@ -117,7 +117,7 @@
         "imageUuidOrDatabaseUri": "dbda1570-8831-4172-9e49-87e38f39c7e1@6c48a",
         "atlasUuid": ""
       },
-      "ver": "1.0.11",
+      "ver": "1.0.12",
       "imported": true,
       "files": [
         ".json"

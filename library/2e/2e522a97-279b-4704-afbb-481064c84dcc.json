@@ -1,0 +1,10 @@
+{
+  "__type__": "cc.ParticleAsset",
+  "_name": "star",
+  "_objFlags": 0,
+  "_native": ".plist",
+  "spriteFrame": {
+    "__uuid__": "43263644-c03f-466b-9255-41c1327e3b1c@f9941",
+    "__expectedType__": "cc.SpriteFrame"
+  }
+}

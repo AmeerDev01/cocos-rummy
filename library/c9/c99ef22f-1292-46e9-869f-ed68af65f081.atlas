@@ -1,0 +1,41 @@
+
+Crash.png
+size: 2048,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+crash-bg1
+  rotate: false
+  xy: 2, 11
+  size: 417, 192
+  orig: 417, 192
+  offset: 0, 0
+  index: -1
+crash-xing
+  rotate: false
+  xy: 421, 31
+  size: 389, 172
+  orig: 389, 172
+  offset: 0, 0
+  index: -1
+crash_bg
+  rotate: false
+  xy: 812, 2
+  size: 212, 201
+  orig: 212, 201
+  offset: 0, 0
+  index: -1
+crash_guang
+  rotate: false
+  xy: 1175, 81
+  size: 129, 122
+  orig: 129, 122
+  offset: 0, 0
+  index: -1
+huojian_hj
+  rotate: false
+  xy: 1026, 63
+  size: 147, 140
+  orig: 147, 140
+  offset: 0, 0
+  index: -1

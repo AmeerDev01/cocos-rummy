@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "zhuanpandiquan",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 298,
+      "height": 297
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 298,
+      "height": 297
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -149,
+        -148.5,
+        0,
+        149,
+        -148.5,
+        0,
+        -149,
+        148.5,
+        0,
+        149,
+        148.5,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        297,
+        298,
+        297,
+        0,
+        0,
+        298,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -149,
+        "y": -148.5,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 149,
+        "y": 148.5,
+        "z": 0
+      }
+    },
+    "texture": "43a66b82-4d28-4473-abef-a1de788c77dc@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

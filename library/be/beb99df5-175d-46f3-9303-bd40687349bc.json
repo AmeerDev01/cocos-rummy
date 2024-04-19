@@ -1,0 +1,78 @@
+{
+  "__type__": "sp.SkeletonData",
+  "_name": "fanye_1",
+  "_objFlags": 0,
+  "_native": "",
+  "_skeletonJson": {
+    "skeleton": {
+      "hash": "hQ0dC96H65yMD1rviyofGslBZHw",
+      "spine": "3.8.99",
+      "x": -19.5,
+      "y": -30,
+      "width": 40,
+      "height": 60,
+      "images": "",
+      "audio": ""
+    },
+    "bones": [
+      {
+        "name": "root"
+      }
+    ],
+    "slots": [
+      {
+        "name": "ID_23_4",
+        "bone": "root",
+        "attachment": "zuo"
+      }
+    ],
+    "skins": [
+      {
+        "name": "default",
+        "attachments": {
+          "ID_23_4": {
+            "zuo": {
+              "x": 0.5,
+              "width": 40,
+              "height": 60
+            }
+          }
+        }
+      }
+    ],
+    "animations": {
+      "animation": {
+        "bones": {
+          "root": {
+            "translate": [
+              {
+                "curve": 0.25,
+                "c3": 0.75
+              },
+              {
+                "time": 0.3333,
+                "x": -23,
+                "curve": 0.25,
+                "c3": 0.75
+              },
+              {
+                "time": 1
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "textures": [
+    {
+      "__uuid__": "beba2d99-f554-4863-b39d-a4a3d4871eed@6c48a",
+      "__expectedType__": "cc.Texture2D"
+    }
+  ],
+  "textureNames": [
+    "fanye_1.png"
+  ],
+  "scale": 1,
+  "_atlasText": "\r\nfanye_1.png\r\nsize: 64,64\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\nzuo\r\n  rotate: false\r\n  xy: 2, 2\r\n  size: 40, 60\r\n  orig: 40, 60\r\n  offset: 0, 0\r\n  index: -1\r\n"
+}

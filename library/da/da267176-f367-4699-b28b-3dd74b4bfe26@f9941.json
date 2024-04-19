@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "pro_common_in1",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 442,
+      "height": 28
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 442,
+      "height": 28
+    },
+    "rotated": false,
+    "capInsets": [
+      11,
+      6,
+      11,
+      7
+    ],
+    "vertices": {
+      "rawPosition": [
+        -221,
+        -14,
+        0,
+        221,
+        -14,
+        0,
+        -221,
+        14,
+        0,
+        221,
+        14,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        28,
+        442,
+        28,
+        0,
+        0,
+        442,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -221,
+        "y": -14,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 221,
+        "y": 14,
+        "z": 0
+      }
+    },
+    "texture": "da267176-f367-4699-b28b-3dd74b4bfe26@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

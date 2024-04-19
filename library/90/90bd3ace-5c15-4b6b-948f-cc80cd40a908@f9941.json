@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "img_hall_ad4",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 309,
+      "height": 276
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 309,
+      "height": 276
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -154.5,
+        -138,
+        0,
+        154.5,
+        -138,
+        0,
+        -154.5,
+        138,
+        0,
+        154.5,
+        138,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        276,
+        309,
+        276,
+        0,
+        0,
+        309,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -154.5,
+        "y": -138,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 154.5,
+        "y": 138,
+        "z": 0
+      }
+    },
+    "texture": "90bd3ace-5c15-4b6b-948f-cc80cd40a908@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

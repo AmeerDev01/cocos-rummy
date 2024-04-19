@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "pro_shop_in",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 389,
+      "height": 25
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 389,
+      "height": 25
+    },
+    "rotated": false,
+    "capInsets": [
+      22,
+      0,
+      18,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -194.5,
+        -12.5,
+        0,
+        194.5,
+        -12.5,
+        0,
+        -194.5,
+        12.5,
+        0,
+        194.5,
+        12.5,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        25,
+        389,
+        25,
+        0,
+        0,
+        389,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -194.5,
+        "y": -12.5,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 194.5,
+        "y": 12.5,
+        "z": 0
+      }
+    },
+    "texture": "a94f5901-ac6c-4aec-86eb-5e0a17055013@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

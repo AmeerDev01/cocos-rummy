@@ -1,0 +1,75 @@
+System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
+  "use strict";
+
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Button, Node, BaseComponent, _dec, _class, _crd, ccclass, property, Yxx_Rule;
+
+  function _reportPossibleCrUseOfBaseComponent(extras) {
+    _reporterNs.report("BaseComponent", "../../../base/BaseComponent", _context.meta, extras);
+  }
+
+  return {
+    setters: [function (_unresolved_) {
+      _reporterNs = _unresolved_;
+    }, function (_cc) {
+      _cclegacy = _cc.cclegacy;
+      __checkObsolete__ = _cc.__checkObsolete__;
+      __checkObsoleteInNamespace__ = _cc.__checkObsoleteInNamespace__;
+      _decorator = _cc._decorator;
+      Button = _cc.Button;
+      Node = _cc.Node;
+    }, function (_unresolved_2) {
+      BaseComponent = _unresolved_2.BaseComponent;
+    }],
+    execute: function () {
+      _crd = true;
+
+      _cclegacy._RF.push({}, "ace09UOmcFMSoUC8LeoqGsi", "Yxx_Rule", undefined);
+
+      __checkObsolete__(['_decorator', 'Button', 'Component', 'Font', 'Label', 'log', 'Node', 'resources', 'Sprite', 'SpriteFrame']);
+
+      ({
+        ccclass,
+        property
+      } = _decorator);
+
+      _export("Yxx_Rule", Yxx_Rule = (_dec = ccclass('Yxx_Rule'), _dec(_class = class Yxx_Rule extends (_crd && BaseComponent === void 0 ? (_reportPossibleCrUseOfBaseComponent({
+        error: Error()
+      }), BaseComponent) : BaseComponent) {
+        constructor() {
+          super(...arguments);
+          this.propertyNode = {
+            props_btn_close: new Button()
+          };
+          this.props = {};
+          this.events = {
+            close: () => {}
+          };
+        }
+
+        start() {}
+
+        initState() {
+          return {};
+        }
+
+        bindEvent() {
+          this.propertyNode.props_btn_close.node.on(Node.EventType.TOUCH_END, () => {
+            this.events.close();
+          });
+        }
+
+        useProps(key, value) {}
+
+        bindUI() {}
+
+        update(deltaTime) {}
+
+      }) || _class));
+
+      _cclegacy._RF.pop();
+
+      _crd = false;
+    }
+  };
+});
+//# sourceMappingURL=d2526c6cf69daec5db8778d767d28042bfda74d9.js.map

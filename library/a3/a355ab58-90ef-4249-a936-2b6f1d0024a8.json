@@ -1,0 +1,142 @@
+{
+  "__type__": "sp.SkeletonData",
+  "_name": "qd",
+  "_objFlags": 0,
+  "_native": "",
+  "_skeletonJson": {
+    "skeleton": {
+      "hash": "+H/kr8U3lGy9I8bVLdozQxqrYJ0",
+      "spine": "3.8.99",
+      "x": -52.96,
+      "y": -49.14,
+      "width": 99,
+      "height": 98,
+      "images": "./qd/",
+      "audio": "F:/工作/大厅"
+    },
+    "bones": [
+      {
+        "name": "root"
+      },
+      {
+        "name": "bone3",
+        "parent": "root",
+        "x": -6.58,
+        "y": -0.53
+      },
+      {
+        "name": "bone",
+        "parent": "bone3",
+        "x": 1.9,
+        "y": 3.6
+      },
+      {
+        "name": "bone2",
+        "parent": "bone3",
+        "x": -1.95,
+        "y": -5.02
+      }
+    ],
+    "slots": [
+      {
+        "name": "di",
+        "bone": "root",
+        "attachment": "di"
+      },
+      {
+        "name": "dib",
+        "bone": "bone",
+        "attachment": "dib"
+      },
+      {
+        "name": "gou",
+        "bone": "bone2",
+        "attachment": "gou"
+      }
+    ],
+    "skins": [
+      {
+        "name": "default",
+        "attachments": {
+          "di": {
+            "di": {
+              "x": -3.46,
+              "y": -0.14,
+              "width": 99,
+              "height": 98
+            }
+          },
+          "dib": {
+            "dib": {
+              "x": 4.73,
+              "y": -2.21,
+              "width": 76,
+              "height": 80
+            }
+          },
+          "gou": {
+            "gou": {
+              "x": 4.08,
+              "y": 2.91,
+              "width": 31,
+              "height": 21
+            }
+          }
+        }
+      }
+    ],
+    "animations": {
+      "animation": {
+        "bones": {
+          "bone2": {
+            "scale": [
+              {},
+              {
+                "time": 0.5,
+                "x": 1.2,
+                "y": 1.2
+              },
+              {
+                "time": 1
+              }
+            ]
+          },
+          "bone3": {
+            "rotate": [
+              {},
+              {
+                "time": 0.5,
+                "angle": 3.03
+              },
+              {
+                "time": 1
+              }
+            ],
+            "scale": [
+              {},
+              {
+                "time": 0.5,
+                "x": 1.05,
+                "y": 1.05
+              },
+              {
+                "time": 1
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "textures": [
+    {
+      "__uuid__": "c768c5b5-d97e-4a99-a6f8-a4775102e022@6c48a",
+      "__expectedType__": "cc.Texture2D"
+    }
+  ],
+  "textureNames": [
+    "qd.png"
+  ],
+  "scale": 1,
+  "_atlasText": "\r\nqd.png\r\nsize: 193,91\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\ndi\r\n  rotate: true\r\n  xy: 2, 2\r\n  size: 87, 94\r\n  orig: 99, 98\r\n  offset: 9, 2\r\n  index: -1\r\ndib\r\n  rotate: false\r\n  xy: 98, 12\r\n  size: 72, 77\r\n  orig: 76, 80\r\n  offset: 2, 2\r\n  index: -1\r\ngou\r\n  rotate: true\r\n  xy: 172, 60\r\n  size: 29, 19\r\n  orig: 31, 21\r\n  offset: 1, 1\r\n  index: -1\r\n"
+}

@@ -1,0 +1,99 @@
+{
+  "__type__": "sp.SkeletonData",
+  "_name": "hongdian",
+  "_objFlags": 0,
+  "_native": "",
+  "_skeletonJson": {
+    "skeleton": {
+      "hash": "eNl8IE5wlSqL/ToblZ0VKyhkAOY",
+      "spine": "3.8.99",
+      "x": -17,
+      "y": -17,
+      "width": 34,
+      "height": 34,
+      "images": "E:/新版UI/平台/大厅new/动画/源文件/hongdian",
+      "audio": ""
+    },
+    "bones": [
+      {
+        "name": "root"
+      }
+    ],
+    "slots": [
+      {
+        "name": "190",
+        "bone": "root",
+        "attachment": "190"
+      }
+    ],
+    "skins": [
+      {
+        "name": "default",
+        "attachments": {
+          "190": {
+            "190": {
+              "width": 34,
+              "height": 34
+            }
+          }
+        }
+      }
+    ],
+    "animations": {
+      "animation": {
+        "slots": {
+          "190": {
+            "color": [
+              {
+                "color": "ffffffff",
+                "curve": 0.25,
+                "c3": 0.75
+              },
+              {
+                "time": 0.6667,
+                "color": "ffffffaf",
+                "curve": 0.25,
+                "c3": 0.75
+              },
+              {
+                "time": 1.3333,
+                "color": "ffffffff"
+              }
+            ]
+          }
+        },
+        "bones": {
+          "root": {
+            "scale": [
+              {
+                "curve": 0.25,
+                "c3": 0.75
+              },
+              {
+                "time": 0.6667,
+                "x": 0.8,
+                "y": 0.8,
+                "curve": 0.284,
+                "c3": 0.75
+              },
+              {
+                "time": 1.3333
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "textures": [
+    {
+      "__uuid__": "2edf9803-32f1-4bdd-8870-ee6a8b9cf717@6c48a",
+      "__expectedType__": "cc.Texture2D"
+    }
+  ],
+  "textureNames": [
+    "hongdian.png"
+  ],
+  "scale": 1,
+  "_atlasText": "\r\nhongdian.png\r\nsize: 38,38\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\n190\r\n  rotate: false\r\n  xy: 2, 2\r\n  size: 34, 34\r\n  orig: 34, 34\r\n  offset: 0, 0\r\n  index: -1\r\n"
+}
