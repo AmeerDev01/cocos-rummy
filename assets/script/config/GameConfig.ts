@@ -4,9 +4,9 @@ import { DEV } from 'cc/env'
 import { defaultLanguageType } from "../language/languagePkg"
 
 const envConfig = {
-  dev: ["https://jsconfig.supfutce.com/jsonConfig-test.json"],
-  advance: [`https://jsconfig.rummyapp.cc/jsonConfig-prod.json`],
-  production: ["https://jsconfig.rummyapp.cc/jsonConfig-prod.json"]
+  dev: ["https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json"],
+  advance: [`https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json`],
+  production: ["https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json"]
 }
 /**获取游戏配置列表 */
 export const getGameMapConfig = (urlIndex: number = 0): Promise<GameConfigType> => {
