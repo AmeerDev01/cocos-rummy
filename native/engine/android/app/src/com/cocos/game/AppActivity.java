@@ -110,17 +110,17 @@ public class AppActivity extends CocosActivity {
      * 测试环境地址
      */
     private static final String[] CONFIG_URL_DEVS = {
-            "https://jsconfig.nuih.top/resource-jsonConfig-dev.json",
-            "https://jsconfig.mkom.top/resource-jsonConfig-dev.json"
+            "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
+            "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json"
     };
     /**
      * 生产环境地址
      */
     private static final String[] CONFIG_URL_PROS = {
-            "https://jsconfig.nuih.top/resource-jsonConfig-prod.json",
-            "https://jsconfig.mkom.top/resource-jsonConfig-prod.json",
-            "https://jsconfig.vfen.xyz/resource-jsonConfig-prod.json",
-            "https://jsconfig.hugewin777dl.com/resource-jsonConfig-prod.json"
+            "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
+            "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
+            "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
+            "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json"
     };
     private Map<String, Object> conversionData = null;
     private AppEventsLogger facebookLogger;
