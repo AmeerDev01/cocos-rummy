@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "544023023142",
-    "project_id": "hugewin-6c9bb",
-    "storage_bucket": "hugewin-6c9bb.appspot.com"
+    "project_number": "894820386534",
+    "project_id": "glass-marker-417206",
+    "storage_bucket": "glass-marker-417206.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:544023023142:android:f361f763fb0847ff1920e7",
+        "mobilesdk_app_id": "1:894820386534:android:42dcb218cdb9938c7a9d27",
         "android_client_info": {
-          "package_name": "cocos.com.hugeWin777"
+          "package_name": "coco.com.hugeWin"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBrHqOk9j9NzciQtA8mnnC7bWPgynek538"
+          "current_key": "AIzaSyBQEaPS3M9UP7y7OZwhsHrl6HT217s_ZVU"
         }
       ],
       "services": {
