@@ -3,6 +3,8 @@
     "cce:/internal/x/cc": "./chunks/ce/cee638a986ad8fae09398db255647defcaa6612a.js",
     "cce:/internal/x/prerequisite-imports": "./chunks/12/1289c4451cfd5703ed5eec7c5f1fcd0f4d24ec88.js",
     "file:///Applications/Cocos/Creator/3.7.4/CocosCreator.app/Contents/Resources/resources/3d/engine/editor/assets/tools/debug-view-runtime-control.ts": "./chunks/21/2149071586fb5ee96d3e15df3a10b119fd0c3790.js",
+    "file:///Users/geliang/web/dibai/hall/assets/wheel/assets/script/extend.ts": "./chunks/5f/5f153a1a1e1ab29c078fc0100fed5ddbc91c7a37.js",
+    "file:///Users/geliang/web/dibai/hall/assets/wheel/assets/script/wheel.ts": "./chunks/94/94179e59c82f5d1311b19bdafbb5f5edf0c19b50.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/App.ts": "./chunks/56/56a25763101232c52774c27602ef6caebacaf03f.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/extend.ts": "./chunks/71/711fd3abb15d91e4fbb605f2facec04e867e20d3.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/base/BaseComponent.ts": "./chunks/eb/eb2457813b216b995d322a32a18ee1f6b60c5499.js",
@@ -14,6 +16,7 @@
     "file:///Users/geliang/web/dibai/hall/assets/script/common/bridge.ts": "./chunks/b5/b5323c67db8d40a340d0d95cf3b567c959303902.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/common/listenerFactoy.ts": "./chunks/d3/d3e4d26fa249220ae26e0e98975829812653e6e1.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/common/sktListenerFactoy.ts": "./chunks/d4/d4d7f1dabd0c49da9755ec325acc3e6795ce2f0b.js",
+    "file:///Users/geliang/web/dibai/hall/assets/script/config/GameConfig.ts": "./chunks/8f/8fe58b7c2952bd002778add940dfa04281c2767b.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/hall/apiUrl.ts": "./chunks/19/19d65a6bf05d22b1acc281220b5d483f62cc475e.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/hall/config.ts": "./chunks/a3/a39a00005ad2676f192dde54047115d6801c52d7.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/hall/hallType.ts": "./chunks/0a/0a56a55538e709019de3621b9f66655132af439d.js",
@@ -304,8 +307,6 @@
     "file:///Users/geliang/web/dibai/hall/assets/script/utils/fastEqual/index.ts": "./chunks/0f/0f9cf2e846d5cbcaf6028dfe0b7b10bf6f01efdf.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/utils/fastEqual/internalTypes.ts": "./chunks/c8/c83bc7ac2941eb907250d159cebda9e708ea9e5f.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/utils/fastEqual/utils.ts": "./chunks/10/10870df3cbdfbed6472e8b869cecf6d0d29c44e4.js",
-    "file:///Users/geliang/web/dibai/hall/assets/wheel/assets/script/extend.ts": "./chunks/5f/5f153a1a1e1ab29c078fc0100fed5ddbc91c7a37.js",
-    "file:///Users/geliang/web/dibai/hall/assets/wheel/assets/script/wheel.ts": "./chunks/94/94179e59c82f5d1311b19bdafbb5f5edf0c19b50.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/common/fish/utils/SkillRegisterFunc.ts": "./chunks/39/3988682ffc07273617893c98c1be4c71b3624d4f.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/hall/components/Hall_PC_SubComp/Hall_PC_BackWater.ts": "./chunks/ae/aea74e66366d3eb7d1d60af7dab6ad081cae5358.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/hall/components/Hall_PC_SubComp/Hall_PC_Share_Info.ts": "./chunks/09/09451c383a6943120521e38f80d3d28baa3237c9.js",
@@ -1406,8 +1407,7 @@
     "file:///Users/geliang/web/dibai/hall/assets/script/subGame/phoenix/Framework/patterns/observer/Notifier.ts": "./chunks/9e/9ef79733880f3ac37a888a30de8b8bb251513c56.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/subGame/phoenix/Framework/patterns/observer/Observer.ts": "./chunks/26/264dba49d73b8fc419f3b8462a6e7b6ae5be1c6a.js",
     "file:///Users/geliang/web/dibai/hall/assets/script/subGame/phoenix/Framework/patterns/proxy/Proxy.ts": "./chunks/39/3937916c6b4cea74c6a5a54947cdec059c5005e1.js",
-    "file:///Users/geliang/web/dibai/hall/assets/script/bundle.js": "./chunks/49/49570ede13b44bc2d99c03c43982b1139f0b591f.js",
-    "file:///Users/geliang/web/dibai/hall/assets/script/config/GameConfig.ts": "./chunks/8f/8fe58b7c2952bd002778add940dfa04281c2767b.js"
+    "file:///Users/geliang/web/dibai/hall/assets/script/bundle.js": "./chunks/49/49570ede13b44bc2d99c03c43982b1139f0b591f.js"
   },
   "scopes": {
     "./chunks/ce/cee638a986ad8fae09398db255647defcaa6612a.js": {

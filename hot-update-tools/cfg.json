@@ -1,7 +1,7 @@
 {
-    "version": "3.5.43",
-    "serverRootDir": "http://54.251.66.82:8009/appHotUpdate",
-    "resourceRootDir": "D:\\uccnSVN\\hall\\build\\web-mobile",
+    "version": "1.0.02",
+    "serverRootDir": "https://hot.supfutce.com/appHotUpdate",
+    "resourceRootDir": "/Users/geliang/web/dibai/hall/build/android/data",
     "genManifestDir": "",
     "localServerPath": "",
     "hotAddressArray": [
@@ -16,6 +16,10 @@
         {
             "label": "http://54.251.66.82:8009/appHotUpdate",
             "value": "http://54.251.66.82:8009/appHotUpdate"
+        },
+        {
+            "label": "https://hot.supfutce.com/appHotUpdate",
+            "value": "https://hot.supfutce.com/appHotUpdate"
         }
     ],
     "buildTime": null,
