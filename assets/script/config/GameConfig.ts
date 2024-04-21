@@ -63,12 +63,12 @@ export const GameConfig = {
   /**本地的App版本号，会被动态修改 */
   appLocalVersion: 'V1.0.1',
   gameConfigUrl: isDev ? [
-    "https://jsconfig.nuih.top/resource-jsonConfig-dev.json",
-    "https://jsconfig.mkom.top/resource-jsonConfig-dev.json"
+    "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
+    "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
   ] : [
-    "https://jsconfig.nuih.top/resource-jsonConfig-prod.json",
-    "https://jsconfig.mkom.top/resource-jsonConfig-prod.json",
-    "https://jsconfig.vfen.xyz/resource-jsonConfig-prod.json",
-    "https://jsconfig.hugewin777dl.com/resource-jsonConfig-prod.json"
+    "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
+    "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
+    "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
+    "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
   ]
 }
