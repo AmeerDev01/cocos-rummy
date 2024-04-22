@@ -1,0 +1,73 @@
+{
+"skeleton": {
+	"hash": "BMgGmL5ejQub4BWIgsFGmLrsHiM",
+	"spine": "3.8.99",
+	"x": -108,
+	"y": -108,
+	"width": 216,
+	"height": 216,
+	"images": "C:/Users/Administrator/Desktop/虎/动画源文件/中奖/zj",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root", "x": -0.46 }
+],
+"slots": [
+	{ "name": "111", "bone": "root", "attachment": "z17", "blend": "screen" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"111": {
+				"z1": { "width": 216, "height": 216 },
+				"z2": { "x": -1.14, "width": 216, "height": 216 },
+				"z3": { "x": -2.06, "width": 216, "height": 216 },
+				"z4": { "x": -0.92, "width": 216, "height": 216 },
+				"z5": { "width": 216, "height": 216 },
+				"z6": { "x": -0.69, "width": 216, "height": 216 },
+				"z7": { "x": -1.6, "width": 216, "height": 216 },
+				"z8": { "x": -0.92, "width": 216, "height": 216 },
+				"z9": { "width": 216, "height": 216 },
+				"z10": { "x": -0.92, "width": 216, "height": 216 },
+				"z11": { "x": -0.69, "width": 216, "height": 216 },
+				"z12": { "x": -1.37, "width": 216, "height": 216 },
+				"z13": { "width": 216, "height": 216 },
+				"z14": { "x": -0.92, "width": 216, "height": 216 },
+				"z15": { "width": 216, "height": 216 },
+				"z16": { "width": 216, "height": 216 },
+				"z17": { "x": 0.46, "width": 216, "height": 216 },
+				"z18": { "x": -0.69, "width": 216, "height": 216 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"111": {
+				"attachment": [
+					{ "name": "z1" },
+					{ "time": 0.0667, "name": "z2" },
+					{ "time": 0.1333, "name": "z3" },
+					{ "time": 0.2, "name": "z4" },
+					{ "time": 0.2667, "name": "z5" },
+					{ "time": 0.3333, "name": "z6" },
+					{ "time": 0.4, "name": "z7" },
+					{ "time": 0.4667, "name": "z8" },
+					{ "time": 0.5333, "name": "z9" },
+					{ "time": 0.6, "name": "z10" },
+					{ "time": 0.6667, "name": "z11" },
+					{ "time": 0.7333, "name": "z12" },
+					{ "time": 0.8, "name": "z13" },
+					{ "time": 0.8667, "name": "z14" },
+					{ "time": 0.9333, "name": "z15" },
+					{ "time": 1, "name": "z16" },
+					{ "time": 1.0667, "name": "z17" },
+					{ "time": 1.1333, "name": "z18" }
+				]
+			}
+		}
+	}
+}
+}

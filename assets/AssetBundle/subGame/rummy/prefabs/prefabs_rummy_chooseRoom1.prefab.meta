@@ -1,0 +1,13 @@
+{
+  "ver": "1.1.43",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "f6550bdb-8cd1-49a1-b684-11e0c7968fbb",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "prefabs_rummy_chooseRoom1"
+  }
+}

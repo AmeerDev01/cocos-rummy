@@ -1,0 +1,75 @@
+{
+"skeleton": {
+	"hash": "th4iN+/H2KqnUlzFtefnpfI8ltA",
+	"spine": "3.8.99",
+	"x": -139.5,
+	"y": -139.5,
+	"width": 280,
+	"height": 280,
+	"images": "",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "yinwu1", "parent": "root" },
+	{ "name": "guang", "parent": "yinwu1" }
+],
+"slots": [
+	{ "name": "guang", "bone": "guang", "attachment": "guang" },
+	{ "name": "duofuduocai_icon_fen", "bone": "yinwu1", "attachment": "duofuduocai_icon_lan" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"duofuduocai_icon_fen": {
+				"duofuduocai_icon_lan": { "x": 0.5, "y": 0.5, "width": 280, "height": 280 },
+				"hui": { "x": 0.5, "y": 0.5, "width": 280, "height": 280 }
+			},
+			"guang": {
+				"guang": { "width": 202, "height": 202 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {},
+	"animation1": {
+		"bones": {
+			"yinwu1": {
+				"scale": [
+					{ "x": 0, "y": 0 },
+					{ "time": 0.3333 }
+				]
+			}
+		}
+	},
+	"animation2": {
+		"slots": {
+			"guang": {
+				"color": [
+					{ "time": 0.2333, "color": "ffffffff" },
+					{ "time": 0.5, "color": "ffffff05" }
+				]
+			}
+		},
+		"bones": {
+			"guang": {
+				"scale": [
+					{},
+					{ "time": 0.5, "x": 1.5, "y": 1.5 }
+				]
+			}
+		}
+	},
+	"animation3": {
+		"slots": {
+			"duofuduocai_icon_fen": {
+				"attachment": [
+					{ "name": "hui" }
+				]
+			}
+		}
+	}
+}
+}
