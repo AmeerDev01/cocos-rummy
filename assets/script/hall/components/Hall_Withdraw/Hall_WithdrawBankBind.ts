@@ -1,4 +1,4 @@
-import { _decorator, assetManager, Component, EditBox, ImageAsset, Node, Sprite, SpriteFrame } from 'cc';
+import { _decorator, assetManager, Button, Component, EditBox, ImageAsset, Node, Sprite, SpriteFrame } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 const { ccclass, property } = _decorator;
 import { WithdrawBankChannelType } from '../../store/actions/withdraw';
@@ -17,7 +17,7 @@ export interface IProps {
 }
 export interface IEvent {
 	onClosehandler: () => void,
-	onBindDone: (hadChooseBankChannl: WithdrawBankChannelType, accountNumber: string, realName: string) => void
+	onBindDone: (hadChooseBankChannl: WithdrawBankChannelType, accountNumber: string, realName: string, ifscCode?: string, bankBranch?: string) => void
 }
 
 @ccclass('Hall_WithdrawBankBind')
@@ -29,12 +29,17 @@ export class Hall_WithdrawBankBind extends BaseComponent<IState, IProps, IEvent>
 	protected propertyNode = {
 		props_icon_reken: new Node(),
 		props_btn_metode_close: new Node(),
+		/**支行名字 */
+		props_EditBox_Sub: new EditBox(),
+		/**卡号 */
 		props_nomor_EditBox: new EditBox(),
-		props_spr_cetatan_name1: new Node(),
+		/**卡号名 */
 		props_EditBox_name: new EditBox(),
-		props_btn_metode_tentukan: new Node(),
+		props_btn_metode_tentukan: new Button(),
+		/**ifsc信息 */
+		props_ifsc_EditBox_code: new EditBox(),
 		/**引导节点 */
-		props_layout_tentukan:new Node()
+		props_layout_tentukan: new Node()
 	}
 
 	public props: IProps = {
@@ -43,7 +48,7 @@ export class Hall_WithdrawBankBind extends BaseComponent<IState, IProps, IEvent>
 
 	public events: IEvent = {
 		onClosehandler: () => { },
-		onBindDone: (hadChooseBankChannl: WithdrawBankChannelType, accountNumber: string, realName: string) => { }
+		onBindDone: (hadChooseBankChannl: WithdrawBankChannelType, accountNumber: string, realName: string, ifscCode: string, bankBranch: string) => { }
 	}
 
 	protected initState() {
@@ -54,16 +59,32 @@ export class Hall_WithdrawBankBind extends BaseComponent<IState, IProps, IEvent>
 		this.propertyNode.props_btn_metode_close.on(Node.EventType.TOUCH_END, () => {
 			this.events.onClosehandler()
 		})
-		this.propertyNode.props_btn_metode_tentukan.on(Node.EventType.TOUCH_END, () => {
+		this.propertyNode.props_btn_metode_tentukan.node.on(Node.EventType.TOUCH_END, () => {
 			const accountNumber = this.propertyNode.props_nomor_EditBox.string
 			const realName = this.propertyNode.props_EditBox_name.string
+			const ifscCode = this.propertyNode.props_ifsc_EditBox_code.string
+			const branchName = this.propertyNode.props_EditBox_Sub.string
 			// if (accountNumber.toString().substring(0, 2) !== '08') {
 			// 	global.hallDispatch(addToastAction({ content: lang.write(k => k.InputModule.inputFaildCustomer1, {}, { placeStr: "渠道号码必须以08开头" }) }))
 			// 	return
 			// }
-			new InputValidator().begin().isChartLength([9, 15], accountNumber).done(() => {
-				this.events.onBindDone(this.props.hadChooseBankChannl, accountNumber, realName)
-			})
+			if (this.props.hadChooseBankChannl.channelType === 1) {
+				//银行
+				new InputValidator().begin().isLocalBankCard(accountNumber)
+					.isNotEmpty(realName, lang.write(k => k.InputModule.isNotEmpty) + ':Name')
+					.isNotEmpty(ifscCode, lang.write(k => k.InputModule.isNotEmpty) + ':IFSC')
+					.isNotEmpty(branchName, lang.write(k => k.InputModule.isNotEmpty) + ':SubBranch')
+					.isAllNumber(accountNumber).done(() => {
+						this.events.onBindDone(this.props.hadChooseBankChannl, accountNumber, realName, ifscCode, branchName)
+					})
+			} else if (this.props.hadChooseBankChannl.channelType === 0) {
+				//电子钱包
+				new InputValidator().begin().isLocalBankCard(accountNumber)
+					.isNotEmpty(realName, lang.write(k => k.InputModule.isNotEmpty) + ':Name')
+					.isAllNumber(accountNumber).done(() => {
+						this.events.onBindDone(this.props.hadChooseBankChannl, accountNumber, realName)
+					})
+			}
 		})
 	}
 
@@ -77,14 +98,6 @@ export class Hall_WithdrawBankBind extends BaseComponent<IState, IProps, IEvent>
 					this.propertyNode.props_icon_reken.getComponent(Sprite).spriteFrame = SpriteFrame.createWithImage(asset)
 				}
 			})
-			// bundleHall.load(`withdrawal/resource/icon_withdrawal_${value.cur.name.toLocaleLowerCase()}/spriteFrame`, SpriteFrame, (err, sp) => {
-			// 	!err && (this.propertyNode.props_icon_reken.getComponent(Sprite).spriteFrame = sp)
-			// })
-
-			// if (this.props.hadChooseBankChannl.channelType === 0) {
-			// 	this.propertyNode.props_EditBox_name.node.active = false
-			// 	this.propertyNode.props_spr_cetatan_name1.active = false
-			// }
 			this.beginGuide()
 		}
 	}
@@ -93,7 +106,7 @@ export class Hall_WithdrawBankBind extends BaseComponent<IState, IProps, IEvent>
 		if (config.fristLogin.main && !config.fristLogin['hasShow_3']) {
 			//标明这里已经显示了
 			config.fristLogin['hasShow_3'] = true
-			const guide_1 = new Guide(this.propertyNode.props_btn_metode_tentukan, this.propertyNode.props_layout_tentukan)
+			const guide_1 = new Guide(this.propertyNode.props_btn_metode_tentukan.node, this.propertyNode.props_layout_tentukan)
 			guide_1.begin()
 		}
 	}

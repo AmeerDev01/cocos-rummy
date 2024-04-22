@@ -24,7 +24,6 @@ class OnlineViewModel extends ViewModel<DragonTiger_onlines, IProps, IEvent> {
           
           return {
             roomInfoSize:state.history.roomInfoSize,
-            memberData:state.history.memberData,
             memberId:state.userInfo.memberId,
             memberName:state.userInfo.memberName,
             roomLeftInfoVos:state.history.roomLeftInfoVos,

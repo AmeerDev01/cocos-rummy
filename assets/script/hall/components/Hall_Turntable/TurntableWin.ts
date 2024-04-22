@@ -1,8 +1,7 @@
-import { _decorator, assetManager, Button, Component, ImageAsset, instantiate, Label, log, native, Node, ScrollView, Sprite, SpriteFrame, sys, systemEvent, Texture2D, tween, UIOpacity, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, assetManager, Button, Component, ImageAsset, instantiate, Label, log, native, Node, ScrollView, Sprite, SpriteFrame, sys, Texture2D, tween, UIOpacity, UITransform, Vec2, Vec3 } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import { addToastAction, ToastType } from '../../store/actions/baseBoard';
 import { global, hallAudio, lang, sourceManageSeletor } from '../../index';
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from '../../socketConnect';
 import BaseViewModel from '../../viewModel/BaseViewModel';
 import { EffectType } from '../../../utils/NodeIOEffect';
 import { PrefabPathDefine } from '../../sourceDefine/prefabDefine';

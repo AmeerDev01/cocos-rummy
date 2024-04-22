@@ -1,4 +1,4 @@
-import { Node, UIOpacity, sys, Animation } from "cc"
+import { Node, UIOpacity, sys, Animation, Prefab } from "cc"
 import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { Fruit777_Footer, IProps, IEvent } from "../components/Fruit777_Footer"
 import { StateType } from "../store/reducer"
@@ -9,11 +9,11 @@ import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { EffectType } from "../../../utils/NodeIOEffect"
 import BaseViewModel from "../../../common/viewModel/BaseViewModel"
 import { Fruit777_HelpPanel, IProps as FIProps, IState as FIState, IEvent as FIEvent } from "../components/Fruit777_HelpPanel"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, fruit777WebSocketDriver } from "../socketConnect"
 import { beginRollAction, setRollSpeed, setStopRollAction } from "../store/actions/roller"
 import dataTransfer, { DataKeyType } from "../dataTransfer"
 import { AutoLauncherType, GameType } from "../type"
-import { changeAutoLauncherType, changeProfit, setAutoLaunchedTimes, setShowAuthLaunch, setSortStop, setStopMode, setWaiting } from "../store/actions/game"
+import { changeAutoLauncherType, changeProfit, setAutoLaunchedTimes, setIsBeginStop, setShowAuthLaunch, setSortStop, setStopMode, setWaiting } from "../store/actions/game"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
 import { global, lang } from "../../../hall"
 import config from "../config"
@@ -30,8 +30,9 @@ class FooterViewModel extends ViewModel<Fruit777_Footer, IProps, IEvent> {
   private positionId: number = 0
   private betAmount: number = 0
 
-  protected begin() {
-    this.autoLauncherPanel = new AutoLauncherViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.AUTO_LAUNCHER).source).appendTo(this.comp.getAutoLauncherBaseNBoard()).connect()
+  protected async begin() {
+    this.autoLauncherPanel = new AutoLauncherViewModel().mountView((await sourceManageSeletor()
+      .getFileAsync(PrefabPathDefine._AUTO_LAUNCHER, Prefab)).source).appendTo(this.comp.getAutoLauncherBaseNBoard()).connect()
     this.autoLauncherPanel.viewNode.getComponent(UIOpacity).opacity = 0
     this.setEvent({
       openAutoLauncher: () => {
@@ -45,8 +46,9 @@ class FooterViewModel extends ViewModel<Fruit777_Footer, IProps, IEvent> {
         (this.comp.getPropertyNode().props_down_chooseBg as Node).getComponent(Animation).play('animation_autoLauncher_down')
         // isClear && this.dispatch(setRollSpeed(1))
       },
-      openHelpPanel: () => {
-        this.helpPanelPanel = new BaseViewModel<Fruit777_HelpPanel, FIState, FIProps, FIEvent>("Fruit777_HelpPanel").mountView(sourceManageSeletor().getFile(PrefabPathDefine.INTRODUCE).source)
+      openHelpPanel: async () => {
+        this.helpPanelPanel = new BaseViewModel<Fruit777_HelpPanel, FIState, FIProps, FIEvent>("Fruit777_HelpPanel")
+          .mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._INTRODUCE, Prefab)).source)
           .appendTo(this.viewNode.parent, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({
             closeHandler: () => {
               this.helpPanelPanel.unMount(EffectType.EFFECT1)
@@ -76,7 +78,7 @@ class FooterViewModel extends ViewModel<Fruit777_Footer, IProps, IEvent> {
   }
 
   public manualBetHandler() {
-    if (!sktInstance || (sktInstance && !sktInstance.isConnect)) {
+    if (!fruit777WebSocketDriver) {
       return
     }
     if (this.comp.props && this.comp.props.balance < this.betAmount) {
@@ -90,12 +92,37 @@ class FooterViewModel extends ViewModel<Fruit777_Footer, IProps, IEvent> {
     //如果主游戏，清理奖池
     dataTransfer(DataKeyType.GAME_TYPE) === GameType.MAIN && this.dispatch(changeProfit(0))
     //发送下注
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCHER_BET, {
+    const sktMessager = fruit777WebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCHER_BET, {
       positionId: this.positionId,
-      tableId: JSON.parse(sys.localStorage.getItem('fruit777')).tableId
-    }, { isReSend: true })
+      tableId: JSON.parse(sys.localStorage.getItem('fruit777')).tableId,
+      gameId: config.gameId
+    }, {
+      timeOut: 5000
+    })
+    sktMessager.bindTimeoutHandler(() => {
+      // global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.SocketMsgTimeOut, {}, { placeStr: "网络超时" }), type: ToastType.ERROR }))
+      if (dataTransfer(DataKeyType.GAME_TYPE) !== GameType.SUBGAME1) {
+        // (gameBoardViewModel.currentGameViewModel as RollerPanelViewModel).stopForLast()
+        global.closeSubGame({
+          confirmContent: lang.write(k => k.WebSocketModule.SocketMsgTimeOut, {}, { placeStr: "网络超时" })
+        })
+      }
+      return false
+    })
+    sktMessager.bindReceiveHandler((receiveData, isPassDataVerify) => {
+      if (!isPassDataVerify) {
+        global.closeSubGame({
+          confirmContent: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }) + `[${receiveData.sktCode}]`
+        })
+      } else if ((isPassDataVerify && !receiveData.data.success)) {
+        global.closeSubGame({
+          confirmContent: lang.write(k => k.InitGameModule.BetFaild, {}, { placeStr: "下注失败" })
+        })
+      }
+    }, { data: {}, success: true })
     this.dispatch(setWaiting(false))
     fruit777_Audio.playOneShot(SoundPathDefine.ROLLER_BEGIN2)
+    this.dispatch(setIsBeginStop(false))
   }
 
   public connect() {
@@ -114,7 +141,8 @@ class FooterViewModel extends ViewModel<Fruit777_Footer, IProps, IEvent> {
         autoLaunchedTimes: state.game.autoLaunchedTimes,
         balance: state.game.balance,
         isJumpStop: state.game.stopMode === "jump" ? true : false,
-        isSortStop: state.game.isSortStop
+        isSortStop: state.game.isSortStop,
+        isBeginStop: state.game.isBeginStop
       }
     })
     return this

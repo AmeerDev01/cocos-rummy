@@ -25,6 +25,7 @@ class ThorV2FoolerViewModel extends ViewModel<ThorV2_Footer, IProps, IEvent> {
         gameTypeInfo: state.game.gameTypeInfo,
         gold: state.game.gold,
         betAmount: state.game.betAmount,
+        gameModeType: state.game.gameModeType,
       }
     })
     return this

@@ -269,6 +269,7 @@ export default {
     [2, 2, 9, 4, 5, 7, 1, 3, 1, 2, 4, 1, 4, 6, 2, 10, 1, 2, 3, 3, 3, 2, 1, 1, 6, 3, 5, 3, 3, 5, 7, 7, 13, 1, 1, 1, 9, 1, 7, 4, 3, 9, 7, 2, 9, 5, 5, 5, 3, 4, 8, 2, 4, 4, 1, 3, 6, 3, 7, 8, 7, 4, 14, 8, 5, 8, 10, 3, 3, 6, 4, 6, 1, 2, 6, 1, 3, 5, 5, 11, 2, 1, 2, 1, 7, 6, 6, 2, 9, 4, 8, 1, 12, 1, 8, 3, 2, 2, 2, 1]
   ],
   /**下注档位 */
+
   betSwitcher: [
     {
       /**0≤用户级别<100 */
@@ -277,95 +278,68 @@ export default {
       "amount": [
         {
           "positionId": 1,
-          "value": 1
+          "value": 0.010,
+          "jackpot": 1
         },
         {
           "positionId": 2,
-          "value": 2
+          "value": 0.040,
+          "jackpot": 1
         },
         {
           "positionId": 3,
-          "value": 4
+          "value": 0.080,
+          "jackpot": 1
         },
         {
           "positionId": 4,
-          "value": 8
+          "value": 0.200,
+          "jackpot": 1
         },
         {
           "positionId": 5,
-          "value": 16
+          "value": 0.400,
+          "jackpot": 1
         },
         {
           "positionId": 6,
-          "value": 20
+          "value": 0.900,
+          "jackpot": 1
         },
         {
           "positionId": 7,
-          "value": 40
+          "value": 2.000,
+          "jackpot": 0
         },
         {
           "positionId": 8,
-          "value": 60
+          "value": 4.000,
+          "jackpot": 0
         },
         {
           "positionId": 9,
-          "value": 90
+          "value": 9.000,
+          "jackpot": 0
         },
         {
           "positionId": 10,
-          "value": 120
+          "value": 15.000,
+          "jackpot": 0
         },
         {
           "positionId": 11,
-          "value": 150
+          "value": 30.000,
+          "jackpot": 0
         },
         {
           "positionId": 12,
-          "value": 200
+          "value": 40.000,
+          "jackpot": 0
         },
         {
           "positionId": 13,
-          "value": 400
-        },
-        {
-          "positionId": 14,
-          "value": 600
-        },
-        {
-          "positionId": 15,
-          "value": 900
-        },
-        {
-          "positionId": 16,
-          "value": 1200
-        },
-        {
-          "positionId": 17,
-          "value": 1500
-        },
-        {
-          "positionId": 18,
-          "value": 2000
-        },
-        {
-          "positionId": 19,
-          "value": 3000
-        },
-        {
-          "positionId": 20,
-          "value": 4000
-        },
-        {
-          "positionId": 21,
-          "value": 6000
-        },
-        {
-          "positionId": 22,
-          "value": 8000
-        },
-        {
-          "positionId": 23,
-          "value": 10000
+          "value": 80.000,
+          "jackpot": 0
         }
       ]
     }

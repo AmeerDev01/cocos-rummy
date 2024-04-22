@@ -49,7 +49,7 @@ export class Hall_ChangeNickName extends BaseComponent<IState, IProps, IEvent> {
 			this.events.onCloseHandler()
 		})
 		this.propertyNode.props_btn_tentu.on(Node.EventType.TOUCH_END, () => {
-			new InputValidator().begin().isChartLength([2, 16], this.propertyNode.props_EditBox_changeName.string).done(() => {
+			new InputValidator().begin().isCharLength([2, 16], this.propertyNode.props_EditBox_changeName.string).done(() => {
 				this.events.onModifyHandler(this.propertyNode.props_EditBox_changeName.string).then(() => {
 					this.events.onCloseHandler()
 				})

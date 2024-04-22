@@ -17,7 +17,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "cocos.com.hugeWin777"
+        applicationId "com.HG.IN001"
         minSdkVersion PROP_MIN_SDK_VERSION
         targetSdkVersion PROP_TARGET_SDK_VERSION
         versionCode 1

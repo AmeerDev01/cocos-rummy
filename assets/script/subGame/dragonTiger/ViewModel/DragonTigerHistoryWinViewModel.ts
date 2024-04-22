@@ -4,7 +4,7 @@ import { DragonTiger_historyWin, IProps, IEvent } from "../components/DragonTige
 import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { StateType } from "../store/reducer"
 import { getStore } from '../store'
-import { SKT_MAG_TYPE, sktMsgListener } from '../socketConnect';
+import { SKT_MAG_TYPE } from '../socketConnect';
 import {setHistoryListAction} from '../store/actions/history';
 const { ccclass, property } = _decorator;
 

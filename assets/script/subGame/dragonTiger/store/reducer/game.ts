@@ -27,10 +27,7 @@ export default reduxAct.createReducer<InitStateType>({
         ...state,
         allWinUsers:payload.allWinUsers,
     }),
-    [ActionTypes.DRAGONTIGER_CHANGE_ONLINE_NUMBER]: (state, payload: ActionPayLoad<ActionTypes.DRAGONTIGER_CHANGE_ONLINE_NUMBER>): InitStateType => ({
-        ...state,
-        onlineNum:payload.onlineNum,
-    }),
+
     [ActionTypes.DRAGONTGER_CANCEL_BET_DATA]: (state, payload: ActionPayLoad<ActionTypes.DRAGONTGER_CANCEL_BET_DATA>): InitStateType => ({
         ...state,
         cancelBetData:payload.cancelBetData,

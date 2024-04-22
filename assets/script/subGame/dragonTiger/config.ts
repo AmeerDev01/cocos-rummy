@@ -3,10 +3,12 @@ import { getUUID } from "../../utils/tool";
 import { FontPathDefine } from "./sourceDefine/fontDefine";
 import { SpriteFramePathDefine } from "./sourceDefine/spriteDefine";
 import { BetData, BetType } from "./type";
+import { SKT_HOST } from "../../common/WebSocketStarter";
 
 export default {
-    sktCode: "DRAGON_TIGER",
-    name: "dragonTiger",
+    gameHost: SKT_HOST.MULTI,
+    gameServer: "DRAGON",
+    gameName: "DRAGON",
     gameId: 12,
     testConfig: {
       wsUrl: "ws://192.168.110.243:18003/ws",
@@ -31,7 +33,8 @@ export default {
       /**旁观索引 */
       lookOnIndex: 99, //==>用于其他online玩家的index,便于判定飞金币的位置
       /**胜率最大的索引位置 */
-      winRateMaxIndex: 3,//==>用于判定飞星星的动画展示
+       winRateMaxIndex: 3,//==>用于判定飞星星的动画展示
+       unlockBetMinGold:10,
     },
     /**金币数据 */
     chipTypes: [
@@ -78,6 +81,7 @@ export default {
         fontUrl: FontPathDefine.WU_BET
       },
   ],
+    
      /**上榜头像位置 */
      headLocations: [
       { x: -589, y: 145 },

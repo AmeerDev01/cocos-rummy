@@ -6,7 +6,7 @@ import { addToastAction } from "../../../hall/store/actions/baseBoard"
 import { GodWealthV2_Main, IEvent, IProps } from "../components/GodWealthV2_Main"
 import config from "../config"
 import { cacheData, clearCacheData } from "../dataTransfer"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, godWealthGameLogin, godWealthWebSocketDriver, sktMsgListener } from "../socketConnect"
 import { bundlePkgName } from "../sourceDefine"
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { getStore } from "../store"
@@ -26,6 +26,7 @@ import { EffectType } from "../../../utils/NodeIOEffect"
 import StepNumber from "../../../utils/StepNumber"
 import UseSetOption from "../../../utils/UseSetOption"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
+import { SktMessager } from "../../../common/WebSocketStarter"
 
 @StoreInject(getStore())
 class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEvent> {
@@ -78,18 +79,17 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
       this.dispatch(updatePositionId(1))
     }
 
-    sktMsgListener.add(SKT_MAG_TYPE.AUTH, bundlePkgName, (data: AuthDataVo, error) => {
+    godWealthWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LOGIN, bundlePkgName, (data: AuthDataVo, error) => {
       if (error) {
         return;
       }
 
       if (!data) {
         global.closeSubGame({
-          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.AUTH
+          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.LOGIN
         });
         return;
       }
-      this.isAuthDone = true
       if (data.gameType === GameType.SUBGAME2) {
         // 锁定的图标
         cacheData.fixedChessboardIcon = data.fixedChessboardIcon;
@@ -125,14 +125,24 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
         }
       }, 0.1)
 
+      this.isAuthDone = true
 
     })
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-      token: localStorage.getItem("token"),
-      gameId: config.gameId
-    });
+    // const msgObj = godWealthWebSocketDriver.loginGame(SKT_MAG_TYPE.LOGIN)
+    // msgObj.bindReceiveHandler((message) => {
+    //   if (!message.data.success) {
+    //     global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "认证失败" }) })
+    //   }
+    // })
+    // //超时
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
+    //   return false
+    // })
+    godWealthGameLogin();
 
-    sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
+
+    godWealthWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
       this.comp.unschedule(this.betCallbackFun);
       this.betCallbackFun = undefined;
       this.isBetResult = true;
@@ -151,7 +161,7 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
       const si = data.dl.si[0];
       if (si.gameType === GameType.SUBGAME2 || this.comp.props.gameTypeInfo.viewGameType === GameType.SUBGAME2) {
         //每局的锁定图标
-        cacheData.fixedChessboardIcon = si.fixedChessboardIcon;
+        cacheData.fixedChessboardIcon = si.fixedChessboardIconAndAmount;
       }
 
       // 服务器的索引是从1开始的
@@ -159,7 +169,7 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
       for (let i = 0; i < rollerId.length; i++) {
         rollerId[i]--;
       }
-      console.log("rollerId ", si.rollerId)
+      // console.log("rollerId ", si.rollerId)
       const localLeftCount = this.comp.props.gameTypeInfo.leftCount;
       let leftCount = si.freeCount;
       let nextLeftCount = undefined;
@@ -194,17 +204,24 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
     })
 
     // 更新金额
-    sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
+    godWealthWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
       this.dispatch(updateGold(data));
     })
 
     //jackpot用户
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
-      this.dispatch(updateJackpotDatas(data))
+    godWealthWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
+      if (data.length < 30) {
+        const jackpotDatas = this.comp.props.jackpotDatas;
+        jackpotDatas.pop()
+        jackpotDatas.unshift(data[0])
+        this.dispatch(updateJackpotDatas(data))
+      } else {
+        this.dispatch(updateJackpotDatas(data))
+      }
     })
 
     //jackpot TotalAmount
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data, error) => {
+    godWealthWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data, error) => {
       this.dispatch(updateJackpotAmount(data))
     })
 
@@ -219,6 +236,8 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
       })
   }
   private sendBet() {
+    // console.log("this.isAuthDone",this.isAuthDone);
+
     if (!this.isAuthDone) return
     if (!this.isBetResult) {
       console.log("已经发送过了下注，不能重复发送，等待服务器返回")
@@ -259,10 +278,15 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
     this.betCallbackFun = this.betListenerTimeHandle.bind(this);
     this.comp.schedule(this.betCallbackFun, 10);
 
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
-      "positionId": this.comp.props.positionId,
-      "tableId": cacheData.authData.tableId,
+    const msgObj = godWealthWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
+      positionId: this.comp.props.positionId,
+      tableId: cacheData.authData.tableId,
+      gameId: config.gameId,
+    }, {
+      timeOut: 5000
     });
+
+    this.sendBetTimeOutHandle(msgObj);
   }
 
   private betListenerTimeHandle() {
@@ -280,8 +304,21 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
     }
   }
 
+  private sendBetTimeOutHandle(msgObj: SktMessager<SKT_MAG_TYPE>) {
+    msgObj.bindReceiveHandler((message) => {
+      if (!message.data.success) {
+        global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }) })
+      }
+    })
+    //超时
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
+  }
+
   protected unMountCallBack(): void {
-    sktMsgListener.removeById(bundlePkgName)
+    godWealthWebSocketDriver.sktMsgListener.removeById(bundlePkgName)
     this.footerViewModel.unMount();
     this.headerViewModel.unMount();
     this.rollerPanelViewModel.unMount();

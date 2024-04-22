@@ -2,7 +2,7 @@ export enum ApiUrl {
   /**停服通知公告 */
   NOTICE = `/global/api/appNotice`,
   /**密码登录 */
-  LOGIN_PWD = `/sso/api/memberLogin`,
+  LOGIN_PWD = `/user/api/memberLogin`,
   /*退出*/
   LOGIN_OUT = `/hall/api/member/loginOut`,
   /**验证码登录 */
@@ -10,15 +10,15 @@ export enum ApiUrl {
   // /**游客登录 */
   // LOGIN_GUEST = `/sso/api/memberLogin`,
   /**发送验证码 */
-  SEND_SMS = `/sso/api/sendLoginSms`,
+  SEND_SMS = `/user/api/sendLoginSms`,
   /**重置密码 */
-  RESET_PASSWORD = `/sso/api/resetLoginPassword`,
+  RESET_PASSWORD = `/user/api/resetLoginPassword`,
   /**用户升级 */
-  MEMBER_UPGRADES = `/sso/api/memberUpgrades`,
+  MEMBER_UPGRADES = `/user/api/memberUpgrades`,
   /**快速登录 */
-  LOGIN_FAST = `/sso/api/memberLoginF`,
+  LOGIN_FAST = `/user/api/memberLoginF`,
   /**注册 */
-  REG = `/sso/api/memberRegister`,
+  REG = `/user/api/memberRegister`,
   /**是否需要强制设置银行密码 */
   IS_SET_PWD = `/hall/api/member/querySafePassword`,
   /**验证银行密码 */
@@ -36,7 +36,8 @@ export enum ApiUrl {
   /**用户订单列表 */
   USER_ORDER_LIST = `/hall/api/order/list`,
   /**邮件列表 */
-  EMAIL_LIST = `/hall/api/member/emailList`,
+  // EMAIL_LIST = `/hall/api/member/emailList`,
+  EMAIL_LIST = `/hall/api/member/emailPage`,
   /**查看邮件 */
   CHECK_EMAIL = `/hall/api/member/emailCheck`,
   /**删除邮件 */
@@ -64,7 +65,7 @@ export enum ApiUrl {
   /**确认抽水 */
   DRAW_WATER = `/hall/api/member/withdrawCommissionOrWater`,
   /**检测需要弹出的东西 */
-  POP_UPS = `/hall/api/game/popUps`,
+  // POP_UPS = `/hall/api/game/popUps`,
   /**分享绑定地址 */
   INVITE = `/hall/api/invite`,
   /**游戏轮播图 */
@@ -74,5 +75,18 @@ export enum ApiUrl {
   /**fcm的token绑定 */
   FCM_TOKEN_BIND = `/hall/api/fcm/bind`,
   /**获取绑定之后可能获取的金币 */
-  GET_BIND_PHONE_GOLD = `/hall/api/invite/getBindPoneGold`
+  GET_BIND_PHONE_GOLD = `/hall/api/invite/getBindPoneGold`,
+  /**收到充值消息回调接口 */
+  ADJUST_ACCEPT = `/user/adjust/accept`,
+  /**vip活动 */
+  GET_VIP_BONUS = '/hall/api/member/vipBonus',
+  /**充值活动 */
+  GET_RECHARGE_LIST = '/hall/api/channel/rechargeList',
+  /**领取站内信附件奖励 */
+  RECEIVE_EMAIL_ANNEX = '/hall/api/member/receiveEmailAnnex',
+  /**获取累计存款活动列表 */
+  GET_DAILY_TASK_LIST = '/api/dailyTask/accumulatedDeposits/getList',
+  /**领取领取每日累加充值活动任务 */
+  DAILY_TASK_RECEIVE = '/api/dailyTask/accumulatedDeposits/receive'
+
 }

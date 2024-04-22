@@ -4,8 +4,8 @@ import { loopFiles } from "../../base/SourceManage"
 export enum PrefabPathDefine {
   // COUNTER = "prefabs/test/Counter",
   LOADER_PANEL = "prefabs/loaderPanel",
-  _LOGIN_PAGE = "login/prefabs/loginPage",
-  _LOGIN_DIALOG = "login/prefabs/loginDialog",
+  // _LOGIN_PAGE = "login/prefabs/loginPage",
+  // _LOGIN_DIALOG = "login/prefabs/loginDialog",
   _LOGIN_PAGE_V2 = "login/prefabs/V2/loginPage",
   _LOGIN_DIALOG_LOGIN_V2 = "login/prefabs/V2/loginAkunLogin",
   _LOGIN_DIALOG_REG_V2 = "login/prefabs/V2/loginRegister",
@@ -38,6 +38,11 @@ export enum PrefabPathDefine {
   _HELL_BANK = "bank/prefabs/node_bank",
   _HELL_MAIL = "mail/prefabs/node_mail",
   HELL_SHOP = "shop/prefabs/node_shop",
+  // HELL_NEWCOMER_SHOP = "shop/prefabs/node_newcomer_shop",
+  /**充值历史记录 */
+  HELL_SHOP_HISTORY = "shop/prefabs/node_history",
+  /**每日首充规则 */
+  HELL_SHOP_RACHARGE = "shop/prefabs/node_racharge_rule",
   HELL_WITHDRAWAL = "withdrawal/prefabs/node_withdrawal",
   _HELL_WITHDRAWAL_BANK_LIST = "withdrawal/prefabs/node_withdrawal_metode",
   _HELL_WITHDRAW_TIPS = "withdrawal/prefabs/node_withdrawal_tips",
@@ -50,8 +55,8 @@ export enum PrefabPathDefine {
   _HELL_CHANGE_PASSWORD = "personalCenter/prefabs/node_account_changePassword",
   _HELL_RE_LIEF = "welcome/prefabs/benefit",
   _HELL_WELCOME = "welcome/prefabs/welcome",
-  HELL_GIFT_BAG = "shop/prefabs/node_tas",
-  HELL_CHOOSE_BANK = "shop/prefabs/node_chooseBank",
+  _HELL_GIFT_BAG = "shop/prefabs/node_tas",
+  _HELL_CHOOSE_BANK = "shop/prefabs/node_chooseBank",
   HELL_WATER_HELP = "personalCenter/prefabs/node_water_help",
   _HELL_APP_DOWNLOAD_PANEL = "downloadGuide/prefabs/node_download_guide",
   _HELL_APP_DOWNLOAD_PANEL_IOS = "downloadGuide/prefabs/node_download_guide_ios",
@@ -60,11 +65,13 @@ export enum PrefabPathDefine {
   /**VIP升级动画 */
   _HELL_VIP_UP = "vip/prefabs/vipUp",
   /**VIP主界面 */
-  _HELL_VIP_MAIN = "vip/prefabs/node_vip_main",
+  _HELL_VIP_MAIN = "vip/prefabs/VipMain_Alls",
   /**中奖广播框 */
   _WINNING_BOX = "prefabs/winningCar",
   /**引导帮助的底框层 */
-  _GUIDE_PANEL = "prefabs/guidePanel"
+  _GUIDE_PANEL = "prefabs/guidePanel",
+  /**每日任务 */
+  _DAILY_TASK = "task/prefabs/prafabs_task"
 }
 
 export default (bundlePkgName: string) => loopFiles(bundlePkgName, Prefab, PrefabPathDefine)

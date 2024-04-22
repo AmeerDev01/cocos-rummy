@@ -5,7 +5,7 @@ import { PrefabPathDefine } from "./sourceDefine/prefabDefine";
 import LoaderPanelViewModel from "../../common/viewModel/LoaderPanelViewModel";
 import SourceManage from "../../base/SourceManage";
 import dfdcFileMap from './sourceDefine';
-import { SubGameRunState, config as hallConfig, subGameList } from "../../hall/config";
+import { config as hallConfig, subGameList } from "../../hall/config";
 import socketConnect, { SKT_MAG_TYPE, sktInstance } from "./socketConnect";
 import HeaderViewModel from "./viewModel/HeaderViewModel";
 import FooterViewModel from "./viewModel/FooterViewModel";
@@ -19,6 +19,7 @@ import { baseBoardView, global } from "../../hall";
 import { setSubGameRunState } from "../../hall/store/actions/baseBoard";
 import baseBoard from "../../hall/store/reducer/baseBoard";
 import JackPotViewModel from "./viewModel/JackPotViewModel";
+import { SubGameRunState } from "../../hallType";
 
 
 let sourceManageMap: Array<SourceManage> = []

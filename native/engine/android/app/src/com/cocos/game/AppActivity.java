@@ -100,7 +100,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import cocos.com.hugeWin777.R;
+import com.HG.IN001.R;
 
 public class AppActivity extends CocosActivity {
     private static final String LOG_TAG = "AppsFlyerOneLinkSimApp";
@@ -110,16 +110,12 @@ public class AppActivity extends CocosActivity {
      * 测试环境地址
      */
     private static final String[] CONFIG_URL_DEVS = {
-            "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
             "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json"
     };
     /**
      * 生产环境地址
      */
     private static final String[] CONFIG_URL_PROS = {
-            "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
-            "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
-            "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json",
             "https://sg-e-prod.s3.ap-southeast-1.amazonaws.com/jsonConfig-test.json"
     };
     private Map<String, Object> conversionData = null;
@@ -907,6 +903,17 @@ public class AppActivity extends CocosActivity {
         );
     }
 
+    public static void showSpl() {
+        instance.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (sSplashBgImageView != null) {
+                    sSplashBgImageView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
     /**
      * 这是给 CC JS 调用的隐藏原生开屏背景的方法
      */
@@ -915,7 +922,7 @@ public class AppActivity extends CocosActivity {
             @Override
             public void run() {
                 if (sSplashBgImageView != null) {
-                    sSplashBgImageView.setVisibility(View.GONE);
+                    sSplashBgImageView.setVisibility(View.INVISIBLE);
                 }
             }
         });

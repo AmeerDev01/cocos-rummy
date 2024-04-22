@@ -19,6 +19,9 @@ export class Fish_Main extends BaseComponent<IState, IProps, IEvent> {
 	protected propertyNode = {
 		props_room_list: new Node(),
 		props_game_main_sence: new Node(),
+		// props_background_node: new Node(),
+		// props_fish_node: new Node(),
+		// props_battery_node: new Node(),
 	}
 	public props: IProps = {
 	}
@@ -34,6 +37,18 @@ export class Fish_Main extends BaseComponent<IState, IProps, IEvent> {
 	public getGameMainSenceNode() {
 		return this.propertyNode.props_game_main_sence;
 	}
+
+	// public getFishNode() {
+	// 	return this.propertyNode.props_fish_node;
+	// }
+
+	// public getBatteryNode() {
+	// 	return this.propertyNode.props_battery_node;
+	// }
+
+	// public getBackgroundNode() {
+	// 	return this.propertyNode.props_background_node;
+	// }
 
 	protected initState() {
 		return {

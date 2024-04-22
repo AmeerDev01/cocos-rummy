@@ -1,4 +1,4 @@
-import { _decorator, loader, EditBox, Label, Node, ProgressBar, native, Sprite, SpriteFrame, Toggle, ToggleContainer, tween, UITransform, sys, WebView, Button, log, Prefab } from 'cc';
+import { _decorator, loader, EditBox, Label, Node, ProgressBar, native, Sprite, SpriteFrame, Toggle, ToggleContainer, tween, UITransform, sys, WebView, Button, log, Prefab, director } from 'cc';
 import { NATIVE } from 'cc/env'
 import { BaseComponent } from '../../base/BaseComponent';
 import { initToggle, omitStr } from '../../utils/tool';
@@ -18,11 +18,11 @@ import { config, deviceInfo, levelMap, vipMap } from '../config';
 import { BridgeCode, EventType, sendNativeVibrate } from '../../common/bridge';
 import { ApiUrl } from '../apiUrl';
 import { lang } from '../index';
-import { GameConfig } from '../../config/GameConfig';
+import { GameConfig, getIsTest } from '../../config/GameConfig';
 import InputValidator from '../../utils/InputValidator';
-import { SKT_MAG_TYPE, sktInstance } from '../socketConnect';
 
 import { Hall_PC_BackWater, IState as PBIState, IProps as PBIprops, IEvent as PBIEvent } from './Hall_PC_SubComp/Hall_PC_BackWater';
+import { defaultLanguageType } from '../../language/languagePkg';
 
 const { ccclass, property } = _decorator;
 
@@ -53,6 +53,8 @@ export interface IEvent {
 	bindPhone?: () => void,
 	/**打开修改密码框 */
 	openChangePwdPanel?: () => void,
+	/**打开升级框 */
+	openUpgradePanel: () => void,
 	/**登出 */
 	logOutHandler?: () => void,
 	/**打开分享帮助 */
@@ -147,57 +149,15 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		props_Toggle_set_vibration: new Node(),
 		/**右边头像 */
 		props_Layout_right: new Node(),
-		//===============分享相关节点==========================================
-		/**分享面板 */
-		// props_layout_share: new Node(),
-		/**打开确认上级代理id窗口按钮 */
-		// props_btn_share_mengi: new Node(),
-		// /**提取分享奖励窗口 */
-		// props_btn_share_ekstrak: new Node(),
-		/**分享按钮 */
-		// props_btn_share_jumlah: new Node(),
-		/**上级代理昵称 */
-		// props_parent_shareName: new Label(),
-		/**上级代理输入框 */
-		// props_EditBox_shareName: new Node(),
-		/**打开帮助按钮 */
-		// props_btn_share_help: new Node(),
-		/**复制分享码按钮 */
-		// props_btn_share_copy: new Node(),
-		/**自己的推荐码 */
-		// props_Label_kode: new Label(),
-		/**自己待提取的推荐奖励 */
-		// props_Label_hadiah: new Label(),
-		/**自己的推荐总奖励 */
-		// props_label_number: new Label(),
 		props_Mask_share: new Node(),
 		//==================背包===========================================
 		props_layout_bag: new Node(),
 		/**版本号 */
 		props_pc_version: new Label(),
-		/**返水界面 */
-		// props_layout_water: new Node(),
-		// /**可提返水 */
-		// props_label_water_pro: new Label(),//
-		// /**有效下注 */
-		// props_label_sisa: new Label(),
-		// /**返水比例 */
-		// props_label_skalaSaat: new Label(),
-		// /**洗码数 */
-		// props_label_jumlah: new Label(),
-		// /**返水的vip级别 */
-		// props_water_spr_vip: new Sprite(),
-		// /**确认抽取返水 */
-		// props_water_cuci: new Button(),
 		/**兑换确认按钮 */
 		props_btn_sure: new Button(),
 		/**兑换码 */
 		props_EditBox_conver: new EditBox(),
-		// /**返水置灰覆盖节点 */
-		// props_spr_word_cuci: new Node(),
-		// /**返水最小值说明 */
-		// props_Label_lorem: new Label(),
-		/**等级说明问号按钮 */
 		props_btn_level_help: new Button(),
 		/**等级说明node */
 		props_img_level_hlep: new Node(),
@@ -205,10 +165,10 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		props_btn_vip_help: new Button(),
 		/**VIP说明node */
 		props_img_vip_hlep: new Node(),
-		// /**返水说明 */
-		// props_btn_ratio_help: new Button(),
 		/**设备唯一号 */
-		props_pc_uniqueId: new Label()
+		props_pc_uniqueId: new Label(),
+		/**语言 */
+		props_label_lang: new Label()
 	}
 	//已经选择的头像序号
 	private hasChooseAvatarIndex: number = 0
@@ -220,7 +180,7 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		memberInfo: null,
 		isShowWebView: true,
 		isLoadRecommendData: '',
-		tourist: 1,
+		tourist: -1,
 		profileShowIndex: 1
 	}
 
@@ -229,6 +189,7 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		goToShop: () => { },
 		memberInfoDone: (gender: number, nickName: string, avatarIndex: number) => { },
 		bindPhone: () => { },
+		openUpgradePanel: () => { },
 		openChangePwdPanel: () => { },
 		logOutHandler: () => { },
 		/**打开分享帮助 */
@@ -257,6 +218,8 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		//打开商城
 		this.propertyNode.props_btn_add_shop.on(Node.EventType.TOUCH_END, () => {
 			this.events.goToShop()
+			this.propertyNode.props_img_level_hlep.active = false;
+			this.propertyNode.props_img_vip_hlep.active = false;
 		})
 		//确认头像
 		this.propertyNode.props_btn_change_tentu.on(Node.EventType.TOUCH_END, () => {
@@ -290,6 +253,8 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_btn_change.on(Node.EventType.TOUCH_END, () => {
 			// this.propertyNode.props_EditBox_name.active = !this.propertyNode.props_EditBox_name.active
 			// this.propertyNode.props_nick_name.active = !this.propertyNode.props_nick_name.active
+			this.propertyNode.props_img_level_hlep.active = false;
+			this.propertyNode.props_img_vip_hlep.active = false;
 			this.openEditNickName()
 		})
 		this.propertyNode.props_nick_name.on(Node.EventType.TOUCH_END, () => {
@@ -304,9 +269,11 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		// 	}
 		// }, this);
 		this.propertyNode.props_btn_set_bindPhone.on(Node.EventType.TOUCH_END, () => {
-			if (this.props.tourist !== 0) {
-				this.events.bindPhone()
-			}
+			// if (this.props.tourist !== 0) {
+			// 	this.events.bindPhone()
+			// }
+			this.events.openUpgradePanel()
+			// this.events.bindPhone()
 		})
 		/**打开升级框 */
 		this.propertyNode.props_btn_set_ubasKataSandi.on(Node.EventType.TOUCH_END, () => {
@@ -323,16 +290,35 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		})
 		/**兑换按钮 */
 		this.propertyNode.props_btn_sure.node.on(Node.EventType.TOUCH_END, () => {
+			this.propertyNode.props_img_level_hlep.active = false;
+			this.propertyNode.props_img_vip_hlep.active = false;
 			new InputValidator().begin(this.propertyNode.props_EditBox_conver.string).isNotEmpty().done(() => {
-				// sktInstance.sendSktMessage(SKT_MAG_TYPE.CONVERSION, this.propertyNode.props_EditBox_conver.string, { isLoading: true })
 				fetcher.send(ApiUrl.CODE_CONVER, { data: this.propertyNode.props_EditBox_conver.string }).then(() => {
 					this.dispatch(addToastAction({ content: lang.write(k => k.BaseBoardModule.operateDone, {}, { placeStr: "操作成功" }), position: ToastPosition.TOP, type: ToastType.SUCCESS }))
 				})
 			})
 		})
 
-		this.propertyNode.props_Toggle_set_music.on('toggle', (toggle) => { UseSetOption.Instance().setOption("music", toggle.target.getComponent(Toggle).isChecked) }, this)
-		this.propertyNode.props_Toggle_set_sound.on('toggle', (toggle) => { UseSetOption.Instance().setOption("sound", toggle.target.getComponent(Toggle).isChecked) }, this)
+		this.propertyNode.props_Toggle_set_music.on('toggle', (toggle) => {
+			let can = director.getScene();
+			if (!can.getChildByName("Canvas") || !can.getChildByName("Canvas").getChildByName("baseBoard") || !can.getChildByName("Canvas").getChildByName("baseBoard").getChildByName("props_mainBoard")) {
+
+			} else {
+				let nd = can.getChildByName("Canvas").getChildByName("baseBoard").getChildByName("props_mainBoard");
+				nd.emit("settingMusic", { open: toggle.target.getComponent(Toggle).isChecked })
+			}
+			UseSetOption.Instance().setOption("music", toggle.target.getComponent(Toggle).isChecked)
+		}, this)
+		this.propertyNode.props_Toggle_set_sound.on('toggle', (toggle) => {
+			let can = director.getScene();
+			if (!can.getChildByName("Canvas") || !can.getChildByName("Canvas").getChildByName("baseBoard") || !can.getChildByName("Canvas").getChildByName("baseBoard").getChildByName("props_mainBoard")) {
+
+			} else {
+				let nd = can.getChildByName("Canvas").getChildByName("baseBoard").getChildByName("props_mainBoard");
+				nd.emit("settingSound", { open: toggle.target.getComponent(Toggle).isChecked })
+			}
+			UseSetOption.Instance().setOption("sound", toggle.target.getComponent(Toggle).isChecked)
+		}, this)
 		this.propertyNode.props_Toggle_set_vibration.on('toggle', (toggle) => { UseSetOption.Instance().setOption("vibration", toggle.target.getComponent(Toggle).isChecked) }, this)
 
 		initToggle(this.propertyNode.props_ToggleGroup_perfabs, this.node, new Hall_PcMainPanel.EventHandler(), "Hall_PcMainPanel", "containerEventHandler")
@@ -351,12 +337,22 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 			})
 		}
 		this.propertyNode.props_btn_level_help.node.on(Node.EventType.TOUCH_END, () => {
-			this.propertyNode.props_img_level_hlep.active = true
-			bindCancleHelp()
+			this.propertyNode.props_img_level_hlep.active = !this.propertyNode.props_img_level_hlep.active
+			// bindCancleHelp()
 		})
 		this.propertyNode.props_btn_vip_help.node.on(Node.EventType.TOUCH_END, () => {
-			this.propertyNode.props_img_vip_hlep.active = true
-			bindCancleHelp()
+			this.propertyNode.props_img_vip_hlep.active = !this.propertyNode.props_img_vip_hlep.active
+			// bindCancleHelp()
+		})
+
+		this.propertyNode.props_EditBox_conver.node.on(Node.EventType.TOUCH_END, () => {
+			this.propertyNode.props_img_level_hlep.active = false;
+			this.propertyNode.props_img_vip_hlep.active = false;
+		})
+
+		this.node.on(Node.EventType.TOUCH_END, () => {
+			this.propertyNode.props_img_level_hlep.active = false;
+			this.propertyNode.props_img_vip_hlep.active = false;
 		})
 	}
 
@@ -413,7 +409,7 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		} else if (key === 'isLoadRecommendData') {
 			this.loadRecommendData(true);
 		} else if (key === 'profileShowIndex') {
-			this.setState({ profileShowIndex: value.cur })
+			// this.setState({ profileShowIndex: value.cur })
 			let toggleNodeName = 'Toggle_left_ransel';
 			if (value.cur === 1 || value.cur === 2 || value.cur === 3) {
 				toggleNodeName = 'Toggle_left_profil';
@@ -430,9 +426,8 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		}
 
 		if (key === "tourist") {
-			// this.propertyNode.props_btn_set_bindPhone.active = this.props.tourist !== 0
-			// this.propertyNode.props_btn_set_bindPhone.getComponent(Button).interactable = this.props.tourist !== 0
-			this.propertyNode.props_btn_set_bindPhone.getComponent(Sprite).grayscale = this.props.tourist === 0
+			this.propertyNode.props_btn_set_bindPhone.active = this.props.tourist !== 0
+			this.propertyNode.props_btn_set_ubasKataSandi.active = this.props.tourist === 0
 		}
 	}
 
@@ -446,7 +441,7 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 			this.propertyNode.props_layout_setting.active = value.cur === 2
 			this.propertyNode.props_Layout_change_head.active = value.cur === 3
 			if (value.cur === 4) {
-				 this.loadRecommendData();
+				this.loadRecommendData();
 			} else {
 				this.share_InfoModel && this.share_InfoModel.setProps({ isShow: false })
 			}
@@ -470,13 +465,14 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 			}
 			// this.propertyNode.props_layout_water.active = value.cur === 6
 		}, ["profileShowIndex"])
-		GameConfig.isDev && (this.propertyNode.props_pc_uniqueId.node.active = true)
+		getIsTest() && (this.propertyNode.props_pc_uniqueId.node.active = true)
 		const hotUpdateVersion = UseSetOption.Instance().option.gameSet.hall ? UseSetOption.Instance().option.gameSet.hall.hotUpdateVersion : ''
 		this.propertyNode.props_pc_version.string = GameConfig.appLocalVersion + (hotUpdateVersion && '.') + hotUpdateVersion.replace('v', '').replace(/\./g, '')
 		this.propertyNode.props_pc_uniqueId.string = deviceInfo.getUniqueId()
 		this.propertyNode.props_Toggle_set_music.getComponent(Toggle).isChecked = UseSetOption.Instance().option.music
 		this.propertyNode.props_Toggle_set_sound.getComponent(Toggle).isChecked = UseSetOption.Instance().option.sound
 		this.propertyNode.props_Toggle_set_vibration.getComponent(Toggle).isChecked = UseSetOption.Instance().option.vibration
+		this.propertyNode.props_label_lang.string = defaultLanguageType[config.country].langName
 	}
 
 	private updateWebView(show: boolean) {
@@ -486,6 +482,8 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 
 	private containerEventHandler(event: Event, customEventData: string) {
 		hallAudio.playOneShot(SoundPathDefine.BTU_CLICK)
+		this.propertyNode.props_img_level_hlep.active = false;
+		this.propertyNode.props_img_vip_hlep.active = false;
 		//隐藏分佣面板
 		switch (event.target["name"]) {
 			case "Toggle_left_profil":
@@ -504,6 +502,7 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 				this.propertyNode.props_Mask_share.active = true
 				tween(this.propertyNode.props_Mask_perfabs_left.getComponent(UITransform)).to(0.1, { height: 0 }).start()
 				tween(this.propertyNode.props_Mask_share.getComponent(UITransform)).to(0.1, { height: 138 }).start()
+				this.setState({ profileShowIndex: 4 })
 				break;
 			case "Toggle_left_water":
 				tween(this.propertyNode.props_Mask_perfabs_left.getComponent(UITransform)).to(0.1, { height: 0 }).start()
@@ -517,7 +516,7 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 	private async openEditNickName() {
 		const changeNickNameViewModel = new BaseViewModel<Hall_ChangeNickName, CNIState, CNIprops, CNIEvent>("Hall_ChangeNickName").mountView(
 			(await sourceManageSeletor().getFileAsync(PrefabPathDefine._PC_CHANGE_NICKNAME, Prefab)).source)
-			.appendTo(this.node, { effectType: EffectType.EFFECT1, isModal: true }).setProps({
+			.appendTo(this.node.parent, { effectType: EffectType.EFFECT1, isModal: true }).setProps({
 				nickName: this.props.memberInfo.nickName
 			}).setEvent({
 				onCloseHandler: () => {
@@ -525,8 +524,12 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 				},
 				onModifyHandler: (newNickName) => {
 					return new Promise((resolve, reject) => {
-						this.events.memberInfoDone(this.props.memberInfo.gender, newNickName, this.props.memberInfo.avatarIndex)
-						resolve(true)
+						try {
+							this.events.memberInfoDone(this.props.memberInfo.gender, newNickName, this.props.memberInfo.avatarIndex)
+							resolve(true)
+						} catch (e) {
+							reject(e)
+						}
 					})
 				},
 			})
@@ -547,6 +550,8 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 
 	private containerEventHandler1(event: Event, customEventData: string) {
 		hallAudio.playOneShot(SoundPathDefine.BTU_CLICK)
+		this.propertyNode.props_img_level_hlep.active = false;
+		this.propertyNode.props_img_vip_hlep.active = false;
 		switch (event.target["name"]) {
 			case "Toggle_left_informasi":
 				this.setState({ profileShowIndex: 1 })
@@ -598,7 +603,7 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		if (!this.share_InfoModel) {
 			sourceManageSeletor().getFileAsync(PrefabPathDefine.SHARE_Info, Prefab).then(file => {
 				this.share_InfoModel = new BaseViewModel<Share_Info, SHIState, SHIprops, SHIEvent>("Share_Info").mountView(file.source)
-					.appendTo(this.node, { effectType: EffectType.EFFECT1, isModal: false }).setProps({
+					.appendTo(this.node).setProps({
 						isShow: true
 					}).setEvent({
 						openShareSure: (actingId) => {

@@ -162,7 +162,7 @@ export class DragonV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> 
 		})
 	}
 	public getDragonBalls() {
-		return cacheData.rollerLaunchResult.dl.si[0].fixedChessboardIcon
+		return cacheData.rollerLaunchResult.dl.si[0].fixedChessboardIconAndAmount
 	}
 	/**
 	 * 动画滚动结束处理
@@ -393,13 +393,11 @@ export class DragonV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> 
 		if (viewGameCountOver) {
 			this.changeSubGameToSubGame(currGameType);
 		} else {
-			console.log("changeToSubGame````` gameTypeInfo", this.props.gameTypeInfo);
 			// 如果是免费游戏，要接着弹出的免费次数框
 			mainViewModel.showDialogWin({
 				dialogType: this.props.gameTypeInfo.currGameType === GameType.SUBGAME1 ? DialogType.FREE_GAME_ENTRY : DialogType.BAO_HE_GAME_ENTRY,
 				params: [cacheData.rollerLaunchResult.dl.si[0].freeCount],
 			}, () => {
-				console.log("dispatch updateSubGameAnimationPlayInfo", currGameType);
 				this.dispatch(updateSubGameAnimationPlayInfo({
 					gameType: currGameType,
 					param: 0 //开门类型
@@ -412,15 +410,12 @@ export class DragonV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> 
 
 	/**切换到主游戏的处理 */
 	private changeToMainGame(gameType: GameType) {
-		console.log("changeToMainGame  this.props.gameTypeInfo``````````", this.props.gameTypeInfo);
-		console.log("this.isSubGame(gameType)", this.isSubGame(gameType));
 		if (this.isSubGame(gameType)) {
 			// 弹出结算面板
 			mainViewModel.showDialogWin({
 				dialogType: this.props.gameTypeInfo.viewGameType === GameType.SUBGAME1 ? DialogType.FREE_GAME_SETTLEMENT : DialogType.BAO_HE_GAME_SETTLEMENT,
 				params: [cacheData.rollerLaunchResult.dl.si[0].freeGameAmount],
 			}, () => {
-				console.log("dispatch updateSubGameAnimationPlayInfo222", gameType);
 				// 播放切换游戏动画
 				this.dispatch(updateSubGameAnimationPlayInfo({
 					gameType: gameType,

@@ -187,10 +187,10 @@ export class BandarQiuQiu_cards extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_node_card_back.active = false;
 		backCard.active = true;
 		this.propertyNode.props_layout_cards.parent.addChild(backCard);
-		this.taskScheduler.joinqQueue(new Task((done) => {
+		this.taskScheduler.joinQueue(new Task((done) => {
 			this.propertyNode.props_skleton_commpare_bg.active = true;
 			window.setTimeout(()=>done(),300)
-		}), false).joinqQueue(new Task((done) => {
+		}), false).joinQueue(new Task((done) => {
 			playPK();
 			console.log("backCard",backCard,backCard.getComponent(Animation));
 			backCard.getComponent(Animation).play("animation_cardBack_move");
@@ -198,11 +198,11 @@ export class BandarQiuQiu_cards extends BaseComponent<IState, IProps, IEvent> {
 
 			this.propertyNode.props_skleton_commpare_vs.active = true;
 			window.setTimeout(()=>done(),1500)
-		}), false).joinqQueue(new Task((done) => {
+		}), false).joinQueue(new Task((done) => {
 			backCard.getComponent(Animation).play("animation_cardBack_roll");
 			// this.propertyNode.props_node_card_back.getComponent(Animation).play("animation_cardBack_roll");
 			window.setTimeout(()=>done(),200)
-		}), false).joinqQueue(new Task((done) => {
+		}), false).joinQueue(new Task((done) => {
 			playTurnCard();
 			if (backCard && backCard.isValid) {
 				backCard.active = false;
@@ -219,12 +219,12 @@ export class BandarQiuQiu_cards extends BaseComponent<IState, IProps, IEvent> {
 			this.initialCardState()
 			this.changeCardUpDown(this.props.blueCard,this.props.redCard)
 			window.setTimeout(()=>done(),1500)
-		}),false).joinqQueue(new Task((done) => {
+		}),false).joinQueue(new Task((done) => {
 			this.propertyNode.props_note_card_roll.getComponent(Animation).play("animation_card_move");
 			this.propertyNode.props_skleton_commpare_bg.active = false;
 			this.propertyNode.props_skleton_commpare_vs.active = false;
 			window.setTimeout(()=>done(),500)
-		}), false).joinqQueue(new Task((done) => {
+		}), false).joinQueue(new Task((done) => {
 			if (!this.props || !this.props.cardType || !this.props.twinNum) return
 			console.log("this.props.twinNum",this.props.twinNum,this.props.cardType);
 			this.playWinBg(this.props.twinNum,this.props.cardType)
@@ -247,7 +247,7 @@ export class BandarQiuQiu_cards extends BaseComponent<IState, IProps, IEvent> {
 			}
 			
 			window.setTimeout(()=>done(),500)
-		}),false).joinqQueue(new Task((done) => {
+		}),false).joinQueue(new Task((done) => {
 			this.initialCardState();
 			// console.log("parent",this.propertyNode.props_layout_cards.parent);
 			

@@ -1,6 +1,6 @@
 import hallStore, { getStore } from './store';
 import { Asset, AssetManager, AudioClip, ImageAsset, Node, Prefab, Sprite, SpriteFrame, TextAsset, Vec3, __private, assetManager, director, find, instantiate } from 'cc'
-import SourceManage, { loopFiles } from '../base/SourceManage';
+import SourceManage from '../base/SourceManage';
 import BundleSplit from '../utils/BundleSplit';
 import { PrefabPathDefine as HallPrefabPathDefine } from '../hall/sourceDefine/prefabDefine';
 import { SoundPathDefine } from '../hall/sourceDefine/soundDefine';
@@ -15,15 +15,16 @@ import Fetcher from '../utils/Fetcher';
 import { ApiUrl } from './apiUrl';
 import { config } from './config';
 import Internationalization from '../language/Internationalization';
-import languagePkg, { LanguageItemType } from '../language/languagePkg';
-import { GameConfig } from '../config/GameConfig';
+import languagePkg, { LanguageItemType, defaultLanguageType } from '../language/languagePkg';
+import { GameConfig, getIsTest } from '../config/GameConfig';
 import { BuyType } from './components/Hall_ShopPanel';
 import ModalBox from '../common/ModalBox';
 import GiftUserViewModel, { GameType, UserInfo } from '../common/viewModel/GiftUserViewModel';
 import { getPackageName } from '../common/bridge';
-import { SKT_MAG_TYPE, sktInstance } from './socketConnect';
-import { DEV } from 'cc/env';
+import { SKT_MAG_TYPE, hallWebSocketDriver } from './socketConnect';
 import { TaskSchedulerDefault } from '../utils/TaskScheduler';
+import { ToastPosition, ToastType, addToastAction, setLoadingAction, setSubGameRunState } from './store/actions/baseBoard';
+import { SubGameRunState } from '../hallType';
 
 let sourceManageMap: Array<SourceManage> = []
 let rootNodeWrap: Node
@@ -31,17 +32,19 @@ export let baseBoardView: BaseBoardViewModel
 export const sourceManageSeletor = (bundleName: string = 'hall') => sourceManageMap.find(i => i.bundle.name === bundleName)
 export let bundleCommon: AssetManager.Bundle = null
 export let bundleHall: AssetManager.Bundle = null
-export let hallAudio: AudioMgr<SoundPathDefine>
-export let commonAudio: AudioMgr<CommonSoundPathDefine>
+export let hallAudio: AudioMgr<SoundPathDefine> = null
+export let commonAudio: AudioMgr<CommonSoundPathDefine> = null
 export let fetcher: Fetcher<ApiUrl>
 
 export const lang = new Internationalization(languagePkg)
+
 
 export const startUp = (rootNode: Node) => {
   rootNodeWrap = rootNode
   hallStore.configureStore()
   BundleSplit.init()
-  lang.use(GameConfig.isDev ? LanguageItemType.ZH : LanguageItemType.IDA)
+  /**调试期间为了便于读懂信息，默认中文 */
+  lang.use(getIsTest() ? LanguageItemType.ZH : defaultLanguageType[config.country].language)
   // BuryPoint.Instance().init()
   fetcher = new Fetcher<ApiUrl>(config.httpBaseUrl)
   // const LOADER_PANEL = "prefabs/loaderPanel"
@@ -59,13 +62,14 @@ export const startUp = (rootNode: Node) => {
         }).setEvent({
           onLoadDone: (_sourceManageMap) => {
             sourceManageMap = _sourceManageMap
-            hallAudio = new AudioMgr<SoundPathDefine>(sourceManageSeletor("hall"))
-            commonAudio = new AudioMgr<CommonSoundPathDefine>(sourceManageSeletor("common"))
+            !hallAudio && (hallAudio = new AudioMgr<SoundPathDefine>(sourceManageSeletor("hall")))
+            !commonAudio && (commonAudio = new AudioMgr<CommonSoundPathDefine>(sourceManageSeletor("common")))
             loaderviweModel.unMount().then(() => {
               baseBoardView = new BaseBoardViewModel().mountView(sourceManageSeletor("hall").getSourceFile(HallPrefabPathDefine.BASE_BOARD)).appendTo(rootNode)
               baseBoardView.connect()
               // playBgMusic(baseBoardView)
               getPackageName() !== 'web' && hallAudio.play(SoundPathDefine.MAIN_BGM, true)
+              initHallGlobal()
             })
           }
         }).setProps({
@@ -101,6 +105,90 @@ const playBgMusic = (baseBoardView) => {
     hallAudio.play(SoundPathDefine.MAIN_BGM, true)
   }
 }
+
+const initHallGlobal = () => {
+  window.HALL_GLOBAL.hallDispatch = (action: AnyAction) => { getStore().dispatch(action) }
+  window.HALL_GLOBAL.closeSubGame = (option?: {
+    isPre?: boolean,
+    confirmContent?: string,
+    confirmDoneAfterFn?: Function
+    confirmDoneBeforeFn?: Function
+  }) => {
+    const _option = Object.assign({ isPre: false, confirmContent: "", confirmDoneAfterFn: () => { }, confirmDoneBeforeFn: () => { } }, option || {})
+    // (find("Canvas/baseBoard").getComponent('Hall_Baseboard') as Hall_Baseboard).closeSubGame()
+    //避免重复弹窗
+    if (_option.confirmContent) {
+      if (!ModalBox.Instance().isShow && _option.confirmContent !== ModalBox.Instance().contentStr) {
+        ModalBox.Instance().show({ content: _option.confirmContent, type: "Prompt" }, () => {
+          _option.confirmDoneBeforeFn()
+          baseBoardView.comp && baseBoardView.comp.closeSubGame()
+          _option.confirmDoneAfterFn()
+          return true
+        })
+      }
+    } else {
+      baseBoardView.comp && baseBoardView.comp.closeSubGame()
+    }
+    TaskSchedulerDefault().stopQueue(false)
+    hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, '', { isLoading: false })
+  }
+  window.HALL_GLOBAL.openShop = (buyType?: BuyType) => {
+    baseBoardView && baseBoardView.mainPanelViewModel.openShop(buyType)
+  }
+  window.HALL_GLOBAL.openPersonCenter = (index?: number) => {
+    baseBoardView && baseBoardView.mainPanelViewModel.openPc(index)
+  }
+  window.HALL_GLOBAL.openVipMain = () => {
+    baseBoardView && baseBoardView && baseBoardView.mainPanelViewModel.openVipMain();
+  }
+  window.HALL_GLOBAL.openSign = () => {
+    baseBoardView && baseBoardView.mainPanelViewModel.openSign();
+  }
+  window.HALL_GLOBAL.loadHeadSprite = (icon: number, sprite: Sprite) => {
+    bundleCommon && bundleCommon.load(`resource/head/head_circle_${icon}/spriteFrame`, SpriteFrame, (err, sp) => {
+      if (!err) {
+        sprite.spriteFrame = sp;
+      }
+    })
+  }
+  window.HALL_GLOBAL.openShop = (buyType?: BuyType) => {
+    baseBoardView && baseBoardView.mainPanelViewModel.openShop(buyType)
+  }
+  window.HALL_GLOBAL.setSubGameGate = (gameId: number, progress: number) => {
+    baseBoardView && baseBoardView.mainPanelViewModel.comp.setSubGameGate(gameId, progress)
+  }
+  window.HALL_GLOBAL.isAllowOpenSubGame = (gameId: number) => {
+    if (baseBoardView) {
+      return baseBoardView.isAllowOpenSubGame(gameId)
+    }
+    return true
+  }
+  window.HALL_GLOBAL.showGiftWindow = (gameType: GameType, userInfo: UserInfo | null, callback) => {
+    if (rootNodeWrap && rootNodeWrap.isValid) {
+      GiftUserViewModel.show(rootNodeWrap, gameType, userInfo, callback);
+    }
+  }
+  window.HALL_GLOBAL.flyGift = (fromMemberId: string, toMemberId: string, startPos: Vec3, endPos: Vec3, value: number, parentNode: Node) => {
+    if (!parentNode) {
+      parentNode = rootNodeWrap;
+    }
+    if (parentNode && parentNode.isValid) {
+      GiftUserViewModel.flyGift(parentNode, fromMemberId, toMemberId, startPos, endPos, value)
+    }
+  }
+  window.HALL_GLOBAL.setLoading = (isShow: boolean, flagId: string, isAllowCloseLoading?: boolean) => {
+    getStore().dispatch(setLoadingAction({ isShow, flagId, isAllowCloseLoading }))
+  }
+  window.HALL_GLOBAL.addToast = (content: string, option?: { type?: ToastType, position?: ToastPosition, forceLandscape?: boolean }) => {
+    getStore().dispatch(addToastAction({ content, type: option?.type, position: option?.position, forceLandscape: option?.forceLandscape }))
+  }
+  window.HALL_GLOBAL.setSubGameRunState = (subGameRunState: SubGameRunState) => {
+    getStore().dispatch(setSubGameRunState(subGameRunState))
+  }
+  window.HALL_GLOBAL.SubGameRunState = SubGameRunState
+  window.HALL_GLOBAL.lang = lang
+  window.HALL_GLOBAL.defaultLanguageType = defaultLanguageType
+}
 /**大厅暴露出来的通用方法 */
 export const global = {
   /**使用大厅的store */
@@ -125,16 +213,16 @@ export const global = {
       if (!ModalBox.Instance().isShow && _option.confirmContent !== ModalBox.Instance().contentStr) {
         ModalBox.Instance().show({ content: _option.confirmContent, type: "Prompt" }, () => {
           _option.confirmDoneBeforeFn()
-          baseBoardView.comp && baseBoardView.comp.closeSubGame(_option.isPre)
+          baseBoardView.comp && baseBoardView.comp.closeSubGame()
           _option.confirmDoneAfterFn()
           return true
         })
       }
     } else {
-      baseBoardView.comp && baseBoardView.comp.closeSubGame(_option.isPre)
+      baseBoardView.comp && baseBoardView.comp.closeSubGame()
     }
     TaskSchedulerDefault().stopQueue(false)
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, {}, { isLoading: false })
+    hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, '', { isLoading: false })
   },
   /**打开商城 */
   openShop: (buyType?: BuyType) => {
@@ -171,7 +259,7 @@ export const global = {
     }
     return true
   },
-  // 打开
+
   showGiftWindow: (gameType: GameType, userInfo: UserInfo | null, callback) => {
     if (rootNodeWrap && rootNodeWrap.isValid) {
       GiftUserViewModel.show(rootNodeWrap, gameType, userInfo, callback);

@@ -35,7 +35,7 @@ import Singleton from "./Singleton"
 
 const taskMap = {}
 export class Task {
-  /**切记，声明主执行函数中，done一定要确保执行，否则任务无法停止，若使用了任务调度器，那么队列将会被挂起 */
+  /**切记，声明主执行函数中，done一定要确保执行，否则任务无法停止，若在此情况下使用了任务调度器，那么队列将会被挂起 */
   constructor(fn: (done: Function) => void, name?: string) {
     this.startUpHandler = fn
     name && (this.name = name)
@@ -112,7 +112,7 @@ export class Task {
   }
 }
 
-/**任务调度器，使用方法：TaskScheduler.Instance().joinqQueue(task1, false).joinqQueue(task2, false) 
+/**任务调度器，使用方法：TaskScheduler.Instance().joinQueue(task1, false).joinQueue(task2, false) 
  * 
  * 传入的doneFn是通道里的任务都执行完之后要执行的函数，如果再加入队列，此函数都会在队列执行完之后执行
 */
@@ -148,7 +148,7 @@ export default class TaskScheduler {
    * @param sync 立即执行，还是排队执行（true:立即执行，false：排队执行）遵循先进先出原则
    * @param autoDestroy 是否执行完之后自动销毁，如果不销毁，可以调用restart重启，默认销毁
    */
-  public joinqQueue(task: Task, sync: boolean = false, autoDestroy: boolean = true) {
+  public joinQueue(task: Task, sync: boolean = false, autoDestroy: boolean = true) {
     if (autoDestroy) {
       task.isAutoDestroy = autoDestroy
       task.bindFinally(() => {
@@ -180,7 +180,7 @@ export default class TaskScheduler {
       isDoneExecute && task.forceComplete()
     }
   }
-  /**清楚掉所有后续任务队列 */
+  /**清除掉所有后续任务队列 */
   public destoryQueue() {
     this.isDone = true
     while (this.asyncQueue.length) {

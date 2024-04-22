@@ -114,9 +114,6 @@ export class phoenixV2_sgChoose_small extends BaseComponent<IState, IProps, IEve
 					   this.detryCloseWindow(i);
 					}
 				}).playAnimation()
-				// v.getComponent(sp.Skeleton).setCompleteListener(() => { 
-				// 	this.detryCloseWindow(i);
-				// })
 			});
 		});
 	}

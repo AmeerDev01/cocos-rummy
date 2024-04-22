@@ -212,7 +212,7 @@ export type RollerLaunchResult = {
       // "cs": 0,
       "iconStay": number,
       /**要定住的图标 */
-      "fixedChessboardIcon": [],
+      "fixedChessboardIconAndAmount": [],
       /**这一此转动获得的奖励 */
       "ctw": number,
       /**免费游戏的图标和位置 */
@@ -368,8 +368,8 @@ export const getColumnLockIconArr = (values: any[], columnIndex: number) => {
   const icons = values.filter(v => v[0] === columnIndex).map(v => {
     const lockIcon: LockIcon = {
       index: v[1],
-      iconId: v[2],
-      amount: v[3]
+      amount: v[2],
+      iconId: v[3],
     }
     return lockIcon;
   })

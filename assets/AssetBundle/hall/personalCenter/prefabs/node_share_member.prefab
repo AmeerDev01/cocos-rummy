@@ -188,7 +188,7 @@
     "_isTrimmedMode": true,
     "_useGrayscale": false,
     "_atlas": {
-      "__uuid__": "0e3bc281-3a87-42a8-b7f3-43956c8c6eaf",
+      "__uuid__": "ab53e74c-ce67-4c07-8b57-26eb8ec5a638",
       "__expectedType__": "cc.SpriteAtlas"
     },
     "_id": ""
@@ -317,7 +317,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -16.095,
+      "x": 10.905000000000001,
       "y": 24,
       "z": 0
     },
@@ -450,7 +450,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 214,
+      "x": 241,
       "y": 24,
       "z": 0
     },
@@ -490,7 +490,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 184.59,
+      "width": 154.52,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -525,7 +525,7 @@
       "b": 131,
       "a": 255
     },
-    "_string": "Tanggal Pendaftaran",
+    "_string": "Registration Date",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -583,7 +583,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 630,
+      "x": 657,
       "y": 24,
       "z": 0
     },
@@ -623,7 +623,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 142.3,
+      "width": 104.5,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -658,7 +658,7 @@
       "b": 131,
       "a": 255
     },
-    "_string": "Jumlah Taruhan",
+    "_string": "Bet Amount",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -852,7 +852,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 408,
+      "x": 435,
       "y": 24,
       "z": 0
     },
@@ -892,7 +892,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 101.2,
+      "width": 62.99,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -927,7 +927,7 @@
       "b": 131,
       "a": 255
     },
-    "_string": "Keabsahan",
+    "_string": "Validity",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -971,7 +971,7 @@
       "__id__": 10
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 42
@@ -988,7 +988,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 480,
+      "x": 484,
       "y": 24,
       "z": 0
     },
@@ -1454,7 +1454,10 @@
       "b": 255,
       "a": 255
     },
-    "_spriteFrame": null,
+    "_spriteFrame": {
+      "__uuid__": "afc47931-f066-46b0-90be-9fe61f213428@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_type": 1,
     "_fillType": 0,
     "_sizeMode": 0,
@@ -1535,7 +1538,10 @@
       "b": 255,
       "a": 255
     },
-    "_spriteFrame": null,
+    "_spriteFrame": {
+      "__uuid__": "ffb88a8f-af62-48f4-8f1d-3cb606443a43@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_type": 1,
     "_fillType": 0,
     "_sizeMode": 0,
@@ -1843,7 +1849,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -396,
+      "x": -369,
       "y": -20,
       "z": 0
     },
@@ -1976,7 +1982,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -210,
+      "x": -184,
       "y": -20,
       "z": 0
     },
@@ -2109,7 +2115,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 298,
+      "x": 316.79,
       "y": -20,
       "z": 0
     },
@@ -2242,7 +2248,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 80,
+      "x": 114,
       "y": -20,
       "z": 0
     },
@@ -2959,7 +2965,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 229.837,
-      "height": 65.19999999999999
+      "height": 45.199999999999996
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2993,7 +2999,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "Masa berlaku keanggotaan membutuhkan pengisian ulang sebesar 20,000.",
+    "_string": "Membership validity requires a recharge of 50.",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 16,

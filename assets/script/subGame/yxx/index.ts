@@ -13,13 +13,15 @@ import TestViewModel from "./viewModel/TestViewModel";
 import { getStore } from "../../hall/store";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
 import { global, lang } from "../../hall";
-import { SubGameRunState, subGameList } from "../../hall/config";
+import { subGameList } from "../../hall/config";
+import { SubGameRunState } from "../../hallType";
 
 
 let sourceManageMap: Array<SourceManage> = [];
 export let bundleyxx: AssetManager.Bundle = null;
 export let gameBoardViewModel: GameBoardViewModel;
 export let yxxAudio: AudioMgr<SoundPathDefine>;
+let loaderviweModel: LoaderPanelViewModel;
 export const sourceManageSeletor = (bundleName: string = 'yxx') => sourceManageMap.find(i => i.bundle.name === bundleName)
 let initTimeoutId = 0;
 
@@ -34,19 +36,19 @@ export const startUp = (rootNode: Node) => {
     }, (err, prefab) => {
       if (!global.isAllowOpenSubGame(config.gameId)) return
       global.hallDispatch(setSubGameRunState(SubGameRunState.READY))
-      const loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({
+      loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({
         loadBarType: 1
       }).setEvent({
         onLoadDone: (_sourceManageMap) => {
           // window.clearTimeout(initTimeoutId);
           // 默认给10秒进入游戏超时处理，有时候socket连接成功之后，服务器没有发送进入房间 消息，导致卡住
-          initTimeoutId = window.setTimeout(() => {
-            global.closeSubGame({
-              confirmContent: lang.write(k => k.InitGameModule.GameBoardInit),
-              confirmDoneBeforeFn: () => destoryGame(loaderviweModel, initTimeoutId)
-            });
-            dispatch(addToastAction({ content: lang.write(k => k.InitGameModule.GameBoardInit, {}, { placeStr: "game init failed" }) }))
-          }, 10000);
+          // initTimeoutId = window.setTimeout(() => {
+          //   global.closeSubGame({
+          //     confirmContent: lang.write(k => k.InitGameModule.GameBoardInit),
+          //     confirmDoneBeforeFn: () => destoryGame(loaderviweModel, initTimeoutId)
+          //   });
+          //   dispatch(addToastAction({ content: lang.write(k => k.InitGameModule.GameBoardInit, {}, { placeStr: "game init failed" }) }))
+          // }, 10000);
 
           sourceManageMap = _sourceManageMap
           // hallConfig.gameConfig.find(item => item.name === "yxx")
@@ -84,6 +86,7 @@ export const startUp = (rootNode: Node) => {
 
 export const stopGame = () => {
   // log("stopGame", initTimeoutId);
+  loaderviweModel && loaderviweModel.unMount();
   initTimeoutId && window.clearTimeout(initTimeoutId);
   gameBoardViewModel && gameBoardViewModel.unMount();
   yxxAudio && yxxAudio.remove();

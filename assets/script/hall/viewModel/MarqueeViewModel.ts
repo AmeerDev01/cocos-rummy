@@ -2,7 +2,7 @@ import { Node } from "cc"
 import ViewModel from "../../base/ViewModel"
 import { Common_Marquee, IProps, IEvent } from "../../common/components/Common_Marquee"
 import { StateType } from "../store/reducer"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, hallWebSocketDriver } from "../socketConnect"
 
 class MarqueeViewModel extends ViewModel<Common_Marquee, IProps, IEvent> {
   constructor() {
@@ -18,8 +18,8 @@ class MarqueeViewModel extends ViewModel<Common_Marquee, IProps, IEvent> {
     //     priority: 1
     //   }]
     // })
-    sktMsgListener.add(SKT_MAG_TYPE.MAEQUEE, "main", (data) => {
-      this.setProps({
+    hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.MAEQUEE, "main", (data, error) => {
+      !error && this.setProps({
         addInfoQueue: data
       })
     })

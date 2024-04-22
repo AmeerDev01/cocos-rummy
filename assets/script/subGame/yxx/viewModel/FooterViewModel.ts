@@ -5,7 +5,7 @@ import { getUUID } from "../../../utils/tool"
 import { IEvent, IProps, Yxx_Footer } from "../components/Yxx_Footer"
 import config from "../config"
 import { SendBet, convertToServerBetType, gameCacheData } from "../serverType"
-import { SKT_MAG_TYPE, sktInstance } from "../socketConnect"
+import { SKT_MAG_TYPE, yxxWebSocketDriver } from "../socketConnect"
 import { getStore } from "../store"
 import { seatBet, selectChip } from "../store/actions/bet"
 import { changeSeatBet } from "../store/actions/game"
@@ -50,13 +50,16 @@ class FooterViewModel extends ViewModel<Yxx_Footer, IProps, IEvent> {
             this.dispatch(changeSeatBet(v));
           })
         } else {
-          let gold = this.comp.props.myHead.gold;
           lastBet.forEach(betData => {
             const chips: number[] = [];
             this.splitChip(betData.betAmount, chips)
 
             chips.forEach(chip => {
+              let gold = this.comp.props.myHead.gold;
               if (this.comp.getLockBet(gold)) {
+                return;
+              }
+              if (chip > gold) {
                 return;
               }
               const chipBet = instantiate(betData);
@@ -84,7 +87,7 @@ class FooterViewModel extends ViewModel<Yxx_Footer, IProps, IEvent> {
               }
 
               // 下注信息发送给服务器
-              sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCHER_BET, sendBet);
+              yxxWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCHER_BET, sendBet);
             })
           })
 

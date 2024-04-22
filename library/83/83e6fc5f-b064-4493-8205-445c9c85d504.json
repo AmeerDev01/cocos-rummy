@@ -5,12 +5,12 @@
   "_native": "",
   "_skeletonJson": {
     "skeleton": {
-      "hash": "i0rJ0XaIYKtjluG1Fyv8pfEkuno",
+      "hash": "8KV0ax+0OlMoWPVyHFuHFh0g9nE",
       "spine": "3.8.99",
-      "x": -106,
+      "x": -123,
       "y": -3.32,
-      "width": 212,
-      "height": 207.04,
+      "width": 246,
+      "height": 214.93,
       "images": "",
       "audio": ""
     },
@@ -56,6 +56,10 @@
         "rotation": -139.37,
         "x": 18.73,
         "y": 107.66
+      },
+      {
+        "name": "hui",
+        "parent": "root"
       }
     ],
     "slots": [
@@ -88,6 +92,16 @@
         "name": "huojian_hj",
         "bone": "hj",
         "attachment": "huojian_hj"
+      },
+      {
+        "name": "bghui",
+        "bone": "hui",
+        "attachment": "crash_bghui"
+      },
+      {
+        "name": "cs",
+        "bone": "hui",
+        "attachment": "Cs_xiao"
       }
     ],
     "skins": [
@@ -97,6 +111,13 @@
           "bg": {
             "crash_bg": {
               "y": 97.18,
+              "width": 212,
+              "height": 201
+            }
+          },
+          "bghui": {
+            "crash_bghui": {
+              "y": 97.57,
               "width": 212,
               "height": 201
             }
@@ -125,6 +146,13 @@
               "rotation": 136.28,
               "width": 129,
               "height": 122
+            }
+          },
+          "cs": {
+            "Cs_xiao": {
+              "y": 126.11,
+              "width": 246,
+              "height": 171
             }
           },
           "huojian_hj": {
@@ -243,6 +271,22 @@
     ],
     "animations": {
       "animation": {
+        "slots": {
+          "bghui": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "cs": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          }
+        },
         "bones": {
           "hj": {
             "translate": [
@@ -362,6 +406,45 @@
             ]
           }
         }
+      },
+      "animation1": {
+        "slots": {
+          "bg": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "crash-bg1": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "crash-xing": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "crash_guang": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "huojian_hj": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          }
+        }
       }
     }
   },
@@ -375,5 +458,5 @@
     "Crash.png"
   ],
   "scale": 1,
-  "_atlasText": "\r\nCrash.png\r\nsize: 2048,256\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\ncrash-bg1\r\n  rotate: false\r\n  xy: 2, 11\r\n  size: 417, 192\r\n  orig: 417, 192\r\n  offset: 0, 0\r\n  index: -1\r\ncrash-xing\r\n  rotate: false\r\n  xy: 421, 31\r\n  size: 389, 172\r\n  orig: 389, 172\r\n  offset: 0, 0\r\n  index: -1\r\ncrash_bg\r\n  rotate: false\r\n  xy: 812, 2\r\n  size: 212, 201\r\n  orig: 212, 201\r\n  offset: 0, 0\r\n  index: -1\r\ncrash_guang\r\n  rotate: false\r\n  xy: 1175, 81\r\n  size: 129, 122\r\n  orig: 129, 122\r\n  offset: 0, 0\r\n  index: -1\r\nhuojian_hj\r\n  rotate: false\r\n  xy: 1026, 63\r\n  size: 147, 140\r\n  orig: 147, 140\r\n  offset: 0, 0\r\n  index: -1\r\n"
+  "_atlasText": "\r\nCrash.png\r\nsize: 1024,512\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\nCs_xiao\r\n  rotate: false\r\n  xy: 282, 206\r\n  size: 246, 171\r\n  orig: 246, 171\r\n  offset: 0, 0\r\n  index: -1\r\ncrash-bg1\r\n  rotate: false\r\n  xy: 216, 11\r\n  size: 417, 192\r\n  orig: 417, 192\r\n  offset: 0, 0\r\n  index: -1\r\ncrash-xing\r\n  rotate: false\r\n  xy: 530, 205\r\n  size: 389, 172\r\n  orig: 389, 172\r\n  offset: 0, 0\r\n  index: -1\r\ncrash_bg\r\n  rotate: false\r\n  xy: 2, 34\r\n  size: 212, 201\r\n  orig: 212, 201\r\n  offset: 0, 0\r\n  index: -1\r\ncrash_bghui\r\n  rotate: false\r\n  xy: 635, 2\r\n  size: 212, 201\r\n  orig: 212, 201\r\n  offset: 0, 0\r\n  index: -1\r\ncrash_guang\r\n  rotate: false\r\n  xy: 2, 255\r\n  size: 129, 122\r\n  orig: 129, 122\r\n  offset: 0, 0\r\n  index: -1\r\nhuojian_hj\r\n  rotate: false\r\n  xy: 133, 237\r\n  size: 147, 140\r\n  orig: 147, 140\r\n  offset: 0, 0\r\n  index: -1\r\n"
 }

@@ -1,6 +1,6 @@
 import { _decorator,instantiate,Label,Node, Sprite, SpriteFrame, Toggle, tween, Vec3 } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
-import { getNodeByNameDeep, getNodePositionInCanvas, getUUID, initToggle } from '../../../utils/tool';
+import { getNodeByNameDeep, getNodePositionInCanvas, getUUID, initToggle, omitStr } from '../../../utils/tool';
 import { BetData, BetType, gameCacheData, GameStatus, HeadType, SendBet, TipsVo } from '../type';
 import { changeSelectChipAction, setBetDataAction, setLastBetAction, WinUser } from '../store/actions/bet';
 import { mainGameViewModel, playBtnClick, playChooseChip, sourceManageSelector } from '../index';
@@ -11,7 +11,7 @@ import FooterViewModel from '../viewModel/BandarFooterViewModel';
 import ChipViewModel from '../viewModel/BandarChipViewModel';
 import { global, lang } from '../../../hall';
 import { addToastAction } from '../../../hall/store/actions/baseBoard';
-import { SKT_MAG_TYPE, sktInstance } from '../socketConnect';
+import { bandarWebSocketDriver, SKT_MAG_TYPE } from '../socketConnect';
 import { betAreaViewModel } from '../viewModel/BandarGameBoardViewModel';
 const { ccclass, property } = _decorator;
 
@@ -53,9 +53,11 @@ export class Bandar_footer extends BaseComponent<IState, IProps, IEvent> {
 		/** 重复下注按钮 */
 		props_btn_auto:new Node(),
 		/**金币组 */
-		props_ToggleGroup:new Node(),
+		props_ToggleGroup: new Node(),
+		props_bet_chip:new Node(),
 		/**用户头像 */
-		props_user_avatar:new Node(),
+		props_user_avatar: new Node(),
+		props_label_username:new Label(),
 		/**重复按钮动画 */
 		props_animation_auto:new Node(),
 
@@ -118,14 +120,14 @@ export class Bandar_footer extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
-        if(key === "gold"){
+		if (key === "gold") {
 			this.judgeCoin(value.cur);
 			this.updateLockBetState();
 			// this.propertyNode.props_layout_lock.active = value.cur <= 5000 || value.cur === undefined;
 			if( value.cur <= 0 || value.cur == undefined){
 			  this.propertyNode.props_label_user_goldNum.getComponent(Label).string="0"
 			}else{
-			  this.propertyNode.props_label_user_goldNum.getComponent(Label).string=parseInt(value.cur).formatAmountWithCommas()
+			  this.propertyNode.props_label_user_goldNum.getComponent(Label).string=value.cur.formatAmountWithCommas()
 			}
 			this.repeatArr=betAreaViewModel.comp.lastArr
 			if(this.repeatArr.length!=0){
@@ -145,7 +147,11 @@ export class Bandar_footer extends BaseComponent<IState, IProps, IEvent> {
 			}
 		}
 		if (key === "myInfo") {
-			global.loadHeadSprite(value.cur.icon,this.propertyNode.props_user_avatar.getComponent(Sprite));//加载头像
+			if (!value.pre) {
+				this.initChip()
+				global.loadHeadSprite(value.cur.icon,this.propertyNode.props_user_avatar.getComponent(Sprite));//加载头像
+			}
+			this.propertyNode.props_label_username.string = omitStr(value.cur.memberName + "", 12);
 			// window.setTimeout(() => {
 			// 	if (mainGameViewModel.isUnMount) { return }
 			// 	this.propertyNode.props_label_user_goldNum.getComponent(Label).string=value.cur.gold.formatAmountWithCommas()
@@ -181,6 +187,45 @@ export class Bandar_footer extends BaseComponent<IState, IProps, IEvent> {
 				toggleArr[i].children[1].active = false;
 			}
 		}
+	}
+
+	/**初始化下注金币资源 */
+	private initChip(): void {
+		this.propertyNode.props_ToggleGroup.removeAllChildren();
+		const startX = -306;
+		const offset = 100;
+		config.chipTypes.forEach((chip, index) => {
+			if(index === config.chipTypes.length - 1) return
+			const node = this.createChip(chip, new Vec3(startX + index * offset, 30));
+			this.propertyNode.props_ToggleGroup.addChild(node);
+		});
+	}
+
+	private chipNodeNamePrefix = "props_chip_toggle_"
+	private createChip(chip: any, position: Vec3): Node {
+		const node = instantiate(this.propertyNode.props_bet_chip);
+		node.setPosition(position);
+		node.name = this.chipNodeNamePrefix + chip.value;
+
+		// this.bindChipEvent(node);
+
+		const chips = node.getChildByName("spr_chips");
+		const checkMark = node.getChildByName("Checkmark");
+		const sf = sourceManageSelector().getFile(chip.fileUrl).source;
+
+		checkMark.getChildByName("spr_chip").getComponent(Sprite).spriteFrame = sf;
+		chips.getComponent(Sprite).spriteFrame = sf;
+
+		const chipLabel = chips.getChildByName("Label_chips").getComponent(Label);
+		chipLabel.string = chip.valueStr;
+		chipLabel.font = sourceManageSelector().getFile(chip.fontUrl).source;
+
+
+		const checkMarkChipLabel = checkMark.getChildByName("Label_chips").getComponent(Label);
+		checkMarkChipLabel.string = chip.valueStr;
+		checkMarkChipLabel.font = sourceManageSelector().getFile(chip.fontUrl).source;
+
+		return node;
 	}
 
 
@@ -312,9 +357,10 @@ export class Bandar_footer extends BaseComponent<IState, IProps, IEvent> {
 						betId: lastBetArr[i].betId,
 					}
 
-					sktInstance.sendSktMessage(SKT_MAG_TYPE.BET_ALL, sendBet)
+					bandarWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.BET_ALL, sendBet)
 					const betData = initBetData(this.props.myInfo.index, this.props.myInfo.memberId, lastBetArr[i].type, chip);
 					betData.isMyBet = true;
+					betAreaViewModel.comp.isMe = true;
 					betAreaViewModel.comp.flyChip(betData);
 				})
 				
@@ -398,20 +444,34 @@ export class Bandar_footer extends BaseComponent<IState, IProps, IEvent> {
 	/**更新锁定下注区域状态 */
 	private updateLockBetState() { 
 	// 是否锁定下注  金币不足5千时出现充值弹框
-		let isLockBet = this.props.gold < 5000 || this.props.gold == undefined || this.props.gold == 0;
-		if (this.props.tips && this.props.tips.length > 0) {
+		let isLockBet = this.props.gold < config.gameOption.unlockBetMinGold || this.props.gold == undefined || this.props.gold == 0;
+		if (this.props.tips && this.props.tips.length > 0 && this.isPower("vip")) {
 			isLockBet = true;
-		} else {
-			isLockBet = false;
 		}
+		// else {
+		// 	isLockBet = false;
+		// }
 		if (isLockBet) {
-			this.updateTipsValue(this.propertyNode.props_tips_gold, String(5000));
+			this.updateTipsValue(this.propertyNode.props_tips_gold, String(config.gameOption.unlockBetMinGold));
 			this.updateTipsShow();
 
 		} 
 		this.propertyNode.props_layout_lock.active = isLockBet;
 		
 	}
+
+	private isPower(value: string) {
+		if (this.props.tips && this.props.tips.length > 0) {
+			for (let i = 0; i < this.props.tips.length; i++) {
+				const power = this.props.tips[i];
+				if (value === power.name.toLowerCase()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 
 	private updateTipsShow() {
 		this.propertyNode.props_tips_vip.active = false;
@@ -458,25 +518,25 @@ export class Bandar_footer extends BaseComponent<IState, IProps, IEvent> {
 			} 
 			return sourceManageSelector().getFile(fileName).source;
 	}
-	private getFontSpriteFrame(result:number): SpriteFrame {
+	private getFontSpriteFrame(result: number): SpriteFrame {
 		let fileName = '';
-		if (result === 1000) {
+		if (result === config.chipTypes[0].value) {
 			fileName = config.chipTypes[0].fontUrl;
-		}else if (result === 5000) {
+		}else if (result === config.chipTypes[1].value) {
 			fileName = config.chipTypes[1].fontUrl;
-		} else if (result === 10000) {
+		} else if (result === config.chipTypes[2].value) {
 			fileName = config.chipTypes[2].fontUrl;
-		}else if (result === 100000) {
+		}else if (result === config.chipTypes[3].value) {
 			fileName = config.chipTypes[3].fontUrl;
-		} else if (result === 500000) {
+		} else if (result === config.chipTypes[4].value) {
 			fileName = config.chipTypes[4].fontUrl;
-		} else if (result === 1000000) {
+		} else if (result === config.chipTypes[5].value) {
 			fileName = config.chipTypes[5].fontUrl;
-		} else if (result === 0) {
+		} else if (result == config.chipTypes[6].value) {
 			fileName = config.chipTypes[6].fontUrl;
 		} 
 		return sourceManageSelector().getFile(fileName).source;
-    }
+	}
 
 
 	toggleCallback(event: Event, customEventData: string) {

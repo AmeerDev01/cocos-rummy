@@ -6,7 +6,7 @@ import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { footerViewModel, gameBoardViewModel, sourceManageSeletor } from "../index"
 import { IProps as Award_IProps } from './Fruit777_AwardBox';
 import TaskScheduler, { TaskSchedulerDefault } from '../../../utils/TaskScheduler';
-import { JactpotType } from '../type';
+import { AutoLauncherType, JactpotType } from '../type';
 import BaseViewModel from '../../../common/viewModel/BaseViewModel';
 
 export interface IState {
@@ -19,7 +19,8 @@ export interface IProps {
 	/**剩余小游戏次数 */
 	remainGameTimes?: number,
 	/**奖励金额 */
-	BONUS?: number
+	BONUS?: number,
+	autoLauncherType: AutoLauncherType,
 }
 export interface IEvent {
 	onOpenHandler: (boxId: number) => void
@@ -44,7 +45,8 @@ export class Fruit777_BoxPanel extends BaseComponent<IState, IProps, IEvent> {
 	public props: IProps = {
 		openDoBoxData: null,
 		remainGameTimes: 0,
-		BONUS: 0
+		BONUS: 0,
+		autoLauncherType: AutoLauncherType.NONE,
 	}
 
 	public events: IEvent = {
@@ -78,14 +80,9 @@ export class Fruit777_BoxPanel extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	protected bindUI(): void {
-		const fly = () => {
-			if (gameBoardViewModel.changeGameTypeTask && !gameBoardViewModel.changeGameTypeTask.isExecute) {
-				this.taskScheduler && this.taskScheduler.joinqQueue(gameBoardViewModel.changeGameTypeTask)
-				this.events && this.events.allDoneHandler()
-			}
-		}
 		for (let i = 0; i < 20; i++) {
-			const awardBox = new BaseViewModel<Fruit777_AwardBox, AIIState, AIIProps, AIEvent>("Fruit777_AwardBox").mountView(sourceManageSeletor().getFile(PrefabPathDefine.AWARD_BOX).source)
+			const awardBox = new BaseViewModel<Fruit777_AwardBox, AIIState, AIIProps, AIEvent>("Fruit777_AwardBox")
+				.mountView(sourceManageSeletor().getFile(PrefabPathDefine.AWARD_BOX).source)
 				.appendTo(this.propertyNode.props_Layout_box_wrap).setProps({ boxId: i }).setEvent({
 					onOpenHandler: (boxId) => {
 						this.events.onOpenHandler(boxId)
@@ -95,12 +92,13 @@ export class Fruit777_BoxPanel extends BaseComponent<IState, IProps, IEvent> {
 					},
 					checkFlyEndHandler: () => {
 						// console.log(gameBoardViewModel.changeGameTypeTask.isExecute)
-						this.unschedule(fly)
-						this.scheduleOnce(fly, 3.5)
-						// this.flyTimer && window.clearTimeout(this.flyTimer)
-						// this.flyTimer = window.setTimeout(() => {
-
-						// }, 3500)
+						this.flyTimer && window.clearTimeout(this.flyTimer)
+						this.flyTimer = window.setTimeout(() => {
+							if (gameBoardViewModel.changeGameTypeTask && !gameBoardViewModel.changeGameTypeTask.isExecute) {
+								this.taskScheduler && this.taskScheduler.joinQueue(gameBoardViewModel.changeGameTypeTask)
+								this.events && this.events.allDoneHandler()
+							}
+						}, 3500)
 					},
 					onFreeGameAmoundChange: (amount: number) => {
 						this.events.onFreeGameAmoundChange(amount)

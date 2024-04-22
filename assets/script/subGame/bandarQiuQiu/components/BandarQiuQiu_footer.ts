@@ -428,19 +428,19 @@ export class BandarQiuQiu_footer extends BaseComponent<IState, IProps, IEvent> {
 
 	private getFontSpriteFrame(result: number): SpriteFrame {
 		let fileName = '';
-		if (result === 1000) {
+		if (result === config.chipTypes[0].value) {
 			fileName = config.chipTypes[0].fontUrl;
-		}else if (result === 2000) {
+		}else if (result === config.chipTypes[1].value) {
 			fileName = config.chipTypes[1].fontUrl;
-		} else if (result === 5000) {
+		} else if (result === config.chipTypes[2].value) {
 			fileName = config.chipTypes[2].fontUrl;
-		}else if (result === 10000) {
+		}else if (result === config.chipTypes[3].value) {
 			fileName = config.chipTypes[3].fontUrl;
-		} else if (result === 20000) {
+		} else if (result === config.chipTypes[4].value) {
 			fileName = config.chipTypes[4].fontUrl;
-		} else if (result === 50000) {
+		} else if (result === config.chipTypes[5].value) {
 			fileName = config.chipTypes[5].fontUrl;
-		} else if (result === 0) {
+		} else if (result == config.chipTypes[6].value) {
 			fileName = config.chipTypes[6].fontUrl;
 		} 
 		return sourceManageSelector().getFile(fileName).source;

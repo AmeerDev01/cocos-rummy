@@ -44,14 +44,14 @@ export const effect1: EffectItem = (target: Node) => {
     enter: (option?: EnterOption): Promise<Node | undefined> => {
       return new Promise((resolve) => {
         const _option = Object.assign({
-          tweenDuration: 0.3,
+          tweenDuration: 0.5,
           scaleOrigin: { x: 1, y: 1 }
         }, option || {})
         try {
           let opacityUI = target.getComponent(UIOpacity)
           !target.getComponent(UIOpacity) && (opacityUI = target.addComponent(UIOpacity))
           opacityUI.opacity = 0
-          target.setScale(_option.scaleOrigin.x * 0.9, _option.scaleOrigin.y * 0.9)
+          target.setScale(_option.scaleOrigin.x * 0.7, _option.scaleOrigin.y * 0.7)
           tween(opacityUI).to(_option.tweenDuration, { opacity: 255 }).start();
           tween(target).to(_option.tweenDuration, { scale: new Vec3(_option.scaleOrigin.x * 1, _option.scaleOrigin.x * 1, 1) }, {
             easing: "backOut"//"elasticOut"
@@ -81,7 +81,7 @@ export const effect1: EffectItem = (target: Node) => {
   }
 }
 
-/**放大0.9，并渐变 */
+/**放大1.1，并渐变 */
 export const effect2: EffectItem = (target: Node) => {
   return {
     enter: (option?: EnterOption): Promise<Node | undefined> => {

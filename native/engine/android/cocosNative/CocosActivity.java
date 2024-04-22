@@ -81,6 +81,8 @@ public class CocosActivity extends GameActivity {
         setImmersiveMode();
 
         Utils.hideVirtualButton();
+
+        mSurfaceView.setOnTouchListener((v, event) -> onTouchEventNative(getGameActivityNativeHandle(), event));
     }
 
     private void setImmersiveMode() {
@@ -93,10 +95,10 @@ public class CocosActivity extends GameActivity {
 
             // https://developer.android.com/training/system-ui/immersive
             int flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
 
             flag |= View.class.getDeclaredField("SYSTEM_UI_FLAG_IMMERSIVE_STICKY").getInt(null);
             View view = getWindow().getDecorView();
@@ -123,6 +125,7 @@ public class CocosActivity extends GameActivity {
         mWebViewHelper.onActivityResultAboveL(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 
     public SurfaceView getSurfaceView() {
         return this.mSurfaceView;

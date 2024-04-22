@@ -21,7 +21,6 @@ export class AudioMgr<M> {
   private nodes: Array<Node> = [];
   constructor(sourceManage: SourceManage) {
     this.sourceManage = sourceManage
-
     this._audioSource = this.createNode("__bgm_music__");
     this._longSoundSource = this.createNode("__long_sound__");
     this._shortSoundSource = this.createNode("__short_sound__");
@@ -68,7 +67,7 @@ export class AudioMgr<M> {
     const source = this.sourceManage.getFile(sound as string).source
     if (source instanceof AudioClip) {
       // this._audioSource.playOneShot(source, volume);
-      isReplace ? this.playSound(source) : this._audioSource.playOneShot(source, volume)
+      isReplace ? this.playSound(source, volume) : this._audioSource.playOneShot(source, volume)
       // this.playSound(source);
     }
     else {
@@ -79,7 +78,7 @@ export class AudioMgr<M> {
         }
         else {
           // this._audioSource.playOneShot(clip, volume);
-          this.playSound(clip);
+          this.playSound(clip, volume);
         }
       });
     }
@@ -89,9 +88,10 @@ export class AudioMgr<M> {
     return !source || !source.isValid;
   }
 
-  private playSound(clip: AudioClip) {
+  private playSound(clip: AudioClip, volume: number = 1.0) {
     const audioSource = clip.getDuration() > 1 ? this._longSoundSource : this._shortSoundSource;
     if (this.isNotValid(audioSource)) return;
+    audioSource.volume = volume
     audioSource.clip = clip;
     audioSource.loop = false;
     audioSource.play();
@@ -110,13 +110,14 @@ export class AudioMgr<M> {
   play(sound: M, isLoop: boolean = false, volume: number = 1.0) {
     if (!UseSetOption.Instance().option.music) return
     if (this.disable) return
+    if (this._audioSource.playing) return
     if (this.isNotValid(this.audioSource)) return;
-    console.log('play:' + sound)
+    // console.log('play:' + sound)
     const source = this.sourceManage.getFile(sound as string).source
     if (source instanceof AudioClip) {
       this._audioSource.clip = source
       this._audioSource.loop = isLoop
-      this._audioSource.playOnAwake = true
+      // this._audioSource.playOnAwake = true
       this.audioSource.volume = volume
       this._audioSource.play()
     }
@@ -135,6 +136,10 @@ export class AudioMgr<M> {
         }
       });
     }
+  }
+
+  setMusicVolume(volume: number) {
+    this.audioSource.volume = volume;
   }
 
   /**

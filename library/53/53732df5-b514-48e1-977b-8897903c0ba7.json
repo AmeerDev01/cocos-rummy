@@ -236,7 +236,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 170,
+      "y": 152,
       "z": 0
     },
     "_lrot": {
@@ -275,8 +275,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 277,
-      "height": 30
+      "width": 297,
+      "height": 36
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -316,7 +316,7 @@
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 2,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -374,8 +374,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 348,
-      "y": 208,
+      "x": 344,
+      "y": 206,
       "z": 0
     },
     "_lrot": {
@@ -574,8 +574,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -194,
-      "y": 88,
+      "x": -187,
+      "y": 92,
       "z": 0
     },
     "_lrot": {
@@ -633,8 +633,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 118,
-      "y": 4,
+      "x": 127,
+      "y": 0,
       "z": 0
     },
     "_lrot": {
@@ -763,7 +763,7 @@
     "_actualFontSize": 30,
     "_fontSize": 30,
     "_fontFamily": "Arial",
-    "_lineHeight": 40,
+    "_lineHeight": 30,
     "_overflow": 1,
     "_enableWrapText": false,
     "_font": null,
@@ -1028,9 +1028,9 @@
       "__uuid__": "0acfc39d-22a0-480a-a468-84c7e0c8f1ab@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
-    "_inputFlag": 5,
-    "_inputMode": 2,
-    "_maxLength": 20,
+    "_inputFlag": 0,
+    "_inputMode": 6,
+    "_maxLength": 30,
     "_id": ""
   },
   {
@@ -1063,8 +1063,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 208,
-      "height": 28
+      "width": 216,
+      "height": 25
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1104,7 +1104,7 @@
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 2,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -1163,8 +1163,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -204,
-      "y": 8,
+      "x": -196,
+      "y": 12,
       "z": 0
     },
     "_lrot": {
@@ -1222,8 +1222,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 128,
-      "y": 4,
+      "x": 136,
+      "y": 0,
       "z": 0
     },
     "_lrot": {
@@ -1352,7 +1352,7 @@
     "_actualFontSize": 30,
     "_fontSize": 30,
     "_fontFamily": "Arial",
-    "_lineHeight": 40,
+    "_lineHeight": 30,
     "_overflow": 1,
     "_enableWrapText": false,
     "_font": null,
@@ -1617,9 +1617,9 @@
       "__uuid__": "0acfc39d-22a0-480a-a468-84c7e0c8f1ab@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
-    "_inputFlag": 5,
-    "_inputMode": 2,
-    "_maxLength": 20,
+    "_inputFlag": 0,
+    "_inputMode": 6,
+    "_maxLength": 30,
     "_id": ""
   },
   {
@@ -1652,8 +1652,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 195,
-      "height": 28
+      "width": 234,
+      "height": 25
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1693,7 +1693,7 @@
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 2,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -1752,8 +1752,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -194,
-      "y": -72,
+      "x": -167.5,
+      "y": -70,
       "z": 0
     },
     "_lrot": {
@@ -1811,8 +1811,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 118,
-      "y": 4,
+      "x": 107.5,
+      "y": 2,
       "z": 0
     },
     "_lrot": {
@@ -1941,7 +1941,7 @@
     "_actualFontSize": 30,
     "_fontSize": 30,
     "_fontFamily": "Arial",
-    "_lineHeight": 40,
+    "_lineHeight": 30,
     "_overflow": 1,
     "_enableWrapText": false,
     "_font": null,
@@ -2206,9 +2206,9 @@
       "__uuid__": "0acfc39d-22a0-480a-a468-84c7e0c8f1ab@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
-    "_inputFlag": 5,
-    "_inputMode": 2,
-    "_maxLength": 20,
+    "_inputFlag": 0,
+    "_inputMode": 6,
+    "_maxLength": 30,
     "_id": ""
   },
   {
@@ -2241,7 +2241,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 196,
+      "width": 177,
       "height": 58
     },
     "_anchorPoint": {
@@ -2277,7 +2277,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "84b45697-dc65-4ddf-a003-47e84e351ac6@f9941",
+      "__uuid__": "b9c552a5-2c68-40cd-937d-e885812e4f19@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,

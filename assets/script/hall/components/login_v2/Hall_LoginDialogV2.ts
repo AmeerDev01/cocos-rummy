@@ -9,7 +9,6 @@ import { PrefabPathDefine } from '../../sourceDefine/prefabDefine';
 import CaptchaGenerator from '../../../utils/CaptchaGenerator';
 import { addToastAction } from '../../store/actions/baseBoard';
 import { EffectType } from '../../../utils/NodeIOEffect';
-import ModalBox from '../../../common/ModalBox';
 const { ccclass, property } = _decorator;
 
 export enum LoginType {
@@ -111,9 +110,9 @@ export class Hall_LoginDialogV2 extends BaseComponent<IState, IProps, IEvent> {
 	private login() {
 		const loginName = this.propertyNode.props_input_akun.string
 		const password = this.propertyNode.props_input_sandi.string;
-		(new InputValidator()).begin().isIDAPhoneNumber(loginName)
+		(new InputValidator()).begin().isLocalPhoneNumber(loginName)
 			.isEmtry(password, lang.write(k => k.HallModule.passwordEmptyError, {}, { placeStr: "请输入密码" }))
-			.isChartLength([6, 30], password).done(() => {
+			.isCharLength([6, 30], password).done(() => {
 				/**验证码 */
 				const valodateCode = this.propertyNode.props_input_kode.string
 				if (valodateCode.trim().length === 0) {

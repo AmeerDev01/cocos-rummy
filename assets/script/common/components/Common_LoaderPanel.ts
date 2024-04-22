@@ -2,7 +2,7 @@ import { _decorator, AssetManager, Label, Node, ProgressBar, tween, Vec3 } from 
 import { BaseComponent } from '../../base/BaseComponent';
 import SourceManage, { ISourceFile } from '../../base/SourceManage';
 import { global } from '../../hall';
-import { GameConfig } from '../../config/GameConfig';
+import { GameConfig, getIsTest } from '../../config/GameConfig';
 const { ccclass, property } = _decorator;
 
 interface IState {
@@ -52,13 +52,13 @@ export class Common_LoaderPanel extends BaseComponent<IState, IProps, IEvent> {
 	}
 	public props: IProps = {
 		loadBarType: 1,
-		reverseProgress: true,
+		reverseProgress: false,
 		versionStr: '-'
 	}
 	protected bindEvent(): void {
 		this.propertyNode.props_btn_return.on(Node.EventType.TOUCH_END, () => {
 			this.sourceManageList.forEach(sm => sm.stopPreLoad())
-			global.closeSubGame({ isPre: true })
+			global.closeSubGame()
 		})
 	}
 
@@ -83,7 +83,7 @@ export class Common_LoaderPanel extends BaseComponent<IState, IProps, IEvent> {
 				if (totalCount === hasDoneCount) {
 					this.delayShowClose(true);
 					// this.hideCloseBtn();
-					this.events && window.setTimeout(() => this.events && this.events.onLoadDone(this.sourceManageList), 1000)
+					this.events && window.setTimeout(() => this.events.onLoadDone(this.sourceManageList), 300)
 				}
 			}, () => { }, this.propertyNode.props_error_log)
 		})
@@ -100,9 +100,13 @@ export class Common_LoaderPanel extends BaseComponent<IState, IProps, IEvent> {
 	private t = 0;
 	private delayShowClose(isClear: boolean = false) {
 		this.t && window.clearTimeout(this.t);
-		!isClear && (this.t = window.setTimeout(() => {
-			this.node.isValid && (this.propertyNode.props_btn_return.active = true)
-		}, 50 * 1000));
+		if (!isClear) {
+			this.t = window.setTimeout(() => {
+				this.node.isValid && (this.propertyNode.props_btn_return.active = true)
+			}, 2 * 1000);
+		} else {
+			this.hideCloseBtn();
+		}
 	}
 
 	protected bindUI(): void {
@@ -113,7 +117,7 @@ export class Common_LoaderPanel extends BaseComponent<IState, IProps, IEvent> {
 				this.propertyNode.props_progressTip.string = "无可预加载的资源，任务已完成"
 				return
 			}
-			this.propertyNode.props_progressBar.progress = this.props.reverseProgress ? (1 - this.state.progress / this.state.total) : (this.state.progress / this.state.total)
+			this.propertyNode.props_progressBar.progress = this.props.reverseProgress ? (1 + this.state.progress / this.state.total) : (this.state.progress / this.state.total)
 			// this.propertyNode.props_progressTip.string = (this.state.progress === this.state.total
 			// 	? "已加载完成" : `正在加载资源:${this.state.loadingObj.path}
 			// 	(${(this.state.progress) + '/' + this.state.total})`)
@@ -127,7 +131,7 @@ export class Common_LoaderPanel extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	public hideCloseBtn() {
-		this.propertyNode.props_btn_return.active = false;
+		this.node.isValid && (this.propertyNode.props_btn_return.active = false);
 	}
 	protected destroyCallBack(): void {
 		this.delayShowClose(true);
@@ -135,8 +139,8 @@ export class Common_LoaderPanel extends BaseComponent<IState, IProps, IEvent> {
 	protected useProps(key: string, value: { pre: any; cur: any; }): void {
 		// console.log(key, "change", value.cur)
 		if (key === "versionStr") {
-			this.propertyNode.props_version.string = `${GameConfig.isDev ? '内部版本-' : ''}${value.cur}`
-			if (!GameConfig.isDev) {
+			this.propertyNode.props_version.string = `${getIsTest() ? '内部版本-' : ''}${value.cur}`
+			if (!getIsTest()) {
 				this.propertyNode.props_version.node.active = false
 			}
 		}

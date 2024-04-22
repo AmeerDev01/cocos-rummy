@@ -65,16 +65,17 @@ export enum ActionTypes {
   DRAGONTGER_VIP="DRAGONTGER_VIP",
   DRAGONTGER_LEVEL="DRAGONTGER_LEVEL",
   DRAGONTGER_POKER_RESET_STORE = "DRAGONTGER_POKER_RESET_STORE",
+
   
 }
 
 /**定义action的payLoad类型 */
 
 export type ActionPayLoad<A extends ActionTypes> =
-  A extends ActionTypes.DRAGONTGER_POKER_INFO ? {pokerInfo:{
-    pokerLeftNum: DragonTigerCard;
-    pokerRightNum:DragonTigerCard ;
-  }}:
+A extends ActionTypes.DRAGONTGER_POKER_INFO ? {pokerInfo:{
+  pokerLeftNum: DragonTigerCard;
+  pokerRightNum:DragonTigerCard ;
+}}:
   A extends ActionTypes.DRAGONTGER_POKER_LEFT ? {pokerLeftNum:{
     suit:number,
     rank:string,
@@ -92,17 +93,17 @@ export type ActionPayLoad<A extends ActionTypes> =
   A extends ActionTypes.DRAGONTGER_VIP ? { vip: number } :
   A extends ActionTypes.DRAGONTGER_LEVEL ? { level: number } :
   A extends ActionTypes.DRAGONTGER_POKER_RESET_STORE ? { } :
-
   never;
   
-export const updatePokerInfo= reduxAct.createAction(ActionTypes.DRAGONTGER_POKER_INFO,
-  (pokerInfo:{
-    pokerLeftNum: DragonTigerCard;
-    pokerRightNum:DragonTigerCard ;
-  }): ActionPayLoad<ActionTypes.DRAGONTGER_POKER_INFO> => {
-    return { pokerInfo }
-})
 
+export const updatePokerInfo= reduxAct.createAction(ActionTypes.DRAGONTGER_POKER_INFO,
+    (pokerInfo:{
+      pokerLeftNum: DragonTigerCard;
+      pokerRightNum:DragonTigerCard ;
+    }): ActionPayLoad<ActionTypes.DRAGONTGER_POKER_INFO> => {
+      return { pokerInfo }
+})
+  
 export const setPokerLeftAction = reduxAct.createAction(ActionTypes.DRAGONTGER_POKER_LEFT,
   (pokerLeftNum:{
     suit:number,
@@ -145,12 +146,11 @@ export const setPokerRightAction = reduxAct.createAction(ActionTypes.DRAGONTGER_
     (level:number): ActionPayLoad<ActionTypes.DRAGONTGER_LEVEL> => {
       return { level }
     })
-  
-export const resetPokerStore = reduxAct.createAction(ActionTypes.DRAGONTGER_POKER_RESET_STORE,
-  (): ActionPayLoad<ActionTypes.DRAGONTGER_POKER_RESET_STORE> => {
-    return { initState }
-  })
-    
+  export const resetPokerStore = reduxAct.createAction(ActionTypes.DRAGONTGER_POKER_RESET_STORE,
+    (): ActionPayLoad<ActionTypes.DRAGONTGER_POKER_RESET_STORE> => {
+      return { initState }
+    })
+        
 
 
 

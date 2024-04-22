@@ -202,8 +202,10 @@ export class ThorV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 
 	protected bindEvent(): void {
 		this.props_shandian_iconSk.setCompleteListener(() => {
-			this.props_shandian_iconSk.node.active = false;
-			this.props_shandian_iconSk.clearTracks();
+			this.scheduleOnce(() => {
+				this.props_shandian_iconSk.node.active = false;
+				this.props_shandian_iconSk.clearTracks();
+			})
 		})
 	}
 
@@ -409,8 +411,15 @@ export class ThorV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 		const timeScale = this.isSpeed ? config.iconTimeScaleSpeed : config.iconTimeScaleCommon;
 		if (this.node.isValid) {
 			let count = 0;
+			let skeletonOverCount = 0;
 			indexs.forEach(index => {
 				const icon = this.iconArr[index];
+				icon.setSkeletonOverCallback(() => {
+					skeletonOverCount++;
+					if (skeletonOverCount >= indexs.length) {
+						this.playWinSound(roundIndex);
+					}
+				})
 				icon.playWin(this.propertyNode.props_big_icon, roundIndex, timeScale, true, false, () => {
 					this.iconArr[index] = null;
 					count++;
@@ -420,6 +429,32 @@ export class ThorV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 				})
 			})
 		}
+	}
+
+	private playWinSound(roundIndex: number) {
+		let soundStr = SoundPathDefine.WIN1;
+		if (roundIndex === 0) {
+			soundStr = SoundPathDefine.WIN1;
+		} else if (roundIndex === 1) {
+			soundStr = SoundPathDefine.WIN2;
+		} else if (roundIndex === 2) {
+			soundStr = SoundPathDefine.WIN3;
+		} else if (roundIndex === 3) {
+			soundStr = SoundPathDefine.WIN4;
+		} else if (roundIndex === 4) {
+			soundStr = SoundPathDefine.WIN5;
+		} else if (roundIndex === 5) {
+			soundStr = SoundPathDefine.WIN6;
+		} else if (roundIndex === 6) {
+			soundStr = SoundPathDefine.WIN7;
+		} else if (roundIndex === 7) {
+			soundStr = SoundPathDefine.WIN8;
+		} else if (roundIndex === 8) {
+			soundStr = SoundPathDefine.WIN9;
+		} else if (roundIndex === 9) {
+			soundStr = SoundPathDefine.WIN10;
+		}
+		thorv2_Audio.playOneShot(soundStr)
 	}
 
 	/**播放scatter的动画，然后进入小游戏弹窗 */

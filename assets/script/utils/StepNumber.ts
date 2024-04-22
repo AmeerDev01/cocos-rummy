@@ -4,8 +4,8 @@ import { Label, Node, UIOpacity, UITransform, Vec3, instantiate, tween } from "c
  */
 export default class StepNumber {
   constructor(beginNum: number, endNum: number, update: (num: number) => void, done?: () => void) {
-    this.beginNum = beginNum
-    this.endNum = endNum
+    this.beginNum = beginNum.toFixedFix()
+    this.endNum = endNum.toFixedFix()
     this.update = update
     this.done = done
     this.set()
@@ -24,7 +24,7 @@ export default class StepNumber {
     this.targetNode = targetNode
     this.flyLabelNode = flyLabelNode
     this.flyHandler = (num: number) => {
-      if (!this.flyLabelNode) return
+      if (!this.flyLabelNode || num === 0) return
       const flyNode = instantiate(this.flyLabelNode)
       flyNode.active = true
       if (this.targetNode) {
@@ -71,7 +71,7 @@ export default class StepNumber {
     }
     this.currNum = this.beginNum
     // console.log(this.endNum - this.beginNum)
-    this.flyHandler && isFlyNumber && this.flyHandler(this.endNum - this.beginNum)
+    this.flyHandler && isFlyNumber && this.flyHandler(+(this.endNum - this.beginNum).toFixed(2))
     this.timer = window.setInterval(() => {
       this.currNum += this.step
       //乘以2是怕越过终点，这样就停不下来了

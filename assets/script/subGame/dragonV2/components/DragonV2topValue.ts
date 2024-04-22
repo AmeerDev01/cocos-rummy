@@ -145,7 +145,7 @@ export class DragonV2topValue extends BaseComponent<IState, IProps, IEvent> {
             this.flashbox()
             this.setState({ miniVal: value.cur.value * config.winning[1].maxRate })
             this.setState({ majorVal: value.cur.value * config.winning[2].maxRate })
-            if (this.props.amountInfo.positionId < 6) {
+            if (this.props.amountInfo.positionId <= config.betAmountLimit) {
                 this.setState({ grandVal: value.cur.value * config.winning[3].maxRate })
             }
         }
@@ -154,7 +154,7 @@ export class DragonV2topValue extends BaseComponent<IState, IProps, IEvent> {
             this.node.getChildByName('main_bg').active = !this.isSubgame2()
         }
         if (key === 'grandVal') {
-            if (this.props.amountInfo.positionId >= 6) {
+            if (this.props.amountInfo.positionId > config.betAmountLimit) {
                 this.setState({ grandVal: value.cur })
             }
             if (value.cur === 1) {
@@ -166,7 +166,7 @@ export class DragonV2topValue extends BaseComponent<IState, IProps, IEvent> {
         this.useState((key, value) => {
             new StepNumber(value.pre, value.cur, (num) => {
                 if (this.node && this.node.isValid) {
-                    const value = Number(num.toFixed(0));
+                    const value = Number(num.toFixed(2));
                     this.mini_numer.getChildByName('number').getComponent(Label).string = value.formatAmountWithCommas();
                 }
             }).start();
@@ -175,7 +175,7 @@ export class DragonV2topValue extends BaseComponent<IState, IProps, IEvent> {
         this.useState((key, value) => {
             new StepNumber(value.pre, value.cur, (num) => {
                 if (this.node && this.node.isValid) {
-                    const value = Number(num.toFixed(0));
+                    const value = Number(num.toFixed(2));
                     this.major_numer.getChildByName('number').getComponent(Label).string = value.formatAmountWithCommas();
                 }
             }).start();

@@ -1,4 +1,4 @@
-import { Node, instantiate, sys } from "cc"
+import { Node, Prefab, instantiate, sys } from "cc"
 import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { Fruit777_BoxPanel, IProps, IEvent } from "../components/Fruit777_BoxPanel"
 import { Fruit777_JackPot, IState as JPIState, IProps as JPIprops, IEvent as JPIEvent } from "../components/Fruit777_JackPot"
@@ -6,14 +6,14 @@ import { StateType } from "../store/reducer"
 import { getStore } from "../store"
 import { getStore as GetHallStore } from "../../../hall/store"
 import { footerViewModel, fruit777_Audio, sourceManageSeletor } from "../index"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from '../socketConnect';
+import { SKT_MAG_TYPE, fruit777WebSocketDriver } from '../socketConnect';
 import { addToastAction } from "../../../hall/store/actions/baseBoard"
 import dataTransfer, { DataKeyType, refreshData } from "../dataTransfer"
 import config from "../config"
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { setRollRoundEnd } from "../store/actions/roller"
 import { changeProfit, setSubGameTimes, setWaiting, updateBalance, updateSubGameTimes } from "../store/actions/game"
-import { GameType, JactpotType } from "../type"
+import { AutoLauncherType, GameType, JactpotType } from "../type"
 import BaseViewModel from "../../../common/viewModel/BaseViewModel"
 import { OpenStatus } from "../components/Fruit777_AwardBox"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
@@ -26,15 +26,16 @@ class BoxPanelViewModel extends ViewModel<Fruit777_BoxPanel, IProps, IEvent> {
   }
   public openWaitingBoxId: number = -1
   private jackpot: BaseViewModel<Fruit777_JackPot, JPIState, JPIprops, JPIEvent>
-  protected begin() {
+  protected async begin() {
     fruit777_Audio.stop()
     fruit777_Audio.play(SoundPathDefine.BG_MUSIC_1, true)
     this.dispatch(setRollRoundEnd(false))
     // console.log('SUBGAME_TIMES')
     this.dispatch(changeProfit(dataTransfer(DataKeyType.FREE_GAME_AMOUNT)))
     this.dispatch(updateSubGameTimes(dataTransfer(DataKeyType.SUBGAME_TIMES)))
-    this.jackpot = new BaseViewModel<Fruit777_JackPot, JPIState, JPIprops, JPIEvent>('Fruit777_JackPot').mountView(sourceManageSeletor().getFile(PrefabPathDefine.JACK_POT).source).appendTo(this.viewNode)
-    sktMsgListener.add(SKT_MAG_TYPE.LAUNCHER_BET, "box", (data, error) => {
+    this.jackpot = new BaseViewModel<Fruit777_JackPot, JPIState, JPIprops, JPIEvent>('Fruit777_JackPot')
+      .mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._JACK_POT, Prefab)).source).appendTo(this.viewNode)
+    fruit777WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCHER_BET, "box", (data, error) => {
       if (!error) {
         // console.log('box', data)
         refreshData(data)
@@ -59,7 +60,8 @@ class BoxPanelViewModel extends ViewModel<Fruit777_BoxPanel, IProps, IEvent> {
                 score: awardInfo[key],
                 distance: awardBoxItem.distance,
                 BONUS: 0,
-                name: awardBoxItem.name
+                name: awardBoxItem.name,
+                autoLauncherType: this.comp.props.autoLauncherType
               }
             })
           }
@@ -72,11 +74,11 @@ class BoxPanelViewModel extends ViewModel<Fruit777_BoxPanel, IProps, IEvent> {
 
     this.setEvent({
       onOpenHandler: (boxId) => {
-        console.log('open', this.openWaitingBoxId)
+        // console.log('open', this.openWaitingBoxId)
         fruit777_Audio.playOneShot(SoundPathDefine.OPEN_AWARDBOX)
         if (this.openWaitingBoxId === -1 && dataTransfer(DataKeyType.SUBGAME_TIMES) !== 0) {
           this.openWaitingBoxId = boxId
-          sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCHER_BET, {
+          fruit777WebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCHER_BET, {
             positionId: footerViewModel.comp.getPositionData().positionId,
             tableId: JSON.parse(sys.localStorage.getItem('fruit777')).tableId,
             gameId: config.gameId
@@ -136,12 +138,13 @@ class BoxPanelViewModel extends ViewModel<Fruit777_BoxPanel, IProps, IEvent> {
   protected unMountCallBack(): void {
     // this.comp.awardBoxMap.forEach(vm => vm.unMount())
     // this.jackpot.unMount()
-    sktMsgListener.removeById("box")
+    fruit777WebSocketDriver.sktMsgListener.removeById("box")
   }
   public connect() {
     this.inject({}, (state: StateType) => {
       return {
-        remainGameTimes: state.game.remainSubGameTimes
+        remainGameTimes: state.game.remainSubGameTimes,
+        autoLauncherType: state.game.autoLauncherType
       }
     })
     return this

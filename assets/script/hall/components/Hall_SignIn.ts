@@ -1,4 +1,4 @@
-import { Animation, Button, Label, Node, Sprite, _decorator, log } from 'cc';
+import { Animation, Button, Label, Node, Sprite, SpriteFrame, _decorator, log } from 'cc';
 import { BaseComponent } from '../../base/BaseComponent';
 import Throttler from '../../utils/Throttler';
 import { ApiUrl } from '../apiUrl';
@@ -277,9 +277,10 @@ export class Hall_SignIn extends BaseComponent<IState, IProps, IEvent> {
 		}
 	}
 
-	private updateChangeVip(vipLevel: number) {
+	private async updateChangeVip(vipLevel: number) {
 		vipLevel = vipLevel ? vipLevel : 0;
-		this.propertyNode.props_vip_level.spriteFrame = sourceManageSeletor('common').getFile(`resource/vip/b_VIP${vipLevel}/spriteFrame`).source;
+		const vipSpritePath = `resource/vip/b_VIP${vipLevel}/spriteFrame`;
+		this.propertyNode.props_vip_level.spriteFrame = (await sourceManageSeletor('common').getFileAsync(vipSpritePath, SpriteFrame)).source;
 	}
 
 	protected bindUI(): void {

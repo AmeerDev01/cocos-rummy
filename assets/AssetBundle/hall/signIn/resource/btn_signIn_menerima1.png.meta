@@ -2,7 +2,7 @@
   "ver": "1.0.25",
   "importer": "image",
   "imported": true,
-  "uuid": "2ffe3eee-e38f-45b0-ad1d-d91e9cc4e070",
+  "uuid": "2c08fb06-6b82-4a26-b57e-19e0cc41f349",
   "files": [
     ".json",
     ".png"
@@ -10,7 +10,7 @@
   "subMetas": {
     "6c48a": {
       "importer": "texture",
-      "uuid": "2ffe3eee-e38f-45b0-ad1d-d91e9cc4e070@6c48a",
+      "uuid": "2c08fb06-6b82-4a26-b57e-19e0cc41f349@6c48a",
       "displayName": "btn_signIn_menerima1",
       "id": "6c48a",
       "name": "texture",
@@ -22,7 +22,7 @@
         "mipfilter": "none",
         "anisotropy": 0,
         "isUuid": true,
-        "imageUuidOrDatabaseUri": "2ffe3eee-e38f-45b0-ad1d-d91e9cc4e070",
+        "imageUuidOrDatabaseUri": "2c08fb06-6b82-4a26-b57e-19e0cc41f349",
         "visible": false
       },
       "ver": "1.0.22",
@@ -34,7 +34,7 @@
     },
     "f9941": {
       "importer": "sprite-frame",
-      "uuid": "2ffe3eee-e38f-45b0-ad1d-d91e9cc4e070@f9941",
+      "uuid": "2c08fb06-6b82-4a26-b57e-19e0cc41f349@f9941",
       "displayName": "btn_signIn_menerima1",
       "id": "f9941",
       "name": "spriteFrame",
@@ -47,9 +47,9 @@
         "trimX": 0,
         "trimY": 0,
         "width": 300,
-        "height": 84,
+        "height": 87,
         "rawWidth": 300,
-        "rawHeight": 84,
+        "rawHeight": 87,
         "borderTop": 0,
         "borderBottom": 0,
         "borderLeft": 0,
@@ -62,16 +62,16 @@
         "vertices": {
           "rawPosition": [
             -150,
-            -42,
+            -43.5,
             0,
             150,
-            -42,
+            -43.5,
             0,
             -150,
-            42,
+            43.5,
             0,
             150,
-            42,
+            43.5,
             0
           ],
           "indexes": [
@@ -84,9 +84,9 @@
           ],
           "uv": [
             0,
-            84,
+            87,
             300,
-            84,
+            87,
             0,
             0,
             300,
@@ -104,17 +104,17 @@
           ],
           "minPos": [
             -150,
-            -42,
+            -43.5,
             0
           ],
           "maxPos": [
             150,
-            42,
+            43.5,
             0
           ]
         },
         "isUuid": true,
-        "imageUuidOrDatabaseUri": "2ffe3eee-e38f-45b0-ad1d-d91e9cc4e070@6c48a",
+        "imageUuidOrDatabaseUri": "2c08fb06-6b82-4a26-b57e-19e0cc41f349@6c48a",
         "atlasUuid": ""
       },
       "ver": "1.0.12",
@@ -129,6 +129,6 @@
     "fixAlphaTransparencyArtifacts": true,
     "hasAlpha": true,
     "type": "sprite-frame",
-    "redirect": "2ffe3eee-e38f-45b0-ad1d-d91e9cc4e070@f9941"
+    "redirect": "2c08fb06-6b82-4a26-b57e-19e0cc41f349@f9941"
   }
 }

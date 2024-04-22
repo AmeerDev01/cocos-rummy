@@ -2,6 +2,7 @@ import { _decorator, Component, Node } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import { GameType } from '../type';
 import { setShowAuthLaunch } from '../store/actions/game';
+import TaskScheduler from '../../../utils/TaskScheduler';
 const { ccclass, property } = _decorator;
 
 export interface IState {
@@ -21,7 +22,6 @@ export class Fruit777_GameBoard extends BaseComponent<IState, IProps, IEvent> {
 	start() {
 
 	}
-
 	protected propertyNode = {
 		props_gameBoard: new Node(),
 		props_wrap: new Node()

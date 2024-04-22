@@ -1,12 +1,12 @@
 {
 "skeleton": {
-	"hash": "ndSdCVQ/2jY/kkKESGJt30pajF8",
+	"hash": "wtbrwvR5RodMiOiceTRH0u7G7lg",
 	"spine": "3.8.99",
 	"x": -118,
 	"y": -107,
 	"width": 237,
 	"height": 214,
-	"images": "E:/新版UI/平台/大厅new/动画/源文件/商店/素材",
+	"images": "./素材/",
 	"audio": ""
 },
 "bones": [
@@ -15,7 +15,7 @@
 "slots": [
 	{ "name": "di", "bone": "root", "attachment": "di" },
 	{ "name": "g", "bone": "root", "attachment": "9", "blend": "screen" },
-	{ "name": "c", "bone": "root", "attachment": "che" },
+	{ "name": "c", "bone": "root", "attachment": "che1" },
 	{ "name": "zi", "bone": "root", "attachment": "zi" },
 	{ "name": "ziig", "bone": "root", "attachment": "z9", "blend": "screen" }
 ],
@@ -24,7 +24,7 @@
 		"name": "default",
 		"attachments": {
 			"c": {
-				"che": { "y": 6.36, "width": 110, "height": 87 }
+				"che1": { "y": 6.36, "width": 110, "height": 87 }
 			},
 			"di": {
 				"di": { "x": 0.5, "y": 0.5, "width": 111, "height": 101 }

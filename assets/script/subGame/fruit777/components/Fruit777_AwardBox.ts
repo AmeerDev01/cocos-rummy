@@ -4,7 +4,7 @@ import TaskScheduler, { Task, TaskSchedulerDefault } from '../../../utils/TaskSc
 import { bundleFruit777, footerViewModel, fruit777_Audio, gameBoardViewModel, sourceManageSeletor } from '../index';
 import { getNodePositionInCanvas } from '../../../utils/tool';
 import dataTransfer, { DataKeyType } from '../dataTransfer';
-import { GameType, JactpotType } from '../type';
+import { AutoLauncherType, GameType, JactpotType } from '../type';
 import { SoundPathDefine } from '../sourceDefine/soundDefine';
 const { ccclass, property } = _decorator;
 
@@ -27,7 +27,8 @@ export interface IProps {
 	score: number,
 	BONUS: number,
 	distance: number[],
-	name: string
+	name: string,
+	autoLauncherType: AutoLauncherType
 }
 export interface IEvent {
 	onOpenHandler: (id: number) => void,
@@ -56,7 +57,8 @@ export class Fruit777_AwardBox extends BaseComponent<IState, IProps, IEvent> {
 		score: 0,
 		BONUS: 0,
 		distance: [0, 0],
-		name: ''
+		name: '',
+		autoLauncherType: AutoLauncherType.NONE
 	}
 
 	public events: IEvent = {
@@ -74,6 +76,10 @@ export class Fruit777_AwardBox extends BaseComponent<IState, IProps, IEvent> {
 
 	protected bindEvent(): void {
 		this.node.on(Node.EventType.TOUCH_END, () => {
+			if (this.props.autoLauncherType !== AutoLauncherType.NONE) {
+				//自动执行的时候不允许手动开
+				return
+			}
 			// console.log('GAME_TYPE', dataTransfer(DataKeyType.GAME_TYPE))
 			if (dataTransfer(DataKeyType.GAME_TYPE) !== GameType.SUBGAME1) {
 				return
@@ -85,6 +91,7 @@ export class Fruit777_AwardBox extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
+		const self = this
 		let thenTimes = 0
 		if (key !== "boxId") {
 			try {
@@ -93,14 +100,14 @@ export class Fruit777_AwardBox extends BaseComponent<IState, IProps, IEvent> {
 					//执行贝壳动作
 					// this.setState({ hasOpen: true })
 					this.setState({ openStatus: OpenStatus.OPEN })
-					this.taskScheduler && this.taskScheduler.joinqQueue(new Task((done) => {
+					this.taskScheduler.joinQueue(new Task((done) => {
 						this.propertyNode.props_btn_sg_box.getComponent(sp.Skeleton).animation = 'diankaibaoxiang'
 						this.scheduleOnce(() => { this.propertyNode.props_btn_sg_box.active = false }, 2)
 						this.scheduleOnce(() => {
 							done()
 						}, 1)
 					}))
-					this.taskScheduler && this.taskScheduler.joinqQueue(new Task((done) => {
+					this.taskScheduler.joinQueue(new Task((done) => {
 						this.events.checkFlyEndHandler()
 						done()
 					}))
@@ -111,20 +118,24 @@ export class Fruit777_AwardBox extends BaseComponent<IState, IProps, IEvent> {
 		}
 		if (key === "fruitFileName") {
 			this.scheduleOnce(() => {
-				//加定时器是确保distance肯定有数据
-				this.taskScheduler && this.taskScheduler.joinqQueue(new Task((done) => {
-					if (!this.propertyNode) {
-						done()
-						return
-					}
-					this.propertyNode.props_spr_result_item.active = true
-					const skeleton = this.propertyNode.props_spr_result_item.getComponent(sp.Skeleton)
-					skeleton.skeletonData = sourceManageSeletor().getFile(value.cur).source
-					skeleton.animation = "animation"
-					const { x, y, z } = this.propertyNode.props_spr_result_item.position
-					this.propertyNode.props_spr_result_item.setPosition(new Vec3(x + this.props.distance[0], y + this.props.distance[1], z))
-					this.scheduleOnce(() => done(), 1)
-				}))
+				try {
+					//加定时器是确保distance肯定有数据
+					this.taskScheduler && this.taskScheduler.joinQueue(new Task(async (done) => {
+						if (!this.propertyNode) {
+							done()
+							return
+						}
+						this.propertyNode.props_spr_result_item.active = true
+						const skeleton = this.propertyNode.props_spr_result_item.getComponent(sp.Skeleton)
+						skeleton.skeletonData = ((await sourceManageSeletor().getFileAsync(value.cur, sp.SkeletonData))).source
+						skeleton.animation = "animation"
+						const { x, y, z } = this.propertyNode.props_spr_result_item.position
+						this.propertyNode.props_spr_result_item.setPosition(new Vec3(x + this.props.distance[0], y + this.props.distance[1], z))
+						this.scheduleOnce(() => done(), 1)
+					}))
+				} catch (e) {
+					console.error(e, this.taskScheduler)
+				}
 			}, 0.1)
 		}
 		if (key === "score") {
@@ -174,13 +185,13 @@ export class Fruit777_AwardBox extends BaseComponent<IState, IProps, IEvent> {
 					this.events.updateTimesHandler(thenTimes, this.jackPotTypeName[this.props.name])
 					this.events.onFreeGameAmoundChange(thenAmound)
 				})
-				this.taskScheduler && this.taskScheduler.joinqQueue(scoreTask).joinqQueue(particleTask)
+				this.taskScheduler && this.taskScheduler.joinQueue(scoreTask).joinQueue(particleTask)
 			}, 1)
 		}
 		if (key === "levelUp") {
 			this.scheduleOnce(() => {
 				fruit777_Audio.playOneShot(SoundPathDefine.LEVEV_UP)
-				this.taskScheduler && this.taskScheduler.joinqQueue(new Task((done) => {
+				this.taskScheduler && this.taskScheduler.joinQueue(new Task((done) => {
 					if (!this.propertyNode || !this.node) {
 						done()
 						return
@@ -206,7 +217,7 @@ export class Fruit777_AwardBox extends BaseComponent<IState, IProps, IEvent> {
 			this.scheduleOnce(() => {
 				fruit777_Audio.playOneShot(SoundPathDefine.GET_COIN)
 				//确保资源被替换之后
-				this.taskScheduler && this.taskScheduler.joinqQueue(new Task((done) => {
+				this.taskScheduler && this.taskScheduler.joinQueue(new Task((done) => {
 					if (!this.propertyNode || !this.node) {
 						done()
 						return
@@ -229,7 +240,7 @@ export class Fruit777_AwardBox extends BaseComponent<IState, IProps, IEvent> {
 		}
 		if (key === "BONUS") {
 			this.scheduleOnce(() => {
-				this.taskScheduler && this.taskScheduler.joinqQueue(new Task((done) => {
+				this.taskScheduler && this.taskScheduler.joinQueue(new Task((done) => {
 					if (!this.propertyNode || !gameBoardViewModel.currentGameViewModel['jackpot'].comp.getHeaderNode()) {
 						done()
 						return

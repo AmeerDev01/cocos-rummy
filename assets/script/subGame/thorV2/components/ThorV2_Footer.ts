@@ -2,7 +2,7 @@ import { _decorator, Animation, AnimationState, Button, Color, Game, Label, Node
 import { BaseComponent } from '../../../base/BaseComponent';
 import { setAutoLauncherInfo, setBetDropDownList, updateDialogInfo, updatePositionId, updateSubGameAnimationPlayInfo, updateWinloss } from '../store/actions/game';
 import { updateManualSpeedStatus, updateRollerStatus, updateSpeedStatus } from '../store/actions/roller';
-import { AutoLauncherInfo, AutoLauncherType, calBetAmount, DialogType, GameType, GameTypeInfo, getAutoCount, isAuto, isLimit, RollerStatus } from '../type';
+import { AutoLauncherInfo, AutoLauncherType, calBetAmount, DialogType, GameModeType, GameType, GameTypeInfo, getAutoCount, isAuto, isLimit, RollerStatus } from '../type';
 import config from '../config';
 import StepNumber from '../../../utils/StepNumber';
 import { cacheData } from '../dataTransfer';
@@ -35,6 +35,8 @@ export interface IProps {
 	gold: number,
 	/**下注金额 */
 	betAmount: number,
+	/**游戏模式 */
+	gameModeType: GameModeType,
 }
 export interface IEvent {
 	onSendBet: () => void,
@@ -86,8 +88,9 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			viewGameType: GameType.MAIN,
 			leftCount: 0
 		},
-		gold: 0,
+		gold: -1,
 		betAmount: 0,
+		gameModeType: GameModeType.normal,
 	}
 
 	public events: IEvent = {
@@ -142,7 +145,7 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		// 	this.isLongPress = false;
 		// 	this.unscheduleLong();
 		// })
-		this.propertyNode.props_startButton.on(Button.EventType.CLICK, () => {
+		this.propertyNode.props_startButton.on(Node.EventType.TOUCH_END, () => {
 			// this.stepNumberV2.stop();
 			// this.unscheduleLong();
 			// if (this.isLongPress) {
@@ -194,8 +197,8 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		})
 
 		const amount = config.betSwitcher[0].amount;
-		this.propertyNode.props_min_btn.on(Button.EventType.CLICK, () => {
-			if (this.isBtnDisable() || !this.propertyNode.props_min_btn.getComponent(Button).enabled) {
+		this.propertyNode.props_min_btn.on(Node.EventType.TOUCH_END, () => {
+			if (this.isBtnDisable() || this.isButtonDisable(this.propertyNode.props_min_btn)) {
 				return;
 			}
 			thorv2_Audio.playOneShot(SoundPathDefine.MIN_COIN)
@@ -205,8 +208,8 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.dispatch(updatePositionId(this.props.positionId - 1));
 			this.updateSprMoney();
 		})
-		this.propertyNode.props_max_btn.on(Button.EventType.CLICK, () => {
-			if (this.isBtnDisable() || !this.propertyNode.props_max_btn.getComponent(Button).enabled) {
+		this.propertyNode.props_max_btn.on(Node.EventType.TOUCH_END, () => {
+			if (this.isBtnDisable() || this.isButtonDisable(this.propertyNode.props_max_btn)) {
 				return;
 			}
 			if (this.props.positionId >= amount[amount.length - 1].positionId) {
@@ -217,10 +220,10 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.updateSprMoney();
 		})
 
-		this.propertyNode.props_btn_down_auto.on(Button.EventType.CLICK, () => {
-			// if (this.isBtnDisable() || !this.propertyNode.props_max_btn.getComponent(Button).enabled) {
-			// 	return;
-			// }
+		this.propertyNode.props_btn_down_auto.on(Node.EventType.TOUCH_END, () => {
+			if (this.isButtonDisable(this.propertyNode.props_btn_down_auto)) {
+				return;
+			}
 
 			thorv2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
 			if (isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)) {
@@ -269,42 +272,12 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	private updateStartButtonAutoType() {
 		const startBgNode = getNodeByNameDeep("props_word_down_pular", this.propertyNode.props_startButton);
 		const stopBgNode = getNodeByNameDeep("props_scrollingThePicture", this.propertyNode.props_startButton);
-		// const autoNode = getNodeByNameDeep("props_times", this.propertyNode.props_startButton);
-		// const limitNode = getNodeByNameDeep("props_autoLaunch_label", this.propertyNode.props_startButton);
-		// const auto = isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo);
+		const auto = isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo, true);
 
 		// 开始按钮背景，
-		startBgNode.active = this.props.rollerStatus === RollerStatus.END;
+		startBgNode.active = !auto && this.props.rollerStatus === RollerStatus.END;
 		// 停止滚动按钮背景
-		stopBgNode.active = this.props.rollerStatus !== RollerStatus.END;
-
-		// if (!this.isMain()) {
-		// 	// autoNode.active = false;
-		// 	// limitNode.active = false;
-
-		// 	// 开始按钮背景，
-		// 	startBgNode.active = this.props.rollerStatus === RollerStatus.END;
-		// 	// 停止滚动按钮背景
-		// 	stopBgNode.active = this.props.rollerStatus !== RollerStatus.END;
-		// } else {
-		// 	// 开始按钮背景，
-		// 	startBgNode.active = this.props.rollerStatus === RollerStatus.END;
-		// 	// 停止滚动按钮背景
-		// 	stopBgNode.active = this.props.rollerStatus !== RollerStatus.END;
-
-		// 	if (auto) {
-		// 		// 	autoNode.active = !this.isLimit();
-		// 		// 	limitNode.active = this.isLimit();
-		// 		// 	if (!this.isLimit()) {
-		// 		// 		autoNode.getComponent(Label).string = this.props.autoLauncherInfo.leftCount + "/" + this.props.autoLauncherInfo.totalCount;
-		// 		// 	} else {
-		// 		// 		limitNode.getComponent(Label).string = this.props.autoLauncherInfo.leftCount + "";
-		// 		// 	}
-		// 		// } else {
-		// 		// 	autoNode.active = false;
-		// 		// 	limitNode.active = false;
-		// 	}
-		// }
+		stopBgNode.active = auto || this.props.rollerStatus !== RollerStatus.END;
 
 		this.updateAutoBtn();
 	}
@@ -312,9 +285,9 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	private updateAutoBtn() {
 		const props_autoLaunch_not_auto = getNodeByNameDeep("props_autoLaunch_not_auto", this.propertyNode.props_btn_down_auto);
 		const props_autoLaunch_auto = getNodeByNameDeep("props_autoLaunch_auto", this.propertyNode.props_btn_down_auto);
-		const auto = isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo);
+		const auto = isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo, false);
 
-		if (!this.isMain()) {
+		if (!this.isMain() && !auto) {
 			props_autoLaunch_not_auto.active = true;
 			props_autoLaunch_auto.active = false;
 		} else {
@@ -393,6 +366,10 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		return this.props.rollerStatus !== RollerStatus.END || isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo);
 	}
 
+	private isButtonDisable(btnNode: Node) {
+		return !btnNode.getComponent(Button).interactable;
+	}
+
 	/**更新按钮禁用状态 */
 	private updateBtnDisableStatus() {
 		const isDisable = this.isBtnDisable();
@@ -401,14 +378,15 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		// this.updateBtnStatus(this.propertyNode.props_maxBet_btn, isDisable);
 
 
-		this.propertyNode.props_max_btn.getComponent(Button).enabled = !isDisable;
-		this.propertyNode.props_min_btn.getComponent(Button).enabled = !isDisable;
+		this.propertyNode.props_max_btn.getComponent(Button).interactable = !isDisable;
+		this.propertyNode.props_min_btn.getComponent(Button).interactable = !isDisable;
 		// this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = !isDisable;
 	}
 
 	private updateBtnStatus(btnNode: Node, isDisable: boolean) {
 		btnNode.getChildByName("disable").active = isDisable;
-		btnNode.getComponent(Button).enabled = !isDisable;
+		// btnNode.getComponent(Button).enabled = !isDisable;
+		btnNode.getComponent(Button).interactable = !isDisable;
 	}
 
 	/**更新最大最小状态 */
@@ -420,27 +398,27 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 		if (isDisable || amount[amount.length - 1].positionId === this.props.positionId) {
 			this.updateBtnStatus(this.propertyNode.props_max_btn, true);
-			this.propertyNode.props_max_btn.getComponent(Button).enabled = false;
+			this.propertyNode.props_max_btn.getComponent(Button).interactable = false;
 		} else {
 			this.updateBtnStatus(this.propertyNode.props_max_btn, false);
-			this.propertyNode.props_max_btn.getComponent(Button).enabled = true;
+			this.propertyNode.props_max_btn.getComponent(Button).interactable = true;
 		}
 
 		if (isDisable || this.props.positionId === amount[0].positionId) {
 			this.updateBtnStatus(this.propertyNode.props_min_btn, true);
-			this.propertyNode.props_min_btn.getComponent(Button).enabled = false;
+			this.propertyNode.props_min_btn.getComponent(Button).interactable = false;
 		} else {
 			this.updateBtnStatus(this.propertyNode.props_min_btn, false);
-			this.propertyNode.props_min_btn.getComponent(Button).enabled = true;
+			this.propertyNode.props_min_btn.getComponent(Button).interactable = true;
 		}
 
-		const auto = isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)
-		if ((isDisable && !auto) || this.isSubGame()) {
+		const auto = isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo, false)
+		if ((isDisable && !auto) || (this.isSubGame() && !auto)) {
 			this.updateBtnStatus(this.propertyNode.props_btn_down_auto, true);
-			this.propertyNode.props_btn_down_auto.getComponent(Button).enabled = false;
+			this.propertyNode.props_btn_down_auto.getComponent(Button).interactable = false;
 		} else {
 			this.updateBtnStatus(this.propertyNode.props_btn_down_auto, false);
-			this.propertyNode.props_btn_down_auto.getComponent(Button).enabled = true;
+			this.propertyNode.props_btn_down_auto.getComponent(Button).interactable = true;
 		}
 
 		this.updateMaxBetStatus();
@@ -486,7 +464,7 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		this.stepNumber && this.stepNumber.stop();
 		this.stepNumber = new StepNumber(value.pre, value.cur, (num) => {
 			if (this.node && this.node.isValid) {
-				const value = Number(num.toFixed(0));
+				const value = Number(num);
 				this.propertyNode.props_word_down_winNum.string = value.formatAmountWithCommas();
 			}
 		})
@@ -520,6 +498,9 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 				this.updateBtnDisableStatus();
 			} else if (key === 'positionId' || key === 'betAmount') {
 				this.updateBetInfo();
+				this.updateSprMoney();
+			} else if (key === 'gold' || key === 'gameModeType') {
+				this.updateSprMoney();
 			} else if (key === 'winloss' && !this.isSubGame()) {
 				this.updateScore(value);
 			} else if (key === 'subGameWinloss' && this.isSubGame()) {
@@ -605,16 +586,19 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		// }
 	}
 
+	private updateSprMoneyScheduleCallback() {
+		this.propertyNode.props_spr_nomoney.active = false;
+	}
+
 	private updateSprMoney() {
 		if (this.props.gold < calBetAmount(this.props.betAmount, this.props.positionId)) {
 			if (!this.propertyNode.props_spr_nomoney.active) {
-				this.propertyNode.props_spr_nomoney.active = true;
 				this.propertyNode.props_betAmount.getComponent(Label).color = new Color(144, 144, 134);
-				this.scheduleOnce(() => {
-					this.propertyNode.props_spr_nomoney.active = false;
-				}, 4)
+				this.propertyNode.props_spr_nomoney.active = true;
+				this.schedule(this.updateSprMoneyScheduleCallback, 4, 0)
 			}
 		} else {
+			this.unschedule(this.updateSprMoneyScheduleCallback);
 			this.propertyNode.props_spr_nomoney.active = false;
 			this.propertyNode.props_betAmount.getComponent(Label).color = new Color(255, 255, 255);
 		}

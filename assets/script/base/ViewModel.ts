@@ -1,4 +1,4 @@
-import { Node, Prefab, Component, assetManager, instantiate, find, tween, UIOpacity } from "cc"
+import { Node, Prefab, Component, assetManager, instantiate, find, tween, UIOpacity, BlockInputEvents } from "cc"
 import { getStore } from "../hall/store"
 import { BaseComponent } from "./BaseComponent";
 import { EffectType, EnterOption, getEffectByType } from "../utils/NodeIOEffect";
@@ -10,11 +10,14 @@ export const viewModelMap: { [key: string]: ViewModel<any, unknown, unknown> } =
 /**BaseViewModel为特定的功能而设计，在这里撰写主逻辑 */
 abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
   constructor(componentStr: string) {
+    this.id = parseInt(Math.random() * 10000000 + '')
     this.componentStr = componentStr
     this.store = getStore()
+    this.init()
   }
   protected componentStr: string
   protected store
+  public id: number
   /**是否已卸载(此值在卸载开始之时就已赋值) */
   public isUnMount: boolean = false
   /**被挂载的父节点 */
@@ -40,12 +43,20 @@ abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
 
   /**视图初始化并挂载到节点上后要执行的动作（appendTo之后要执行的动作） */
   protected abstract begin(): void
+  /**初始化便要执行的函数 */
+  protected init() { }
+  /**begin函数执行完之后要执行的函数 */
+  private initDone() { }
   /**卸载时的回调函数 */
   protected unMountCallBack() { }
   protected dispatch(action: AnyAction) {
     this.store.dispatch(action)
   }
-
+  /**绑定begin函数执行完之后要执行的函数，因为ViewModel中的begin是异步的，如果某一些操作需要确保begin之后才执行，建议在这里完成 */
+  public bindDoneHandler(initDone: () => void) {
+    this.initDone = initDone
+    return this
+  }
   /**挂载到视图 */
   public appendTo(parentNode: Node, option?: {
     /**添加到节点的动效 */
@@ -54,6 +65,8 @@ abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
     effectDone?: () => void,
     /**是否以模态框的形式添加，既后面加一层模态框 */
     isModal?: boolean,
+    /**是否轻点底板关闭，在isModal=true才生效 */
+    isBgClose?: boolean,
     effectOption?: EnterOption
 
   }) {
@@ -61,6 +74,7 @@ abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
       effectType: null,
       effectDone: null,
       isModal: false,
+      isBgClose: false,
       effectOption: {}
     }, option || {})
     this.isModal = _option.isModal
@@ -68,17 +82,24 @@ abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
     if (_option.isModal) {
       this.modalBg = instantiate(find("Canvas/modalBg"))
       this.modalBg.active = true
+      this.modalBg.addComponent(BlockInputEvents)
       const uiOpacity = this.modalBg.getComponent(UIOpacity) || this.modalBg.addComponent(UIOpacity);
       uiOpacity.opacity = 0
       tween(uiOpacity).to(0.1, { opacity: 255 }).start()
       this.modalBg.addChild(this.viewNode)
       parentNode.addChild(this.modalBg)
       hallAudio && hallAudio.playOneShot(SoundPathDefine.POP_UP)
+      // if (_option.isBgClose) {
+      //   this.modalBg && this.modalBg.once(Node.EventType.TOUCH_END, () => {
+      //     this.unMount(EffectType.EFFECT1)
+      //   })
+      // }
     } else {
       parentNode.addChild(this.viewNode)
     }
     const done = () => window.setTimeout(() => {
       this.begin()
+      this.initDone()
     }, 10)
     _option.effectType !== null ? getEffectByType(_option.effectType)(this.viewNode).enter(_option.effectOption).then(() => {
       _option.effectDone && _option.effectDone()
@@ -87,7 +108,12 @@ abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
     viewModelMap[this.viewNode.uuid] = this
     return this
   }
-
+  /**手动绑定底层点击事件 */
+  public bindCloseToBg(closeHandler: Function) {
+    this.modalBg && this.modalBg.once(Node.EventType.TOUCH_END, () => {
+      closeHandler && closeHandler()
+    })
+  }
   /**初始化视图对象，告知viewmodel需要实例化的预制体和组件脚本(若不执行这个，节点对象和自定义脚本将无法调用) */
   public mountView(prefabSource: Prefab) {
     // this.prefabFile = PrefabFiles.find(item => item.path === prefabFile).source
@@ -100,6 +126,7 @@ abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
   /**卸载(销毁节点，且取消订阅) */
   public unMount(effectType: EffectType = null) {
     // hallAudio && hallAudio.playOneShot(SoundPathDefine.BTU_CLICK)
+    if (this.isUnMount) return
     this.isUnMount = true
     return new Promise((reslove, reject) => {
       this.unsubscribe && this.unsubscribe()

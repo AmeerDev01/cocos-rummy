@@ -137,7 +137,7 @@ class GameBoardViewModel extends ViewModel<BlessedWealthy_gameBoard, IProps, IEv
         // this.changeGameTypeTask.name = "changeGameTypeTask"
         if (!this.currentGameViewModel) {
           //初始化的时候才直接执行
-          TaskSchedulerDefault().joinqQueue(this.changeGameTypeTask, true)
+          TaskSchedulerDefault().joinQueue(this.changeGameTypeTask, true)
           // console.log('changeGameTypeTask init')
         }
       }

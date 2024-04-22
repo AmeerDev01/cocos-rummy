@@ -1,4 +1,4 @@
-import { Node, UITransform, Vec3, instantiate, sp, Sprite, Label, Mask, Graphics, Animation } from "cc";
+import { Node, UITransform, Vec3, instantiate, sp, Sprite, Label, Mask, Graphics, Animation, Component } from "cc";
 import { sourceManageSeletor, thorv2_Audio } from "../index";
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine";
 import { getNodeByNameDeep } from "../../../utils/tool";
@@ -6,6 +6,9 @@ import { IconId } from "../type";
 import config from "../config";
 import { SoundPathDefine } from "../sourceDefine/soundDefine";
 
+class IconComponent extends Component {
+
+}
 export class ThorV2Icon {
   private node: Node;
   private faceNode: Node;
@@ -28,10 +31,13 @@ export class ThorV2Icon {
 
   private isPoolObject = true;
   private callback;
+  /**骨骼动画播放结束回调方法 */
+  private skeletonOverCallback;
   private roundIndex: number = 0;
 
   /**是否播放闪电 */
   private playLightning = false;
+  private iconComponent: IconComponent;
 
   constructor(iconConfig, isPoolObject: boolean = true) {
     this.iconConfig = iconConfig;
@@ -39,6 +45,8 @@ export class ThorV2Icon {
     this.node = instantiate(sourceManageSeletor().getFile(PrefabPathDefine.ICON).source);
     this.node.getComponent(UITransform).width = config.normalRollOption.singleRollerWidth;
     this.node.getComponent(UITransform).height = config.normalRollOption.singleRollerHeight;
+
+    this.iconComponent = this.node.addComponent(IconComponent);
 
     this.props_iconWrap = getNodeByNameDeep("props_iconWrap", this.node);
     this.faceNode = getNodeByNameDeep("iconNode_sprite", this.node);
@@ -73,14 +81,18 @@ export class ThorV2Icon {
   private listenerSkeletonEvent() {
     this.skeleton.setCompleteListener(() => {
       if (this.node.isValid) {
-        if (this.isOddsIcon() || this.isScatterIcon()) {
-          this.resetFaceAnimationNodeOrOdds();
-          this.callback && this.callback();
-          this.callback = null;
-        } else {
-          this.hideWin();
-          this.playBomb();
-        }
+        this.iconComponent.scheduleOnce(() => {
+          if (this.isOddsIcon() || this.isScatterIcon()) {
+            this.resetFaceAnimationNodeOrOdds();
+            this.callback && this.callback();
+            this.callback = null;
+          } else {
+            this.hideWin();
+            this.skeletonOverCallback && this.skeletonOverCallback();
+            this.skeletonOverCallback = undefined;
+            this.playBomb();
+          }
+        });
       }
     })
   }
@@ -88,9 +100,11 @@ export class ThorV2Icon {
   private listenerBombSkeletonEvent() {
     this.props_skeleton_bomb.setCompleteListener(() => {
       if (this.node.isValid) {
-        this.restore();
-        this.callback && this.callback();
-        this.callback = null;
+        this.iconComponent.scheduleOnce(() => {
+          this.restore();
+          this.callback && this.callback();
+          this.callback = null;
+        });
       }
     })
   }
@@ -137,7 +151,7 @@ export class ThorV2Icon {
       this.faceNode.active = true;
       this.skeleton.clearTracks()
       this.props_skeleton_bomb.node.active = false;
-      this.props_skeleton_bomb.clearTracks();
+      // this.props_skeleton_bomb.clearTracks();
       this.hideWin();
 
       !this.isPoolObject && this.destory();
@@ -184,6 +198,10 @@ export class ThorV2Icon {
 
   }
 
+  public setSkeletonOverCallback(skeletonOverCallback) {
+    this.skeletonOverCallback = skeletonOverCallback;
+  }
+
   /**播放普通中奖 */
   public playWin(parentNode: Node, roundIndex: number = 0, timeScale: number = 1, isBorder: boolean = true, loop: boolean = false, callback = undefined) {
     this.callback = callback;
@@ -206,34 +224,6 @@ export class ThorV2Icon {
     this.faceNode.active = false;
     this.props_skeleton_bomb.node.active = true;
     this.props_skeleton_bomb.setAnimation(0, 'animation', false);
-
-    this.playWinSound();
-  }
-
-  private playWinSound() {
-    let soundStr = SoundPathDefine.WIN1;
-    if (this.roundIndex === 0) {
-      soundStr = SoundPathDefine.WIN1;
-    } else if (this.roundIndex === 1) {
-      soundStr = SoundPathDefine.WIN2;
-    } else if (this.roundIndex === 2) {
-      soundStr = SoundPathDefine.WIN3;
-    } else if (this.roundIndex === 3) {
-      soundStr = SoundPathDefine.WIN4;
-    } else if (this.roundIndex === 4) {
-      soundStr = SoundPathDefine.WIN5;
-    } else if (this.roundIndex === 5) {
-      soundStr = SoundPathDefine.WIN6;
-    } else if (this.roundIndex === 6) {
-      soundStr = SoundPathDefine.WIN7;
-    } else if (this.roundIndex === 7) {
-      soundStr = SoundPathDefine.WIN8;
-    } else if (this.roundIndex === 8) {
-      soundStr = SoundPathDefine.WIN9;
-    } else if (this.roundIndex === 9) {
-      soundStr = SoundPathDefine.WIN10;
-    }
-    thorv2_Audio.playOneShot(soundStr)
   }
 
   /**隐藏普通中奖 */
@@ -242,7 +232,7 @@ export class ThorV2Icon {
     this.borderNode.active = false;
 
     this.faceNode.active = true;
-    this.skeleton.clearTracks();
+    // this.skeleton.clearTracks();
 
     this.props_label_rate_num.active = false;
   }

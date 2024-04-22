@@ -38,9 +38,8 @@ export const initState: InitStateType = {
 /**必须大写，不然redux-act要自动加序列号 */
 
 export enum ActionTypes {
-  DRAGONTGER_MENBER_INFO = "DRAGONTGER_MENBER_INFO",
   DRAGONTGER_MENBER_RESET_STORE = "DRAGONTGER_MENBER_RESET_STORE",
-
+  DRAGONTGER_MENBER_INFO = "DRAGONTGER_MENBER_INFO",
 }
 
 /**定义action的payLoad类型 */
@@ -48,6 +47,7 @@ export enum ActionTypes {
 export type ActionPayLoad<A extends ActionTypes> =
   A extends ActionTypes.DRAGONTGER_MENBER_INFO ? InitStateType :
   A extends ActionTypes.DRAGONTGER_MENBER_RESET_STORE ? { } :never;
+  
   /**初始化用户信息 */
 export const setUserInfoAction = reduxAct.createAction(ActionTypes.DRAGONTGER_MENBER_INFO,
   (userInfo:{
@@ -60,11 +60,9 @@ export const setUserInfoAction = reduxAct.createAction(ActionTypes.DRAGONTGER_ME
     memberBet?:object
   }): ActionPayLoad<ActionTypes.DRAGONTGER_MENBER_INFO> => {
     return { ...userInfo }
+})
+
+export const resetUserStore = reduxAct.createAction(ActionTypes.DRAGONTGER_MENBER_RESET_STORE,
+  (): ActionPayLoad<ActionTypes.DRAGONTGER_MENBER_RESET_STORE> => {
+    return { initState }
   })
-
-  export const resetUserStore = reduxAct.createAction(ActionTypes.DRAGONTGER_MENBER_RESET_STORE,
-    (): ActionPayLoad<ActionTypes.DRAGONTGER_MENBER_RESET_STORE> => {
-      return { initState }
-    })
-
-

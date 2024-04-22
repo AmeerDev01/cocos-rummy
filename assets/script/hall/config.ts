@@ -1,36 +1,32 @@
-import { Node, assetManager } from "cc"
-import { GameConfig, getGameMapConfig } from "../config/GameConfig"
-import { ToastType, addToastAction } from "./store/actions/baseBoard"
-import GodWealthStartUp from "../subGame/godWealth/Slot/StartUp"
-import GodWealth2StartUp from "../subGame/godWealthV2/GodWealthV2_StartUp"
-import GxfcStartUp from "../subGame/gxfc/Slot/StartUp"
-import GxfcV2StartUp from "../subGame/gxfcV2/GxfcV2_StartUp"
-import DragonStartUp from "../subGame/dragon/Slot/StartUp"
-import dragonV2_StartUp from "../subGame/dragonV2/dragonV2_StartUp"
-import EgyptStartUp from "../subGame/egypt/Slot/StartUp"
-import Egypt2StartUp from "../subGame/egyptV2/EgyptV2_StartUp"
-import CrashStartUp from "../subGame/Crash/StartUp"
-import Fruit777StartUp from "../subGame/fruit777/StartUp"
-import YxxStartUp from "../subGame/yxx/StartUp"
+import { Node } from "cc"
+import { getGameMapConfig, getIsTest } from "../config/GameConfig"
 import DragonTigerStartUp from "../subGame/dragonTiger/StartUp"
-import PhoenixStartUp from "../subGame/phoenix/Slot/StartUp"
+import dragonV2_StartUp from "../subGame/dragonV2/dragonV2_StartUp"
+import Egypt2StartUp from "../subGame/egyptV2/EgyptV2_StartUp"
+import Fruit777StartUp from "../subGame/fruit777/StartUp"
+import GodWealth2StartUp from "../subGame/godWealthV2/GodWealthV2_StartUp"
+import GxfcV2StartUp from "../subGame/gxfcV2/GxfcV2_StartUp"
 import Phoenix2StartUp from "../subGame/phoenixV2/PhoenixV2_StartUp"
-import DominoStartUp from "../subGame/domino/StartUp"
+import YxxStartUp from "../subGame/yxx/StartUp"
+import { ToastType, addToastAction } from "./store/actions/baseBoard"
+// import DominoStartUp from "../subGame/domino/StartUp"
 import BandarStartUp from "../subGame/bandar/StartUp"
-import ThorStartUp from "../subGame/thor/StartUp"
+import StarlightV2StartUp from "../subGame/starlightV2/StarlightV2_StartUp"
 import ThorV2StartUp from "../subGame/thorV2/ThorV2_StartUp"
-import starlightStartUp from "../subGame/starlight/StartUp"
-import QiuQiuStartUp from "../subGame/qiuqiu/QiuQiuStartUp"
-import BandarQiuQiuStartUp from "../subGame/bandarQiuQiu/StartUp"
-import FishStartUp from "../subGame/fish/StartUp"
-import { lang } from "../hall";
-import { DEV } from 'cc/env'
-import { getStore } from "./store"
-import { NATIVE } from "cc/env"
+// import QiuQiuStartUp from "../subGame/qiuqiu/QiuQiuStartUp"
+// import BandarQiuQiuStartUp from "../subGame/bandarQiuQiu/StartUp"
+// import FishStartUp from "../subGame/fish/StartUp"
+import { NATIVE } from 'cc/env'
+import WebSocketStarter, { SKT_HOST, WebSocketDriver } from "../common/WebSocketStarter"
 import { getPackageName } from "../common/bridge"
+import { lang } from "../hall"
+import { Country, defaultLanguageType } from "../language/languagePkg"
 import { generateUniqueId } from "../utils/tool"
 import { SkeletalPathDefine } from "./sourceDefine/skeletalDefine"
 import { SpriteFramePathDefine } from "./sourceDefine/spriteDefine"
+import { getStore } from "./store"
+import RummyStartUp from "../subGame/rummy/RummyStartUp"
+import { GameState, SubGameRunState } from "../hallType"
 
 export type SubGameConfigType = {
   "id": number,
@@ -40,16 +36,24 @@ export type SubGameConfigType = {
   "md5": string,
   "isHot"?: boolean,
   "isNew"?: boolean,
-  "vip": number
+  "vip": number,
+  "status": GameState
 }
 
+
+
 let gameConfig: SubGameConfigType[] = []
+
 // let webUniqueId: string = ''
 export type HallGameGateType = {
   /**游戏名称 */
   gameId: number,
   /**游戏名字，仅用于识别 */
   gameName: string,
+  /**host */
+  gameHost: SKT_HOST,
+  // /**游戏服务器 */
+  // gameServer: string,
   /**小主图文件 */
   fileNameSmall: string,
   /**大主图文件 */
@@ -59,7 +63,7 @@ export type HallGameGateType = {
   /**bundle名称 */
   bundleName: string,
   md5: string,
-  websocketUrl: string,
+  // websocketUrl: string,
   /**是否使用远程包 */
   enableRemote: boolean,
   /**运行状态 */
@@ -72,14 +76,20 @@ export type HallGameGateType = {
   newMark?: boolean,
   /**vip标识 */
   vipMark?: number,
+  /**状态。-1：下架；0：正常；1：维护；2：即将开放 */
+  status: GameState,
+  /**是否獨立游戲 */
+  isDepend?: boolean,
+  /**子游戏的启动prefab路径名称 */
+  startUpPrefabPathName?: string
+  /**是否是竖屏游戏 */
+  isVertical?: boolean
   startUpHandler: (boardPanel: Node) => any
 }
 export enum SubGameType {
   All, Slot, Domino, Other
 }
-export enum SubGameRunState {
-  CLOSE, INIT, LOADING, READY, CANCEL, RUN
-}
+
 export type GateQueueType = {
   typeName: SubGameType,
   toggleName: string,
@@ -98,6 +108,7 @@ export type GameConfigType = {
   /**热更主地址 */
   hotUpdateUrl: string,
   httpBaseUrl: string,
+  socketBaseUrl: string,
   goldRecordUrl: string,
   maintenanceStatus: boolean,
   isCheckHotUpdate: boolean,
@@ -112,17 +123,18 @@ export type GameConfigType = {
   fristLogin: {
     main: boolean
   },
-  wsList: Array<SubGameConfigType>
+  wsList: Array<SubGameConfigType>,
+  country: Country
 }
 /**拉取最新的配置文件 */
 export const initConfig = (): Promise<{
-  sktCode: string,
   appOnlineVersion: string,
   upgradeDesc: string,
   forceUpgrade: boolean,
   gameBundleUrl: string,
   hotUpdateUrl: string,
   httpBaseUrl: string,
+  websocketUrl: string,
   maintenanceStatus: boolean,
   appleAppDumpUrl: string,
   isCheckHotUpdate: boolean,
@@ -135,9 +147,13 @@ export const initConfig = (): Promise<{
   shareUrl: string,
   backwaterHelpUrl: string,
   faceSwitch: boolean,
-  gameConfig: SubGameConfigType[]
+  gameConfig: SubGameConfigType[],
+  country: Country
 }> => {
   return new Promise((resolve, reject) => {
+    !window.HALL_GLOBAL && (window.HALL_GLOBAL = {} as any)
+    /**游戏单独运行的时候，防止getWsInstance为空 */
+    window.HALL_GLOBAL.wsInstance = WebSocketStarter.Instance()
     getGameMapConfig().then((data) => {
       // console.log("游戏map配置读取完成~",data)
       config.gameConfig = data.wsList
@@ -148,6 +164,7 @@ export const initConfig = (): Promise<{
       config.gameBundleUrl = data.gameBundleUrl
       data.hotUpdateUrl && (config.hotUpdateUrl = data.hotUpdateUrl)
       config.httpBaseUrl = data.httpBaseUrl
+      config.websocketUrl = data.socketBaseUrl
       config.goldRecordUrl = data.goldRecordUrl
       config.maintenanceStatus = data.maintenanceStatus === undefined ? false : data.maintenanceStatus
       config.appleAppDumpUrl = data.appleAppDumpUrl
@@ -160,6 +177,7 @@ export const initConfig = (): Promise<{
       config.forceUpgrade = data.forceUpgrade
       config.backwaterHelpUrl = data.backwaterHelpUrl
       config.faceSwitch = data.faceSwitch === undefined ? true : data.faceSwitch
+      config.country = data.country || Country.CHINA
       data.relief !== undefined && (config.relief = data.relief)
       /**-------------------确认data需要具备appVersion字段---------------------- */
       // config.appOnlineVersion = 'V1.0.1'//data['appVersion']
@@ -169,7 +187,7 @@ export const initConfig = (): Promise<{
       // let isError = false
       const pkgCode = getPackageName()
       subGameList.forEach(subGame => {
-        if (subGame.gameId > 0 && !DEV) {
+        if (subGame.gameId > 0 && !getIsTest()) {
           //web模式不请求远程游戏，直接本地请求(因为远程包是android的)
           subGame.enableRemote = pkgCode === 'web' ? false : true
         }
@@ -177,15 +195,16 @@ export const initConfig = (): Promise<{
         subGame.hotMark = false
         subGame.newMark = false
         subGame.vipMark = 0
+        subGame.status = GameState.WORKING
         subGame.runState = SubGameRunState.CLOSE
         const result = data.wsList.find(i => i.id === subGame.gameId)
         if (result) {
           subGame.md5 = result.md5
-          subGame.websocketUrl = result.ws
+          // subGame.websocketUrl = result.ws
           subGame.hotMark = result.isHot || false
           subGame.newMark = result.isNew || false
           subGame.vipMark = result.vip || 0
-
+          subGame.status = result.status
         } else {
           // isError = true
           // console.error(`远程配置中未找到游戏“${subGame.gameName}”的信息`)
@@ -208,6 +227,7 @@ export const initConfig = (): Promise<{
       // 将游戏类别组揉在一起放到All里面
       subGameGateQueue.find(i => i.typeName === SubGameType.All).queue =
         subGameGateQueue.filter(i => i.typeName !== SubGameType.All).sort((a, b) => a.typeName - b.typeName).map(i => i.queue).reduce((a, b) => a.concat(b), [])
+      window.HALL_GLOBAL.config = config
       resolve(config)
     }).catch(e => {
       getStore().dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "游戏map配置读取错误~" }), type: ToastType.ERROR }))
@@ -217,21 +237,6 @@ export const initConfig = (): Promise<{
   })
 }
 
-/**这里的配置一定要与界面的列表一一对应 */
-export const rechargeChannel = [
-  { channelType: 1, name: 'Shopee', type: 1 },
-  { channelType: 1, name: 'Shopee', type: 2 },
-  { channelType: 2, name: 'VA', type: 1 },
-  { channelType: 2, name: 'VA', type: 2 },
-  { channelType: 3, name: 'DANA', type: 1 },
-  { channelType: 3, name: 'DANA', type: 2 },
-  { channelType: 4, name: 'Linkaja', type: 1 },
-  { channelType: 4, name: 'Linkaja', type: 2 },
-  { channelType: 5, name: 'OVO', type: 1 },
-  { channelType: 5, name: 'OVO', type: 2 },
-  { channelType: 6, name: 'QRIS', type: 1 },
-  { channelType: 6, name: 'QRIS', type: 2 }
-]
 export const deviceInfo = {
   /**设备唯一id */
   thisUniqueId: '',
@@ -247,7 +252,8 @@ export const deviceInfo = {
 /**这些配置都会被配置文件替换掉 */
 export const config = {
   gameId: 0,
-  sktCode: "HALL",
+  gameHost: SKT_HOST.HALL,
+  gameServer: "HALL",
   /**用于存放请求到的线上版本号，如果此值与appLocalVersion不一致时，会禁止登录并提示更新App */
   appOnlineVersion: 'V1.0.0',
   /**更新说明 */
@@ -259,7 +265,15 @@ export const config = {
   /**热更主地址 */
   hotUpdateUrl: "",
   /**http请求主域名 */
-  httpBaseUrl: "http://54.251.66.82:10001",
+  httpBaseUrl: "http://api.rummycdn.com",
+  // httpBaseUrl: "http://192.168.110.35:10000",
+  // httpBaseUrl: "http://47.129.15.199:10000",
+
+  /**websocket请求主域名 */
+  websocketUrl: "ws://192.168.110.248:10000/socket",
+  // websocketUrl: "ws://192.168.110.35:10000/socket",
+  // websocketUrl: "ws://47.129.15.199:10000/socket",
+
   /**分享url */
   shareUrl: "http://hugewin777.com",
   /**代理分享数据url */
@@ -292,6 +306,8 @@ export const config = {
   fristLogin: {
     main: false
   },
+  /**国家 */
+  country: Country.CHINA,
   gameConfig
 }
 
@@ -300,256 +316,318 @@ export let subGameList: Array<HallGameGateType> = [
   {
     gameId: 0,
     gameName: "大厅",
+    gameHost: SKT_HOST.HALL,
     fileNameSmall: "",
     fileNameLarge: "",
     nameSprite: [""],
     bundleName: "",
     md5: "",
-    websocketUrl: "",
     enableRemote: false,
     runState: SubGameRunState.CLOSE,
-    startUpHandler: () => { },
+    status: GameState.OFF_LINE,
+    startUpPrefabPathName: 'prefab/loaderPanel',
+    startUpHandler: (boardPanel) => { }
   },
   {
     gameId: 1,
     gameName: "双子星",
+    gameHost: SKT_HOST.SLOTS,
     fileNameSmall: SkeletalPathDefine._GEMINI_GATE,
     fileNameLarge: SkeletalPathDefine._GEMINI_GATE,
     nameSprite: [SpriteFramePathDefine._GEMINI_NAME_SMALL, SpriteFramePathDefine._GEMINI_NAME_LARGE],
     bundleName: "binaryStar",
     md5: "",
-    websocketUrl: "",
     enableRemote: false,
-    startUpHandler: () => { }
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    startUpPrefabPathName: "",
+    startUpHandler: (boardPanel) => { }
   },
   {
     gameId: 2,
     gameName: "多米诺",
+    gameHost: SKT_HOST.MULTI,
     fileNameSmall: SkeletalPathDefine._DOMINO_GATE_S,
     fileNameLarge: SkeletalPathDefine._CRASH_GATE_L,
     nameSprite: [SpriteFramePathDefine._DOMINO_NAME_SMALL, SpriteFramePathDefine._DOMINO_NAME_LARGE],
     bundleName: "domino",
     md5: "",
-    websocketUrl: "",
     enableRemote: false,
-    startUpHandler: (boardPanel) => DominoStartUp(boardPanel)
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    startUpPrefabPathName: "",
+    startUpHandler: (boardPanel) => { }
   },
   {
     gameId: 3,
     gameName: "水果777",
-    fileNameSmall: SkeletalPathDefine.FRUITS_GATE_S,
-    fileNameLarge: SkeletalPathDefine.FRUITS_GATE_L,
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._FRUITS_GATE_S,
+    fileNameLarge: SkeletalPathDefine._FRUITS_GATE_L,
     nameSprite: [SpriteFramePathDefine.FRUITS_NAME_SMALL, SpriteFramePathDefine.FRUITS_NAME_LARGE],
     bundleName: "fruit777",
     md5: "",
-    websocketUrl: "",
     enableRemote: false,
-    startUpHandler: (boardPanel) => Fruit777StartUp(boardPanel)
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    startUpPrefabPathName: "",
+    startUpHandler: (boardPanel) => Fruit777StartUp(boardPanel as Node)
   },
   {
     gameId: 4,
     gameName: "qiuqiu",
+    gameHost: SKT_HOST.MULTI,
     fileNameSmall: SkeletalPathDefine._QIU_QIU_S,
     fileNameLarge: SkeletalPathDefine._QIU_QIU_L,
     nameSprite: [SpriteFramePathDefine._QIU_QIU_NAME_SMALL, SpriteFramePathDefine._QIU_QIU_NAME_LARGE],
     bundleName: "qiuqiu",
     md5: "",
-    websocketUrl: "",
     enableRemote: false,
-    startUpHandler: (boardPanel) => QiuQiuStartUp(boardPanel)
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    startUpHandler: (boardPanel) => { }
   },
   {
     gameId: 5,
     gameName: "小火箭",
+    gameHost: SKT_HOST.MULTI,
     fileNameSmall: SkeletalPathDefine._CRASH_GATE_S,
     fileNameLarge: SkeletalPathDefine._CRASH_GATE_L,
     nameSprite: [SpriteFramePathDefine._CRASH_NAME_SMALL, SpriteFramePathDefine._CRASH_NAME_LARGE],
     bundleName: "Crash",
     md5: "",
-    websocketUrl: "",
     enableRemote: false,
-    startUpHandler: (boardPanel) => CrashStartUp(boardPanel as Node)
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    startUpHandler: (boardPanel) => { }
   },
-/*   {
-    gameId: 6,
-    gameName: "财神",
-    fileNameSmall: SkeletalPathDefine.CSRUKOU_GATE_S,
-    fileNameLarge: SkeletalPathDefine.CSRUKOU_GATE_L,
-    nameSprite: [SpriteFramePathDefine.CSRUKOU_NAME_SMALL, SpriteFramePathDefine.CSRUKOU_NAME_LARGE],
-    bundleName: "godWealth",
-    md5: "",
-    websocketUrl: "",
-    enableRemote: false,
-    startUpHandler: (boardPanel) => GodWealthStartUp(boardPanel as Node)
-  }, */
   {
     gameId: 6,
     gameName: "财神",
-    fileNameSmall: SkeletalPathDefine.CSRUKOU_GATE_S,
-    fileNameLarge: SkeletalPathDefine.CSRUKOU_GATE_L,
-    nameSprite: [SpriteFramePathDefine.CSRUKOU_NAME_SMALL, SpriteFramePathDefine.CSRUKOU_NAME_LARGE],
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._CSRUKOU_GATE_S,
+    fileNameLarge: SkeletalPathDefine._CSRUKOU_GATE_L,
+    nameSprite: [SpriteFramePathDefine._CSRUKOU_NAME_SMALL, SpriteFramePathDefine._CSRUKOU_NAME_LARGE],
     bundleName: "godWealthV2",
     md5: "",
-    websocketUrl: "",
     enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
     startUpHandler: (boardPanel) => GodWealth2StartUp(boardPanel as Node)
   },
-  // {
-  //   gameId: 7,
-  //   gameName: "恭喜发财",
-  //   fileNameSmall: SkeletalPathDefine.GXFC_GATE_S,
-  //   fileNameLarge: SkeletalPathDefine.GXFC_GATE_L,
-  //   nameSprite: [SpriteFramePathDefine.GXFC_NAME_SMALL, SpriteFramePathDefine.GXFC_NAME_LARGE],
-  //   bundleName: "gxfc",
-  //   md5: "bf1c3",
-  //   websocketUrl: "",
-  //   enableRemote: false,
-  //   startUpHandler: (boardPanel) => GxfcStartUp(boardPanel as Node)
-  // },
   {
     gameId: 7,
     gameName: "恭喜发财",
-    fileNameSmall: SkeletalPathDefine.GXFC_GATE_S,
-    fileNameLarge: SkeletalPathDefine.GXFC_GATE_L,
-    nameSprite: [SpriteFramePathDefine.GXFC_NAME_SMALL, SpriteFramePathDefine.GXFC_NAME_LARGE],
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._GXFC_GATE_S,
+    fileNameLarge: SkeletalPathDefine._GXFC_GATE_L,
+    nameSprite: [SpriteFramePathDefine._GXFC_NAME_SMALL, SpriteFramePathDefine._GXFC_NAME_LARGE],
     bundleName: "gxfcV2",
     md5: "bf1c3",
-    websocketUrl: "",
     enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
     startUpHandler: (boardPanel) => GxfcV2StartUp(boardPanel as Node)
   },
   {
     gameId: 8,
     gameName: "埃及",
-    fileNameSmall: SkeletalPathDefine.EGYPT_GATE_S,
-    fileNameLarge: SkeletalPathDefine.EGYPT_GATE_L,
-    nameSprite: [SpriteFramePathDefine.EGYPT_NAME_SMALL, SpriteFramePathDefine.EGYPT_NAME_LARGE],
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._EGYPT_GATE_S,
+    fileNameLarge: SkeletalPathDefine._EGYPT_GATE_L,
+    nameSprite: [SpriteFramePathDefine._EGYPT_NAME_SMALL, SpriteFramePathDefine._EGYPT_NAME_LARGE],
     bundleName: "egyptV2",
     md5: "12e85",
-    websocketUrl: "",
     enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
     startUpHandler: (boardPanel) => Egypt2StartUp(boardPanel as Node)
   },
   {
     gameId: 9,
     gameName: "追龙",
-    fileNameSmall: SkeletalPathDefine.LONG_RK_GATE_S,
-    fileNameLarge: SkeletalPathDefine.LONG_RK_GATE_L,
-    nameSprite: [SpriteFramePathDefine.LONG_RK_NAME_SMALL, SpriteFramePathDefine.LONG_RK_NAME_LARGE],
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._LONG_RK_GATE_S,
+    fileNameLarge: SkeletalPathDefine._LONG_RK_GATE_L,
+    nameSprite: [SpriteFramePathDefine._LONG_RK_NAME_SMALL, SpriteFramePathDefine._LONG_RK_NAME_LARGE],
     bundleName: "dragonV2",
     md5: "beb70",
-    websocketUrl: "",
     enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
     startUpHandler: (boardPanel) => dragonV2_StartUp(boardPanel as Node)
   },
-  // {
-  //   gameId: 10,
-  //   gameName: "凤凰",
-  //   fileNameSmall: SkeletalPathDefine.GENG_HUANG_GATE_S,
-  //   fileNameLarge: SkeletalPathDefine.GENG_HUANG_GATE_L,
-  //   nameSprite: [SpriteFramePathDefine.GENG_HUANG_NAME_SMALL, SpriteFramePathDefine.GENG_HUANG_NAME_LARGE],
-  //   bundleName: "phoenix",
-  //   md5: "",
-  //   websocketUrl: "",
-  //   enableRemote: false,
-  //   startUpHandler: (boardPanel) => PhoenixStartUp(boardPanel as Node)
-  // },
-    {
-      gameId: 10,
-      gameName: "凤凰",
-      fileNameSmall: SkeletalPathDefine.GENG_HUANG_GATE_S,
-      fileNameLarge: SkeletalPathDefine.GENG_HUANG_GATE_L,
-      nameSprite: [SpriteFramePathDefine.GENG_HUANG_NAME_SMALL, SpriteFramePathDefine.GENG_HUANG_NAME_LARGE],
-      bundleName: "phoenixV2",
-      md5: "",
-      websocketUrl: "",
-      enableRemote: false,
-      startUpHandler: (boardPanel) => Phoenix2StartUp(boardPanel as Node)
-    },
+  {
+    gameId: 10,
+    gameName: "凤凰",
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._GENG_HUANG_GATE_S,
+    fileNameLarge: SkeletalPathDefine._GENG_HUANG_GATE_L,
+    nameSprite: [SpriteFramePathDefine._GENG_HUANG_NAME_SMALL, SpriteFramePathDefine._GENG_HUANG_NAME_LARGE],
+    bundleName: "phoenixV2",
+    md5: "",
+    enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    startUpHandler: (boardPanel) => Phoenix2StartUp(boardPanel as Node)
+  },
   {
     gameId: 11,
     gameName: "鱼虾蟹",
+    gameHost: SKT_HOST.MULTI,
     fileNameSmall: SkeletalPathDefine._YXXRK_GATE_S,
     fileNameLarge: SkeletalPathDefine._YXXRK_GATE_L,
     nameSprite: [SpriteFramePathDefine._YXXRK_NAME_SMALL, SpriteFramePathDefine._YXXRK_NAME_LARGE],
     bundleName: "yxx",
-    websocketUrl: "",
     md5: "",
     enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
     startUpHandler: (boardPanel) => YxxStartUp(boardPanel as Node)
   },
   {
     gameId: 12,
     gameName: "龙虎",
+    gameHost: SKT_HOST.MULTI,
     fileNameSmall: SkeletalPathDefine._DRAGON_TIGER_GATE_S,
     fileNameLarge: SkeletalPathDefine._DRAGON_TIGER_GATE_L,
     nameSprite: [SpriteFramePathDefine._DRAGON_TIGER_SMALL, SpriteFramePathDefine._DRAGON_TIGER_LARGE],
     bundleName: "dragonTiger",
-    websocketUrl: "",
     md5: "",
     enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
     startUpHandler: (boardPanel) => DragonTigerStartUp(boardPanel as Node)
   },
   {
     gameId: 13,
     gameName: "百人球球",
+    gameHost: SKT_HOST.MULTI,
     fileNameSmall: SkeletalPathDefine._BANDAR_S,
     fileNameLarge: SkeletalPathDefine._BANDAR_L,
     nameSprite: [SpriteFramePathDefine._BANDAR_SMALL, SpriteFramePathDefine._BANDAR_LARGE],
     bundleName: "bandar",
-    websocketUrl: "",
     md5: "",
     enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
     startUpHandler: (boardPanel) => BandarStartUp(boardPanel as Node)
   },
   {
     gameId: 14,
     gameName: "雷神",
-    fileNameSmall: SkeletalPathDefine.THOR_S,
-    fileNameLarge: SkeletalPathDefine.THOR_L,
-    nameSprite: [SpriteFramePathDefine.THOR_SMALL, SpriteFramePathDefine.THOR_LARGE],
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._THOR_S,
+    fileNameLarge: SkeletalPathDefine._THOR_L,
+    nameSprite: [SpriteFramePathDefine._THOR_SMALL, SpriteFramePathDefine._THOR_LARGE],
     bundleName: "thorV2",
-    websocketUrl: "",
     md5: "",
     enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
     startUpHandler: (boardPanel) => ThorV2StartUp(boardPanel as Node)
   },
   {
     gameId: 15,
     gameName: "星光公主",
-    fileNameSmall: SkeletalPathDefine.STAR_S,
-    fileNameLarge: SkeletalPathDefine.STAR_L,
-    nameSprite: [SpriteFramePathDefine.STAR_SMALL, SpriteFramePathDefine.STAR_LARGE],
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._STAR_S,
+    fileNameLarge: SkeletalPathDefine._STAR_L,
+    nameSprite: [SpriteFramePathDefine._STAR_SMALL, SpriteFramePathDefine._STAR_LARGE],
     bundleName: "starlight",
-    websocketUrl: "",
     md5: "",
     enableRemote: false,
-    startUpHandler: (boardPanel) => starlightStartUp(boardPanel as Node)
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    startUpHandler: (boardPanel) => StarlightV2StartUp(boardPanel as Node)
   },
   {
     gameId: 16,
     gameName: "BandarQiuQiu",
+    gameHost: SKT_HOST.MULTI,
     fileNameSmall: SkeletalPathDefine._BANDARQIUQIU_S,
     fileNameLarge: SkeletalPathDefine._BANDARQIUQIU_L,
     nameSprite: [SpriteFramePathDefine._BANDARQIUQIU_SMALL, SpriteFramePathDefine._BANDARQIUQIU_LARGE],
     bundleName: "bandar-qiuqiu",
-    websocketUrl: "",
     md5: "",
     enableRemote: false,
-    startUpHandler: (boardPanel) => BandarQiuQiuStartUp(boardPanel as Node)
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    startUpHandler: (boardPanel) => { }
   },
   {
     gameId: 17,
     gameName: "Fish",
-    fileNameSmall: SkeletalPathDefine.FISHING_S,
-    fileNameLarge: SkeletalPathDefine.FISHING_L,
-    nameSprite: [SpriteFramePathDefine.FISH_SMALL, SpriteFramePathDefine.FISH_LARGE],
+    gameHost: SKT_HOST.MULTI,
+    fileNameSmall: SkeletalPathDefine._FISHING_S,
+    fileNameLarge: SkeletalPathDefine._FISHING_L,
+    nameSprite: [SpriteFramePathDefine._FISH_SMALL, SpriteFramePathDefine._FISH_LARGE],
     bundleName: "fish",
-    websocketUrl: "",
     md5: "",
     enableRemote: false,
-    startUpHandler: (boardPanel) => FishStartUp(boardPanel as Node)
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    startUpHandler: (boardPanel) => { }
   },
+  {
+    gameId: 18,
+    gameName: "DFDC",
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._DFDC_S,
+    fileNameLarge: SkeletalPathDefine._DFDC_L,
+    nameSprite: [SpriteFramePathDefine._DFDC_SMALL, SpriteFramePathDefine._DFDC_LARGE],
+    bundleName: "dfdc",
+    md5: "",
+    enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    isDepend: true,
+    startUpHandler: (boardPanel) => { }
+  },
+  {
+    gameId: 19,
+    gameName: "RUMMY",
+    gameHost: SKT_HOST.BATTLE,
+    fileNameSmall: SkeletalPathDefine._RUMMY_S,
+    fileNameLarge: SkeletalPathDefine._RUMMY_L,
+    nameSprite: [SpriteFramePathDefine._RUMMY_SMALL, SpriteFramePathDefine._RUMMY_LARGE],
+    bundleName: "rummy",
+    md5: "",
+    enableRemote: false,
+    status: GameState.OFF_LINE,
+    isVertical: false,
+    startUpHandler: (boardPanel) => RummyStartUp(boardPanel as Node)
+  },
+  {
+    gameId: 20,
+    gameName: "FortuneMouse",
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._FORTUNET_TIGER_S,
+    fileNameLarge: SkeletalPathDefine._FORTUNET_TIGER_L,
+    nameSprite: [SpriteFramePathDefine._FORTUNET_TIGER_SMALL, SpriteFramePathDefine._FORTUNET_TIGER_LARGE],
+    bundleName: "fortuneMouse",
+    md5: "",
+    enableRemote: false,
+    status: GameState.OFF_LINE,
+    isDepend: true,
+    isVertical: true,
+    startUpHandler: (boardPanel) => { }
+  },
+  {
+    gameId: 21,
+    gameName: "FortuneTiger",
+    gameHost: SKT_HOST.SLOTS,
+    fileNameSmall: SkeletalPathDefine._FORTUNET_TIGER_S,
+    fileNameLarge: SkeletalPathDefine._FORTUNET_TIGER_L,
+    nameSprite: [SpriteFramePathDefine._FORTUNET_TIGER_SMALL, SpriteFramePathDefine._FORTUNET_TIGER_LARGE],
+    bundleName: "fortuneTiger",
+    md5: "",
+    enableRemote: false,
+    status: GameState.OFF_LINE,
+    isDepend: true,
+    isVertical: true,
+    startUpHandler: (boardPanel) => { }
+  }
 ]
 
 /** 大厅的游戏入口排列信息 */
@@ -588,7 +666,7 @@ export const subGameGateQueue: Array<GateQueueType> = [
 ]
 
 export const vipMap = [
-  [1, 100000], [2, 500000], [3, 1000000], [4, 5000000], [5, 10000000], [6, 30000000], [7, 80000000], [8, 100000000], [9, 200000000], [10, 300000000], [11, 500000000], [12, 800000000], [13, 1000000000], [14, 5000000000], [15, 10000000000]
+  [1, 1], [2, 9999], [3, 10000], [4, 30000], [5, 20000], [6, 30000], [7, 50000], [8, 50000], [9, 100000], [10, 200000], [11, 300000], [12, 200000], [13, 500000], [14, 500000], [15, 500000], [16, 500000], [17, 500000], [18, 500000], [19, 500000], [20, 500000], [21, 1000000], [22, 2000000], [23, 2000000], [24, 5000000], [25, 10000000]
 ]
 
 export const levelMap = [

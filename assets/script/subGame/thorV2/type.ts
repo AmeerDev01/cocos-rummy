@@ -165,7 +165,7 @@ export enum JactpotType {
 }
 
 export type AuthDataVo = {
-  coinsBeforeBetting: number,
+  bl: number,
   freeGameCoins: number,
   freeGameCount: number,
   totalFreeGameCount: number,
@@ -336,9 +336,9 @@ export const isLimit = (autoLauncherType: AutoLauncherType) => {
 }
 
 /**是否自动 */
-export const isAuto = (autoLauncherInfo: AutoLauncherInfo, gameTypeInfo: GameTypeInfo) => {
+export const isAuto = (autoLauncherInfo: AutoLauncherInfo, gameTypeInfo: GameTypeInfo, isCalSubGame: boolean = true) => {
   // 小游戏中都是自动
-  if (gameTypeInfo.viewGameType !== GameType.MAIN && gameTypeInfo.viewGameType === gameTypeInfo.currGameType) {
+  if (isCalSubGame && gameTypeInfo.viewGameType !== GameType.MAIN && gameTypeInfo.viewGameType === gameTypeInfo.currGameType) {
     return true;
   }
   if (autoLauncherInfo) {

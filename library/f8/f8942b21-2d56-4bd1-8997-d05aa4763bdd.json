@@ -5,13 +5,13 @@
   "_native": "",
   "_skeletonJson": {
     "skeleton": {
-      "hash": "Wr0BA46qvUpQhiXCpXTBrnA20YI",
+      "hash": "lRGVVzxu7eF2oQEuF3dgizc6XPc",
       "spine": "3.8.99",
       "x": -354,
       "y": -321,
       "width": 711,
       "height": 642,
-      "images": "E:/新版UI/平台/大厅new/动画/源文件/手机绑定优化/1",
+      "images": "./1/",
       "audio": ""
     },
     "bones": [

@@ -1,31 +1,33 @@
 /****************************************************************************
-Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2013-2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
-http://www.cocos2d-x.org
+ http://www.cocos2d-x.org
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
  ****************************************************************************/
 package com.cocos.lib;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -34,6 +36,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -52,8 +55,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.app.Activity;
-import android.content.Intent;
+import android.widget.Toast;
+
 
 public class CocosEditBoxActivity extends Activity {
 
@@ -83,6 +86,7 @@ public class CocosEditBoxActivity extends Activity {
         private float mLineWidth = 2f;
         private boolean keyboardVisible = false;
         private int mScreenHeight;
+        private boolean mCheckKeyboardShowNormally = false;
 
         public  Cocos2dxEditText(Activity context){
             super(context);
@@ -90,7 +94,7 @@ public class CocosEditBoxActivity extends Activity {
             this.setBackground(null);
             this.setTextColor(Color.BLACK);
             mScreenHeight = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).
-                    getDefaultDisplay().getHeight();
+                getDefaultDisplay().getHeight();
             mPaint = new Paint();
             mPaint.setStrokeWidth(mLineWidth);
             mPaint.setStyle(Paint.Style.FILL);
@@ -125,8 +129,8 @@ public class CocosEditBoxActivity extends Activity {
             // draw the underline
             int padB = this.getPaddingBottom();
             canvas.drawLine(getScrollX(), this.getHeight() - padB / 2 - mLineWidth,
-                    getScrollX() + this.getWidth(),
-                    this.getHeight() - padB / 2 - mLineWidth, mPaint);
+                getScrollX() + this.getWidth(),
+                this.getHeight() - padB / 2 - mLineWidth, mPaint);
             super.onDraw(canvas);
         }
 
@@ -188,6 +192,7 @@ public class CocosEditBoxActivity extends Activity {
         }
 
         private void setInputType(final String inputType, boolean isMultiLine){
+            mCheckKeyboardShowNormally = false;
             if (inputType.contentEquals("text")) {
                 if (isMultiLine)
                     this.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
@@ -200,8 +205,12 @@ public class CocosEditBoxActivity extends Activity {
                 this.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
             else if (inputType.contentEquals("phone"))
                 this.setInputType(InputType.TYPE_CLASS_PHONE);
-            else if (inputType.contentEquals("password"))
+            else if (inputType.contentEquals("password")) {
+                if (Build.BRAND.equalsIgnoreCase("oppo")) {
+                    mCheckKeyboardShowNormally = true;
+                }
                 this.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            }
             else
                 Log.e(TAG, "unknown input type " + inputType);
         }
@@ -241,6 +250,9 @@ public class CocosEditBoxActivity extends Activity {
                             keyboardVisible = true;
                         }
                     } else {
+                        if (mCheckKeyboardShowNormally && !keyboardVisible) {
+                            Toast.makeText(CocosEditBoxActivity.this, R.string.tip_disable_safe_input_type, Toast.LENGTH_SHORT).show();
+                        }
                         if (keyboardVisible) {
                             keyboardVisible = false;
                             CocosEditBoxActivity.this.hide();
@@ -259,8 +271,8 @@ public class CocosEditBoxActivity extends Activity {
         CocosEditBoxActivity.sThis = this;
 
         ViewGroup.LayoutParams frameLayoutParams =
-                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT);
+            new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
         RelativeLayout frameLayout = new RelativeLayout(this);
         frameLayout.setLayoutParams(frameLayoutParams);
         frameLayout.setClickable(true);
@@ -290,7 +302,7 @@ public class CocosEditBoxActivity extends Activity {
                 false,
                 "done",
                 "text"
-                );
+            );
         } else {
             show(extras.getString("defaultValue"),
                 extras.getInt("maxLength"),
@@ -314,7 +326,7 @@ public class CocosEditBoxActivity extends Activity {
         this.addButton(myLayout);
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         layout.addView(myLayout, layoutParams);
 
@@ -336,7 +348,7 @@ public class CocosEditBoxActivity extends Activity {
         mEditText.setBackgroundColor(Color.WHITE);
         mEditText.setId(mEditTextID);
         RelativeLayout.LayoutParams editParams = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         editParams.addRule(RelativeLayout.LEFT_OF, mButtonLayoutID);
         layout.addView(mEditText, editParams);
     }
@@ -349,7 +361,7 @@ public class CocosEditBoxActivity extends Activity {
         mButtonLayout = new RelativeLayout(GlobalObject.getActivity());
         mButtonLayout.setBackgroundColor(Color.WHITE);
         RelativeLayout.LayoutParams buttonLayoutParams = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         buttonLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         buttonLayoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, mEditTextID);
         buttonLayoutParams.addRule(RelativeLayout.ALIGN_TOP, mEditTextID);
@@ -468,7 +480,7 @@ public class CocosEditBoxActivity extends Activity {
      Native functions invoked by UI.
      **************************************************************************************/
     private void onKeyboardInput(String text) {
-        CocosHelper.runOnGameThreadAtForeground(new Runnable() {
+        CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
                 CocosEditBoxActivity.onKeyboardInputNative(text);
@@ -477,7 +489,7 @@ public class CocosEditBoxActivity extends Activity {
     }
 
     private void onKeyboardComplete(String text) {
-        CocosHelper.runOnGameThreadAtForeground(new Runnable() {
+        CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
                 CocosEditBoxActivity.onKeyboardCompleteNative(text);
@@ -486,7 +498,7 @@ public class CocosEditBoxActivity extends Activity {
     }
 
     private void onKeyboardConfirm(String text) {
-        CocosHelper.runOnGameThreadAtForeground(new Runnable() {
+        CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
                 CocosEditBoxActivity.onKeyboardConfirmNative(text);

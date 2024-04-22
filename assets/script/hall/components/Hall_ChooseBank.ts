@@ -1,6 +1,6 @@
 import { _decorator, assetManager, Button, Component, ImageAsset, instantiate, Label, Node, Sprite, SpriteFrame } from 'cc';
 import { BaseComponent } from '../../base/BaseComponent';
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from '../socketConnect';
+import { SKT_MAG_TYPE, hallWebSocketDriver } from '../socketConnect';
 import { setLoadingAction } from '../store/actions/baseBoard';
 import { ChannelItemType } from './Hall_ShopPanel';
 import { global, hallAudio } from '../index';
@@ -59,15 +59,16 @@ export class Hall_ChooseBank extends BaseComponent<IState, IProps, IEvent> {
 			}
 		})
 
-		sktMsgListener.add(SKT_MAG_TYPE.GET_WITH_DRAW_CHANNEL, 'chooseBank', (data: ChannelItemType[]) => {
+		hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GET_WITH_DRAW_CHANNEL, 'chooseBank', (data: ChannelItemType[], error) => {
+			if (error) return
 			if (this.props.onlyDisplayArr.length) {
 				this.setState({ dataList: data.filter(i => this.props.onlyDisplayArr.indexOf(i.id) !== -1) })
 			} else {
 				this.setState({ dataList: data })
 			}
-			global.hallDispatch(setLoadingAction({ isShow: false }))
+			// global.hallDispatch(setLoadingAction({ isShow: false }))
 		})
-		sktInstance.sendSktMessage(SKT_MAG_TYPE.GET_WITH_DRAW_CHANNEL, {}, { isLoading: true })
+		hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GET_WITH_DRAW_CHANNEL, {}, { isLoading: true })
 	}
 
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) { }
@@ -96,7 +97,7 @@ export class Hall_ChooseBank extends BaseComponent<IState, IProps, IEvent> {
 		})
 	}
 	protected onDestroy() {
-		sktMsgListener.removeById("chooseBank")
+		hallWebSocketDriver.sktMsgListener.removeById("chooseBank")
 	}
 	update(deltaTime: number) { }
 }

@@ -11,10 +11,10 @@ import SetViewModel from './DragonTigerSetViewModel';
 import RuleViewModel from './DragonTigerRuleViewModel';
 import { global } from '../../../hall';
 import { gameTime, hisTime, timer } from '../components/DragonTiger_MainPanel';
-import { resetPokerStore, setPokerLeftAction, setPokerRightAction, setReadyPAction, setSendedPAction, setTipsAction, updatePokerInfo } from '../store/actions/pokerDetail';
-import { changeGameTypeAction, resetHistoryStore, setMemberBetAction } from '../store/actions/history';
-import { changeAllWinUsersAction, changeCancelBetDataAction, changeGoldDataAction, resetStore, setNewBetDataAction, setUsersInfoAction } from '../store/actions/game';
-import { resetUserStore } from '../store/actions/userInfo';
+import { setPokerLeftAction, setPokerRightAction, setReadyPAction, setSendedPAction, setTipsAction } from '../store/actions/pokerDetail';
+import { changeGameTypeAction, setMemberBetAction } from '../store/actions/history';
+import { changeAllWinUsersAction, changeCancelBetDataAction, changeGoldDataAction, setNewBetDataAction, setUsersInfoAction } from '../store/actions/game';
+import { usersViewModel } from './DragonTigerMainViewModel';
 
 
 const { ccclass, property } = _decorator;
@@ -52,25 +52,18 @@ class TitleViewModel extends ViewModel<DragonTiger_title, IProps, IEvent> {
         })
   }
   public clearCacheData() {
-    this.dispatch(resetStore(null));
-    this.dispatch(resetHistoryStore(null));
-    this.dispatch(resetPokerStore(null));
-    this.dispatch(resetUserStore(null));
     this.dispatch(changeGoldDataAction({}));
     this.dispatch(setTipsAction(null));
     this.dispatch(setSendedPAction(0));
     this.dispatch(setReadyPAction(0));
     this.dispatch(changeGameTypeAction(null));
     this.dispatch(setMemberBetAction(null));
-    this.dispatch(updatePokerInfo(null));
     this.dispatch(setPokerLeftAction(null));
     this.dispatch(setPokerRightAction(null));
     this.dispatch(setNewBetDataAction(null));
     this.dispatch(changeCancelBetDataAction(null));
     this.dispatch(setUsersInfoAction(null));
     this.dispatch(changeAllWinUsersAction(null));
-
-
 
   }
     

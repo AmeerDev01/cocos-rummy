@@ -180,7 +180,7 @@
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -275,8 +275,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 251,
-      "height": 29
+      "width": 189,
+      "height": 32
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -411,7 +411,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 585.62,
+      "width": 488.88,
       "height": 90.4
     },
     "_anchorPoint": {
@@ -446,7 +446,7 @@
       "b": 255,
       "a": 255
     },
-    "_string": "Kau tidak punya cukup koin, kami akan memberikanmu \n000 koin sebagai hadiah.",
+    "_string": "You don't have enough coins, we will give you \n000 coins as a reward.",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 22,
@@ -600,8 +600,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 138,
-      "height": 22
+      "width": 103,
+      "height": 27
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -636,7 +636,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "eed263ac-abc9-476f-bec2-a14fd7823596@f9941",
+      "__uuid__": "af1df1f7-f23f-41a9-80f0-339068cb571d@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -725,7 +725,7 @@
     },
     "_type": 1,
     "_fillType": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 1,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,

@@ -17,7 +17,7 @@ export enum SKT_MAG_TYPE {
   /**充值返回 */
   TOP_UP = "10",
   /**游戏权限提示语 */
-  GAME_TIP="11",
+  GAME_TIP = "11",
   /** 倒计时 */
   GAMESTATUS_CRASH = "8101",
   /** 下注总金币数 */
@@ -61,7 +61,7 @@ export default () => {
           },
           onDataFail: (data: any) => {
             dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDateFail, {}, { placeStr: "连接失败" }) }))
-            dispatch(setLoadingAction({ isShow: false }))
+            // dispatch(setLoadingAction({ isShow: false }))
           },
           onAnthFail: () => {
             dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "Auth Faild" }) }))
@@ -92,7 +92,7 @@ export default () => {
           global.hallDispatch(addToastAction({ content: lang.write(k => k.InitGameModule.GameBoardInit, {}, { placeStr: "游戏初始化失败" }) }))
           removeInstance()
           window.setTimeout(() => {
-            global.closeSubGame({ isPre: true })
+            global.closeSubGame()
           }, 1500)
         })
       }).catch(e => {

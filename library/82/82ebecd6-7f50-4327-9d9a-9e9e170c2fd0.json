@@ -1681,7 +1681,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 139.37,
+      "width": 173.57,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -1716,7 +1716,7 @@
       "b": 100,
       "a": 255
     },
-    "_string": "Blok Animasi",
+    "_string": "Animation Block",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 22,

@@ -1,11 +1,14 @@
 import { default as redux } from "redux"
-import WebSocketToDo from "../common/WebSocketToDo"
-import { initConfig, config as hallConfig, subGameList, config } from "./config"
+import { initConfig, config as hallConfig, subGameList, config, HallGameGateType } from "./config"
 import { ToastType, addToastAction, setLoadingAction, setSocketConnectStatus } from "./store/actions/baseBoard"
 import { listenerFactoy } from "../common/listenerFactoy"
 import { getStore } from "./store"
 import { baseBoardView, global } from "./index"
 import { lang } from "./index"
+import { sys } from "cc"
+import WebSocketStarter, { EVEVT_TYPE, SKT_OPERATION, WebSocketDriver } from "../common/WebSocketStarter"
+import ModalBox from "../common/ModalBox"
+import { Task, TaskSchedulerDefault } from "../utils/TaskScheduler"
 
 export enum SKT_MAG_TYPE {
   /**强制退出 */
@@ -26,6 +29,10 @@ export enum SKT_MAG_TYPE {
   MODIFY_MEMBER_INFO = "416",
   /**修改绑定手机 */
   MODIFY_BIND_PHONE = "408",
+  /**邮箱最新消息推送 */
+  NEW_MAIL = "409",
+  /**首页弹出 */
+  POP_UPS = "403",
   /**跑马灯 */
   MAEQUEE = "404",
   /**提现人员列表 */
@@ -50,69 +57,88 @@ export enum SKT_MAG_TYPE {
   FRIST_LOGIN = "430"
 }
 
-export const sktMsgListener = listenerFactoy<SKT_MAG_TYPE>()
-
-export let sktInstance: WebSocketToDo<SKT_MAG_TYPE> = null
-
-export default () => {
-  const dispatch = getStore().dispatch
-  return new Promise((resolve, reject) => {
-    if (sktInstance) {
-      resolve(sktInstance)
+// export const sktMsgListener = listenerFactoy<SKT_MAG_TYPE>()
+// export let sktInstance: WebSocketToDo<SKT_MAG_TYPE> = null
+export let hallWebSocketDriver: WebSocketDriver<SKT_MAG_TYPE> = new WebSocketDriver<SKT_MAG_TYPE>(config.gameId, config.gameHost)
+hallWebSocketDriver.filterData = (data, source) => {
+  if (source.operation === SKT_OPERATION.RECOVER && baseBoardView) {
+    if (!baseBoardView.comp.props.openGameInfo) {
+      const hallGameGate: HallGameGateType = subGameList.find(i => i.gameId === source.gameId)
+      if (hallGameGate) {
+        const openResetConfirm = (callback?: Function) => {
+          window.setTimeout(() => {
+            ModalBox.Instance().show({ content: lang.write(k => k.HallModule.UnfinishedGames, { game: hallGameGate.gameName }, { placeStr: "您还有未完成的游戏，请继续" }), type: "Prompt" }, () => {
+              try {
+                const gateViewModel = baseBoardView.mainPanelViewModel.comp.gateViewModelList.find(vm => vm.comp.props.gamesIds.indexOf(hallGameGate.gameId) !== -1)
+                if (gateViewModel && gateViewModel.comp) {
+                  gateViewModel.comp.openGateGame(hallGameGate.gameId)
+                } else {
+                  global.hallDispatch(addToastAction({ content: `gameId error:${source.gameId}`, type: ToastType.ERROR, forceLandscape: false }))
+                }
+              } catch (e) {
+                global.hallDispatch(addToastAction({ content: e, type: ToastType.ERROR, forceLandscape: false }))
+              }
+              callback && callback()
+              return true
+            })
+          }, 1000)
+        }
+        if (baseBoardView.mainPanelViewModel && baseBoardView.mainPanelViewModel.isBeginPop) {
+          //已经开始弹窗了
+          TaskSchedulerDefault().joinQueue(new Task((done) => {
+            openResetConfirm(done)
+          }))
+        } else {
+          //还没开始弹窗，那弹个der，直接弹恢复游戏的弹窗
+          baseBoardView.mainPanelViewModel && (baseBoardView.mainPanelViewModel.isBeginPop = true)
+          openResetConfirm()
+        }
+      }
     } else {
-      sktInstance = new WebSocketToDo<SKT_MAG_TYPE>()
-      sktInstance.maxReConnectTimes = 5
-      initConfig().then((config) => {
-        const { gameId, websocketUrl } = subGameList.find(i => i.gameId === hallConfig.gameId)
-        sktInstance.init(config.sktCode, gameId, websocketUrl, {
-          onMessage: (code, data) => {
-            dispatch(setSocketConnectStatus({ isConnect: true, retryConnectTimes: 1 }))
-            sktMsgListener.dispath(code, data || undefined)
-          },
-          onDataFail: (data: any) => {
-            dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDateFail, {}, { placeStr: "连接失败~" }), type: ToastType.ERROR }))
-            dispatch(setLoadingAction({ isShow: false }))
-          },
-          onAnthFail: () => {
-            baseBoardView && baseBoardView.mainPanelViewModel && baseBoardView.mainPanelViewModel.logOut()
-          },
-          onDisconnect: (data: any) => {
-            dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDisconnect, {}, { placeStr: "Network disconnect" }), type: ToastType.ERROR }))
-            dispatch(setLoadingAction({ isShow: false }))
-            dispatch(setSocketConnectStatus({ isConnect: false }))
-          },
-          onReConnect: (times) => {
-            console.log('retry', times)
-            if (times > sktInstance.maxReConnectTimes) {
-              return false
-            }
-            return true
+      //游戏中，需要游戏自行LOGIN
+    }
+    return
+  }
+  if (data.code === '200') {
+    return {
+      data: data.data,
+      error: undefined
+    }
+  } else {
+    console.error(data, source)
+    global.hallDispatch(addToastAction({ content: `${data.message}[${data.code}]`, type: ToastType.ERROR, forceLandscape: false }))
+    return {
+      data: '', error: data.message
+    }
+  }
+}
+export default () => {
+  return new Promise((resolve, reject) => {
+    initConfig().then((config) => {
+      WebSocketStarter.Instance().initSocket().then(() => {
+        const wss = WebSocketStarter.Instance()
+        wss.eventListener.add(EVEVT_TYPE.HEART_BEAT, '', () => {
+          if (!wss.isConnect || wss.isReconnecting) {
+            global.hallDispatch(setSocketConnectStatus({ isConnect: true, remainRetryCount: wss.maxReconnectTime }))
           }
         })
-        sktInstance.initSocket().then(() => {
-          // dispatch(addToastAction({ content: "socket已连接" }))
-          dispatch(setSocketConnectStatus({ isConnect: true, retryConnectTimes: 1 }))
-          global.hallDispatch(setLoadingAction({ isShow: false }))
-          resolve(sktInstance)
+        wss.eventListener.add(EVEVT_TYPE.DISCONNECT, '', () => {
+          global.hallDispatch(setSocketConnectStatus({ isConnect: false, remainRetryCount: wss.remainRetryCount }))
         })
-      }).catch((e) => {
-        reject(e)
-        // dispatch(addToastAction({ content: "配置文件获取失败:" + e }))
+        wss.eventListener.add(EVEVT_TYPE.OPEN, '', () => {
+          global.hallDispatch(setSocketConnectStatus({ isConnect: true, remainRetryCount: wss.maxReconnectTime }))
+        })
+        wss.eventListener.add(EVEVT_TYPE.WARN, '', () => {
+          global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.NetworkInstability, {}, { placeStr: "网络不稳定" }), type: ToastType.ERROR, forceLandscape: false }))
+        })
+        wss.eventListener.add(EVEVT_TYPE.RECONNECT, '', (remainRetryCount) => {
+          global.hallDispatch(setSocketConnectStatus({ isConnect: false, remainRetryCount }))
+        })
+        resolve(hallWebSocketDriver)
       })
-      // sktInstance.initSocket().then(() => {
-      //   // dispatch(addToastAction({ content: "socket已连接" }))
-      //   resolve(sktInstance)
-      // })
-      // initConfig().then((config) => {
-
-      // }).catch((e) => {
-      //   reject(e)
-      //   // dispatch(addToastAction({ content: "配置文件获取失败:" + e }))
-      // })
-    }
+    }).catch((e) => {
+      reject(e)
+    })
   })
 }
 
-export const removeInstance = () => {
-  sktInstance = null
-}

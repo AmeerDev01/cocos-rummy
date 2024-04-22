@@ -1,19 +1,16 @@
-import { default as redux } from "redux"
-import WebSocketToDo from "../../common/WebSocketToDo"
-import { listenerFactoy } from "../../common/listenerFactoy"
 import { initConfig, subGameList } from "../../hall/config"
 import config from "./config"
 import { ToastType, addToastAction, setLoadingAction } from "../../hall/store/actions/baseBoard"
 import store, { getStore } from "./store"
 import { global, lang } from "../../hall"
+import  { EVEVT_TYPE, SKT_OPERATION, WebSocketDriver } from "../../common/WebSocketStarter"
 
 export enum SKT_MAG_TYPE {
-  /**心跳 */
-  HEART_BEAT = "1",
+  LOGIN = "1",
+  LOGOUT = "3",
   /**认证 */
-  AUTH = "2",
   /**启动下注 */
-  LAUNCHER_BET = "501",
+  LAUNCHER_BET = "2",
   /**JACKPOT */
   JACKPOT = "7",
   /**更新金币 */
@@ -22,69 +19,66 @@ export enum SKT_MAG_TYPE {
   VACATETHEROOM = "3"
 }
 
-export const sktMsgListener = listenerFactoy<SKT_MAG_TYPE>()
-
-export let sktInstance: WebSocketToDo<SKT_MAG_TYPE> = null
+export let fruit777WebSocketDriver: WebSocketDriver<SKT_MAG_TYPE> = null
 export default () => {
-  const dispatch = getStore().dispatch
   return new Promise((resolve, reject) => {
-    if (sktInstance) {
-      resolve(sktInstance)
-    } else {
-      sktInstance = new WebSocketToDo<SKT_MAG_TYPE>()
-      initConfig().then(() => {
-        const { gameId, websocketUrl } = subGameList.find(i => i.gameId === config.gameId)
-        sktInstance.init(config.sktCode, gameId, websocketUrl, {
-          onMessage: (code, data, error) => {
-            sktMsgListener.dispath(code, data, error)
-          },
-          onDataFail: (code: any) => {
-            if (code === SKT_MAG_TYPE.LAUNCHER_BET) {
-              global.closeSubGame({
-                confirmContent: (lang.write(k => k.WebSocketModule.socketConnectDateFail) + '-' + code)
-              })
-            } else {
-              dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDateFail, {}, { placeStr: "连接失败" }) + '-' + code }))
-              dispatch(setLoadingAction({ isShow: false }))
-            }
-          },
-          onAnthFail: (reason) => {
-            dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "Auth Faild" }) }))
-            global.closeSubGame({ confirmContent: reason || lang.write(k => k.WebSocketModule.socketConnectAuthFaild) })
-          },
-          onDisconnect: (data: any) => {
-            // dispatch(setLoadingAction({ isShow: false }))
-            global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.socketConnectDisconnect, {}, { placeStr: "网络已断开连接" }) })
-          },
-          onReConnect: (times) => {
-            if (times > sktInstance.maxReConnectTimes) {
-              return false
-            }
-            return true
+    initConfig().then(() => {
+      const { gameId, gameHost } = subGameList.find(i => i.gameId === config.gameId)
+      window.HALL_GLOBAL.wsInstance.initSocket().then(() => {
+        fruit777WebSocketDriver = new WebSocketDriver<SKT_MAG_TYPE>(gameId, gameHost)
+        fruit777WebSocketDriver.filterData = (data, source) => {
+          if (source.operation === SKT_OPERATION.RECOVER) {
+            gameLogin()
+            return
           }
-        })
-        sktInstance.initSocket().then(() => {
-          resolve(sktInstance)
-        }).catch(e => {
-          global.hallDispatch(addToastAction({ content: lang.write(k => k.InitGameModule.GameBoardInit, {}, { placeStr: "游戏初始化失败" }) }))
-          removeInstance()
-          window.setTimeout(() => {
-            global.closeSubGame({ isPre: true, confirmContent: lang.write(k => k.InitGameModule.GameBoardInit) })
-          }, 1500)
-        })
-      }).catch(e => {
-        global.hallDispatch(addToastAction({ content: lang.write(k => k.InitGameModule.GameBoardInit, {}, { placeStr: "游戏初始化失败" }) }))
-        global.closeSubGame({
-          confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild)
-        });
+          if (data.success) {
+            return {
+              data: data.data,
+              error: undefined
+            }
+          } else {
+            let error = ''
+            if (data.success === undefined) {
+              //数据格式错误
+              error = 'data format error'
+              console.error('data format error', data)
+            } else {
+              error = data.reason || 'error'
+              console.error(data.reason)
+            }
+            global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }), type: ToastType.ERROR }))
+            return {
+              data: '', error
+            }
+          }
+        }
+        resolve(fruit777WebSocketDriver)
       })
+      window.HALL_GLOBAL.wsInstance.eventListener.add(EVEVT_TYPE.RECONNECT_SUCCESS, 'fruit777', () => {
+        
+      })
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export const gameLogin = () => {
+  const msgObj = fruit777WebSocketDriver.loginGame(SKT_MAG_TYPE.LOGIN)
+  msgObj.bindReceiveHandler((message) => {
+    if (!message.data.success) {
+      // global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "认证失败" }) })
+      global.closeSubGame({ confirmContent: message.data.reason })
     }
+  })
+  //超时
+  msgObj.bindTimeoutHandler(() => {
+    global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.SocketMsgTimeOut, {}, { placeStr: "对不起，网络超时" }) })
+    return false
   })
 }
 
 export const removeInstance = () => {
-  if (!sktMsgListener) return
-  sktMsgListener.removeAll()
-  sktInstance.close()
-  sktInstance = null
+  fruit777WebSocketDriver && fruit777WebSocketDriver.logoutGame(SKT_MAG_TYPE.LOGOUT)
+  window.HALL_GLOBAL.wsInstance.eventListener.removeById('fruit777')
 }

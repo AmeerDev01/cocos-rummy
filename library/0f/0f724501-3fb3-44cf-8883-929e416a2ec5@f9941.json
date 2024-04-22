@@ -1,12 +1,12 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "Kata sandi",
+    "name": "Katasandi",
     "atlas": "",
     "rect": {
       "x": 0,
       "y": 0,
-      "width": 129,
+      "width": 116,
       "height": 22
     },
     "offset": {
@@ -14,7 +14,7 @@
       "y": 0
     },
     "originalSize": {
-      "width": 129,
+      "width": 116,
       "height": 22
     },
     "rotated": false,
@@ -26,16 +26,16 @@
     ],
     "vertices": {
       "rawPosition": [
-        -64.5,
+        -58,
         -11,
         0,
-        64.5,
+        58,
         -11,
         0,
-        -64.5,
+        -58,
         11,
         0,
-        64.5,
+        58,
         11,
         0
       ],
@@ -50,11 +50,11 @@
       "uv": [
         0,
         22,
-        129,
+        116,
         22,
         0,
         0,
-        129,
+        116,
         0
       ],
       "nuv": [
@@ -68,12 +68,12 @@
         1
       ],
       "minPos": {
-        "x": -64.5,
+        "x": -58,
         "y": -11,
         "z": 0
       },
       "maxPos": {
-        "x": 64.5,
+        "x": 58,
         "y": 11,
         "z": 0
       }

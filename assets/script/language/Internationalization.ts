@@ -1,4 +1,4 @@
-import languagePkg, { LanguageItemType } from "./languagePkg"
+import { LanguageItemType } from "./languagePkg"
 
 export type LanguageItem = {
   [LanguageItemType.ZH]: string,
@@ -10,7 +10,7 @@ export default class Internationalization<T> {
   constructor(languagePkg: T) {
     this.languagePkg = languagePkg
   }
-  private languagePkg: T
+  public languagePkg: T
   public languageItemType: LanguageItemType
   /**配置语言类型 */
   use(languageItemType: LanguageItemType) {

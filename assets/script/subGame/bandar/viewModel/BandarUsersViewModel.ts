@@ -5,7 +5,7 @@ import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { StateType } from "../store/reducer"
 import { getStore } from '../store';
 import { gameCacheData, ReqGiftSo } from '../type';
-import { SKT_MAG_TYPE, sktInstance } from '../socketConnect';
+import { bandarWebSocketDriver, SKT_MAG_TYPE } from '../socketConnect';
 const { ccclass, property } = _decorator;
 
 @StoreInject(getStore())
@@ -28,7 +28,7 @@ class UsersViewModel extends ViewModel<Bandar_users, IProps, IEvent> {
               /** 总共需要花费的金币 */
               num: num
             }
-            sktInstance.sendSktMessage(SKT_MAG_TYPE.GIVE_GIFT, data)
+            bandarWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GIVE_GIFT, data)
           }
         })
       }

@@ -8,7 +8,7 @@ import { EgyptV2_Main, IEvent, IProps } from "../components/EgyptV2_Main"
 import config from "../config"
 import { cacheData, clearCacheData } from "../dataTransfer"
 import { egyptv2_Audio, sourceManageSeletor } from "../index"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, egyptGameLogin, egyptWebSocketDriver } from "../socketConnect"
 import { bundlePkgName } from "../sourceDefine"
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { getStore } from "../store"
@@ -23,6 +23,7 @@ import EgyptV2RollerPanelViewModel from "./EgyptV2RollerPanelViewModel"
 import EgyptV2RulePanelViewModel from "./EgyptV2RulePanelViewModel"
 import { EffectType } from "../../../utils/NodeIOEffect"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
+import { SktMessager } from "../../../common/WebSocketStarter"
 
 @StoreInject(getStore())
 class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
@@ -37,11 +38,11 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
   private rollerPanelViewModel: EgyptV2RollerPanelViewModel;
   private isAuthDone: boolean = false
   private isBetResult = true;
+  private betCallbackFun;
 
   /**奖励的坐标 */
   private goodLuckPos: Vec3;
 
-  private betCallbackFun;
   protected begin() {
     this.headerViewModel = new EgyptV2HeaderViewModel().mountViewNode(this.comp.getHeader()).connect();
     this.headerViewModel.setEvent({
@@ -66,14 +67,14 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
       }
     })
 
-    sktMsgListener.add(SKT_MAG_TYPE.AUTH, bundlePkgName, (data: AuthDataVo, error) => {
+    egyptWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LOGIN, bundlePkgName, (data: AuthDataVo, error) => {
       if (error) {
         return;
       }
 
       if (!data) {
         global.closeSubGame({
-          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.AUTH
+          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.LOGIN
         });
         return;
       }
@@ -113,13 +114,11 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
 
       }, 0.1)
     })
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-      token: localStorage.getItem("token"),
-      gameId: config.gameId
-    });
 
-    sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
-      this.comp.unschedule(this.betCallbackFun);
+    egyptGameLogin();
+
+    egyptWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
+      this.betCallbackFun && this.comp.unschedule(this.betCallbackFun);
       this.betCallbackFun = undefined;
       this.isBetResult = true;
       const result = verifyBetResultData(data)
@@ -138,7 +137,7 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
       const si = cacheData.rollerLaunchResult.dl.si[0];
       if (si.gameType === GameType.SUBGAME2 || this.comp.props.gameTypeInfo.viewGameType === GameType.SUBGAME2) {
         //每局的锁定图标
-        cacheData.fixedChessboardIcon = si.fixedChessboardIcon;
+        cacheData.fixedChessboardIcon = si.fixedChessboardIconAndAmount;
       }
 
       // 服务器的索引是从1开始的
@@ -146,7 +145,7 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
       for (let i = 0; i < rollerId.length; i++) {
         rollerId[i]--;
       }
-      console.log("rollerId ", si.rollerId)
+      // console.log("rollerId ", si.rollerId)
 
       const localLeftCount = this.comp.props.gameTypeInfo.leftCount;
       let leftCount = si.freeCount;
@@ -182,16 +181,16 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
     })
 
     // 更新金额
-    sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
+    egyptWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
       this.dispatch(updateGold(data));
     })
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
+    egyptWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
       this.dispatch(updateJackpotDatas(data))
     })
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data, error) => {
+    egyptWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data, error) => {
       this.dispatch(updateJackpotAmount(data))
     })
-    sktMsgListener.add(SKT_MAG_TYPE.VACATETHEROOM, bundlePkgName, (data) => {
+    egyptWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.EXIT, bundlePkgName, (data) => {
       global.closeSubGame({ confirmContent: lang.write(k => k.UpdateModule.GameNotice, {}, { placeStr: "对不起，系统维护中，请稍后再尝试登录" }) })
     })
 
@@ -233,37 +232,47 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
     }
 
     cacheData.sendBetTime = Date.now();
-    console.log("sendBet time " + cacheData.sendBetTime)
+    // console.log("sendBet time " + cacheData.sendBetTime)
 
     cacheData.rollerLaunchResult = null;
     cacheData.fixedChessboardIcon = null;
     this.dispatch(updateRollerStatus(RollerStatus.RUNNING));
     this.isBetResult = false;
-    this.betCallbackFun = this.betListenerTimeHandle.bind(this);
-    this.comp.schedule(this.betCallbackFun, 10);
 
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
+    this.betCallbackFun = () => {
+      if (!this.isBetResult) {
+        this.isBetResult = true;
+        const content = lang.write(k => k.WebSocketModule.WebSocketError) + '-' + SKT_MAG_TYPE.LAUNCH;
+        global.closeSubGame({ confirmContent: content })
+      }
+    }
+    this.comp.schedule(this.betCallbackFun, 10, 0);
+
+    const msgObj = egyptWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
       "positionId": this.comp.props.positionId,
       "tableId": cacheData.authData.tableId,
+      gameId: config.gameId,
+    }, {
+      timeOut: 10000
     });
+    this.sendBetTimeOutHandle(msgObj);
   }
 
-  private betListenerTimeHandle() {
-    if (!this.isBetResult) {
-      this.isBetResult = true;
-      const content = lang.write(k => k.WebSocketModule.WebSocketError) + '-' + SKT_MAG_TYPE.LAUNCH;
-      egyptv2_Audio.playOneShot(SoundPathDefine.ding)
-      ModalBox.Instance().show({
-        content: content, type: 'Prompt'
-      }, () => {
-        this.onQuitGame();
-        return true
-      })
-    }
+  private sendBetTimeOutHandle(msgObj: SktMessager<SKT_MAG_TYPE>) {
+    msgObj.bindReceiveHandler((message) => {
+      if (!message.data.success) {
+        global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }) })
+      }
+    })
+    //超时
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
   }
 
   protected unMountCallBack(): void {
-    sktMsgListener.removeById(bundlePkgName)
+    egyptWebSocketDriver.sktMsgListener.removeById(bundlePkgName)
     this.footerViewModel.unMount();
     this.headerViewModel.unMount();
     this.rollerPanelViewModel.unMount();
@@ -309,14 +318,18 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
   }
 
   public playBgMusic() {
-    egyptv2_Audio.stop();
-    if (this.comp.props.gameTypeInfo.viewGameType === GameType.MAIN) {
-      egyptv2_Audio.play(SoundPathDefine.bgMain, true)
-    } else if (this.comp.props.gameTypeInfo.viewGameType === GameType.SUBGAME2) {
-      egyptv2_Audio.play(SoundPathDefine.bgMusic, true)
-    } else {
-      egyptv2_Audio.play(SoundPathDefine.bgFree, true)
-    }
+    this.comp.scheduleOnce(() => {
+      egyptv2_Audio.stop();
+      this.comp.scheduleOnce(() => {
+        if (this.comp.props.gameTypeInfo.viewGameType === GameType.MAIN) {
+          egyptv2_Audio.play(SoundPathDefine.bgMain, true)
+        } else if (this.comp.props.gameTypeInfo.viewGameType === GameType.SUBGAME2) {
+          egyptv2_Audio.play(SoundPathDefine.bgMusic, true)
+        } else {
+          egyptv2_Audio.play(SoundPathDefine.bgFree, true)
+        }
+      })
+    })
   }
 
   public connect() {

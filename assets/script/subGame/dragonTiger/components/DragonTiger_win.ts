@@ -101,7 +101,8 @@ export class DragonTiger_win extends BaseComponent<IState, IProps, IEvent> {
 
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
 
-		if(key==="winGold"){
+		if (key === "winGold") {
+			
 			if(value.cur===0){
 				this.propertyNode.props_label_win_num.getComponent(Label).string = value.cur + "";
 			}else{

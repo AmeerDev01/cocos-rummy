@@ -90,6 +90,7 @@ export class Hall_WithdrawBank extends BaseComponent<IState, IProps, IEvent> {
 				const childNode = instantiate(template)
 				childNode.active = true
 				childNode.getChildByName("Label_num1").getComponent(Label).string = `${item.limitDown}-${item.limitUp}`
+				childNode.getChildByName("Label_bank_name").getComponent(Label).string = item.name
 				assetManager.loadRemote(item.iconMax, (err, asset: ImageAsset) => {
 					if (this.propertyNode && !err) {
 						childNode.getChildByName("icon").getComponent(Sprite).spriteFrame = SpriteFrame.createWithImage(asset)
@@ -98,7 +99,7 @@ export class Hall_WithdrawBank extends BaseComponent<IState, IProps, IEvent> {
 				// bundleHall.load(`withdrawal/resource/icon_withdrawal_${item.name.toLocaleLowerCase()}/spriteFrame`, SpriteFrame, (err, sp) => {
 				// 	!err && (childNode.getChildByName("icon").getComponent(Sprite).spriteFrame = sp)
 				// })
-				childNode.getChildByName("bank_name").getComponent(Label).string = item.name
+
 				if (item.bind) {
 					//如果是已经绑定的卡，按钮显示另外一个
 					bundleHall.load(`withdrawal/resource/btn_withdrawal_ikatRed/spriteFrame`, SpriteFrame, (err, sp) => {
@@ -108,7 +109,7 @@ export class Hall_WithdrawBank extends BaseComponent<IState, IProps, IEvent> {
 				toggleWrap.addChild(childNode)
 				childNode.getChildByName("btn_ikat1").on(Node.EventType.TOUCH_END, () => {
 					if (item.bind) {
-						this.dispatch(addToastAction({ content: lang.write(k => k.withdrawal.GotoServiceModify, {}, { placeStr: "请联系客服修改" }) }))
+						// this.dispatch(addToastAction({ content: lang.write(k => k.withdrawal.GotoServiceModify, {}, { placeStr: "请联系客服修改" }) }))
 					} else {
 						//打开详情
 						const grayscale = childNode.getChildByName("btn_ikat1").getComponent(Sprite).grayscale
@@ -134,9 +135,9 @@ export class Hall_WithdrawBank extends BaseComponent<IState, IProps, IEvent> {
 			const children = this.propertyNode.props_ToggleGroup_bankType.children
 			const guide_1 = new Guide(children.length ? children[0] : this.propertyNode.props_ToggleGroup_bankType, this.propertyNode.props_layout_choose)
 			const guide_2 = new Guide(this.propertyNode.props_btn_metode_tentukan, this.propertyNode.props_layout_tentukan)
-			this.taskScheduler.joinqQueue(new Task((done) => {
+			this.taskScheduler.joinQueue(new Task((done) => {
 				guide_1.begin().bindDone(() => done())
-			})).joinqQueue(new Task((done) => {
+			})).joinQueue(new Task((done) => {
 				guide_2.begin().bindDone(() => done())
 			}))
 		}

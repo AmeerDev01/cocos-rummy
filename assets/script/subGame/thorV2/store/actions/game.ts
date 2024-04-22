@@ -1,5 +1,6 @@
 import { default as reduxAct } from 'redux-act'
 import { AutoLauncherInfo, AutoLauncherType, DialogInfo, DirectionType, GameModeType, GameType, GameTypeInfo, JackpotData, PlayAnimationData, SubGameAnimationPlayInfo, WinIconData } from '../../type';
+import config from '../../config';
 
 
 export type InitStateType = {
@@ -58,7 +59,7 @@ export const initState: InitStateType = {
   winIconDataItem: null,
   playThorAnimation: null,
   playWinOddsAnimation: null,
-  betAmount: 0,
+  betAmount: config.betAmount,
   gameModeType: GameModeType.normal,
   freeGameOdds: 0,
 }

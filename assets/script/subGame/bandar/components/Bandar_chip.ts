@@ -10,6 +10,7 @@ export interface IState {
 
 export interface IProps {
 	value?: number
+	isMe?: boolean,
 }
 export interface IEvent {
 
@@ -24,10 +25,12 @@ export class Bandar_chip extends BaseComponent<IState, IProps, IEvent> {
 	protected propertyNode = {
 		props_spr_chips: new Sprite(),
 		props_label_chips: new Label(),
+		props_ChipTail: new Node(),
 	}
 
 	public props: IProps = {
-		value: 0
+		value: 0,
+		isMe: null,
 	}
 
 	public events: IEvent = {
@@ -49,6 +52,10 @@ export class Bandar_chip extends BaseComponent<IState, IProps, IEvent> {
 			const chip = config.chipTypes.find(v => v.value === value.cur);
 			this.propertyNode.props_label_chips.string = chip.valueStr;
 			this.loadResource(chip);
+		}
+
+		if (key === "isMe") {
+			this.propertyNode && this.propertyNode.props_ChipTail && (this.propertyNode.props_ChipTail.active = value.cur);
 		}
 	}
 

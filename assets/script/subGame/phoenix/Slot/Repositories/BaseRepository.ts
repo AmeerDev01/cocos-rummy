@@ -1,5 +1,0 @@
-export class BaseRepository {
-    constructor() {
-    }
-
-}

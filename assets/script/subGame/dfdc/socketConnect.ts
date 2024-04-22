@@ -56,7 +56,7 @@ export default () => {
           },
           onReConnect: (times) => {
             if (times >= 5) {
-              
+
               global.closeSubGame({
                 confirmContent: lang.write(k => k.WebSocketModule.socketConnectDisconnect),
               });
@@ -73,14 +73,14 @@ export default () => {
           global.hallDispatch(addToastAction({ content: lang.write(k => k.InitGameModule.GameBoardInit, {}, { placeStr: "游戏初始化失败" }) }))
           removeInstance()
           window.setTimeout(() => {
-            global.closeSubGame({ isPre: true })
+            global.closeSubGame()
           }, 1500)
         })
       }).catch(e => {
         global.hallDispatch(addToastAction({ content: lang.write(k => k.InitGameModule.GameBoardInit, {}, { placeStr: "游戏初始化失败" }) }))
         global.closeSubGame({
           confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild)
-        } );
+        });
       })
     }
   })

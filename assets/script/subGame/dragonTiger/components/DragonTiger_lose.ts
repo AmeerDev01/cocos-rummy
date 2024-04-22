@@ -23,7 +23,7 @@ export function updateWinUsers(node){
    gameCacheData.winList.forEach((item,index)=>{
 	 winChild.forEach((v,i)=>{
 		if(index===i){
-			let goldNum: string = formatNumber(item.gold);
+			let goldNum: string = formatNumber(item.winGold);
 			v.active=true;
 			v.getChildByName("Label_user_name").getComponent(Label).string=omitStr(item.memberName,12);
 			v.getChildByName("Label_user_gold").getComponent(Label).string="+"+goldNum;
@@ -92,7 +92,6 @@ export class DragonTiger_lose extends BaseComponent<IState, IProps, IEvent> {
 
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
 		if (key === "winGold") {
-			// console.log("winGold",value.cur);
 			// console.log(Math.abs(value.cur));
 			
 			if(value.cur === 0){

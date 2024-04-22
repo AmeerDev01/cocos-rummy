@@ -82,7 +82,7 @@ export class BandarQiuQiu_sendCard extends BaseComponent<IState, IProps, IEvent>
         if(!this.propertyNode || !this.node){ return }
         this.propertyNode.props_spr_sendCard.active = true;
 
-        this.taskScheduler.joinqQueue(new Task((done) => {
+        this.taskScheduler.joinQueue(new Task((done) => {
             config.cardPosition.forEach((endP, i) => {
                 let card = instantiate(this.propertyNode.props_spr_sendCard);
                 card.scale=new Vec3(1,1)
@@ -95,16 +95,16 @@ export class BandarQiuQiu_sendCard extends BaseComponent<IState, IProps, IEvent>
                     this.allDecks.push(card)
                     window.setTimeout(()=>done(),100)
                 })
-                this.taskScheduler.joinqQueue(task, false);
+                this.taskScheduler.joinQueue(task, false);
                
             })
             window.setTimeout(()=>done(),500)
             
         }), false)
-        .joinqQueue(new Task((done) => {
+        .joinQueue(new Task((done) => {
             this.propertyNode.props_spr_sendCard.active = false;
             window.setTimeout(()=>done(),500)
-        }), false).joinqQueue(new Task((done) => {
+        }), false).joinQueue(new Task((done) => {
            if(!this.allDecks || this.allDecks.length === 0){ return }
             
             this.randomNumbers=this.getRandomUniqueNumbers(0,13,2)
@@ -115,7 +115,7 @@ export class BandarQiuQiu_sendCard extends BaseComponent<IState, IProps, IEvent>
             })
  
             window.setTimeout(()=>done(),500)
-        }), false).joinqQueue(new Task((done) => {
+        }), false).joinQueue(new Task((done) => {
            if(!this.allDecks || this.allDecks.length === 0){ return }
             this.allDecks.forEach((c, d) => {
                 if (d !== this.randomNumbers[0] && d!==this.randomNumbers[1]) {  
@@ -125,7 +125,7 @@ export class BandarQiuQiu_sendCard extends BaseComponent<IState, IProps, IEvent>
                 }
             })
             window.setTimeout(()=>done(),500)
-        }),false).joinqQueue(new Task((done) => {
+        }),false).joinQueue(new Task((done) => {
             // console.log(this.twinCard);
             if (!this.twinCard || this.twinCard.length == 0) { return }
             if(cardViewModel.isUnMount) return
@@ -143,14 +143,14 @@ export class BandarQiuQiu_sendCard extends BaseComponent<IState, IProps, IEvent>
                 window.setTimeout(() => done(), 500);
 
             })
-        }),false).joinqQueue(new Task((done) => {
+        }),false).joinQueue(new Task((done) => {
             if (cardViewModel.isUnMount) return;
             cardViewModel.comp.initCardBack()
             let backCard = cardViewModel.comp.getPropertyNode().props_node_card_back as Node;
             backCard.active = true;
             window.setTimeout(() => done(), 500);
         }), false)
-        //     .joinqQueue(new Task((done) => {
+        //     .joinQueue(new Task((done) => {
   
         //     window.setTimeout(() => done(), 500);
         // }),false)

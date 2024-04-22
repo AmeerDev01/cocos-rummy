@@ -192,8 +192,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 41,
-      "height": 41
+      "width": 50,
+      "height": 51
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -299,9 +299,18 @@
       "__uuid__": "2e97a7df-7340-4e24-a3ed-8135bf404a09@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
-    "_hoverSprite": null,
-    "_pressedSprite": null,
-    "_disabledSprite": null,
+    "_hoverSprite": {
+      "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "_pressedSprite": {
+      "__uuid__": "544e49d6-3f05-4fa8-9a9e-091f98fc2ce8@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
+    "_disabledSprite": {
+      "__uuid__": "951249e0-9f16-456d-8b85-a6ca954da16b@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_duration": 0.1,
     "_zoomScale": 0.9,
     "_target": {
@@ -388,8 +397,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 421,
-      "height": 20
+      "width": 438,
+      "height": 24
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -424,7 +433,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "b3288bb1-2240-4416-b109-8267f9104d7b@f9941",
+      "__uuid__": "5ba48425-d691-46c2-a9fc-02b603e9d4f6@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -484,8 +493,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 16.552999999999997,
-      "y": 70.80899999999997,
+      "x": 22,
+      "y": -190,
       "z": 0
     },
     "_lrot": {
@@ -559,7 +568,7 @@
       "b": 255,
       "a": 255
     },
-    "_string": "Lotere Malam Tahun Baru sekarang online!",
+    "_string": "New Year's Eve Lottery is now online!",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 22,
@@ -617,8 +626,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 16.552999999999997,
-      "y": 40.809000000000026,
+      "x": 22,
+      "y": -220,
       "z": 0
     },
     "_lrot": {
@@ -692,7 +701,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "Waktu acara: 29 Desember 2023 - 3 Januari 2024",
+    "_string": "Event time: 29 Desember 2023 - 3 Januari 2024",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 22,
@@ -751,7 +760,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 14,
-      "y": 62.01299999999998,
+      "y": 62,
       "z": 0
     },
     "_lrot": {
@@ -790,8 +799,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 500,
-      "height": 150.24
+      "width": 520,
+      "height": 126.24
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -825,8 +834,8 @@
       "b": 0,
       "a": 255
     },
-    "_string": "Selesaikan tugas yang ditentukan setiap hari untuk mendapatkan waktu undian, mengikuti undian, dan memenangkan hadiah!\nTugas :\n1. Login setiap hari untuk mendapatkan 1 kesempatan undian.\n2. Isi ulang 50.000 setiap hari untuk mendapatkan 1 kesempatan undian.",
-    "_horizontalAlign": 1,
+    "_string": "Complete the designated tasks every day to get lucky draw time, enter sweepstakes and win prizes!\nTask :\n1. Login every day to get 1 chance to draw.\n2. Recharge once a day to get one lucky draw opportunity.",
+    "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 16,
     "_fontSize": 16,
@@ -923,7 +932,7 @@
     },
     "_fillStart": 0,
     "_fillRange": 0,
-    "_isTrimmedMode": false,
+    "_isTrimmedMode": true,
     "_useGrayscale": false,
     "_atlas": {
       "__uuid__": "725b620b-8a8e-4dbf-bdfb-914a87cbd34d",
@@ -942,7 +951,7 @@
     "node": {
       "__id__": 2
     },
-    "_enabled": false,
+    "_enabled": true,
     "__prefab": {
       "__id__": 40
     },

@@ -5,7 +5,7 @@ import { StateType } from "../store/reducer"
 import Fetcher from "../../utils/Fetcher"
 import { ApiUrl } from "../apiUrl"
 import { ToastType, addToastAction } from "../store/actions/baseBoard"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, hallWebSocketDriver } from "../socketConnect"
 import { fetcher, lang } from "../index"
 
 class BindPhoneViewModel extends ViewModel<Hall_BindPhonePanel, IProps, IEvent> {
@@ -14,30 +14,31 @@ class BindPhoneViewModel extends ViewModel<Hall_BindPhonePanel, IProps, IEvent> 
   }
 
   protected begin() {
-    sktMsgListener.add(SKT_MAG_TYPE.MODIFY_BIND_PHONE, 'bindPhone', () => {
-      this.dispatch(addToastAction({ content: lang.write(k => k.BindPhoneModule.BindPhoneChange,{},{ placeStr:"修改成功~" }), type: ToastType.SUCCESS }))
+    hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.MODIFY_BIND_PHONE, 'bindPhone', (data, error) => {
+      if (error) return
+      this.dispatch(addToastAction({ content: lang.write(k => k.BindPhoneModule.BindPhoneChange, {}, { placeStr: "修改成功~" }), type: ToastType.SUCCESS }))
       this.comp.events.onClosePanel()
     })
     this.setEvent({
       sendSmsCode: (phoneNumber: string) => {
         return new Promise((reslove, reject) => {
           fetcher.send(ApiUrl.SEND_SMS, { phone: phoneNumber }).then((rsp) => {
-            this.dispatch(addToastAction({ content: lang.write(k => k.BindPhoneModule.BindPhoneSend,{},{ placeStr:"验证信息已经发送，请注意查收" }) }))
+            this.dispatch(addToastAction({ content: lang.write(k => k.BindPhoneModule.BindPhoneSend, {}, { placeStr: "验证信息已经发送，请注意查收" }) }))
             reslove(rsp)
           }).catch((e) => {
-            this.dispatch(addToastAction({ content: lang.write(k => k.BindPhoneModule.BindPhonesSendError,{},{ placeStr:"请求失败：${e}" }) }))
+            this.dispatch(addToastAction({ content: lang.write(k => k.BindPhoneModule.BindPhonesSendError, {}, { placeStr: "请求失败：${e}" }) }))
             reject(e)
           })
         })
       },
       modifyPhoneDone: (phoneNumber: string, verificationCode: string) => {
-        sktInstance.sendSktMessage(SKT_MAG_TYPE.MODIFY_BIND_PHONE, { phone: phoneNumber, verificationCode })
+        hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.MODIFY_BIND_PHONE, { phone: phoneNumber, verificationCode })
       }
     })
   }
 
   protected unMountCallBack(): void {
-    sktMsgListener.removeById("bindPhone")
+    hallWebSocketDriver.sktMsgListener.removeById("bindPhone")
   }
   public connect() {
     const storeState = this.store.getState() as StateType;

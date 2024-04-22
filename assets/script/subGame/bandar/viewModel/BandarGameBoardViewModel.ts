@@ -12,7 +12,7 @@ import UsersViewModel from './BandarUsersViewModel';
 import TitleViewModel from './BandarTitleViewModel';
 import BetAreaViewModel from './BandarBetAreaViewModel';
 import FooterViewModel from './BandarFooterViewModel';
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from '../socketConnect';
+import { bandarGameLogin, bandarWebSocketDriver, SKT_MAG_TYPE} from '../socketConnect';
 import { bundlePkgName } from '../sourceDefine';
 import config, { initBetData } from '../config';
 import { global, lang } from '../../../hall';
@@ -34,6 +34,7 @@ import { changeAllCardRateAction, changeAllWinUsersAction, changeCardRateAction,
 import WinViewModel from './BandarWinViewModel';
 import LoseViewModel from './BandarLoseViewModel';
 import { BANKER_ID } from '../../../common/viewModel/GiftUserViewModel';
+import WebSocketStarter, { EVEVT_TYPE } from '../../../common/WebSocketStarter';
 
 
 const { ccclass, property } = _decorator;
@@ -65,22 +66,30 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
   }
 
   protected begin() {
-
+    WebSocketStarter.Instance().eventListener.add(EVEVT_TYPE.DISCONNECT, bundlePkgName, () => {
+      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
+    })
     this.listenerAuth();//认证
     this.listenerUserJoinOrQuit();
     // 初始化界面
     this.initView();
 
-    sktMsgListener.add(SKT_MAG_TYPE.TOP_UP, bundlePkgName, (data) => {//10
+    bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.TOP_UP, bundlePkgName, (data) => {//10
       this.comp.scheduleOnce(() => {
         this.dispatch(setGoldAction(data))
-      },7)
+      }, 7)
     })
-    sktMsgListener.add(SKT_MAG_TYPE.GAME_TIP, bundlePkgName, (data) => {//11
+    bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_TIP, bundlePkgName, (data) => {//11
+      if (data) {
+        const value = data.find(v => v.name.toLowerCase() === 'gold')
+        if (value) {
+          config.gameOption.unlockBetMinGold = parseInt(value.num);
+        }
+      }
       this.dispatch(setTipsAction(data))
     })
 
-    // sktMsgListener.add(SKT_MAG_TYPE.POKER, bundlePkgName, (data) => {//805
+    // bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.POKER, bundlePkgName, (data) => {//805
 
     //   this.dispatch(setBankerPokerAction(data.lotteryVo.farmhouse))
     //   this.dispatch(setBlackPokerAction(data.lotteryVo.spade))
@@ -89,7 +98,7 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
     //   this.dispatch(setDiamondPokerAction(data.lotteryVo.block));
 
     // })
-    sktMsgListener.add(SKT_MAG_TYPE.GAMESTATUS_CRASH, bundlePkgName, (data) => {//8101
+    bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAMESTATUS_CRASH, bundlePkgName, (data) => {//8101
       if (data.gameType === GameStatus.BET && data.seconds > 0) {
         this.winArea = [];
         this.winCardRate = [];
@@ -112,7 +121,7 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
       } else if (data.gameType === GameStatus.STOP_BET) {
         this.updatePokerInfo(data.qiuQiuMemberDrawPrizeVo)
         this.updateAllWinUser(data.qiuQiuWinMemberVo)
-        this.updateAreaWinLoseRateInfo(data.qiuQiuMemberWinLoseVo,data.seconds)
+        this.updateAreaWinLoseRateInfo(data.qiuQiuMemberWinLoseVo, data.seconds)
         if (data.qiuQiuSettlementVo) {
           this.updateUserSettlement(data.qiuQiuSettlementVo)
         }
@@ -132,7 +141,7 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
         this.startCountdown();
       }
     })
-    sktMsgListener.add(SKT_MAG_TYPE.BET_ALL, bundlePkgName, (data) => {//802
+    bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.BET_ALL, bundlePkgName, (data) => {//802
       if (!config.preBet) {
         this.dispatch(setGoldAction(data.gold))
         this.dispatch(setMemberBetAction(data.memberBet))
@@ -160,13 +169,13 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
         this.dispatch(changeCancelBetDataAction(betData))
       }
     })
-    sktMsgListener.add(SKT_MAG_TYPE.HISTORY, bundlePkgName, (data) => {//806
+    bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.HISTORY, bundlePkgName, (data) => {//806
 
       this.dispatch(changeTrenAction(data.winLoseList.reverse()));
       this.dispatch(changeStatistikAction(data.qiuStatistikVo));
       this.dispatch(changeRekorAction(data.qiuQiuMemberWinVo));
     })
-    sktMsgListener.add(SKT_MAG_TYPE.BET_RESPONSE, bundlePkgName, (data) => {//8102
+    bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.BET_RESPONSE, bundlePkgName, (data) => {//8102
       gameCacheData.goldData = data.goldData;
       this.dispatch(changeGoldDataAction(data.goldData))
       const memberId = data.memberData.memberId;
@@ -181,7 +190,7 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
       this.dispatch(setNewBetDataAction(betData));
       // console.log(data);
     })
-    // sktMsgListener.add(SKT_MAG_TYPE.SETTLEMENT, bundlePkgName, (data) => {//804
+    // bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.SETTLEMENT, bundlePkgName, (data) => {//804
     //   // console.log(data);
     //   let myInfo = {
     //     gold: data.myInfo.gold,
@@ -201,12 +210,12 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
     //   this.dispatch(setMyWinLose(data.myInfo.winType))
 
     // })
-    sktMsgListener.add(SKT_MAG_TYPE.ALL_USERS, bundlePkgName, (data) => {//807
+    bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.ALL_USERS, bundlePkgName, (data) => {//807
       // 改变在线人数
       this.dispatch(setOnlineNumber(data));
     })
 
-    // sktMsgListener.add(SKT_MAG_TYPE.OTHER_WIN, bundlePkgName, (data) => {//808
+    // bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.OTHER_WIN, bundlePkgName, (data) => {//808
 
     //   this.updateWinloss(data.list)
     //   // 改变在线人数
@@ -218,7 +227,7 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
     //   // this.dispatch(changeAllWinUsersAction(data.list))
 
     // })
-    sktMsgListener.add(SKT_MAG_TYPE.GAME_SHOW, bundlePkgName, (data: any) => {//810
+    bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_SHOW, bundlePkgName, (data: any) => {//810
       if (GameStatus.BET === this.comp.props.gameStatus) {
         // 拿到最新的倒计时后，就减掉1秒
         this.countDown = data.seconds;
@@ -226,7 +235,7 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
       }
     })
 
-    sktMsgListener.add(SKT_MAG_TYPE.GIVE_GIFT, bundlePkgName, (data: ResGiftVo) => {//11
+    bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GIVE_GIFT, bundlePkgName, (data: ResGiftVo) => {//11
       const seats = this.comp.props.usersInfo.filter(v => v.memberId === data.receiveMemberId);
       // 如果展示座位上有两个相同人，就同时送两次
       if (seats && seats.length > 1) {
@@ -254,12 +263,11 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
         this.openLose();
       },
       sendGameShowEvent: () => {
-        sktInstance.sendSktMessage(SKT_MAG_TYPE.GAME_SHOW, { roomId: gameCacheData.roomId });
+        bandarWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GAME_SHOW, { data: gameCacheData.roomId });
       }
     })
   }
-
-  /**更新用户结算 */
+     /**更新用户结算 */
   private updateUserSettlement(data) {
     this.comp.scheduleOnce(() => {
       let myInfo = {
@@ -375,16 +383,16 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
    * 认证消息监听及处理
    */
   private listenerAuth() {
-    sktMsgListener.addOnce(SKT_MAG_TYPE.AUTH, bundlePkgName, (data: any) => {
-      sys.localStorage.setItem("auth", JSON.stringify(data));
-    })
+    // bandarWebSocketDriver.sktMsgListener.addOnce(SKT_MAG_TYPE.AUTH, bundlePkgName, (data: any) => {
+    //   sys.localStorage.setItem("auth", JSON.stringify(data));
+    // })
 
-    // sys.localStorage.setItem("token",window.location.search.substring(6))
-    // sys.localStorage.setItem("token",config.testConfig.token)
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-      token: sys.localStorage.getItem("token"),
-      gameId: config.gameId
-    });
+    // // sys.localStorage.setItem("token",window.location.search.substring(6))
+    // // sys.localStorage.setItem("token",config.testConfig.token)
+    // bandarWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.AUTH, {
+    //   token: sys.localStorage.getItem("token"),
+    //   gameId: config.gameId
+    // });
 
   }
 
@@ -392,12 +400,14 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
   * 监听用户进出游戏
   */
   private listenerUserJoinOrQuit() {
-    sktMsgListener.add(SKT_MAG_TYPE.JOIN_GAME, bundlePkgName, (data) => {//4
+    bandarWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LOGIN, bundlePkgName, (data) => {//41
       if (!data) {
         global.hallDispatch(addToastAction({ content: lang.write(k => k.InitGameModule.GameBoardInit, {}, { placeStr: "game init failed" }) }))
         global.closeSubGame({ confirmContent: lang.write(k => k.InitGameModule.GameBoardInit) });
         return;
       }
+      this.setChipTypesDynamic(data.betList);
+
       gameCacheData.leftUsers = data.leftMember;
       gameCacheData.rightUsers = data.rightMember;
       gameCacheData.roomId = data.roomId;
@@ -495,6 +505,20 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
   }
 
 
+  private setChipTypesDynamic(betList: number[]) {
+    if (betList && betList.length > 0) {
+      if (betList && betList.length > 0) {
+        betList.forEach((v, i) => {
+          if (i <= config.chipTypes.length - 1) {
+            const value = config.chipTypes[i]
+            value.value = v;
+            value.valueStr = v >= 10000 ? v.formatAmountWithLetter() : v + '';
+          }
+        })
+      }
+    }
+  }
+
 
 
   public initView() {
@@ -548,7 +572,7 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
 
   protected unMountCallBack(): void {
     this.clearData();
-    sktMsgListener.removeById(bundlePkgName)
+    bandarWebSocketDriver.sktMsgListener.removeById(bundlePkgName)
   }
 
   private clearData() {

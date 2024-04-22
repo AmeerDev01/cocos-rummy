@@ -151,10 +151,12 @@ export class PhoenixV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 			// this.detryCloseWindow();
 		});
 		this.propertyNode.props_bigWin.getChildByName("sk_bw").getComponent(sp.Skeleton).setCompleteListener(() => {
-			if (this.node && this.node.isValid) {
-				this.node.destroy();
-				this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
-			}
+			this.scheduleOnce(() => {
+				if (this.node && this.node.isValid) {
+					this.node.destroy();
+					this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
+				}
+			})
 		})
 	}
 
@@ -165,12 +167,6 @@ export class PhoenixV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 		this.startStepNumber(numberLabel.getComponent(Label), 0, this.props.dialogInfo.params[0], () => {
 			this.detryCloseWindow();
 		});
-		// this.propertyNode.props_jackpot.getChildByName("sk_jackpot").getComponent(sp.Skeleton).setCompleteListener(() => {
-		// 	if (this.node && this.node.isValid) {
-		// 		this.node.destroy();
-		// 		this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
-		// 	}
-		// })
 	}
 
 	private showMegaWin() {
@@ -181,10 +177,12 @@ export class PhoenixV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 			// this.detryCloseWindow();
 		});
 		this.propertyNode.props_megaWin.getChildByName("sk_mw").getComponent(sp.Skeleton).setCompleteListener(() => {
-			if (this.node && this.node.isValid) {
-				this.node.destroy();
-				this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
-			}
+			this.scheduleOnce(() => {
+				if (this.node && this.node.isValid) {
+					this.node.destroy();
+					this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
+				}
+			})
 		})
 	}
 
@@ -197,10 +195,12 @@ export class PhoenixV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 		});
 
 		this.propertyNode.props_superWin.getChildByName("sk_sw").getComponent(sp.Skeleton).setCompleteListener(() => {
-			if (this.node && this.node.isValid) {
-				this.node.destroy();
-				this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
-			}
+			this.scheduleOnce(() => {
+				if (this.node && this.node.isValid) {
+					this.node.destroy();
+					this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
+				}
+			})
 		})
 	}
 
@@ -249,7 +249,7 @@ export class PhoenixV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 	private startStepNumber(label: Label, start, end, done) {
 		new StepNumber(start, end, (num) => {
 			if (this.node && this.node.isValid) {
-				label.string = Number(num.toFixed(0)).formatAmountWithCommas();
+				label.string = Number(num).formatAmountWithCommas();
 			}
 		}, () => this.node && this.node.isValid && done()).set(config.normalRollOption.numberRollerTime).start();
 		// this.stepNumberV2.start(start, end, (num) => {

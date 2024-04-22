@@ -121,9 +121,9 @@ export class Hall_WithdrawTip extends BaseComponent<IState, IProps, IEvent> {
 			config.fristLogin['hasShow_4'] = true
 			const guide_1 = new Guide(this.propertyNode.props_spr_tip_bg1, this.propertyNode.props_layout_confirm)
 			const guide_2 = new Guide(this.propertyNode.props_btn_tip_tentukan, this.propertyNode.props_layout_tentukan)
-			this.taskScheduler.joinqQueue(new Task((done) => {
+			this.taskScheduler.joinQueue(new Task((done) => {
 				guide_1.begin().bindDone(() => done())
-			})).joinqQueue(new Task((done) => {
+			})).joinQueue(new Task((done) => {
 				guide_2.begin().bindDone(() => done())
 			}))
 		}

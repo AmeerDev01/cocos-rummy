@@ -50,6 +50,10 @@ class Hot {
             console.log('uninitialized')
             this.logLabel.string += `状态错误：${this._assetsMgr.getState()}=>`
             // log.string += 'uninitialized'
+
+            this._assetsMgr.loadLocalManifest("")
+
+            this._assetsMgr.loadLocalManifest("")
             return;
         }
         if (!this._assetsMgr.getLocalManifest().isLoaded()) {
@@ -106,6 +110,34 @@ class Hot {
             case native.EventAssetsManager.ASSET_UPDATED:
                 this.logLabel.string += "ASSET_UPDATED=>"
                 break;
+            case native.EventAssetsManager.ERROR_DOWNLOAD_MANIFEST:
+            case native.EventAssetsManager.ERROR_PARSE_MANIFEST:
+                console.log('Fail to download manifest file, hot update skipped.: ' + event.getMessage())
+                this.logLabel.string += "失败=>"
+                this._onUpdateFailed(code);
+                break;
+            case native.EventAssetsManager.ERROR_UPDATING:
+                console.log('ERROR_UPDATING Asset update error: ' + event.getAssetId() + ', ' + event.getMessage())
+                this.logLabel.string = 'Asset update error: ' + event.getAssetId() + ', ' + event.getMessage();
+                break;
+            case native.EventAssetsManager.ERROR_DECOMPRESS:
+                console.log('ERROR_DECOMPRESS: ' + event.getMessage())
+                this.logLabel.string = event.getMessage();
+                break;
+            case native.EventAssetsManager.ERROR_DOWNLOAD_MANIFEST:
+            case native.EventAssetsManager.ERROR_PARSE_MANIFEST:
+                console.log('Fail to download manifest file, hot update skipped.: ' + event.getMessage())
+                this.logLabel.string += "失败=>"
+                this._onUpdateFailed(code);
+                break;
+            case native.EventAssetsManager.ERROR_UPDATING:
+                console.log('ERROR_UPDATING Asset update error: ' + event.getAssetId() + ', ' + event.getMessage())
+                this.logLabel.string = 'Asset update error: ' + event.getAssetId() + ', ' + event.getMessage();
+                break;
+            case native.EventAssetsManager.ERROR_DECOMPRESS:
+                console.log('ERROR_DECOMPRESS: ' + event.getMessage())
+                this.logLabel.string = event.getMessage();
+                break;
             default:
                 this.logLabel.string += "失败=>"
                 this._onUpdateFailed(code);
@@ -138,7 +170,7 @@ class Hot {
         }
     }
 
-    init(manifest: Asset, opt: HotOptions) {
+    init(customManifest: native.Manifest, storagePath: string, opt: HotOptions) {
         // log.string += "=>INIT开始"
         // log.string += "=>fileUtils:" + native.fileUtils.getSearchPaths()
         // log.string += "=>INIT失败？"
@@ -170,13 +202,8 @@ class Hot {
 
 
         this.showSearchPath();
-        // log.string += "showSearchPath--"
-        let url = manifest.nativeUrl;
-        if (loader.md5Pipe) {
-            url = loader.md5Pipe.transformURL(url)
-        }
-        let storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : '/') + 'remote-asset');
-        this._assetsMgr = new native.AssetsManager(url, storagePath, (versionA, versionB) => {
+
+        this._assetsMgr = new native.AssetsManager('', storagePath, (versionA, versionB) => {
             // const localVersion = sys.localStorage.getItem('currentVersion') || versionA
             console.log("Client Version: " + versionA + ', The Latest Version: ' + versionB);
             UseSetOption.Instance().setGameOption("hall", { hotUpdateVersion: versionA })
@@ -199,6 +226,12 @@ class Hot {
                 return 0;
             }
         });
+
+
+        console.log(`local packageUrl ${customManifest.getPackageUrl()} 
+            remoteManifestUrl ${customManifest.getManifestFileUrl()} remoteVersionUrl ${customManifest.getVersionFileUrl()}`);
+        this._assetsMgr.loadLocalManifest(customManifest, storagePath);
+
         this._assetsMgr.setVerifyCallback((assetsFullPath, asset) => {
             let { compressed, md5, path, size } = asset;
             if (compressed) {
@@ -210,8 +243,7 @@ class Hot {
         if (sys.os === sys.OS.ANDROID) {
 
         }
-        let localManifest = this._assetsMgr.getLocalManifest()
-
+        // let localManifest = this._assetsMgr.getLocalManifest()
         // log.string += "showSearchPath--"
         // log.string += ('=》[HotUpdate] 热更新资源存放路径: ' + storagePath);
         // log.string += ('=》[HotUpdate] 本地manifest路径: ' + url);

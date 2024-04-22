@@ -257,7 +257,7 @@ export type RollerLaunchResult = {
       // "cs": 0,
       "iconStay": number,
       /**要定住的图标 */
-      "fixedChessboardIcon": [],
+      "fixedChessboardIconAndAmount": [],
       /**这一此转动获得的奖励 */
       "ctw": number,
       /**免费游戏的图标和位置 */

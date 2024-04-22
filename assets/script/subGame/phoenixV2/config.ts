@@ -7,8 +7,8 @@ export default {
   name: "Phoenix",
   gameId: 10,
   testConfig: {
-      wsUrl: "",
-      token: ""
+    wsUrl: "",
+    token: ""
   },
   /**默认底注 */
   betAmount: 50,
@@ -23,7 +23,7 @@ export default {
     /**每一列显示几个图标 */
     showIconCount: 3,
     /**银币一次飞几个 */
-    yinBiCount:3,
+    yinBiCount: 3,
     /**中奖图标闪烁时间 */
     winIconFlickerTime: 2,
     /**统一的滚动速度 */
@@ -93,7 +93,7 @@ export default {
   },
   /**普通图标 */
   icon: [
-   {
+    {
       /**图标id */
       "id": 1,
       /**图标名称,用于人肉识别 */
@@ -207,7 +207,7 @@ export default {
       "distance": [0, 0],
       /**图标的缩放 */
       "scale": [1, 1]
-    },{
+    }, {
       "id": 13,
       "name": "yuanbao",
       "fileName": SpriteFramePathDefine.icon_yuanBao,
@@ -218,70 +218,70 @@ export default {
       "scale": [1, 1]
     }
   ],
-     /**小游戏选择 */
-     smallGame: [
-      {
-        /**次数 */
-        times:25,
-        /**3连倍率 */
-        initial_value3:"2",
-        /**4连倍率 */
-        initial_value4:"3",
-        /**5连倍率 */
-        initial_value5:"5",
-        /**凤凰图标 */
-        "fileName": SpriteFramePathDefine.icon_wildG,
-        /**凤凰骨骼文件 */
-        "wildFileName": SkeletalPathDefine.TUBIAO_NIAOG
-      },
-      {
-        times:20,
-        initial_value3:"3",
-        initial_value4:"5",
-        initial_value5: "8",
-        /**凤凰图标 */
-        "fileName": SpriteFramePathDefine.icon_wildR,
-        /**凤凰骨骼文件 */
-        "wildFileName": SkeletalPathDefine.TUBIAO_NIAOR
-      },
-      {
-        times:15,
-        initial_value3:"5",
-        initial_value4:"8",
-        initial_value5: "10",
-        /**凤凰图标 */
-        "fileName": SpriteFramePathDefine.icon_wildP,
-        /**凤凰骨骼文件 */
-        "wildFileName": SkeletalPathDefine.TUBIAO_NIAOP
-      },
-      {
-        times:13,
-        initial_value3:"8",
-        initial_value4:"10",
-        initial_value5: "15",
-       /**凤凰图标 */
-       "fileName": SpriteFramePathDefine.icon_wildB,
-       /**凤凰骨骼文件 */
-       "wildFileName": SkeletalPathDefine.TUBIAO_NIAOB
-      },
-      {
-        times:10,
-        initial_value3:"10",
-        initial_value4:"15",
-        initial_value5: "30",
-        /**凤凰图标 */
-        "fileName": SpriteFramePathDefine.icon_wildY,
-        /**凤凰骨骼文件 */
-        "wildFileName": SkeletalPathDefine.TUBIAO_NIAOY
-      }
+  /**小游戏选择 */
+  smallGame: [
+    {
+      /**次数 */
+      times: 25,
+      /**3连倍率 */
+      initial_value3: "2",
+      /**4连倍率 */
+      initial_value4: "3",
+      /**5连倍率 */
+      initial_value5: "5",
+      /**凤凰图标 */
+      "fileName": SpriteFramePathDefine.icon_wildG,
+      /**凤凰骨骼文件 */
+      "wildFileName": SkeletalPathDefine.TUBIAO_NIAOG
+    },
+    {
+      times: 20,
+      initial_value3: "3",
+      initial_value4: "5",
+      initial_value5: "8",
+      /**凤凰图标 */
+      "fileName": SpriteFramePathDefine.icon_wildR,
+      /**凤凰骨骼文件 */
+      "wildFileName": SkeletalPathDefine.TUBIAO_NIAOR
+    },
+    {
+      times: 15,
+      initial_value3: "5",
+      initial_value4: "8",
+      initial_value5: "10",
+      /**凤凰图标 */
+      "fileName": SpriteFramePathDefine.icon_wildP,
+      /**凤凰骨骼文件 */
+      "wildFileName": SkeletalPathDefine.TUBIAO_NIAOP
+    },
+    {
+      times: 13,
+      initial_value3: "8",
+      initial_value4: "10",
+      initial_value5: "15",
+      /**凤凰图标 */
+      "fileName": SpriteFramePathDefine.icon_wildB,
+      /**凤凰骨骼文件 */
+      "wildFileName": SkeletalPathDefine.TUBIAO_NIAOB
+    },
+    {
+      times: 10,
+      initial_value3: "10",
+      initial_value4: "15",
+      initial_value5: "30",
+      /**凤凰图标 */
+      "fileName": SpriteFramePathDefine.icon_wildY,
+      /**凤凰骨骼文件 */
+      "wildFileName": SkeletalPathDefine.TUBIAO_NIAOY
+    }
   ],
-    /**普通图标的滑槽(5条滑槽)排列(数据：从左至有=>游戏：从上至下) */
-    iconRollerQueue: [
-      [8,8,1,7,6,9,12,4,13,3,  11,8,1,6,6,9,5,2,8,13,  6,4,6,5,13,6,10,8,7,4,  2,12,1,1,9,10,3,13,8,10,  9,10,6,2,7,9,11,5,12,5,  10,10,7,4,3,3,7,2,7,5],
-      [6,3,4,10,6,1,12,8,8,8,  10,4,13,5,10,2,2,9,6,7,  9,12,8,7,9,7,1,11,1,3,  3,2,6,9,7,5,5,10,6,13,  13,2,7,8,13,7,3,9,12,5,  10,8,6,8,9,10,4,4,11,1],
-      [7,2,8,6,9,8,8,11,1,6,  2,4,8,5,9,12,7,1,9,13,  4,10,6,13,4,2,5,12,7,8,  6,9,3,13,6,3,10,9,7,7,  5,12,1,7,6,4,9,8,10,3,  3,11,10,13,2,10,5,10,1,8],
-      [6,7,3,1,10,11,4,10,4,1,  7,3,2,10,2,10,8,13,9,1,  11,7,3,10,2,9,5,9,6,12,  9,7,8,5,6,8,13,7,9,9,  7,13,4,10,12,5,9,4,8,6,  1,13,5,10,2,12,6,6,8,3],
-      [2,13,4,9,6,1,1,9,4,10,  11,5,10,8,8,5,8,2,2,10,  8,3,12,3,13,5,7,11,6,1,  1,9,6,12,8,2,10,7,3,10,  5,7,6,10,9,12,6,8,1,9,  7,9,4,3,13,13,4,10,7,4]
+  /**普通图标的滑槽(5条滑槽)排列(数据：从左至有=>游戏：从上至下) */
+  iconRollerQueue: [
+    [8, 8, 1, 7, 6, 9, 12, 4, 13, 3, 11, 8, 1, 6, 6, 9, 5, 2, 8, 13, 6, 4, 6, 5, 13, 6, 10, 8, 7, 4, 2, 12, 1, 1, 9, 10, 3, 13, 8, 10, 9, 10, 6, 2, 7, 9, 11, 5, 12, 5, 10, 10, 7, 4, 3, 3, 7, 2, 7, 5],
+    [6, 3, 4, 10, 6, 1, 12, 8, 8, 8, 10, 4, 13, 5, 10, 2, 2, 9, 6, 7, 9, 12, 8, 7, 9, 7, 1, 11, 1, 3, 3, 2, 6, 9, 7, 5, 5, 10, 6, 13, 13, 2, 7, 8, 13, 7, 3, 9, 12, 5, 10, 8, 6, 8, 9, 10, 4, 4, 11, 1],
+    [7, 2, 8, 6, 9, 8, 8, 11, 1, 6, 2, 4, 8, 5, 9, 12, 7, 1, 9, 13, 4, 10, 6, 13, 4, 2, 5, 12, 7, 8, 6, 9, 3, 13, 6, 3, 10, 9, 7, 7, 5, 12, 1, 7, 6, 4, 9, 8, 10, 3, 3, 11, 10, 13, 2, 10, 5, 10, 1, 8],
+    [6, 7, 3, 1, 10, 11, 4, 10, 4, 1, 7, 3, 2, 10, 2, 10, 8, 13, 9, 1, 11, 7, 3, 10, 2, 9, 5, 9, 6, 12, 9, 7, 8, 5, 6, 8, 13, 7, 9, 9, 7, 13, 4, 10, 12, 5, 9, 4, 8, 6, 1, 13, 5, 10, 2, 12, 6, 6, 8, 3],
+    [2, 13, 4, 9, 6, 1, 1, 9, 4, 10, 11, 5, 10, 8, 8, 5, 8, 2, 2, 10, 8, 3, 12, 3, 13, 5, 7, 11, 6, 1, 1, 9, 6, 12, 8, 2, 10, 7, 3, 10, 5, 7, 6, 10, 9, 12, 6, 8, 1, 9, 7, 9, 4, 3, 13, 13, 4, 10, 7, 4]
   ],
   /**下注档位 */
   betSwitcher: [
@@ -292,117 +292,68 @@ export default {
       "amount": [
         {
           "positionId": 1,
-          "value": 1,
-          "jackpot": 0
+          "value": 0.004,
+          "jackpot": 1
         },
         {
           "positionId": 2,
-          "value": 2,
-          "jackpot": 0
+          "value": 0.016,
+          "jackpot": 1
         },
         {
           "positionId": 3,
-          "value": 4,
-          "jackpot": 0
+          "value": 0.032,
+          "jackpot": 1
         },
         {
           "positionId": 4,
-          "value": 8,
-          "jackpot": 0
+          "value": 0.08,
+          "jackpot": 1
         },
         {
           "positionId": 5,
-          "value": 16,
-          "jackpot": 0
+          "value": 0.160,
+          "jackpot": 1
         },
         {
           "positionId": 6,
-          "value": 20,
-          "jackpot": 0
+          "value": 0.360,
+          "jackpot": 1
         },
         {
           "positionId": 7,
-          "value": 40,
+          "value": 0.800,
           "jackpot": 0
         },
         {
           "positionId": 8,
-          "value": 60,
+          "value": 1.600,
           "jackpot": 0
         },
         {
           "positionId": 9,
-          "value": 90,
+          "value": 3.600,
           "jackpot": 0
         },
         {
           "positionId": 10,
-          "value": 120,
+          "value": 6.000,
           "jackpot": 0
         },
         {
           "positionId": 11,
-          "value": 150,
+          "value": 12.000,
           "jackpot": 0
         },
         {
           "positionId": 12,
-          "value": 200,
-          "jackpot": 1
+          "value": 16.000,
+          "jackpot": 0
         },
         {
           "positionId": 13,
-          "value": 400,
-          "jackpot": 1
-        },
-        {
-          "positionId": 14,
-          "value": 600,
-          "jackpot": 1
-        },
-        {
-          "positionId": 15,
-          "value": 900,
-          "jackpot": 1
-        },
-        {
-          "positionId": 16,
-          "value": 1200,
-          "jackpot": 1
-        },
-        {
-          "positionId": 17,
-          "value": 1500,
-          "jackpot": 1
-        },
-        {
-          "positionId": 18,
-          "value": 2000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 19,
-          "value": 3000
-        },
-        {
-          "positionId": 20,
-          "value": 4000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 21,
-          "value": 6000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 22,
-          "value": 8000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 23,
-          "value": 10000,
-          "jackpot": 1
+          "value": 32.000,
+          "jackpot": 0
         }
       ]
     }
@@ -410,32 +361,32 @@ export default {
   /**中奖配置 */
   winning: [
     {
-        "id": 1,
-        "name": "bigWin",
-        "fileName": ["img/dialog/bigwin/bigwin", "img/dialog/bigwin/slots_common_game_bw_gold"],
-        "minRate": 100,
-        "maxRate": 300
+      "id": 1,
+      "name": "bigWin",
+      "fileName": ["img/dialog/bigwin/bigwin", "img/dialog/bigwin/slots_common_game_bw_gold"],
+      "minRate": 100,
+      "maxRate": 300
     },
     {
-        "id": 2,
-        "name": "megaWin",
-        "fileName": ["img/dialog/megawin/megawin", "img/dialog/megawin/slots_common_game_ew_gold"],
-        "minRate": 301,
-        "maxRate": 1250
+      "id": 2,
+      "name": "megaWin",
+      "fileName": ["img/dialog/megawin/megawin", "img/dialog/megawin/slots_common_game_ew_gold"],
+      "minRate": 301,
+      "maxRate": 1250
     },
     {
-        "id": 3,
-        "name": "superWin",
-        "fileName": ["img/dialog/superwin/superwin", "img/dialog/superwin/slots_common_game_sw_gold"],
-        "minRate": 1251,
-        "maxRate": 3000
+      "id": 3,
+      "name": "superWin",
+      "fileName": ["img/dialog/superwin/superwin", "img/dialog/superwin/slots_common_game_sw_gold"],
+      "minRate": 1251,
+      "maxRate": 3000
     },
     {
-        "id": 4,
-        "name": "jackpot",
-        "fileName": ["img/dialog/jackpot/sb_lbjs_JACKPOT", "img/dialog/jackpot/slots_common_game_uw_gold"],
-        "minRate": 3001,
-        "maxRate": 99999
+      "id": 4,
+      "name": "jackpot",
+      "fileName": ["img/dialog/jackpot/sb_lbjs_JACKPOT", "img/dialog/jackpot/slots_common_game_uw_gold"],
+      "minRate": 3001,
+      "maxRate": 99999
     }
   ]
 }

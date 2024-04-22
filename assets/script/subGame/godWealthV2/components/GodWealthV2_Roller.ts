@@ -208,9 +208,9 @@ export class GodWealthV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 		if (lockIconDatas.length === 0) {
 			// 没有锁定图标就随机一个金额
 			const betAmount = calBetAmount(this.props.positionId)
-			let amount = Math.ceil(Math.random() * betAmount)
-			amount = amount <= 0 ? amount = 1 : amount
-			icon.setAmount(amount)
+			let amount = Number(Number(Math.random() * betAmount).toFixedFix())
+			amount = amount <= 0 ? amount + 1 : amount
+			icon.setAmount(amount);
 			return;
 		}
 		const index = diff === 2 ? 0 : diff === 0 ? 2 : 1;
@@ -479,7 +479,7 @@ export class GodWealthV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 				// console.log("rollIndex",rollIndex);
 				
 				if (element.getId() === IconId.SCATTER) {
-					godWealthV2_Audio.playOneShot(SoundPathDefine.HA)
+					godWealthV2_Audio.playOneShot(SoundPathDefine.HA, 1.0, false);
 					// if (rollIndex < 3) {
 						element.faceAnimationNode.scale = new Vec3(0.9, 0.9);
 						element.playWin(this.propertyNode.props_big_icon, false, isLoop);

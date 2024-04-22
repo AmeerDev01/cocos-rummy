@@ -230,28 +230,28 @@ export class GodWealthV2_Main extends BaseComponent<IState, IProps, IEvent> {
 				let betValueId = config.betSwitcher[0].amount[value.cur - 1].value;
 				this.majorNum = 1500 * betValueId;
 				this.miniNum = 750 * betValueId;
-				if (value.cur <= 5) {
+				if (value.cur <= config.betAmountLimit) {
 					new StepNumber(startNumberGrand, 15000 * betValueId, (num) => {
 						if (this.node && this.node.isValid) {
-							const value = Number(num.toFixed(0));
-							this.propertyNode.props_grand_number.string = value.formatAmountWithCommas();
+							const value = Number(num.toFixed(2));
+							this.propertyNode.props_grand_number.string = value.formatAmountWithCommas().split('.')[0];
 						}
 					}).set(config.normalRollOption.numberRollerTime).start();
 				}
 				new StepNumber(startNumberMajor, 1500 * betValueId, (num) => {
 					if (this.node && this.node.isValid) {
-						const value = Number(num.toFixed(0));
+						const value = Number(num.toFixed(2));
 						this.propertyNode.props_major_number.string = value.formatAmountWithCommas();
 					}
 				}).set(config.normalRollOption.numberRollerTime).start();
 				new StepNumber(startNumberMini, 750 * betValueId, (num) => {
 					if (this.node && this.node.isValid) {
-						const value = Number(num.toFixed(0));
+						const value = Number(num.toFixed(2));
 						this.propertyNode.props_mini_number.string = value.formatAmountWithCommas();
 					}
 				}).set(config.normalRollOption.numberRollerTime).start();
 			} else if (key === "jackpotTotalAmount") {
-				if (this.props.positionId > 5) {
+				if (this.props.positionId > config.betAmountLimit) {
 					new StepNumber(value.pre, value.cur, (num) => {
 						if (this.node && this.node.isValid) {
 							const value = Number(num.toFixed(0));

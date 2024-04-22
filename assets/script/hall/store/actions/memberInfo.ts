@@ -5,6 +5,7 @@ import { HallGameGateType } from '../../config'
 export type InitStateType = {
   memberName: string,
   avatarIndex: number,
+  /**玩家当前金币 */
   memberAssetGoldPieces: number,
   memberAssetSafeGoldPieces: number
   memberId: string,
@@ -64,6 +65,7 @@ export enum ActionTypes {
   SET_VIP = 'SET_VIP',
   CHANGE_GOLD = 'CHANGE_GOLD',
   UPDATE_ACTIVITY_STATUS = 'UPDATE_ACTIVITY_STATUS',
+
 }
 
 /**定义action的payLoad类型 */
@@ -72,6 +74,7 @@ export type ActionPayLoad<A extends ActionTypes> =
   A extends ActionTypes.SET_VIP ? { vipLevel: number, vipLevelExperience: number } :
   A extends ActionTypes.CHANGE_GOLD ? { value: number } :
   A extends ActionTypes.UPDATE_ACTIVITY_STATUS ? { isUnreadActivity: boolean } :
+
   never;
 
 

@@ -2,6 +2,7 @@
  * 拉去充值或者充值成功回调
  */
 export type RechangeCallbackVo = {
+  id: string,
   /**充值渠道 */
   channelName: string,
   /**货币类型 */
@@ -14,4 +15,12 @@ export type RechangeCallbackVo = {
   orderOperations: number,
   /**充值金额 */
   rechargeAmount: string
+}
+
+/**邮件分页信息配置 */
+export const PageInfo = {
+  /**页数 */
+  pageNum: 1,
+  /**条数 */
+  pageSize: 10,
 }

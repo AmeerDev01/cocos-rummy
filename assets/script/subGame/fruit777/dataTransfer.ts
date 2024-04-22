@@ -26,9 +26,9 @@ const mockData: any = {
   "dl": {
     "si": [
       {
-        "bl": 5695641,
-        "blab": 5694591,
-        "blb": 5694591,
+        "bl": 19340,
+        "blab": 19340,
+        "blb": 19390,
         "bubble": 0,
         "change": {},
         "cs": 0,
@@ -36,59 +36,56 @@ const mockData: any = {
         "esb": {},
         "fireRingSwitch": 0,
         "fixedChessboardIcon": [],
-        "freeCount": 3,
-        "freeGameAmount": 1050,
+        "freeCount": 0,
+        "freeGameAmount": 0,
         "freegame": {},
-        "gameType": 2,
+        "gameType": 0,
         "iconStay": 0,
         "indexGameType": 0,
-        "lw": {
-          "1": 1050
-        },
-        "magnification": 525,
-        "np": 1040,
+        "lw": {},
+        "magnification": 0,
+        "np": 0,
         "rl": [
           [
-            6,
+            12,
             2,
+            2
+          ],
+          [
+            3,
+            1,
+            9
+          ],
+          [
+            2,
+            1,
+            5
+          ],
+          [
+            7,
+            1,
             3
           ],
           [
-            18
-          ],
-          [
-            6,
+            5,
             3,
-            2
+            1
           ]
         ],
         "rollerId": [
-          3,
-          24,
-          45
+          35,
+          17,
+          7,
+          56,
+          55
         ],
         "sc": 0,
         "sgb": 0,
         "tb": 2,
-        "tbb": 0,
+        "tbb": 50,
         "totalFreeGameCount": 0,
-        "tw": 1050,
-        "wp": {
-          "1": [
-            [
-              0,
-              0
-            ],
-            [
-              1,
-              0
-            ],
-            [
-              2,
-              0
-            ]
-          ]
-        }
+        "tw": 0,
+        "wp": {}
       }
     ]
   }

@@ -3,7 +3,7 @@ import SourceManage from "../../base/SourceManage";
 import { listenerFactoy } from "../../common/listenerFactoy";
 import LoaderPanelViewModel from "../../common/viewModel/LoaderPanelViewModel";
 import { global, lang } from "../../hall";
-import { SubGameRunState, subGameList } from "../../hall/config";
+import { subGameList } from "../../hall/config";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
 import { AudioMgr } from "../../utils/AudioMgr";
 import { setActiveAudio } from "../../utils/UseSetOption";
@@ -16,12 +16,14 @@ import fruitStore, { getStore } from './store';
 import EgyptV2MainViewModel from "./viewModel/EgyptV2MainViewModel";
 import { initGameStore } from "./store/actions/game";
 import { initRoller } from "./store/actions/roller";
+import { SubGameRunState } from "../../hallType";
 
 
 let sourceManageMap: Array<SourceManage> = []
 export let bundleEgyptv2: AssetManager.Bundle = null
 export let mainViewModel: EgyptV2MainViewModel;
 export let egyptv2_Audio: AudioMgr<SoundPathDefine>
+let loaderviweModel: LoaderPanelViewModel;
 export const sourceManageSeletor = (bundleName: string = bundlePkgName) => sourceManageMap.find(i => i.bundle.name === bundleName)
 
 export enum NORMAL_MAG_TYPE {
@@ -42,7 +44,7 @@ export const startUp = (rootNode: Node) => {
     }, (err, prefab) => {
       if (!global.isAllowOpenSubGame(config.gameId)) return
       global.hallDispatch(setSubGameRunState(SubGameRunState.READY))
-      const loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({
+      loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({
         loadBarType: 1
       }).setEvent({
         onLoadDone: (_sourceManageMap) => {
@@ -93,7 +95,8 @@ export const stopGame = () => {
   // log("stopGame", initTimeoutId);
   getStore().dispatch(initGameStore(0));
   getStore().dispatch(initRoller(0));
-  
+
+  loaderviweModel && loaderviweModel.unMount();
   initTimeoutId && window.clearTimeout(initTimeoutId);
   mainViewModel && mainViewModel.unMount();
   egyptv2_Audio && egyptv2_Audio.remove();

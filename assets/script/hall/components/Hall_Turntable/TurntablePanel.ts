@@ -1,8 +1,8 @@
-import { _decorator, assetManager, Button, Component, find, ImageAsset, instantiate, Label, log, native, Node, ScrollView, Sprite, SpriteFrame, sys, systemEvent, Texture2D, Toggle, ToggleContainer, tween, UIOpacity, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, assetManager, Button, Component, find, ImageAsset, instantiate, Label, log, native, Node, ScrollView, Sprite, SpriteFrame, sys, Texture2D, Toggle, ToggleContainer, tween, UIOpacity, UITransform, Vec2, Vec3 } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import { global, lang } from '../../index';
 import { addToastAction, ToastType } from '../../store/actions/baseBoard';
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from '../../socketConnect';
+import { SKT_MAG_TYPE, hallWebSocketDriver } from '../../socketConnect';
 import { initToggle } from '../../../utils/tool';
 const { ccclass, property } = _decorator;
 export interface IState {
@@ -57,7 +57,6 @@ export class TurntablePanel extends BaseComponent<IState, IProps, IEvent> {
 
     protected propertyNode = {
         props_btn_turntable_arow: new Button(),
-        props_btn_turntable_arow_disable: new Node(),
         props_spr_truntable: new Node(),
         props_btn_detail: new Button(),
         props_tum_gift: new Node(),
@@ -93,7 +92,8 @@ export class TurntablePanel extends BaseComponent<IState, IProps, IEvent> {
         this.propertyNode.props_btn_detail.node.on(Button.EventType.CLICK, () => {
             this.events.rotaryStarting(TypeOperation.HELP)
         })
-        sktMsgListener.add(SKT_MAG_TYPE.TURNTABLETNOTIFICATION, "main", (data) => {
+        hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.TURNTABLETNOTIFICATION, "main", (data, error) => {
+            if (error) return
             this.winningRecordData = data
             this.initAll()
             this.CarouselData = data.filter(item => item.horseRaceLamp === 1);
@@ -103,24 +103,21 @@ export class TurntablePanel extends BaseComponent<IState, IProps, IEvent> {
         initToggle(this.node.getChildByName('note_toggleGroup'), this.node, new TurntablePanel.EventHandler(), "TurntablePanel", "toggleCallback")
     }
     onDestroy() {
-        sktMsgListener.remove(SKT_MAG_TYPE.TURNTABLETNOTIFICATION, "main",)
+        hallWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.TURNTABLETNOTIFICATION, "main",)
     }
     protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
         if (key == 'TurntableData') {
             let { turntable, turntablePrizeEntities, count } = value.cur
             this.turntableData = value.cur
-            this.winningRecordData = value.cur.turntableClaimRecordEntities
-            this.meRecordData = value.cur.memberTurntableClaimRecordEntities
+            this.winningRecordData = value.cur.turntableClaimRecordEntities?value.cur.turntableClaimRecordEntities:[]
+            this.meRecordData = value.cur.memberTurntableClaimRecordEntities?value.cur.memberTurntableClaimRecordEntities:[]
             this.initAll()
             if (count === 0) {
-                // this.propertyNode.props_btn_turntable_arow.getComponent(Sprite).grayscale = true
-                this.turntableDisable(true);
-            } else {
-                this.turntableDisable(false);
+                this.propertyNode.props_btn_turntable_arow.getComponent(Sprite).grayscale = true
             }
             this.count = count
             this.propertyNode.props_label_title.getComponent(Label).string = turntable.effectStart + ' - ' + turntable.effectEnd
-            this.propertyNode.props_label_times.getComponent(Label).string = count + ' kali'
+            this.propertyNode.props_label_times.getComponent(Label).string = count + ' times'
             turntablePrizeEntities.forEach((j, I) => {
                 let node = instantiate(this.propertyNode.props_tum_gift)
                 this.loadTurntableImg(j, node)
@@ -138,13 +135,10 @@ export class TurntablePanel extends BaseComponent<IState, IProps, IEvent> {
         this.turntableData.count = data.count
         if (data.count === 0) {
             this.count = data.count
-            // this.propertyNode.props_btn_turntable_arow.getComponent(Sprite).grayscale = true
-            this.turntableDisable(true);
-        } else {
-            this.turntableDisable(false);
+            this.propertyNode.props_btn_turntable_arow.getComponent(Sprite).grayscale = true
         }
         this.meRecordData = data.memberTurntableClaimRecordEntities
-        this.propertyNode.props_label_times.getComponent(Label).string = data.count + ' kali'
+        this.propertyNode.props_label_times.getComponent(Label).string = data.count + ' times'
         this.initMy()
     }
     protected bindUI(): void {
@@ -172,7 +166,7 @@ export class TurntablePanel extends BaseComponent<IState, IProps, IEvent> {
     }
     updateLabel() {
         if (this.CarouselData.length > 0) {
-            this.propertyNode.props_label_remind.getComponent(Label).string = `Selamat kepada ${this.CarouselData[this.currentIndex].memberName} yang telah memenangkan ${this.CarouselData[this.currentIndex].prizeName}.`
+            this.propertyNode.props_label_remind.getComponent(Label).string = `Congrats to ${this.CarouselData[this.currentIndex].memberName} for winning ${this.CarouselData[this.currentIndex].prizeName}.`
             // 获取当前位置的 x 和 z 坐标，只改变 y 坐标
             let currentPos = this.propertyNode.props_label_remind.getPosition();
             this.propertyNode.props_label_remind.setPosition(new Vec3(currentPos.x, -20, currentPos.z));
@@ -221,48 +215,6 @@ export class TurntablePanel extends BaseComponent<IState, IProps, IEvent> {
             node.active = true
             content.addChild(node)
         })
-    }
-    /**是否禁用倒计时 */
-    private turntableDisable(value: boolean) {
-        this.propertyNode.props_btn_turntable_arow_disable.active = value;
-        if (value) {
-            this.startCountdown(this.propertyNode.props_btn_turntable_arow_disable.getChildByName("label_time").getComponent(Label));
-        } else {
-            this.unscheduleAllCallbacks();
-        }
-    }
-
-    private startCountdown(timeLabel: Label) {
-        const targetDate = new Date()
-        targetDate.setDate(targetDate.getDate() + 1);
-        targetDate.setHours(0);
-        targetDate.setMinutes(0);
-        targetDate.setSeconds(0);
-        targetDate.setMilliseconds(0);
-
-        this.updateCountdownLabel(timeLabel, targetDate);
-        this.schedule(() => {
-            this.updateCountdownLabel(timeLabel, targetDate);
-        }, 1)
-    }
-
-    private updateCountdownLabel(timeLabel: Label, targetDate: Date) {
-        const currentDate = new Date()
-        let times = (targetDate.getTime() - currentDate.getTime()) / 1000; // times是剩余时间总的秒数
-        let h = parseInt(times / 60 / 60 + ''); //时
-        const remainHours = h < 10 ? '0' + h : h;
-        let m = parseInt(times / 60 % 60 + ''); //分
-        const remainMinutes = m < 10 ? '0' + m : m;
-        let s = parseInt(times % 60 + ''); // 秒
-        const remainSeconds = s < 10 ? '0' + s : s;
-
-        const remainTimeStr = `${remainHours}:${remainMinutes}:${remainSeconds}`;
-        timeLabel.string = remainTimeStr;
-
-        if (h === 13 && m === 9 && s === 0) {
-            sktInstance.sendSktMessage(SKT_MAG_TYPE.TURNTABLEDATA)
-            this.turntableDisable(false);
-        }
     }
 }
 

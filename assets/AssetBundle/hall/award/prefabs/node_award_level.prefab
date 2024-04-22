@@ -2881,8 +2881,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 138,
-      "height": 22
+      "width": 103,
+      "height": 27
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2917,12 +2917,12 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "eed263ac-abc9-476f-bec2-a14fd7823596@f9941",
+      "__uuid__": "af1df1f7-f23f-41a9-80f0-339068cb571d@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -2932,7 +2932,10 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_useGrayscale": false,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "26b359c6-e9f3-4098-a5ab-2a1630d891c1",
+      "__expectedType__": "cc.SpriteAtlas"
+    },
     "_id": ""
   },
   {
@@ -3528,7 +3531,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 142.69,
+      "width": 100.02,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -3563,7 +3566,7 @@
       "b": 36,
       "a": 255
     },
-    "_string": "Tampilan Hadiah",
+    "_string": "Gift Display",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 18,
@@ -3661,7 +3664,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 223.14,
+      "width": 196.1,
       "height": 67.8
     },
     "_anchorPoint": {
@@ -3696,7 +3699,7 @@
       "b": 36,
       "a": 255
     },
-    "_string": "Dapatkan 30 juta koin emas\nDapatkan alat peraga",
+    "_string": "Get 30 million gold coins\nGet props",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 18,
@@ -4199,7 +4202,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 176.7,
+      "width": 134.03,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -4234,7 +4237,7 @@
       "b": 36,
       "a": 255
     },
-    "_string": "VIP Tampilan Hadiah",
+    "_string": "VIP Gift Display",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 18,
@@ -4332,7 +4335,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 223.14,
+      "width": 196.1,
       "height": 67.8
     },
     "_anchorPoint": {
@@ -4367,7 +4370,7 @@
       "b": 36,
       "a": 255
     },
-    "_string": "Dapatkan 30 juta koin emas\nDapatkan alat peraga",
+    "_string": "Get 30 million gold coins\nGet props",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 18,
@@ -4793,8 +4796,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 137,
-      "height": 26
+      "width": 143,
+      "height": 20
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -5626,7 +5629,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 142.69,
+      "width": 100.02,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -5661,7 +5664,7 @@
       "b": 36,
       "a": 255
     },
-    "_string": "Tampilan Hadiah",
+    "_string": "Gift Display",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 18,
@@ -5759,7 +5762,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 223.14,
+      "width": 196.1,
       "height": 67.8
     },
     "_anchorPoint": {
@@ -5794,7 +5797,7 @@
       "b": 36,
       "a": 255
     },
-    "_string": "Dapatkan 30 juta koin emas\nDapatkan alat peraga",
+    "_string": "Get 30 million gold coins\nGet props",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 18,

@@ -8,6 +8,7 @@ import { SoundPathDefine } from '../sourceDefine/soundDefine';
 import ModalBox from '../../common/ModalBox';
 import { config } from '../config';
 import { getStore } from '../store';
+import { getIsTest } from '../../config/GameConfig';
 const { ccclass, property } = _decorator;
 
 enum ShowModelType {
@@ -137,7 +138,7 @@ export class Hall_BankPanel extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_set_btn_sure.on(Node.EventType.TOUCH_END, () => {
 			const str = this.propertyNode.props_intput_sandi_pwd.getComponent(EditBox).string
 			const str2 = this.propertyNode.props_intput_bank_set_pwd.getComponent(EditBox).string
-			new InputValidator().begin().isNotEmpty(str).isAllNumber(str2).isChartLength([6, 12], str2).done(() => {
+			new InputValidator().begin().isNotEmpty(str).isCharLength([6, 12], str2).done(() => {
 				this.events.setBankPassword(str, str2).then(() => {
 					this.setState({ showModel: ShowModelType.VERIFY })
 				})
@@ -151,10 +152,11 @@ export class Hall_BankPanel extends BaseComponent<IState, IProps, IEvent> {
 		})
 		this.propertyNode.props_btn_history.node.on(Node.EventType.TOUCH_END, () => {
 			//打开记录
-			ModalBox.Instance().show({ url: config.goldRecordUrl + `?token=${sys.localStorage.getItem('token')}&memberId=${getStore().getState().memberInfo.memberId}`, type: "Prompt" })
+			sys.openURL(config.goldRecordUrl + `?token=${sys.localStorage.getItem('token')}&memberId=${getStore().getState().memberInfo.memberId}&env=${getIsTest() ? 'test' : 'pro'}`)
 		})
 	}
 	private trasfer(amount: string, direction: TrasferDirectionType) {
+		if (+amount <= 0) return
 		new InputValidator().begin().isNotEmpty(amount).isDecimal(amount).done(() => {
 			this.events.transferCapital(+amount, direction).then(() => {
 				this.propertyNode.props_EditBox_meng_goldNum.getComponent(EditBox).string = ""

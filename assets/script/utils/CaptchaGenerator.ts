@@ -19,7 +19,7 @@ export default class CaptchaGenerator {
   }
   /**生成指定长度的随机字符验证码 */
   private generateCaptcha(length) {
-    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charset = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
     let captcha = "";
     for (let i = 0; i < length; i++) {
       const randomIndex = Math.floor(Math.random() * charset.length);
@@ -29,7 +29,6 @@ export default class CaptchaGenerator {
   }
   /**将验证码显示在精灵节点上 */
   private displayCaptcha() {
-    // 此处假设你有一个字体文件来渲染文本，你可以在精灵上创建一个Label组件
     this.displayNode && (this.displayNode.destroy())
     this.displayNoiseNode && (this.displayNoiseNode.destroy())
     this.displayNode = new Node();
@@ -39,8 +38,6 @@ export default class CaptchaGenerator {
     labelComponent.fontSize = 26 + (parseInt(Math.random() * 6 + '')); // 设置字体大小
     labelComponent.fontFamily = "Arial"; // 设置字体类型
     labelComponent.horizontalAlign = Label.HorizontalAlign.CENTER; // 设置文本水平对齐方式
-
-    // 将Label节点作为子节点添加到验证码精灵节点上
     this.node.addChild(this.displayNode);
   }
   /**添加噪点到验证码图片 */

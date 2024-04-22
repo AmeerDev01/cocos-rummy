@@ -3,7 +3,7 @@ import SourceManage from "../../base/SourceManage";
 import { listenerFactoy } from "../../common/listenerFactoy";
 import LoaderPanelViewModel from "../../common/viewModel/LoaderPanelViewModel";
 import { global, lang } from "../../hall";
-import { SubGameRunState, subGameList } from "../../hall/config";
+import { subGameList } from "../../hall/config";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
 import { AudioMgr } from "../../utils/AudioMgr";
 import { setActiveAudio } from "../../utils/UseSetOption";
@@ -16,12 +16,14 @@ import fruitStore, { getStore } from './store';
 import GodWealthV2MainViewModel from "./viewModel/GodWealthV2MainViewModel";
 import { resetStore } from "./store/actions/game";
 import { initRoller } from "./store/actions/roller";
+import { SubGameRunState } from "../../hallType";
 
 
 let sourceManageMap: Array<SourceManage> = []
 export let bundleGodWealthV2: AssetManager.Bundle = null
 export let mainViewModel: GodWealthV2MainViewModel;
 export let godWealthV2_Audio: AudioMgr<SoundPathDefine>
+let loaderviweModel: LoaderPanelViewModel;
 export const sourceManageSeletor = (bundleName: string = bundlePkgName) => sourceManageMap.find(i => i.bundle.name === bundleName)
 
 export enum NORMAL_MAG_TYPE {
@@ -32,7 +34,6 @@ export enum NORMAL_MAG_TYPE {
 export const msgListener = listenerFactoy<NORMAL_MAG_TYPE>()
 let initTimeoutId = 0;
 export const startUp = (rootNode: Node) => {
-  console.log('进入游戏');
   fruitStore.configureStore()
   assetManager.loadBundle(bundlePkgName, (err, bundle) => {
     bundleGodWealthV2 = bundle;
@@ -42,14 +43,14 @@ export const startUp = (rootNode: Node) => {
     }, (err, prefab) => {
       if (!global.isAllowOpenSubGame(config.gameId)) return
       global.hallDispatch(setSubGameRunState(SubGameRunState.READY))
-      const loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({
+      loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({
         loadBarType: 1
       }).setEvent({
         onLoadDone: (_sourceManageMap) => {
           sourceManageMap = _sourceManageMap
           godWealthV2_Audio = new AudioMgr<SoundPathDefine>(sourceManageSeletor())
           setActiveAudio(godWealthV2_Audio)
-          
+
           // 默认给10秒进入游戏超时处理，有时候socket连接成功之后，服务器没有发送进入房间 消息，导致卡住
           initTimeoutId = window.setTimeout(() => {
             global.closeSubGame({
@@ -76,9 +77,9 @@ export const startUp = (rootNode: Node) => {
               .mountView(sourceManageSeletor().getFile(PrefabPathDefine.MAIN_GAME).source)
               .appendTo(rootNode)
               .connect();
-              // 调整loader层级到最上层，让主界面初始化完成后才卸载
-              loaderviweModel.viewNode.isValid && loaderviweModel.viewNode.setSiblingIndex(loaderviweModel.viewNode.parent.children.length);
-            
+            // 调整loader层级到最上层，让主界面初始化完成后才卸载
+            loaderviweModel.viewNode.isValid && loaderviweModel.viewNode.setSiblingIndex(loaderviweModel.viewNode.parent.children.length);
+
           }).catch(e => loaderviweModel.comp.setTipContent(e || 'error'))
         }
       }).setProps({
@@ -93,7 +94,8 @@ export const stopGame = () => {
   // log("stopGame", initTimeoutId);
   getStore().dispatch(resetStore(0));
   getStore().dispatch(initRoller(0));
-  
+
+  loaderviweModel && loaderviweModel.unMount();
   initTimeoutId && window.clearTimeout(initTimeoutId);
   mainViewModel && mainViewModel.unMount();
   godWealthV2_Audio && godWealthV2_Audio.remove();

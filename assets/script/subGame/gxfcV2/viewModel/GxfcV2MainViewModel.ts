@@ -8,7 +8,7 @@ import { GxfcV2_Main, IEvent, IProps } from "../components/GxfcV2_Main"
 import config from "../config"
 import { cacheData, clearCacheData } from "../dataTransfer"
 import { GxfcV2_Audio, sourceManageSeletor } from "../index"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, gxfcGameLogin, gxfcWebSocketDriver, sktMsgListener } from "../socketConnect"
 import { bundlePkgName } from "../sourceDefine"
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { getStore } from "../store"
@@ -23,6 +23,7 @@ import GxfcV2RollerPanelViewModel from "./GxfcV2RollerPanelViewModel"
 import GxfcV2RulePanelViewModel from "./GxfcV2RulePanelViewModel"
 import { EffectType } from "../../../utils/NodeIOEffect"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
+import { SktMessager } from "../../../common/WebSocketStarter"
 
 @StoreInject(getStore())
 class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
@@ -36,6 +37,7 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
   private footerViewModel: GxfcV2FoolerViewModel;
   public rollerPanelViewModel: GxfcV2RollerPanelViewModel;
 
+  public isAuthDone: boolean = false
   private isBetResult = true;
 
   /**奖励的坐标 */
@@ -66,18 +68,18 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
       }
     })
 
-    sktMsgListener.add(SKT_MAG_TYPE.AUTH, bundlePkgName, (data: AuthDataVo, error) => {
+    gxfcWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LOGIN, bundlePkgName, (data: AuthDataVo, error) => {
       if (error) {
         return;
       }
 
       if (!data) {
         global.closeSubGame({
-          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.AUTH
+          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.LOGIN
         });
         return;
       }
-
+      this.isAuthDone = true;
       if (data.gameType === GameType.SUBGAME2) {
         // 锁定的图标
         cacheData.fixedChessboardIcon = data.fixedChessboardIcon;
@@ -110,17 +112,25 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
         if (isAuto(this.comp.props.autoLauncherInfo, this.comp.props.gameTypeInfo)) {
           this.comp.scheduleOnce(() => {
             this.sendBet();
-          },1)
+          }, 1)
         }
 
       }, 0.1)
     })
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-      token: localStorage.getItem("token"),
-      gameId: config.gameId
-    });
+    // const msgObj = gxfcWebSocketDriver.loginGame(SKT_MAG_TYPE.LOGIN)
+    // msgObj.bindReceiveHandler((message) => {
+    //   if (!message.data.success) {
+    //     global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "认证失败" }) })
+    //   }
+    // })
+    // //超时
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
+    //   return false
+    // })
+    gxfcGameLogin()
 
-    sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
+    gxfcWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
       this.comp.unschedule(this.betCallbackFun);
       this.betCallbackFun = undefined;
       this.isBetResult = true;
@@ -148,7 +158,7 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
       for (let i = 0; i < rollerId.length; i++) {
         rollerId[i]--;
       }
-      console.log("rollerId ", si.rollerId)
+      // console.log("rollerId ", si.rollerId)
 
       const localLeftCount = this.comp.props.gameTypeInfo.leftCount;
       let leftCount = si.freeCount;
@@ -184,13 +194,13 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
     })
 
     // 更新金额
-    sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
+    gxfcWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
       this.dispatch(updateGold(data));
     })
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
+    gxfcWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
       this.dispatch(updateJackpotDatas(data))
     })
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data, error) => {
+    gxfcWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data, error) => {
       this.dispatch(updateJackpotAmount(data))
     })
 
@@ -202,6 +212,7 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
   }
 
   private sendBet() {
+    if (!this.isAuthDone) return
     if (!this.isBetResult) {
       console.log("已经发送过了下注，不能重复发送，等待服务器返回")
       return;
@@ -229,7 +240,7 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
     }
 
     cacheData.sendBetTime = Date.now();
-    console.log("sendBet time " + cacheData.sendBetTime)
+    // console.log("sendBet time " + cacheData.sendBetTime)
 
     cacheData.rollerLaunchResult = null;
     cacheData.fixedChessboardIcon = null;
@@ -238,10 +249,28 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
     this.betCallbackFun = this.betListenerTimeHandle.bind(this);
     this.comp.schedule(this.betCallbackFun, 10);
 
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
-      "positionId": this.comp.props.positionId,
-      "tableId": cacheData.authData.tableId,
+    const msgObj = gxfcWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
+      positionId: this.comp.props.positionId,
+      tableId: cacheData.authData.tableId,
+      gameId: config.gameId,
+    }, {
+      timeOut: 5000
     });
+
+    this.sendBetTimeOutHandle(msgObj);
+  }
+
+  private sendBetTimeOutHandle(msgObj: SktMessager<SKT_MAG_TYPE>) {
+    msgObj.bindReceiveHandler((message) => {
+      if (!message.data.success) {
+        global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }) })
+      }
+    })
+    //超时
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
   }
 
   private betListenerTimeHandle() {
@@ -259,7 +288,7 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
   }
 
   protected unMountCallBack(): void {
-    sktMsgListener.removeById(bundlePkgName)
+    gxfcWebSocketDriver.sktMsgListener.removeById(bundlePkgName)
     this.footerViewModel.unMount();
     this.headerViewModel.unMount();
     this.rollerPanelViewModel.unMount();
@@ -278,7 +307,7 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
   public showDialogWin(dialogInfo: DialogInfo, done) {
     let gxfcv2DialogWinViewModel = new GxfcV2DialogWinViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.DIALOG_WIN).source)
       .appendTo(this.viewNode);
-      gxfcv2DialogWinViewModel.setProps({
+    gxfcv2DialogWinViewModel.setProps({
       dialogInfo: dialogInfo,
       gameTypeInfo: this.comp.props.gameTypeInfo,
       autoLauncherInfo: this.comp.props.autoLauncherInfo,
@@ -309,7 +338,7 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
     if (this.comp.props.gameTypeInfo.viewGameType === GameType.MAIN) {
       GxfcV2_Audio.play(SoundPathDefine.Main_bg, true)
     } else if (this.comp.props.gameTypeInfo.viewGameType === GameType.SUBGAME1) {
-			GxfcV2_Audio.play(SoundPathDefine.Free_bg, true)
+      GxfcV2_Audio.play(SoundPathDefine.Free_bg, true)
     }
   }
 

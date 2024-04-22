@@ -34,12 +34,6 @@ export default reduxAct.createReducer<InitStateType>({
     roomInfoSize: payload.roomInfoSize,
    
   }),
-  [ActionTypes.DRAGONTGER_MEMBER_DATA]: (state, payload: ActionPayLoad<ActionTypes.DRAGONTGER_MEMBER_DATA>): InitStateType => ({
-    ...state,
-
-    memberData: payload.memberData,
-   
-  }),
   [ActionTypes.DRAGONTGER_MEMBER_BET]: (state, payload: ActionPayLoad<ActionTypes.DRAGONTGER_MEMBER_BET>): InitStateType => ({
     ...state,
 

@@ -1,4 +1,4 @@
-import { _decorator, Component, EditBox, ImageAsset, instantiate, Label, native, Node, Prefab, Sprite, SpriteFrame, sys, systemEvent, Texture2D, tween, UIOpacity, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, Component, EditBox, ImageAsset, instantiate, isValid, Label, native, Node, Prefab, Sprite, SpriteFrame, sys, Texture2D, tween, UIOpacity, UITransform, Vec2, Vec3 } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 const { ccclass, property } = _decorator;
 import qrcode from "qrcode-generator"
@@ -30,6 +30,7 @@ export class Share_Info extends BaseComponent<IState, IProps, IEvent> {
   zoomScale = 3 // 放大的倍数
   fadeDuration = 0.3 // 背景渐变时间，单位为秒
   shareLink = ''
+  openQR=false
   start() {
 
   }
@@ -101,9 +102,14 @@ export class Share_Info extends BaseComponent<IState, IProps, IEvent> {
       tween(this.propertyNode.props_background.getComponent(UITransform))
         .to(this.fadeDuration, { height: 0 })
         .start()
-      this.node.getChildByName('copy_QR_code').destroy()
+      if(isValid(this.node.getChildByName('copy_QR_code'))) {
+        this.node.getChildByName('copy_QR_code').destroy()
+        this.openQR=false
+      }
     })
     this.propertyNode.props_spr_QR_code.on(Node.EventType.TOUCH_END, () => { // 打开二维码
+      if(this.openQR)return;
+      this.openQR=true
       let node = instantiate(this.propertyNode.props_spr_QR_code)
       node.name = 'copy_QR_code'
       // node.setScale(new Vec3(0, 0, 1))
@@ -154,34 +160,46 @@ export class Share_Info extends BaseComponent<IState, IProps, IEvent> {
   }
   private renderData() {
     fetcher.send(ApiUrl.RECOMMEND_DATA, {}, "get").then((rsp) => {
-      if (rsp.promotionMemberCode && rsp.promotionMemberCode !== '') {
-        this.propertyNode.props_EditBox_shareName.getComponent(EditBox).string = rsp.promotionMemberCode
-        this.propertyNode.props_EditBox_shareName.getComponent(EditBox).enabled = false
-        this.propertyNode.props_btn_share_mengi.active = false
-      } else {
-        this.propertyNode.props_EditBox_shareName.getComponent(EditBox).enabled = true
-        this.propertyNode.props_btn_share_mengi.active = true
-      }
-      this.propertyNode.props_Label_totalTaruhan.string = rsp.totalPromotionMemberBet.formatAmountWithCommas()
-      this.propertyNode.props_Label_kode.string = rsp.promotionCode
-      this.propertyNode.props_Label_num1.string = rsp.totalPromotionMemberCount
-      this.propertyNode.props_Label_num2.string = rsp.totalPromotionRewardsSum.formatAmountWithCommas()
-      this.propertyNode.props_Label_num3.string = rsp.promotionRewardsSum.formatAmountWithCommas()
-      this.propertyNode.props_label_link.string = rsp.shareLink
+      try {
+        if (rsp.promotionMemberCode && rsp.promotionMemberCode !== '') {
+          this.propertyNode.props_EditBox_shareName.getComponent(EditBox).string = rsp.promotionMemberCode
+          this.propertyNode.props_EditBox_shareName.getComponent(EditBox).enabled = false
+          this.propertyNode.props_btn_share_mengi.active = false
+        } else {
+          this.propertyNode.props_EditBox_shareName.getComponent(EditBox).enabled = true
+          this.propertyNode.props_btn_share_mengi.active = true
+        }
+        this.propertyNode.props_Label_totalTaruhan.string = rsp.totalPromotionMemberBet.formatAmountWithCommas()
+        this.propertyNode.props_Label_kode.string = rsp.promotionCode
+        this.propertyNode.props_Label_num1.string = rsp.totalPromotionMemberCount
+        this.propertyNode.props_Label_num2.string = rsp.totalPromotionRewardsSum.formatAmountWithCommas()
+        this.propertyNode.props_Label_num3.string = rsp.promotionRewardsSum.formatAmountWithCommas()
+        this.propertyNode.props_label_link.string = rsp.shareLink
 
-      this.propertyNode.props_btn_draw.getComponent(Sprite).grayscale = rsp.promotionRewardsSum <= 0
-      this.shareLink = rsp.shareLink
-      this.createQRCode(this.shareLink, 80, (res => {
-        this.propertyNode.props_spr_QR_code.getComponent(Sprite).spriteFrame = res;
-      }))
+        this.propertyNode.props_btn_draw.getComponent(Sprite).grayscale = rsp.promotionRewardsSum <= 0
+        this.shareLink = rsp.shareLink
+        this.createQRCode(this.shareLink, 80, (res => {
+          this.propertyNode.props_spr_QR_code.getComponent(Sprite).spriteFrame = res;
+        }))
+      } catch (error) {
+        console.log('分佣会员渲染');
+      }
+
     })
     fetcher.send(ApiUrl.RECOMMENDDATATOTODAY, {}, "get").then((rsp) => {
-      this.propertyNode.props_Label_num4.string = rsp.todayTotalPromotionMemberCount.formatAmountWithCommas()
-      this.propertyNode.props_Label_num5.string = rsp.todayPromotionMemberBet.formatAmountWithCommas()
-      this.propertyNode.props_Label_num6.string = rsp.todayPromotionRewardsSum.formatAmountWithCommas()
+      try {
+        if (rsp) {
+          this.propertyNode.props_Label_num4.string = rsp.todayTotalPromotionMemberCount.formatAmountWithCommas()
+          this.propertyNode.props_Label_num5.string = rsp.todayPromotionMemberBet.formatAmountWithCommas()
+          this.propertyNode.props_Label_num6.string = rsp.todayPromotionRewardsSum.formatAmountWithCommas()
+        }
+      } catch (error) {
+        console.log('分佣会员渲染');
+      }
     })
   }
   private createQRCode(text, sz, callback) {
+    if (!text) return
     let qr = qrcode(4, 'L');
     qr.addData(text);
     qr.make();

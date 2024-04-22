@@ -1,8 +1,8 @@
-import { Game, Node, instantiate, sys } from "cc"
+import { Game, Node, Prefab, instantiate, sys } from "cc"
 import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { Fruit777_GameBoard, IProps, IEvent } from "../components/Fruit777_GameBoard"
 import { StateType } from "../store/reducer"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, fruit777WebSocketDriver } from "../socketConnect"
 import { GameType } from "../type"
 import RollerPanelViewModel from "./RollerPanelViewModel"
 import { NORMAL_MAG_TYPE, fruit777_Audio, msgListener, sourceManageSeletor } from "../index"
@@ -16,7 +16,6 @@ import { EffectType } from "../../../utils/NodeIOEffect"
 import { setRollRoundEnd } from "../store/actions/roller"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
 import { global, lang } from "../../../hall"
-import config from "../config"
 
 type anthInfoType = {
   bl: number
@@ -39,9 +38,10 @@ class GameBoardViewModel extends ViewModel<Fruit777_GameBoard, IProps, IEvent> {
   public changeGameTypeTask: Task
   public flyFruitNode: Node
   private currGameType: GameType = GameType.NONE
+  public isAuthPass: boolean = false
   public taskScheduler: TaskScheduler = new TaskScheduler()
   protected begin() {
-    sktMsgListener.addOnce(SKT_MAG_TYPE.AUTH, "board", (data: anthInfoType) => {
+    fruit777WebSocketDriver.sktMsgListener.addOnce(SKT_MAG_TYPE.LOGIN, "fruit777_board", (data) => {
       try {
         this.dispatch(changeGame(data.gameType))
         // this.dispatch(changeGame(GameType.SUBGAME1))
@@ -60,43 +60,45 @@ class GameBoardViewModel extends ViewModel<Fruit777_GameBoard, IProps, IEvent> {
           this.dispatch(changeProfit(dataTransfer(DataKeyType.FREE_GAME_AMOUNT)))
         }
         sys.localStorage.setItem("fruit777", JSON.stringify(data))
+        this.comp.scheduleOnce(() => {
+          this.isAuthPass = true
+        }, 1.2)
       } catch (e) {
         global.closeSubGame({ confirmContent: lang.write(k => k.InitGameModule.GameBoardInit) })
       }
       // this.dispatch(changeGame(GameType.MAIN))
     })
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-      token: sys.localStorage.getItem("token"),
-      gameId: config.gameId
-    }, {
-      isReSend: true
-    })
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, "board", (data) => {
+    // fruit777WebSocketDriver.sendSktMessage(SKT_MAG_TYPE.AUTH, {
+    //   token: sys.localStorage.getItem("token"),
+    //   gameId: config.gameId
+    // })
+    fruit777WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, "fruit777_board", (data) => {
       this.dispatch(updateJackpotAmount(data))
     })
-    sktMsgListener.add(SKT_MAG_TYPE.BALANCE_UPDATE, "board", (data) => {
+    fruit777WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.BALANCE_UPDATE, "fruit777_board", (data) => {
       // this.dispatch(updateBalance(data))
     })
-    sktMsgListener.add(SKT_MAG_TYPE.VACATETHEROOM, "board", (data) => {
+    fruit777WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.VACATETHEROOM, "fruit777_board", (data) => {
       global.closeSubGame({ confirmContent: lang.write(k => k.UpdateModule.GameNotice, {}, { placeStr: "对不起，系统维护中，请稍后再尝试登录" }) })
     })
-    sktMsgListener.add(SKT_MAG_TYPE.LAUNCHER_BET, "board", (data, error) => {
-      // console.log('curGame', dataTransfer(DataKeyType.GAME_TYPE))
-      if (this.currGameType !== dataTransfer(DataKeyType.GAME_TYPE)) {
-        this.currGameType = dataTransfer(DataKeyType.GAME_TYPE)
-        this.dispatch(changeGame(dataTransfer(DataKeyType.GAME_TYPE)))
+    fruit777WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCHER_BET, "fruit777_board", (data, error) => {
+      if (!error) {
+        // console.log('curGame', dataTransfer(DataKeyType.GAME_TYPE))
+        if (this.currGameType !== dataTransfer(DataKeyType.GAME_TYPE)) {
+          this.currGameType = dataTransfer(DataKeyType.GAME_TYPE)
+          this.dispatch(changeGame(dataTransfer(DataKeyType.GAME_TYPE)))
+        }
       }
     }, 100)
-
 
     this.setEvent({
       changeGameHandler: (lastGameType, currGameType) => {
         console.log(lastGameType, currGameType)
-        this.changeGameTypeTask = new Task((done) => {
+        this.changeGameTypeTask = new Task(async (done) => {
           try {
             if (this.currentGameViewModel) {
               fruit777_Audio.playOneShot(SoundPathDefine.TRANSFER)
-              this.flyFruitNode = instantiate(sourceManageSeletor().getFile(PrefabPathDefine.FLY_FRUITS).source)
+              this.flyFruitNode = instantiate((await sourceManageSeletor().getFileAsync(PrefabPathDefine._FLY_FRUITS, Prefab)).source)
               this.viewNode.addChild(this.flyFruitNode)
               this.comp.scheduleOnce(() => {
                 //卸载当前
@@ -111,7 +113,7 @@ class GameBoardViewModel extends ViewModel<Fruit777_GameBoard, IProps, IEvent> {
             done()
             console.log('err', e)
           }
-        }).subscribeDone('change', () => {
+        }).subscribeDone('change', async () => {
           if (!this.comp.getPropertyNode()) return
           this.dispatch(changeViewGame(currGameType))
           if (currGameType === GameType.MAIN) {
@@ -121,7 +123,7 @@ class GameBoardViewModel extends ViewModel<Fruit777_GameBoard, IProps, IEvent> {
               }
             }).connect()
           } else if (currGameType === GameType.SUBGAME1) {
-            this.currentGameViewModel = new BoxPanelViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.BOX_GAME).source).appendTo(this.comp.getGameNode(), {
+            this.currentGameViewModel = new BoxPanelViewModel().mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._BOX_GAME, Prefab)).source).appendTo(this.comp.getGameNode(), {
               effectType: EffectType.EFFECT_FADE, effectDone: () => {
                 this.dispatch(setRollRoundEnd(true))
               }
@@ -140,7 +142,7 @@ class GameBoardViewModel extends ViewModel<Fruit777_GameBoard, IProps, IEvent> {
         })
         if (!this.currentGameViewModel) {
           //初始化的时候才直接执行
-          this.taskScheduler.joinqQueue(this.changeGameTypeTask, true)
+          this.taskScheduler && this.taskScheduler.joinQueue(this.changeGameTypeTask, true)
         }
       }
     })

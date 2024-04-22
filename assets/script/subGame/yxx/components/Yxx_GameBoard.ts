@@ -132,10 +132,14 @@ export class Yxx_GameBoard extends BaseComponent<IState, IProps, IEvent> {
 		});
 
 		this.getSkeleton(this.propertyNode.props_xiazhu_begin).setCompleteListener(() => {
-			this.getSkeleton(this.propertyNode.props_xiazhu_begin).enabled = false;
+			this.scheduleOnce(() => {
+				this.getSkeleton(this.propertyNode.props_xiazhu_begin).enabled = false;
+			})
 		})
 		this.getSkeleton(this.propertyNode.props_xiazhu_end).setCompleteListener(() => {
-			this.getSkeleton(this.propertyNode.props_xiazhu_end).enabled = false;
+			this.scheduleOnce(() => {
+				this.getSkeleton(this.propertyNode.props_xiazhu_end).enabled = false;
+			})
 
 			// 结束动画之后，开始播放开奖动画
 			this.scheduleOnceEnhance(() => {
@@ -150,6 +154,7 @@ export class Yxx_GameBoard extends BaseComponent<IState, IProps, IEvent> {
 
 		// 开盖动画结束之后暂停开盖动画，同时开始关闭盖子的动画
 		this.getSkeleton(this.propertyNode.props_open_gai).setCompleteListener((index) => {
+			// this.scheduleOnce(() => {
 			this.playOpenGaiAnimation(false);
 
 			// 所有延时动画都要加上如果下注状态就不处理了
@@ -172,12 +177,15 @@ export class Yxx_GameBoard extends BaseComponent<IState, IProps, IEvent> {
 					this.playCloseGaiAnimation(true);
 				}, balanceTime + 1)
 			}, 3)
+			// })
 		})
 
 		// 关闭盖子动画结束之后，暂停动画，同时显示待开盖的动画
 		this.getSkeleton(this.propertyNode.props_close_gai).setCompleteListener((index) => {
+			// this.scheduleOnce(() => {
 			this.playCloseGaiAnimation(false);
 			this.getSkeleton(this.propertyNode.props_result_wait).enabled = true;
+			// })
 		})
 
 		this.propertyNode.props_mask_titrle.on(Animation.EventType.FINISHED, () => {
@@ -271,14 +279,16 @@ export class Yxx_GameBoard extends BaseComponent<IState, IProps, IEvent> {
 		if (play && this.isBet()) {
 			return;
 		}
+		if (!play) {
+			this.propertyNode.props_dice_container1.destroyAllChildren()
+			this.propertyNode.props_dice_container1.active = false;
+		}
+		play && this.addDice();
+
 		this.getSkeleton(this.propertyNode.props_open_panzi).enabled = play;
 		this.getSkeleton(this.propertyNode.props_open_gai).enabled = play;
 		this.getSkeleton(this.propertyNode.props_open_panzi).paused = !play;
 		this.getSkeleton(this.propertyNode.props_open_gai).paused = !play;
-		if (!play) {
-			this.propertyNode.props_dice_container1.active = false;
-		}
-		play && this.addDice();
 	}
 
 	private playCloseGaiAnimation(play: boolean) {
@@ -312,11 +322,11 @@ export class Yxx_GameBoard extends BaseComponent<IState, IProps, IEvent> {
 
 	/**添加骰子 */
 	private addDice() {
-		// 添加骰子的时候开盖盘子上面的骰子
-		this.propertyNode.props_dice_container1.active = true;
 		// 清理历史骰子
-		this.propertyNode.props_dice_container1.removeAllChildren();
-		this.propertyNode.props_dice_container2.removeAllChildren();
+		this.propertyNode.props_dice_container1.destroyAllChildren()
+		this.propertyNode.props_dice_container2.destroyAllChildren();
+		// 添加骰子的时候开盖盘子上面的骰子
+		this.propertyNode.props_dice_container1.active = false;
 		// 随机骰子位置
 		const positions = this.randomDicePosition();
 		// 同时添加开盖盘子和关闭盖子盘子上面的骰子
@@ -324,6 +334,11 @@ export class Yxx_GameBoard extends BaseComponent<IState, IProps, IEvent> {
 			this.createDice(v, positions[index], this.propertyNode.props_dice_container1);
 			this.createDice(v, positions[index], this.propertyNode.props_dice_container2);
 		})
+
+		this.scheduleOnce(() => {
+			// 添加骰子的时候开盖盘子上面的骰子
+			this.propertyNode.props_dice_container1.active = true;
+		}, 0.1)
 		// 由于挂载在开盖盘子上面的节点在动画结束时隐藏有一点点延迟，因此这里模拟同步动画时间
 		this.scheduleOnceEnhance(() => {
 			this.propertyNode.props_dice_container1.active = false;

@@ -43,208 +43,208 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 
- class ShouldStartLoadingWorker implements Runnable {
-     private CountDownLatch mLatch;
-     private boolean[] mResult;
-     private final int mViewTag;
-     private final String mUrlString;
+class ShouldStartLoadingWorker implements Runnable {
+    private CountDownLatch mLatch;
+    private boolean[] mResult;
+    private final int mViewTag;
+    private final String mUrlString;
 
-     ShouldStartLoadingWorker(CountDownLatch latch, boolean[] result, int viewTag, String urlString) {
-         this.mLatch = latch;
-         this.mResult = result;
-         this.mViewTag = viewTag;
-         this.mUrlString = urlString;
-     }
+    ShouldStartLoadingWorker(CountDownLatch latch, boolean[] result, int viewTag, String urlString) {
+        this.mLatch = latch;
+        this.mResult = result;
+        this.mViewTag = viewTag;
+        this.mUrlString = urlString;
+    }
 
-     @Override
-     public void run() {
-         this.mResult[0] = CocosWebViewHelper._shouldStartLoading(mViewTag, mUrlString);
-         this.mLatch.countDown(); // notify that result is ready
-     }
- }
+    @Override
+    public void run() {
+        this.mResult[0] = CocosWebViewHelper._shouldStartLoading(mViewTag, mUrlString);
+        this.mLatch.countDown(); // notify that result is ready
+    }
+}
 
- public class CocosWebView extends WebView {
-     private static final String TAG = CocosWebViewHelper.class.getSimpleName();
-     public final static int FILECHOOSER_RESULTCODE = 7777777;
-     private ValueCallback<Uri[]> mUploadCallbackAboveL;
+public class CocosWebView extends WebView {
+    private static final String TAG = CocosWebViewHelper.class.getSimpleName();
+    public final static int FILECHOOSER_RESULTCODE = 7777777;
+    private ValueCallback<Uri[]> mUploadCallbackAboveL;
 
-     private int mViewTag;
-     private String mJSScheme;
+    private int mViewTag;
+    private String mJSScheme;
 
-     public CocosWebView(Context context) {
-         this(context, -1);
-     }
+    public CocosWebView(Context context) {
+        this(context, -1);
+    }
 
-     @SuppressLint("SetJavaScriptEnabled")
-     public CocosWebView(Context context, int viewTag) {
-         super(context);
-         this.mViewTag = viewTag;
-         this.mJSScheme = "";
+    @SuppressLint("SetJavaScriptEnabled")
+    public CocosWebView(Context context, int viewTag) {
+        super(context);
+        this.mViewTag = viewTag;
+        this.mJSScheme = "";
 
-         this.setFocusable(true);
-         this.setFocusableInTouchMode(true);
+        this.setFocusable(true);
+        this.setFocusableInTouchMode(true);
 
-         this.getSettings().setSupportZoom(false);
+        this.getSettings().setSupportZoom(false);
 
-         this.getSettings().setDomStorageEnabled(true);
-         this.getSettings().setJavaScriptEnabled(true);
+        this.getSettings().setDomStorageEnabled(true);
+        this.getSettings().setJavaScriptEnabled(true);
 
-         // `searchBoxJavaBridge_` has big security risk. http://jvn.jp/en/jp/JVN53768697
-         try {
-             Method method = this.getClass().getMethod("removeJavascriptInterface", new Class[]{String.class});
-             method.invoke(this, "searchBoxJavaBridge_");
-         } catch (Exception e) {
-             Log.d(TAG, "This API level do not support `removeJavascriptInterface`");
-         }
+        // `searchBoxJavaBridge_` has big security risk. http://jvn.jp/en/jp/JVN53768697
+        try {
+            Method method = this.getClass().getMethod("removeJavascriptInterface", new Class[]{String.class});
+            method.invoke(this, "searchBoxJavaBridge_");
+        } catch (Exception e) {
+            Log.d(TAG, "This API level do not support `removeJavascriptInterface`");
+        }
 
-         this.setWebViewClient(new Cocos2dxWebViewClient());
-         this.setWebChromeClient(new WebChromeClient(){
-             @Override
-             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
-                 mUploadCallbackAboveL = filePathCallback;
-                 openImageChooserActivity();
-                 // 此处不能返回父类的方法，不然会抛出  java.lang.IllegalStateException: Duplicate showFileChooser result。
-                 // 直接返回true就可以了
+        this.setWebViewClient(new Cocos2dxWebViewClient());
+        this.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+                mUploadCallbackAboveL = filePathCallback;
+                openImageChooserActivity();
+                // 此处不能返回父类的方法，不然会抛出  java.lang.IllegalStateException: Duplicate showFileChooser result。
+                // 直接返回true就可以了
 //                 return super.onShowFileChooser(webView, filePathCallback, fileChooserParams);
-                 return true;
-             }
+                return true;
+            }
 
-             private void openImageChooserActivity(){
-                 // 获取照片
+            private void openImageChooserActivity(){
+                // 获取照片
 //                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
 //                 i.addCategory(Intent.CATEGORY_OPENABLE);
 //                 i.setType("image/*");
-                 // 同时获取照片和视频
-                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                 i.addCategory(Intent.CATEGORY_OPENABLE);
-                 i.setType("*/*");
-                 i.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {"image/*", "video/*"});
+                // 同时获取照片和视频
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("*/*");
+                i.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {"image/*", "video/*"});
 
-                 ((CocosActivity) context).startActivityForResult(Intent.createChooser(i, "Image Chooser"), FILECHOOSER_RESULTCODE);
-             }
-         });
-     }
+                ((CocosActivity) context).startActivityForResult(Intent.createChooser(i, "Image Chooser"), FILECHOOSER_RESULTCODE);
+            }
+        });
+    }
 
-     public void onActivityResultAbovel(int requestCode, int resultCode, Intent intent) {
-         if (requestCode != FILECHOOSER_RESULTCODE || mUploadCallbackAboveL == null)
-             return;
-         Uri[] results = null;
-         if (resultCode == Activity.RESULT_OK) {
-             if (intent != null) {
-                 String dataString = intent.getDataString();
-                 ClipData clipData = intent.getClipData();
-                 if (clipData != null) {
-                     results = new Uri[clipData.getItemCount()];
-                     for (int i = 0; i < clipData.getItemCount(); i++) {
-                         ClipData.Item item = clipData.getItemAt(i);
-                         results[i] = item.getUri();
-                     }
-                 }
-                 if (dataString != null) {
-                     results = new Uri[]{Uri.parse(dataString)};
-                 }
-             }
-         }
-         mUploadCallbackAboveL.onReceiveValue(results);
-         mUploadCallbackAboveL = null;
-     }
+    public void onActivityResultAbovel(int requestCode, int resultCode, Intent intent) {
+        if (requestCode != FILECHOOSER_RESULTCODE || mUploadCallbackAboveL == null)
+            return;
+        Uri[] results = null;
+        if (resultCode == Activity.RESULT_OK) {
+            if (intent != null) {
+                String dataString = intent.getDataString();
+                ClipData clipData = intent.getClipData();
+                if (clipData != null) {
+                    results = new Uri[clipData.getItemCount()];
+                    for (int i = 0; i < clipData.getItemCount(); i++) {
+                        ClipData.Item item = clipData.getItemAt(i);
+                        results[i] = item.getUri();
+                    }
+                }
+                if (dataString != null) {
+                    results = new Uri[]{Uri.parse(dataString)};
+                }
+            }
+        }
+        mUploadCallbackAboveL.onReceiveValue(results);
+        mUploadCallbackAboveL = null;
+    }
 
-     public void setJavascriptInterfaceScheme(String scheme) {
-         this.mJSScheme = scheme != null ? scheme : "";
-     }
+    public void setJavascriptInterfaceScheme(String scheme) {
+        this.mJSScheme = scheme != null ? scheme : "";
+    }
 
-     public void setScalesPageToFit(boolean scalesPageToFit) {
-         this.getSettings().setSupportZoom(scalesPageToFit);
-     }
+    public void setScalesPageToFit(boolean scalesPageToFit) {
+        this.getSettings().setSupportZoom(scalesPageToFit);
+    }
 
-     class Cocos2dxWebViewClient extends WebViewClient {
-         @Override
-         public boolean shouldOverrideUrlLoading(WebView view, final String urlString) {
-             CocosActivity activity = (CocosActivity)GlobalObject.getActivity();
+    class Cocos2dxWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, final String urlString) {
+            CocosActivity activity = (CocosActivity)GlobalObject.getActivity();
 
-             try {
-                 URI uri = URI.create(urlString);
-                 if (uri != null && uri.getScheme().equals(mJSScheme)) {
-                     CocosHelper.runOnGameThreadAtForeground(new Runnable() {
-                         @Override
-                         public void run() {
-                             CocosWebViewHelper._onJsCallback(mViewTag, urlString);
-                         }
-                     });
-                     return true;
-                 }
-             } catch (Exception e) {
-                 Log.d(TAG, "Failed to create URI from url");
-             }
+            try {
+                URI uri = URI.create(urlString);
+                if (uri != null && uri.getScheme().equals(mJSScheme)) {
+                    CocosHelper.runOnGameThreadAtForeground(new Runnable() {
+                        @Override
+                        public void run() {
+                            CocosWebViewHelper._onJsCallback(mViewTag, urlString);
+                        }
+                    });
+                    return true;
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "Failed to create URI from url");
+            }
 
-             boolean[] result = new boolean[] { true };
-             CountDownLatch latch = new CountDownLatch(1);
+            boolean[] result = new boolean[] { true };
+            CountDownLatch latch = new CountDownLatch(1);
 
-             // run worker on cocos thread
-             activity.runOnUiThread(new ShouldStartLoadingWorker(latch, result, mViewTag, urlString));
+            // run worker on cocos thread
+            activity.runOnUiThread(new ShouldStartLoadingWorker(latch, result, mViewTag, urlString));
 
-             // wait for result from cocos thread
-             try {
-                 latch.await();
-             } catch (InterruptedException ex) {
-                 Log.d(TAG, "'shouldOverrideUrlLoading' failed");
-             }
+            // wait for result from cocos thread
+            try {
+                latch.await();
+            } catch (InterruptedException ex) {
+                Log.d(TAG, "'shouldOverrideUrlLoading' failed");
+            }
 
-             return result[0];
-         }
+            return result[0];
+        }
 
-         @Override
-         public void onPageFinished(WebView view, final String url) {
-             super.onPageFinished(view, url);
+        @Override
+        public void onPageFinished(WebView view, final String url) {
+            super.onPageFinished(view, url);
 
-             CocosHelper.runOnGameThreadAtForeground(new Runnable() {
-                 @Override
-                 public void run() {
-                     CocosWebViewHelper._didFinishLoading(mViewTag, url);
-                 }
-             });
-         }
+            CocosHelper.runOnGameThreadAtForeground(new Runnable() {
+                @Override
+                public void run() {
+                    CocosWebViewHelper._didFinishLoading(mViewTag, url);
+                }
+            });
+        }
 
-         @Override
-         public void onReceivedError(WebView view, int errorCode, String description, final String failingUrl) {
-             super.onReceivedError(view, errorCode, description, failingUrl);
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, final String failingUrl) {
+            super.onReceivedError(view, errorCode, description, failingUrl);
 
-             CocosHelper.runOnGameThreadAtForeground(new Runnable() {
-                 @Override
-                 public void run() {
-                     CocosWebViewHelper._didFailLoading(mViewTag, failingUrl);
-                 }
-             });
-         }
-     }
+            CocosHelper.runOnGameThreadAtForeground(new Runnable() {
+                @Override
+                public void run() {
+                    CocosWebViewHelper._didFailLoading(mViewTag, failingUrl);
+                }
+            });
+        }
+    }
 
-     public void setWebViewRect(int left, int top, int maxWidth, int maxHeight) {
-         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                 FrameLayout.LayoutParams.MATCH_PARENT,
-                 FrameLayout.LayoutParams.MATCH_PARENT);
-         layoutParams.leftMargin = left;
-         layoutParams.topMargin = top;
-         layoutParams.width = maxWidth;
-         layoutParams.height = maxHeight;
-         this.setLayoutParams(layoutParams);
-     }
+    public void setWebViewRect(int left, int top, int maxWidth, int maxHeight) {
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT);
+        layoutParams.leftMargin = left;
+        layoutParams.topMargin = top;
+        layoutParams.width = maxWidth;
+        layoutParams.height = maxHeight;
+        this.setLayoutParams(layoutParams);
+    }
 
-     class WebChromeClient1 extends WebChromeClient {
-         private CocosActivity cocosActivity;
-         public WebChromeClient1(CocosActivity cocosActivity){
+    class WebChromeClient1 extends WebChromeClient {
+        private CocosActivity cocosActivity;
+        public WebChromeClient1(CocosActivity cocosActivity){
             this.cocosActivity = cocosActivity;
-         }
-         @Override
-         public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
-             mUploadCallbackAboveL = filePathCallback;
-             Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-             i.addCategory(Intent.CATEGORY_OPENABLE);
-             i.setType("image/*");
-             this.cocosActivity.startActivityForResult(
-                 Intent.createChooser(i, "File Browser"),
-                 FILECHOOSER_RESULTCODE);
-             return true;
-         }
-     }
+        }
+        @Override
+        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+            mUploadCallbackAboveL = filePathCallback;
+            Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+            i.addCategory(Intent.CATEGORY_OPENABLE);
+            i.setType("image/*");
+            this.cocosActivity.startActivityForResult(
+                Intent.createChooser(i, "File Browser"),
+                FILECHOOSER_RESULTCODE);
+            return true;
+        }
+    }
 
- }
+}

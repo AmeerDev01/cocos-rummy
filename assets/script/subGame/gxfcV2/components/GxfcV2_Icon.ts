@@ -12,6 +12,9 @@ export class GxfcV2Icon {
   private node: Node;
   public faceNode: Node;
   private faceAnimationNode: Node;
+  public jinFaFaceNode: Node;
+  public jinFaFaceAnimationNode: Node;
+  private jinFaSkeleton: sp.Skeleton;
   private iconConfig;
   private skeleton: sp.Skeleton;
   private sprite: Sprite
@@ -35,6 +38,10 @@ export class GxfcV2Icon {
 
     this.faceNode = getNodeByNameDeep("face", this.node);
     this.faceAnimationNode = getNodeByNameDeep("face-animation", this.node);
+
+    this.jinFaFaceNode= getNodeByNameDeep("jinfaface", this.node);
+    this.jinFaFaceAnimationNode = getNodeByNameDeep("jinfaface-animation", this.node);
+    this.jinFaSkeleton = this.jinFaFaceAnimationNode.getComponent(sp.Skeleton);
 
     this.sprite = this.faceNode.getComponent(Sprite);
     this.skeleton = this.faceAnimationNode.getComponent(sp.Skeleton);
@@ -62,16 +69,6 @@ export class GxfcV2Icon {
     // return this.iconConfig.id === IconId.SUN_GOD
   // }
 
-  private listenerSkeletonEvent() {
-    this.skeleton.setCompleteListener(() => {
-      if (this.node.isValid && this.callback) {
-        this.callback && this.callback();
-        this.callback = null;
-        this.hideWin();
-      }
-    })
-  }
-
   /**获得图标 */
   public resetIcon(iconConfig, parentNode?: Node, iconIndex?: number) {
     
@@ -81,6 +78,8 @@ export class GxfcV2Icon {
     parentNode && parentNode.addChild(this.node);
     this.node.setScale(iconConfig.scale[0], iconConfig.scale[1]);
     this.faceAnimationNode.setScale(iconConfig.scale[0], iconConfig.scale[1]);
+
+    this.jinFaFaceAnimationNode.setScale(iconConfig.scale[0], iconConfig.scale[1]);
     // if (parentNode && parentNode.name === "props_wild_icon_list") {
     //   console.log("this.node",this.node);
       
@@ -130,6 +129,8 @@ export class GxfcV2Icon {
       this.node.setPosition(value);
       const offset = new Vec3(this.iconConfig.distance[0], this.iconConfig.distance[1]);
       this.faceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
+
+      this.jinFaFaceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
       this.borderNode.setWorldPosition(this.node.worldPosition);
     }
   }
@@ -137,8 +138,11 @@ export class GxfcV2Icon {
   public setJinWildPosition() {
     if (this.node) {
       this.node.setPosition(this.getPosition());
+      this.node.getComponent(UITransform).width = 160;
+      this.node.getComponent(UITransform).height = 146;
+
       const offset = new Vec3(-4, 5);
-      this.faceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
+      this.jinFaFaceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
       this.borderNode.setWorldPosition(this.node.worldPosition);
 
     }
@@ -152,6 +156,9 @@ export class GxfcV2Icon {
     this.faceAnimationNode.active = false;
     this.faceAnimationNode.removeFromParent();
 
+    this.jinFaFaceAnimationNode.active = false;
+    this.jinFaFaceAnimationNode.removeFromParent();
+
     const skeletonData = sourceManageSeletor().getFile(this.iconConfig.skeletonName).source;
     this.skeleton.skeletonData = skeletonData;
     this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
@@ -162,12 +169,20 @@ export class GxfcV2Icon {
   /**播放普通中奖 */
   public playWin(parentNode: Node, isBorder: boolean = true, loop: boolean = true) {
     const offset = new Vec3(this.iconConfig.distance[0], this.iconConfig.distance[1]);
-    if (!this.faceAnimationNode.active) {
+    if (!this.faceAnimationNode.active && !this.jinFaFaceAnimationNode.active && !this.jinFaFaceNode.active) {
       this.faceAnimationNode.active = true;
       // console.log("playWin ", this.iconConfig.id, " parent " + this.faceAnimationNode.parent);
       if (!this.faceAnimationNode.parent) {
         parentNode.addChild(this.faceAnimationNode)
         this.faceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
+      }
+    } else if (this.jinFaFaceAnimationNode.active || this.jinFaFaceNode.active) {
+      // this.skeleton = this.jinFaSkeleton;
+      this.jinFaFaceAnimationNode.active = true;
+      this.jinFaFaceNode.active = false;
+      if (!this.jinFaFaceAnimationNode.parent) {
+        parentNode.addChild(this.jinFaFaceAnimationNode)
+        this.jinFaFaceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
       }
     }
 
@@ -175,31 +190,38 @@ export class GxfcV2Icon {
       this.borderNode.active = true;
       if (!this.borderNode.parent) {
         parentNode.addChild(this.borderNode)
-        this.borderNode.setWorldPosition(this.node.worldPosition);
+        const offset1 = new Vec3(this.iconConfig.distance[0], this.iconConfig.distance[1]+5);
+
+        this.borderNode.setWorldPosition(this.node.worldPosition.clone().add(offset1));
       }
     }
 
     this.faceNode.active = false;
-    if (this.sprite.spriteFrame !== sourceManageSeletor().getFile(this.iconConfig.fileName).source) {
-      this.skeleton.setAnimation(0, "dynamic", loop);
-      // let count
-      // let skeletonPlayer=  new SkeletonAnimationPlayer(this.skeleton, "dynamic", true, () => {
-        // count++
-        // if (count >= 1) {
-          // skeletonPlayer.stopAnimation()
-          // this.sprite.spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.icon_jinfa).source;
-          // this.faceNode.active = true;
-          // this.faceAnimationNode.active = false;
-        // }
-    //  })
-    //  skeletonPlayer.playAnimation()
-    } else {
+
+    // if (this.sprite.spriteFrame !== sourceManageSeletor().getFile(this.iconConfig.fileName).source) {
+    //   this.skeleton.setAnimation(0, "dynamic", loop);
+    //   // let count
+    //   // let skeletonPlayer=  new SkeletonAnimationPlayer(this.skeleton, "dynamic", true, () => {
+    //     // count++
+    //     // if (count >= 1) {
+    //       // skeletonPlayer.stopAnimation()
+    //       // this.sprite.spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.icon_jinfa).source;
+    //       // this.faceNode.active = true;
+    //       // this.faceAnimationNode.active = false;
+    //     // }
+    // //  })
+    // //  skeletonPlayer.playAnimation()
+    // } else {
       if (this.iconConfig.id === IconId.SCATTER) {
         this.skeleton.setAnimation(0, this.iconConfig.animationArr[2], loop);
       } else {
-        this.skeleton.setAnimation(0, this.iconConfig.animationArr[1], loop);
+        if (this.jinFaFaceAnimationNode.active) {
+          this.jinFaSkeleton.setAnimation(0, "dynamic", loop);
+        } else {
+          this.skeleton.setAnimation(0, this.iconConfig.animationArr[1], loop);
+        }
       }
-    }
+    // }
   }
 
   /**播放甲壳虫动画 */
@@ -280,6 +302,10 @@ export class GxfcV2Icon {
 
     this.faceNode.active = true;
     this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+
+    this.jinFaSkeleton.setAnimation(0, "static", false);
+    this.jinFaFaceAnimationNode.active = false;
+    this.jinFaFaceNode.active = false;
   }
 
   public pauseWin() {
@@ -288,17 +314,25 @@ export class GxfcV2Icon {
     if (this.iconConfig.id === IconId.WILD1 || this.iconConfig.id === IconId.WILD2) {
       this.skeleton.clearTracks()
     } 
-    if (this.sprite.spriteFrame !== sourceManageSeletor().getFile(this.iconConfig.fileName).source) {
-      this.sprite.spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.icon_jinfa).source;
-      this.skeleton.setAnimation(0, "static", false);
-    }
+    // if (this.sprite.spriteFrame !== sourceManageSeletor().getFile(this.iconConfig.fileName).source) {
+    //   this.sprite.spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.icon_jinfa).source;
+    //   this.skeleton.setAnimation(0, "static", false);
+    // }
     this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
-    
+    if (this.jinFaFaceAnimationNode.active) {
+      this.jinFaFaceAnimationNode.active = false;
+      this.jinFaFaceNode.active = true;
+    }
+    this.jinFaSkeleton.setAnimation(0, "static", false);
   }
 
   public changeToJinWild() {
-    this.sprite.spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.icon_jinfa).source;
-    this.skeleton.skeletonData = sourceManageSeletor().getFile(SkeletalPathDefine.icon_jin_wild).source;
+    this.faceNode.active = false;
+    this.faceAnimationNode.active = false;
+    this.jinFaFaceAnimationNode.active = true;
+    this.jinFaFaceNode.active = true;
+    // this.sprite.spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.icon_jinfa).source;
+    // this.skeleton.skeletonData = sourceManageSeletor().getFile(SkeletalPathDefine.icon_jin_wild).source;
     
   }
 
@@ -343,9 +377,11 @@ export class GxfcV2Icon {
   public destory() {
     this.node.isValid && this.node.destroy();
     this.faceAnimationNode.destroy();
+    this.jinFaFaceAnimationNode.destroy()
     this.borderNode.destroy();
     this.node = null;
     this.iconConfig = null;
     this.skeleton = null;
+    this.jinFaSkeleton = null;
   }
 }

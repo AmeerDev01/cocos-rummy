@@ -76,8 +76,8 @@ public class CocosWebViewHelper {
             public void run() {
                 CocosWebView webView = new CocosWebView(sCocos2Activity, index);
                 FrameLayout.LayoutParams lParams = new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.WRAP_CONTENT,
-                        FrameLayout.LayoutParams.WRAP_CONTENT);
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT);
                 sLayout.addView(webView, lParams);
 
                 webViews.put(index, webView);

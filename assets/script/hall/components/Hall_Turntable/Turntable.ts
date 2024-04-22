@@ -2,13 +2,13 @@ import { _decorator, assetManager, Button, ImageAsset, instantiate, Label, Node,
 import { BaseComponent } from '../../../base/BaseComponent';
 import { EffectType } from '../../../utils/NodeIOEffect';
 import { global, hallAudio, lang, sourceManageSeletor } from '../../index';
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from '../../socketConnect';
-import { PrefabPathDefine } from '../../sourceDefine/prefabDefine';
+import { SKT_MAG_TYPE, hallWebSocketDriver } from '../../socketConnect';
+import BaseViewModel from '../../viewModel/BaseViewModel';
 import { SoundPathDefine } from '../../sourceDefine/soundDefine';
 import { addToastAction, ToastType } from '../../store/actions/baseBoard';
-import BaseViewModel from '../../viewModel/BaseViewModel';
 import { ActivityType } from '../Hall_ActivityPanel';
 import { IEvent as CBEvent, IProps as CBProps, IState as CBState, TurntableWin } from './TurntableWin';
+import { PrefabPathDefine } from '../../sourceDefine/prefabDefine';
 const { ccclass, property } = _decorator;
 export interface IState {
 
@@ -40,6 +40,7 @@ export class Turntable extends BaseComponent<IState, IProps, IEvent> {
     }
     private isSpinning: boolean = false; // 转盘是否正在旋转
     private quickStop: boolean = false; // 是否快速停止
+    private theRotationIsComplete: boolean = true; // 是否停止状态
     private slowingDown: boolean = false; // 是否正在减速
     private spinTime: number = 0; // 当前旋转的时间
     private totalSpinTime: number = 4; // 总旋转时间
@@ -81,18 +82,21 @@ export class Turntable extends BaseComponent<IState, IProps, IEvent> {
 
         }
     }
-
+    protected onDestroy(): void {
+        hallWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.TURNTABLESEND, "turntable")
+    }
     protected bindEvent(): void {
         this.propertyNode.props_btn_off.node.on(Button.EventType.CLICK, () => {
-            if (this.isSpinning) {
+            if (!this.theRotationIsComplete) {
                 global.hallDispatch(addToastAction({ content: lang.write(k => k.palyingModule.GameExit, {}, { placeStr: "正在游戏中" }), type: ToastType.ERROR }))
             } else {
-                sktMsgListener.remove(SKT_MAG_TYPE.TURNTABLESEND, "main",)
+                hallWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.TURNTABLESEND, "turntable")
                 this.events.onClosePanel()
             }
         })
         this.propertyNode.props_btn_turntable_arow.node.on(Button.EventType.CLICK, this.onMouseDown, this);
-        sktMsgListener.add(SKT_MAG_TYPE.TURNTABLESEND, "main", (data) => {
+        hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.TURNTABLESEND, "turntable", (data, error) => {
+            if (error) return
             if (this.count > 0) {
                 this.count--
                 this.winData = data
@@ -102,7 +106,7 @@ export class Turntable extends BaseComponent<IState, IProps, IEvent> {
                 }
                 this.events.setCount(data)
                 hallAudio.playOneShot(SoundPathDefine.WHIRL)
-                this.propertyNode.props_label_times.getComponent(Label).string = this.count + ' kali'
+                this.propertyNode.props_label_times.getComponent(Label).string = this.count + ' times'
                 this.propertyNode.props_spr_truntable.children.forEach((item: any) => {
                     if (item.turntableId == data.turntablePrizeEntity.id) {
                         let values = this.rotationData[item.name]
@@ -114,13 +118,11 @@ export class Turntable extends BaseComponent<IState, IProps, IEvent> {
                         this.spinTime = 0;
                     }
                 })
-
             } else {
                 global.hallDispatch(addToastAction({ content: data.reasonlang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: data.reason }), type: ToastType.ERROR }))
             }
         })
     }
-
     // 处理鼠标点击事件
     onMouseDown(event) {
         if (this.count <= 0) {
@@ -136,7 +138,7 @@ export class Turntable extends BaseComponent<IState, IProps, IEvent> {
                     this.slowdownTime = 0;
                     this.startSpinning = true
                 } else {
-                    sktInstance.sendSktMessage(SKT_MAG_TYPE.TURNTABLESEND, { turntableId: this.turntableData.turntable.id })
+                    hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.TURNTABLESEND, { turntableId: this.turntableData.turntable.id })
                 }
             }
         }
@@ -149,7 +151,7 @@ export class Turntable extends BaseComponent<IState, IProps, IEvent> {
                 this.propertyNode.props_btn_turntable_arow.getComponent(Sprite).grayscale = true
             }
             this.turntableData = value.cur
-            this.propertyNode.props_label_times.getComponent(Label).string = count + ' kali'
+            this.propertyNode.props_label_times.getComponent(Label).string = count + ' times'
             turntablePrizeEntities.forEach((j, I) => {
                 let node: any = instantiate(this.propertyNode.props_tum_gift)
                 this.loadTurntableImg(j, node)
@@ -185,32 +187,35 @@ export class Turntable extends BaseComponent<IState, IProps, IEvent> {
     }
     update(dt: number) {
         if (this.isSpinning) {
+            this.theRotationIsComplete=false
             if (this.slowingDown) {
-                this.isSpinning = false;
                 this.slowingDown = false
                 this.propertyNode.props_spr_truntable.angle = 720
                 this.winState = true
                 tween(this.propertyNode.props_spr_truntable)
                     .to(5, { angle: this.stopRaAge }, { easing: 'quartOut' })
                     .call(() => {
+                        this.theRotationIsComplete=true
                         this.loadWin()
                     })
                     .start()
+                    this.isSpinning = false;
             } else {
                 this.spinTime += dt;
                 let t = this.spinTime / this.totalSpinTime;
                 if (t >= 1) {
                     // 时间到达，停止旋转
                     this.spinTime = 0;
-                    this.isSpinning = false;
                     this.propertyNode.props_spr_truntable.angle = 720
                     this.winState = true
                     tween(this.propertyNode.props_spr_truntable)
                         .to(5, { angle: this.stopRaAge }, { easing: 'quartOut' })
                         .call(() => {
+                            this.theRotationIsComplete=true
                             this.loadWin()
                         })
                         .start()
+                        this.isSpinning = false;
                     return;
                 }
                 let speed = this.easeInOut(t);

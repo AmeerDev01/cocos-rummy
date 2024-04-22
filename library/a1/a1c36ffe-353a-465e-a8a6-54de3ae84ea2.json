@@ -5,13 +5,13 @@
   "_native": "",
   "_skeletonJson": {
     "skeleton": {
-      "hash": "ndSdCVQ/2jY/kkKESGJt30pajF8",
+      "hash": "wtbrwvR5RodMiOiceTRH0u7G7lg",
       "spine": "3.8.99",
       "x": -118,
       "y": -107,
       "width": 237,
       "height": 214,
-      "images": "E:/新版UI/平台/大厅new/动画/源文件/商店/素材",
+      "images": "./素材/",
       "audio": ""
     },
     "bones": [
@@ -34,7 +34,7 @@
       {
         "name": "c",
         "bone": "root",
-        "attachment": "che"
+        "attachment": "che1"
       },
       {
         "name": "zi",
@@ -53,7 +53,7 @@
         "name": "default",
         "attachments": {
           "c": {
-            "che": {
+            "che1": {
               "y": 6.36,
               "width": 110,
               "height": 87
@@ -356,5 +356,5 @@
     "shopicon.png"
   ],
   "scale": 1,
-  "_atlasText": "\r\nshopicon.png\r\nsize: 2048,512\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\n1\r\n  rotate: true\r\n  xy: 2, 241\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n10\r\n  rotate: true\r\n  xy: 866, 2\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n2\r\n  rotate: true\r\n  xy: 2, 2\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n3\r\n  rotate: true\r\n  xy: 218, 241\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n4\r\n  rotate: true\r\n  xy: 218, 2\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n5\r\n  rotate: true\r\n  xy: 434, 241\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n6\r\n  rotate: true\r\n  xy: 434, 2\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n7\r\n  rotate: true\r\n  xy: 650, 241\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n8\r\n  rotate: true\r\n  xy: 650, 2\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n9\r\n  rotate: true\r\n  xy: 866, 241\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\nche\r\n  rotate: true\r\n  xy: 1391, 142\r\n  size: 110, 87\r\n  orig: 110, 87\r\n  offset: 0, 0\r\n  index: -1\r\ndi\r\n  rotate: true\r\n  xy: 1082, 254\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz1\r\n  rotate: true\r\n  xy: 1082, 141\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz10\r\n  rotate: true\r\n  xy: 1288, 141\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz11\r\n  rotate: true\r\n  xy: 1288, 28\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz12\r\n  rotate: true\r\n  xy: 1391, 367\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz2\r\n  rotate: true\r\n  xy: 1082, 28\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz3\r\n  rotate: true\r\n  xy: 1185, 367\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz4\r\n  rotate: true\r\n  xy: 1185, 254\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz5\r\n  rotate: true\r\n  xy: 1185, 141\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz6\r\n  rotate: true\r\n  xy: 1185, 28\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz7\r\n  rotate: true\r\n  xy: 1288, 367\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz8\r\n  rotate: true\r\n  xy: 1288, 254\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz9\r\n  rotate: true\r\n  xy: 1082, 367\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nzi\r\n  rotate: true\r\n  xy: 1391, 254\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\n"
+  "_atlasText": "\r\nshopicon.png\r\nsize: 2048,512\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\n1\r\n  rotate: true\r\n  xy: 2, 241\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n10\r\n  rotate: true\r\n  xy: 866, 2\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n2\r\n  rotate: true\r\n  xy: 2, 2\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n3\r\n  rotate: true\r\n  xy: 218, 241\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n4\r\n  rotate: true\r\n  xy: 218, 2\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n5\r\n  rotate: true\r\n  xy: 434, 241\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n6\r\n  rotate: true\r\n  xy: 434, 2\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n7\r\n  rotate: true\r\n  xy: 650, 241\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n8\r\n  rotate: true\r\n  xy: 650, 2\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\n9\r\n  rotate: true\r\n  xy: 866, 241\r\n  size: 237, 214\r\n  orig: 237, 214\r\n  offset: 0, 0\r\n  index: -1\r\nche1\r\n  rotate: true\r\n  xy: 1391, 142\r\n  size: 110, 87\r\n  orig: 110, 87\r\n  offset: 0, 0\r\n  index: -1\r\ndi\r\n  rotate: true\r\n  xy: 1082, 367\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz1\r\n  rotate: true\r\n  xy: 1082, 254\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz10\r\n  rotate: true\r\n  xy: 1288, 141\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz11\r\n  rotate: true\r\n  xy: 1288, 28\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz12\r\n  rotate: true\r\n  xy: 1391, 367\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz2\r\n  rotate: true\r\n  xy: 1082, 141\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz3\r\n  rotate: true\r\n  xy: 1082, 28\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz4\r\n  rotate: true\r\n  xy: 1185, 367\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz5\r\n  rotate: true\r\n  xy: 1185, 254\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz6\r\n  rotate: true\r\n  xy: 1185, 141\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz7\r\n  rotate: true\r\n  xy: 1185, 28\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz8\r\n  rotate: true\r\n  xy: 1288, 367\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nz9\r\n  rotate: true\r\n  xy: 1288, 254\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\nzi\r\n  rotate: true\r\n  xy: 1391, 254\r\n  size: 111, 101\r\n  orig: 111, 101\r\n  offset: 0, 0\r\n  index: -1\r\n"
 }

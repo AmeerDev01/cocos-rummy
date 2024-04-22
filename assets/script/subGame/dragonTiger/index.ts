@@ -5,9 +5,9 @@ import { PrefabPathDefine } from "./sourceDefine/prefabDefine";
 import LoaderPanelViewModel from "../../common/viewModel/LoaderPanelViewModel";
 import SourceManage from "../../base/SourceManage";
 import DragonTigerFileMap from './sourceDefine';
-import { SubGameRunState, config, subGameList } from "../../hall/config";
+import { subGameList } from "../../hall/config";
 import dtConfig from "./config";
-import socketConnect from "./socketConnect";
+import socketConnect, { dragonTigerGameLogin } from "./socketConnect";
 import DragonTigerMainViewModel from "./ViewModel/DragonTigerMainViewModel";
 import { listenerFactoy } from "../../common/listenerFactoy";
 import { AudioMgr } from "../../utils/AudioMgr";
@@ -15,16 +15,17 @@ import { SoundPathDefine } from "./sourceDefine/soundDefine";
 import UseSetOption, { setActiveAudio } from "../../utils/UseSetOption";
 import { global, lang } from "../../hall";
 import { setSubGameRunState } from "../../hall/store/actions/baseBoard";
+import { SubGameRunState } from "../../hallType";
 
 let sourceManageMap: Array<SourceManage> = []
 export let bundleCommon: AssetManager.Bundle = null
 export let bundleDragonTiger: AssetManager.Bundle = null
 export let mainGameViewModel: DragonTigerMainViewModel
 export let dragonTiger_Audio: AudioMgr<SoundPathDefine>
+export let loaderviweModel: LoaderPanelViewModel;
 export const sourceManageSeletor = (bundleName: string = 'dragonTiger') => sourceManageMap.find(i => i.bundle.name === bundleName)
 
 export const startUp = (rootNode: Node) => {
-
   assetManager.loadBundle("common", (err, commonBundle) => {
     bundleCommon = commonBundle
     assetManager.loadBundle(bundlePkgName, Prefab, (err, bundle) => {
@@ -36,19 +37,25 @@ export const startUp = (rootNode: Node) => {
       }, (err, prefab) => {
         if (!global.isAllowOpenSubGame(dtConfig.gameId)) return
         global.hallDispatch(setSubGameRunState(SubGameRunState.READY))
-        const loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({
+        loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({
           loadBarType: 1
         }).setEvent({
           onLoadDone: (_sourceManageMap) => {
             sourceManageMap = _sourceManageMap
             dragonTiger_Audio = new AudioMgr<SoundPathDefine>(sourceManageSeletor("dragonTiger"))
-            config.gameConfig.find(item => item.name === "dragonTiger")
+            // config.gameConfig.find(item => item.name === "dragonTiger")
             loaderviweModel.comp.setTipContent(lang.write(k => k.WebSocketModule.GameInit, {}, { placeStr: "Game init..." }))
             global.hallDispatch(setSubGameRunState(SubGameRunState.RUN))
             socketConnect().then(() => {
               loaderviweModel.unMount().then(() => {
-                mainGameViewModel = new DragonTigerMainViewModel().mountView(sourceManageSeletor("dragonTiger").getFile(PrefabPathDefine.MAIN_GAME).source).appendTo(rootNode).connect()
-                dragonTiger_Audio.play(SoundPathDefine.MAIN_BG, UseSetOption.Instance().option.music)
+                try {
+                  mainGameViewModel = new DragonTigerMainViewModel().mountView(sourceManageSeletor("dragonTiger").getFile(PrefabPathDefine.MAIN_GAME).source).appendTo(rootNode).bindDoneHandler(dragonTigerGameLogin).connect()
+                  dragonTiger_Audio.play(SoundPathDefine.MAIN_BG, UseSetOption.Instance().option.music)
+                } catch (e) {
+                  global.closeSubGame({
+                    confirmContent: lang.write(k => k.WebSocketModule.ErrorGeneral) + ":mount"
+                  })
+                }
               })
             }).catch(e => loaderviweModel.comp.setTipContent(e || 'error'))
           }

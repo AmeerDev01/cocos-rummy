@@ -1,9 +1,7 @@
 import { default as reduxAct } from "redux-act";
-import { BetData, HeadType, MemberInfoVo, WinUser } from "../../type";
+import { BetData, HeadType, MemberInfoVo, TotalBetArea, WinUser } from "../../type";
 
 export type InitStateType = {
-    /**在线人数 */
-    onlineNum: number;
     /**当前用户信息 */
     myInfo: HeadType;
       /** 榜上所有用户 */
@@ -13,13 +11,12 @@ export type InitStateType = {
       /**最新的下注信息 */
     newBetData: BetData,//===> 获取下注返回
     /**区域总值 */
-    goldData: object,
+    goldData: TotalBetArea,
     allWinUsers: WinUser[],
         /**下注失败的金币信息 */
     cancelBetData:BetData
 }
 export const initState: InitStateType = {
-  onlineNum:null,
   myInfo: null,
   usersInfo:null,
   countDown: null,
@@ -48,14 +45,10 @@ export type ActionPayLoad<A extends ActionTypes> =
   :A extends ActionTypes.DRAGONTIGER_USERS_INFO ? { usersInfo: MemberInfoVo[] }
   : A extends ActionTypes.DRAGONTIGER_COUNT_DOWN ? { countDown: number } 
   :A extends ActionTypes.DRAGONTIGER_NEW_BET_DATA ? {  newBetData: BetData } 
-  : A extends ActionTypes.DRAGONTIGER_GOLD_DATA ? { goldData: object } 
+  : A extends ActionTypes.DRAGONTIGER_GOLD_DATA ? { goldData: TotalBetArea } 
   : A extends ActionTypes.DRAGONTIGER_ALL_WIN_USER ? { allWinUsers: WinUser[] } 
   :A extends ActionTypes.DRAGONTGER_CANCEL_BET_DATA ? {cancelBetData:BetData}
-  
-  : A extends ActionTypes.DRAGONTIGER_CHANGE_ONLINE_NUMBER ? { onlineNum: number } 
-  
   :A extends ActionTypes.DRAGONTGER_RESET_STORE ? { } 
-  
   : never;
 
 /**初始化用户信息 */
@@ -86,28 +79,21 @@ export const setNewBetDataAction = reduxAct.createAction(ActionTypes.DRAGONTIGER
       return { newBetData }
 })
 export const changeGoldDataAction=reduxAct.createAction(ActionTypes.DRAGONTIGER_GOLD_DATA,
-    (goldData:object):ActionPayLoad<ActionTypes.DRAGONTIGER_GOLD_DATA>=>{
+    (goldData:TotalBetArea):ActionPayLoad<ActionTypes.DRAGONTIGER_GOLD_DATA>=>{
     return {goldData}
 })
 export const changeAllWinUsersAction=reduxAct.createAction(ActionTypes.DRAGONTIGER_ALL_WIN_USER,
     (allWinUsers:WinUser[]):ActionPayLoad<ActionTypes.DRAGONTIGER_ALL_WIN_USER>=>{
     return {allWinUsers}
     })
-/**设置房间在线人数 */
-export const setOnlineNumber = reduxAct.createAction(
-    ActionTypes.DRAGONTIGER_CHANGE_ONLINE_NUMBER,
-    (
-      onlineNum: number
-    ): ActionPayLoad<ActionTypes.DRAGONTIGER_CHANGE_ONLINE_NUMBER> => {
-      return { onlineNum };
-    }
-);
+
+
 export const changeCancelBetDataAction = reduxAct.createAction(ActionTypes.DRAGONTGER_CANCEL_BET_DATA,
   (cancelBetData:BetData): ActionPayLoad<ActionTypes.DRAGONTGER_CANCEL_BET_DATA> => {
     return { cancelBetData }
   })
 
-export const resetStore = reduxAct.createAction(ActionTypes.DRAGONTGER_RESET_STORE,
-  (): ActionPayLoad<ActionTypes.DRAGONTGER_RESET_STORE> => {
+  export const resetStore = reduxAct.createAction(ActionTypes.DRAGONTGER_RESET_STORE,
+   (): ActionPayLoad<ActionTypes.DRAGONTGER_RESET_STORE> => {
     return { initState }
   })

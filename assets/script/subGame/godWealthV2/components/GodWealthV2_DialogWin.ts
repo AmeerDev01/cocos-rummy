@@ -1,4 +1,4 @@
-import { _decorator, Label, Node } from 'cc';
+import { _decorator, Label, Node, SkeletalAnimation, sp } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import { global } from '../../../hall';
 import { BuyType } from '../../../hall/components/Hall_ShopPanel';
@@ -39,10 +39,10 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 		props_superWin: new Node(),
 		props_smallGame_win: new Node(),
 		props_free_spins: new Node(),
-		props_freeGame_win:new Node(),
-		props_baohe_box:new Node(),
-		props_baoHeGame_win:new Node(),
-		
+		props_freeGame_win: new Node(),
+		props_baohe_box: new Node(),
+		props_baoHeGame_win: new Node(),
+
 	}
 
 	public props: IProps = {
@@ -66,39 +66,39 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 
 	protected bindEvent(): void {
 		this.node.on(Node.EventType.TOUCH_END, () => {
-			if (this.isFreeGameEntry()|| this.isBaoHeGameEntry() || this.isFreeGameSettlement() || this.isBaoHeGameSettlement()) {
-				
+			if (this.isFreeGameEntry() || this.isBaoHeGameEntry() || this.isFreeGameSettlement() || this.isBaoHeGameSettlement()) {
+
 				this.node.destroy();
 				this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
 			} else {
-				console.log("00000000 this.props.dialogInfo111111111",this.props.dialogInfo);
-				
+				// console.log("00000000 this.props.dialogInfo111111111",this.props.dialogInfo);
+
 			}
 		})
 
 		this.node.getChildByName('SpriteSplash').on(Node.EventType.TOUCH_END, () => {
-			if (this.isFreeGameEntry()|| this.isBaoHeGameEntry() || this.isFreeGameSettlement() || this.isBaoHeGameSettlement()) {
-				
+			if (this.isFreeGameEntry() || this.isBaoHeGameEntry() || this.isFreeGameSettlement() || this.isBaoHeGameSettlement()) {
+
 				this.node.destroy();
 				this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
 			} else {
-				console.log("00000000 this.props.dialogInfo111111111",this.props.dialogInfo);
-				
+				// console.log("00000000 this.props.dialogInfo111111111",this.props.dialogInfo);
+
 			}
 		})
 
 	}
 
 	private isFreeGameEntry() {
-		return this.props.dialogInfo && this.props.dialogInfo.dialogType === DialogType.FREE_GAME_ENTRY ;
+		return this.props.dialogInfo && this.props.dialogInfo.dialogType === DialogType.FREE_GAME_ENTRY;
 	}
 
 	private isBaoHeGameEntry() {
-		return this.props.dialogInfo &&  this.props.dialogInfo.dialogType === DialogType.BAO_HE_GAME_ENTRY;
+		return this.props.dialogInfo && this.props.dialogInfo.dialogType === DialogType.BAO_HE_GAME_ENTRY;
 	}
 
 	private isFreeGameSettlement() {
-		return this.props.dialogInfo && this.props.dialogInfo.dialogType === DialogType.FREE_GAME_SETTLEMENT ;
+		return this.props.dialogInfo && this.props.dialogInfo.dialogType === DialogType.FREE_GAME_SETTLEMENT;
 	}
 
 	private isBaoHeGameSettlement() {
@@ -108,10 +108,10 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
 		if (this.node && this.node.isValid) {
-			
+
 			if (key === 'dialogInfo') {
 				this.hideAll();
-				
+
 				if (value.cur) {
 					this.node.active = true;
 					if (this.props.dialogInfo.dialogType === DialogType.FREE_GAME_ENTRY) {
@@ -127,9 +127,9 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 					} else if (this.props.dialogInfo.dialogType === DialogType.SUPER_WIN) {
 						this.showSuperWin();
 					} else if (this.props.dialogInfo.dialogType === DialogType.FREE_GAME_SETTLEMENT) {
-						console.log("this.props.dialogInfo.dialogType",this.props.dialogInfo.dialogType);
+						// console.log("this.props.dialogInfo.dialogType",this.props.dialogInfo.dialogType);
 						this.showFreeSettlement();
-					}else if (this.props.dialogInfo.dialogType === DialogType.BAO_HE_GAME_SETTLEMENT) {
+					} else if (this.props.dialogInfo.dialogType === DialogType.BAO_HE_GAME_SETTLEMENT) {
 						this.showBaoHeSettlement();
 					}
 				} else {
@@ -152,14 +152,14 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 		const labelNode = getNodeByNameDeep("Label_Number", this.propertyNode.props_free_spins)
 		labelNode.getComponent(Label).string = this.props.dialogInfo.params[0];
 		// 如果是自动模式，就等待关闭窗口
-		console.log(this.props.gameTypeInfo,this.props.autoLauncherInfo);
-		
+		// console.log(this.props.gameTypeInfo,this.props.autoLauncherInfo);
+
 		// console.log("isAuto",isAuto(this.props.autoLauncherInfo,this.props.gameTypeInfo));
-		
-		if (isAuto(this.props.autoLauncherInfo,this.props.gameTypeInfo)) {
+
+		if (isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)) {
 			this.detryCloseWindow();
 		}
-		
+
 	}
 
 	private showBaoHeEntry() {
@@ -171,9 +171,10 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 			this.detryCloseWindow();
 		}
 	}
-	
+
 
 	private showBigWin() {
+		this.socket(this.propertyNode.props_bigWin.getChildByName("sk_bw"))
 		godWealthV2_Audio.playOneShot(SoundPathDefine.GET_COIN);
 		this.propertyNode.props_bigWin.active = true;
 		const numberLabel = getNodeByNameDeep("number", this.propertyNode.props_bigWin)
@@ -192,6 +193,7 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 	}
 
 	private showMegaWin() {
+		this.socket(this.propertyNode.props_megaWin.getChildByName("sk_mw"))
 		godWealthV2_Audio.playOneShot(SoundPathDefine.GET_COIN);
 		this.propertyNode.props_megaWin.active = true;
 		const numberLabel = getNodeByNameDeep("number", this.propertyNode.props_megaWin)
@@ -201,6 +203,7 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 	}
 
 	private showSuperWin() {
+		this.socket(this.propertyNode.props_superWin.getChildByName("sk_sw"))
 		godWealthV2_Audio.playOneShot(SoundPathDefine.GET_COIN);
 		this.propertyNode.props_superWin.active = true;
 		const numberLabel = getNodeByNameDeep("number", this.propertyNode.props_superWin)
@@ -225,7 +228,7 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 
 	}
 
-	
+
 	private showBaoHeSettlement() {
 		godWealthV2_Audio.playOneShot(SoundPathDefine.GAME1_OVER_BG)
 
@@ -245,7 +248,7 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 	private startStepNumber(label: Label, start, end, done) {
 		new StepNumber(start, end, (num) => {
 			if (this.node && this.node.isValid) {
-				label.string = Number(num.toFixed(0)).formatAmountWithCommas();
+				label.string = Number(num).formatAmountWithCommas();
 			}
 		}, () => this.node && this.node.isValid && done()).set(config.normalRollOption.numberRollerTime).start();
 	}
@@ -264,6 +267,14 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 	}
 
 	protected bindUI(): void {
+	}
+
+	private socket(skNode: Node) {
+		const sk = skNode.getComponent(sp.Skeleton)
+		const number = skNode.getChildByName("number");
+		const path = "root/box/box_guadian";
+		const socket = new SkeletalAnimation.Socket(path, number);
+		sk.sockets.push(socket);
 	}
 
 	update(deltaTime: number) {

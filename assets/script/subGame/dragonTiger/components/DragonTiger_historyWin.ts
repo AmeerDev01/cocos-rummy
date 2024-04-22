@@ -12,7 +12,7 @@ import { BaseComponent } from "../../../base/BaseComponent";
 import { initToggle } from "../../../utils/tool";
 import { sourceManageSeletor } from "../index";
 import { SpriteFramePathDefine } from "../sourceDefine/spriteDefine";
-import { SKT_MAG_TYPE, sktMsgListener } from "../socketConnect";
+import { SKT_MAG_TYPE } from "../socketConnect";
 import { setHistoryListAction } from "../store/actions/history";
 const { ccclass, property } = _decorator;
 
@@ -97,13 +97,13 @@ export class DragonTiger_historyWin extends BaseComponent<
         (this.propertyNode.props_ProgressBar.getComponent(UITransform).width *
         value.cur.dragon) /100;
       this.propertyNode.props_label_history_naga.getComponent(Label).string =
-        "naga:" + value.cur.dragonNum;
+        "Dragon:" + value.cur.dragonNum;
       this.propertyNode.props_label_history_harimau.getComponent(Label).string =
-        "harimau:" + value.cur.tigerNum;
+        "Tiger:" + value.cur.tigerNum;
       this.propertyNode.props_label_history_seri.getComponent(Label).string =
-        "seri:" + value.cur.drawNum;
+        "Series:" + value.cur.drawNum;
       this.propertyNode.props_label_history_putaran.getComponent(Label).string =
-        "Putaran:" + value.cur.data.length;
+        "Round:" + value.cur.data.length;
       let gridParent = this.propertyNode.props_spr_history_girdBg;
      
       let numbersArray = value.cur.data

@@ -168,7 +168,7 @@ export class BlessedWealthy_rollerPanel extends BaseComponent<IState, IProps, IE
 			})
 		}
 		if (key === "jackpotAmount") {
-			// this.taskScheduler.joinqQueue(new Task((done) => {
+			// this.taskScheduler.joinQueue(new Task((done) => {
 			// 	this.stepNumber && this.stepNumber.stop()
 			// 	this.stepNumber = new StepNumber(value.pre, value.cur, (num) => {
 			// 		// this.propertyNode && this.propertyNode.props_Label_up_goldNum && (this.propertyNode.props_Label_up_goldNum.string = (+num.toFixed(0)).formatAmountWithCommas())

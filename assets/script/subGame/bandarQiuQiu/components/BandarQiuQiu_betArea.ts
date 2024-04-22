@@ -159,7 +159,7 @@ export class BandarQiuQiu_betArea extends BaseComponent<IState, IProps, IEvent> 
 			if (value.cur === GameStatus.STOP_BET) {
 				if (mainGameViewModel.isUnMount) { return }
 				this.lastArr=[...this.amountArr];
-				this.taskScheduler.joinqQueue(new Task((done) => {
+				this.taskScheduler.joinQueue(new Task((done) => {
 					window.setTimeout(() => {
 						if (mainGameViewModel.isUnMount) { return }
 						if (value.cur === GameStatus.STOP_BET && this.props) {
@@ -170,7 +170,7 @@ export class BandarQiuQiu_betArea extends BaseComponent<IState, IProps, IEvent> 
 					},6000)
 					
 					window.setTimeout(() => done(), 1000)
-				}),false).joinqQueue(new Task((done) => {
+				}),false).joinQueue(new Task((done) => {
 					window.setTimeout(() => {
 						if(mainGameViewModel.isUnMount){ return }
 						this.flyChipToWinArea();
@@ -193,7 +193,7 @@ export class BandarQiuQiu_betArea extends BaseComponent<IState, IProps, IEvent> 
 		if(key === "allWinUsers"){
 			// console.log("allWinUsers",value.cur);
 			if(!value.cur){ return }
-			this.taskScheduler.joinqQueue(new Task((done)=>{
+			this.taskScheduler.joinQueue(new Task((done)=>{
 				window.setTimeout(() => {
 					if(mainGameViewModel.isUnMount){ return }
 					if(value.cur){
@@ -205,7 +205,7 @@ export class BandarQiuQiu_betArea extends BaseComponent<IState, IProps, IEvent> 
 				}, 2000)
 				
 				window.setTimeout(() => done(), 1000)
-			}),false).joinqQueue(new Task((done)=>{
+			}),false).joinQueue(new Task((done)=>{
 				window.setTimeout(() => {
 					if(mainGameViewModel.isUnMount){ return }
 					if(!value.cur){
@@ -227,7 +227,7 @@ export class BandarQiuQiu_betArea extends BaseComponent<IState, IProps, IEvent> 
 				},2000)
 			
 				window.setTimeout(()=>done(),1000)
-			}),false).joinqQueue(new Task((done)=>{
+			}),false).joinQueue(new Task((done)=>{
 				window.setTimeout(() => {
 					if(mainGameViewModel.isUnMount){ return }
 					// 清理下注区域数据
@@ -804,38 +804,38 @@ export class BandarQiuQiu_betArea extends BaseComponent<IState, IProps, IEvent> 
 	}
 
 	private cancelBet(cancelBetData: BetData) {
-		console.log("cancelBetData",cancelBetData);
-		
 		if (cancelBetData) {
+			let recycleChip = false;
 			const betInfos = this.betAreaInfo.get(cancelBetData.betType);
-			console.log("betInfos",betInfos);
 			if (betInfos === undefined) return;
 			if (betInfos && betInfos.length > 0) {
 				const chips = betInfos.find(v => v.userId === gameCacheData.memberId || v.isMe).chips;
-				console.log("chips",chips);
-				
 				for (let i = 0; i < chips.length; i++) {
 					const chip = chips[i];
-					if (chip.comp.props.value === cancelBetData.betAmount) {
+					if (chip.comp.props && chip.comp.props.value && chip.comp.props.value === cancelBetData.betAmount) {
 						chips.splice(i, 1);
 						this.chipFlyToHead(chip, undefined);
+						recycleChip = true;
 						break;
 					}
 				}
 			}
 
-			const betArea = this.getNodeByBetType(cancelBetData.betType).getChildByName("Layout_bet");
-			this.updateBetAreaGold(cancelBetData, betArea.parent);
+			if (recycleChip) { 
+				const betArea = this.getNodeByBetType(cancelBetData.betType).getChildByName("Layout_bet");
+				this.updateBetAreaGold(cancelBetData, betArea.parent);
+	
+				const betAmount = cancelBetData.betAmount < 10000 ? cancelBetData.betAmount.formatAmountWithCommas() : cancelBetData.betAmount.formatAmountWithLetter();
+	
+				global.hallDispatch(
+					addToastAction({
+						position: ToastPosition.MIDDLE,
+						content:
+							lang.write(k => k.InitGameModule.BetFaild, {}, { placeStr: "{0} 筹码下注失败" }).format(betAmount)
+					})
+				)
+			}
 
-			const betAmount = cancelBetData.betAmount < 10000 ? cancelBetData.betAmount.formatAmountWithCommas() : cancelBetData.betAmount.formatAmountWithLetter();
-
-			global.hallDispatch(
-				addToastAction({
-					position: ToastPosition.MIDDLE,
-					content:
-						lang.write(k => k.InitGameModule.BetFaild, {}, { placeStr: "{0} 筹码下注失败" }).format(betAmount)
-				})
-			)
 		}
 	}
 	protected bindUI(): void {

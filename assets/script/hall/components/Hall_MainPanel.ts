@@ -1,7 +1,8 @@
-import { _decorator, assetManager, Button, EventHandler, game, ImageAsset, instantiate, Label, log, Node, PageView, ScrollView, Sprite, SpriteFrame, sys, Toggle, ToggleContainer, Tween, tween, UITransform, Vec3 } from 'cc';
+import { _decorator, assetManager, Button, DebugView, EventHandler, game, ImageAsset, instantiate, Label, log, Node, PageView, ScrollView, Sprite, SpriteFrame, sys, Toggle, ToggleContainer, Tween, tween, UITransform, Vec3 } from 'cc';
 import { BaseComponent } from '../../base/BaseComponent';
-import { config, GateQueueType, HallGameGateType, subGameGateQueue, SubGameType } from '../config';
+import { config, GateQueueType, HallGameGateType, subGameGateQueue, subGameList, SubGameType } from '../config';
 import { bundleCommon, fetcher, global, hallAudio, lang, sourceManageSeletor } from '../index';
+import { SampleData } from '../../utils/Fetcher';
 import { PrefabPathDefine } from '../../hall/sourceDefine/prefabDefine';
 import { EffectType } from '../../utils/NodeIOEffect';
 import { arrowDisplay, initToggle, setByScreenScale } from '../../utils/tool';
@@ -9,15 +10,17 @@ import { SoundPathDefine } from '../sourceDefine/soundDefine';
 import SubGameGateViewModel from '../viewModel/SubGameGateViewModel';
 import MarqueeViewModel from '../viewModel/MarqueeViewModel';
 import { PrefabPathDefine as PrefabPathDefineCommon } from '../../../script/common/sourceDefine/prefabDefine';
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from '../socketConnect';
+import { SKT_MAG_TYPE, hallWebSocketDriver } from '../socketConnect';
 import equal from 'fast-deep-equal';
 import { addToastAction, setAppDownLoadGuide, setSocketConnectStatus, ToastType } from '../store/actions/baseBoard';
 import Throttler from '../../utils/Throttler';
 import { BuyType } from './Hall_ShopPanel';
 import { ApiUrl } from '../apiUrl';
 import ModalBox from '../../common/ModalBox';
-import { DEV } from 'cc/env';
 import { getPackageName } from '../../common/bridge';
+import { DataVerify } from '../../utils/Fetcher';
+import StepNumber from '../../utils/StepNumber';
+import { isH5 } from '../../config/GameConfig';
 
 const { ccclass, property } = _decorator;
 
@@ -55,16 +58,15 @@ export interface IProps {
 	memberId: string,
 	/**登录号 */
 	memberName: string,
-	/**是否连接有效 */
-	isConnect: boolean,
 	/**第几次重连 */
-	retryConnectTimes: number,
+	// retryConnectTimes: number,
 	/**是否有未读活动 */
 	isUnreadActivity: boolean,
+	/**未读站内信数 */
+	UnreadMailNum: number
 }
 
 export interface IEvent {
-	// onToggleGameTypeHandler?: (gameType: SubGameType, gameGateViewModelList: BaseViewModel<Hall_SubGameGate, GateState, GateProps, GateEvent>[]) => void
 	onToggleGameTypeHandler?: (gameType: SubGameType, gameGateViewModelList: SubGameGateViewModel[]) => void
 	/**点击游戏触发 */
 	onTouchIntoHandler?: (gameInfo: HallGameGateType) => void,
@@ -73,7 +75,8 @@ export interface IEvent {
 	onOpenBankPanel?: () => void,
 	onOpenMailPanel?: () => void,
 	onOpenShopPanel?: () => void,
-	onOpenAwardPanel?: () => void,
+	/**isTurntable是否点击转盘活动  false为其他活动 true为转盘活动 */
+	onOpenAwardPanel?: (isTurntable: boolean) => void,
 	/**打开礼包窗口 */
 	onOpenGiftBoxanel?: () => void,
 	onOpenWithdrawalPanel?: () => void,
@@ -81,8 +84,9 @@ export interface IEvent {
 	onOpenBindPhonePanel?: () => void,
 	onOpenUpgradePanel?: () => void,
 	onOpenSignInPanel?: () => void,
+	onOpenDailyTaskPanel?: () => void,
 	onOpenVipMainPanel?: () => void,
-	onOpenService?: () => void
+	onOpenService?: () => void,
 }
 
 export enum ToggleTabName {
@@ -105,18 +109,18 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		tourist: 1,
 		memberId: '',
 		memberName: '',
-		isConnect: true,
-		retryConnectTimes: 1,
-		isUnreadActivity: false
+		// isConnect: true,
+		// retryConnectTimes: 1,
+		isUnreadActivity: false,
+		UnreadMailNum: -1,
 	}
-	// public gateViewModelList: BaseViewModel<Hall_SubGameGate, GateState, GateProps, GateEvent>[] = []
 	public gateViewModelList: SubGameGateViewModel[] = []
 	private totalGateQueue: number[][] = subGameGateQueue[0].queue
 	private timerBg: number = 0
 	private connectRetryDone: boolean = true
 	private swiperDatas: SwipeData[] = [];
+	private initGame: boolean = true;
 	public events: IEvent = {
-		// onToggleGameTypeHandler: (gameType: SubGameType, gameGateViewModelList: BaseViewModel<Hall_SubGameGate, GateState, GateProps, GateEvent>[]) => {},
 		onToggleGameTypeHandler: (gameType: SubGameType, gameGateViewModelList: SubGameGateViewModel[]) => { },
 		onTouchIntoHandler: (gameInfo: HallGameGateType) => { },
 		onOpenPersonCenter: (index: number) => { },
@@ -126,11 +130,12 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		onOpenWithdrawalPanel: () => { },
 		onOpenBindPhonePanel: () => { },
 		onOpenUpgradePanel: () => { },
-		onOpenAwardPanel: () => { },
+		onOpenAwardPanel: (isTurntable: boolean) => { },
 		onOpenGiftBoxanel: () => { },
 		onOpenSignInPanel: () => { },
+		onOpenDailyTaskPanel: () => { },
 		onOpenVipMainPanel: () => { },
-		onOpenService: () => { }
+		onOpenService: () => { },
 	}
 	protected propertyNode = {
 		/**白天 */
@@ -161,6 +166,8 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		props_spr_vip: new Node(),
 		/**签到按钮 */
 		props_btn_down_signIn: new Node(),
+		/**每日领取 */
+		props_btn_daily_task: new Node(),
 		/**vip按钮 */
 		props_btn_down_vip: new Node(),
 		/**返佣按钮 */
@@ -171,7 +178,7 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		props_btn_down_bag: new Node(),
 		/** */
 		props_btn_down_hadiah: new Node(),
-		/**任务按钮 */
+		/**底部每日任务 */
 		props_btn_down_task: new Node(),
 		/**客户按钮 */
 		props_btn_down_service: new Node(),
@@ -184,14 +191,14 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		/**右箭头 */
 		props_btn_right: new Node(),
 		/**断链提示面板 */
-		props_disconnect_panel: new Node(),
-		props_connect_tip: new Label(),
+		// props_disconnect_panel: new Node(),
+		// props_connect_tip: new Label(),
 		/**关闭和重试连接外框 */
-		props_user_opa: new Node(),
-		/**连接关闭，退出 */
-		props_sokt_close: new Button(),
-		/**连接重试 */
-		props_sokt_retry: new Button(),
+		// props_user_opa: new Node(),
+		// /**连接关闭，退出 */
+		// props_sokt_close: new Button(),
+		// /**连接重试 */
+		// props_sokt_retry: new Button(),
 		/**宣传画册 */
 		props_PageView: new PageView(),
 		/**宣传画册-轮播灯 */
@@ -202,6 +209,11 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		props_page_template: new Node(),
 		/**大厅的爆奖公告 */
 		props_winningBox: new Node(),
+		/**站内信小红点 */
+		props_inbox_red_dot: new Node(),
+		/**转盘活动按钮 */
+		props_btn_up_lottery: new Node(),
+
 	}
 
 	start() { }
@@ -310,7 +322,12 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		})
 		this.propertyNode.props_btn_down_gift.on(Node.EventType.TOUCH_END, () => {
 			this.isDebouncerAsync(() => {
-				this.events.onOpenAwardPanel()
+				this.events.onOpenAwardPanel(false)
+			})
+		})
+		this.propertyNode.props_btn_up_lottery.on(Node.EventType.TOUCH_END, () => {
+			this.isDebouncerAsync(() => {
+				this.events.onOpenAwardPanel(true)
 			})
 		})
 		this.propertyNode.props_btn_down_shopGift.on(Node.EventType.TOUCH_END, () => {
@@ -324,6 +341,11 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 			})
 		})
 		this.propertyNode.props_btn_down_task.on(Node.EventType.TOUCH_END, () => {
+			this.isDebouncerAsync(() => {
+				this.events.onOpenDailyTaskPanel()
+			})
+		})
+		this.propertyNode.props_btn_daily_task.on(Node.EventType.TOUCH_END, () => {
 			this.isDebouncerAsync(() => {
 				this.events.onOpenSignInPanel()
 			})
@@ -341,23 +363,23 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_ScrollView_game_icon.on(ScrollView.EventType.SCROLLING, (e) => {
 			arrowDisplay(e, this.propertyNode.props_btn_left, this.propertyNode.props_btn_right, 40)
 		})
-		this.propertyNode.props_sokt_close.node.on(Node.EventType.TOUCH_END, () => {
-			game.end()
-		})
-		this.propertyNode.props_sokt_retry.node.on(Node.EventType.TOUCH_END, () => {
-			if (!this.connectRetryDone) {
-				console.log('wait please')
-				return
-			}
-			this.dispatch(setSocketConnectStatus({ isConnect: false, retryConnectTimes: 1 }))
-			sktInstance.reConnectTimes = 0
-			this.connectRetryDone = false
-			sktInstance.reconnect().then(() => {
-				this.connectRetryDone = true
-			}).catch(() => {
-				this.connectRetryDone = true
-			})
-		})
+		// this.propertyNode.props_sokt_close.node.on(Node.EventType.TOUCH_END, () => {
+		// 	game.end()
+		// })
+		// this.propertyNode.props_sokt_retry.node.on(Node.EventType.TOUCH_END, () => {
+		// 	if (!this.connectRetryDone) {
+		// 		console.log('wait please')
+		// 		return
+		// 	}
+		// 	this.dispatch(setSocketConnectStatus({ isConnect: false, remainRetryCount: 1 }))
+		// 	sktInstance.reConnectTimes = 0
+		// 	this.connectRetryDone = false
+		// 	sktInstance.reconnect().then(() => {
+		// 		this.connectRetryDone = true
+		// 	}).catch(() => {
+		// 		this.connectRetryDone = true
+		// 	})
+		// })
 
 		this.propertyNode.props_btn_left.on(Node.EventType.TOUCH_END, () => {
 			const scrollView = this.propertyNode.props_ScrollView_game_icon.getComponent(ScrollView)
@@ -377,7 +399,22 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 
 	protected useProps(key: keyof IProps | '_setDone', value: { pre: any, cur: any }) {
 		key === "nickName" && (this.propertyNode.props_Label_name.string = value.cur + "")
-		key === "memberAssetGoldPieces" && value.cur && (this.propertyNode.props_Label_gold.getComponent(Label).string = value.cur.formatAmountWithCommas(0).split('.')[0])
+		// key === "memberAssetGoldPieces" && (this.propertyNode.props_Label_gold.getComponent(Label).string = value.cur.formatAmountWithCommas().split('.')[0])
+		if (key === "memberAssetGoldPieces") {
+			if (this.initGame) {
+				this.propertyNode.props_Label_gold.getComponent(Label).string = Number(value.cur).formatAmountWithCommas()
+				this.initGame = false;
+			} else {
+				const stepNumber = new StepNumber(value.pre, value.cur, (num) => {
+					if (this.node && this.node.isValid) {
+						this.propertyNode.props_Label_gold.getComponent(Label).string = Number(value.cur).formatAmountWithCommas();
+					}
+				})
+				stepNumber.setFlyNode(this.propertyNode.props_Label_gold.parent, this.propertyNode.props_Label_gold, 30)
+				stepNumber.start()
+			}
+			// (this.propertyNode.props_Label_gold.getComponent(Label).string = value.cur.formatAmountWithCommas())
+		}
 		if (key === "avatarIndex") {
 			bundleCommon.load(`resource/head/head_circle_${value.cur}/spriteFrame`, SpriteFrame, (err, sp) => {
 				if (!err) {
@@ -401,18 +438,25 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 			}
 		}
 
-		if (key === "isConnect") {
-			this.propertyNode.props_disconnect_panel.active = !this.props.isConnect
-		}
-		if (key === "retryConnectTimes") {
-			if (!sktInstance) return
-			this.propertyNode.props_user_opa.active = this.props.retryConnectTimes >= sktInstance.maxReConnectTimes
-			this.propertyNode.props_connect_tip.node.active = this.props.retryConnectTimes < sktInstance.maxReConnectTimes
-			this.propertyNode.props_connect_tip.string = lang.write(k => k.WebSocketModule.socketRetryTimes, { times: this.props.retryConnectTimes }, { placeStr: "连接断开，正在进行第{times}次重连..." })
-		}
+		// if (key === "isConnect") {
+		// 	this.propertyNode.props_disconnect_panel.active = !this.props.isConnect
+		// }
+
+		// if (key === "retryConnectTimes") {
+		// 	if (!sktInstance) return
+		// 	this.propertyNode.props_user_opa.active = this.props.retryConnectTimes >= sktInstance.maxReConnectTimes
+		// 	this.propertyNode.props_connect_tip.node.active = this.props.retryConnectTimes < sktInstance.maxReConnectTimes
+		// 	this.propertyNode.props_connect_tip.string = lang.write(k => k.WebSocketModule.socketRetryTimes, { times: this.props.retryConnectTimes }, { placeStr: "连接断开，正在进行第{times}次重连..." })
+		// }
 
 		if (key === 'isUnreadActivity') {
 			// this.propertyNode.props_btn_down_gift.getChildByName("props_gift_red_dot").active = this.props.isUnreadActivity ? true : false;
+		}
+
+		if (key === "UnreadMailNum") {
+			this.propertyNode.props_btn_down_inbox.getChildByName("props_inbox_red_dot").active = value.cur ? true : false;
+
+			this.propertyNode.props_inbox_red_dot.active = value.cur ? true : false;
 		}
 
 		// if (key === "_setDone") {
@@ -430,8 +474,6 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		this.useState(() => {
 			// 实例化图标对象，先清空
 			const scrollViewContent = this.propertyNode.props_ScrollView_game_icon.getComponent(ScrollView).content
-			// scrollViewContent.removeAllChildren()
-			// const gateViewModelList: BaseViewModel<Hall_SubGameGate, GateState, GateProps, GateEvent>[] = []
 			const ratio = setByScreenScale()
 			// this.gateViewModelList = []
 			const isInit = this.gateViewModelList.length === 0 ? true : false
@@ -439,32 +481,11 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 				this.gateViewModelList.forEach(item => item.viewNode.active = false)
 			}
 			this.state.currGateQueue.queue.forEach(gamesIds => {
-				// const gateModelView = new BaseViewModel<Hall_SubGameGate, GateState, GateProps, GateEvent>("Hall_SubGameGate")
-				// const target = this.gateViewModelList.find(item => equal(item.comp.props.gamesIds, gamesIds))
 				if (!isInit) {
 					const target = this.gateViewModelList.find(item => equal(item.comp.props.gamesIds, gamesIds))
 					target && (target.viewNode.active = true)
 				} else {
-					const gateModelView = new SubGameGateViewModel()
-						.mountView(sourceManageSeletor().getFile(PrefabPathDefine.SUB_GAME_GATE).source)
-						.appendTo(scrollViewContent, {
-							effectType: EffectType.EFFECT1,
-							// effectOption: {
-							// 	scaleOrigin: {
-							// 		x: ratio,
-							// 		y: ratio
-							// 	}
-							// }
-						}).setProps({
-							gamesIds
-						}).setEvent({
-							onTouchInto: (gameInfo: HallGameGateType) => {
-								this.isDebouncerAsync(() => {
-									this.events.onTouchIntoHandler(gameInfo)
-								})
-							}
-						}).connect()
-					this.gateViewModelList.push(gateModelView)
+					this.initGateModelView(scrollViewContent, gamesIds)
 				}
 			})
 			this.events.onToggleGameTypeHandler(this.state.subGameType, this.gateViewModelList)
@@ -473,7 +494,11 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 			chooseTabName: ToggleTabName.ALL
 		})
 		this.propertyNode.props_indicator_toggle.active = false;
-		fetcher.send(ApiUrl.GAME_SWIPE, {}, "get").then((data: Array<SwipeData>) => {
+		fetcher.send(ApiUrl.GAME_SWIPE, {}, "get", {}).then((data: Array<SwipeData>) => {
+			if (!data || (data && !Array.isArray(data))) {
+				global.hallDispatch(addToastAction({ content: lang.write(k => k.BaseBoardModule.DataException, {}, { placeStr: "数据异常" }), type: ToastType.ERROR, forceLandscape: false }))
+				return
+			}
 			data.forEach((item, index) => {
 				assetManager.loadRemote(item.swiperUrl, (err, asset: ImageAsset) => {
 					if (this.propertyNode && !err) {
@@ -482,7 +507,7 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 						this.swiperDatas.push(item);
 					}
 					if (err) {
-						global.hallDispatch(addToastAction({ content: lang.write(k => k.HallModule.LoadFaild, {}, { placeStr: "加载资源失败" }), type: ToastType.ERROR }))
+						global.hallDispatch(addToastAction({ content: lang.write(k => k.HallModule.LoadFaild, {}, { placeStr: "加载资源失败" }), type: ToastType.ERROR, forceLandscape: false }))
 					}
 					if (this.propertyNode && index + 1 === data.length) {
 						this.propertyNode.props_page_template.active = false
@@ -502,12 +527,37 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 					}
 				})
 			})
+		}).catch(e => {
+			console.error(e)
 		})
 
 		this.scrollPageViewListener()
 		this.updateBackground()
 		new MarqueeViewModel().mountView(sourceManageSeletor("common").getFile(PrefabPathDefineCommon.MARQUEE_INSERT).source).appendTo(this.propertyNode.props_Marquee_node).connect()
 		// new MarqueeViewModel().mountView(sourceManageSeletor("common").getFile(CommonPrefabPathDefine.MARQUEE).source, "Common_Marquee").appendTo(this.propertyNode.props_marquee)
+	}
+
+	private initGateModelView(scrollViewContent: Node, gamesIds: number[]) {
+		const gateModelView = new SubGameGateViewModel()
+			.mountView(sourceManageSeletor().getFile(PrefabPathDefine.SUB_GAME_GATE).source)
+			.appendTo(scrollViewContent, {
+				effectType: EffectType.EFFECT1,
+				// effectOption: {
+				// 	scaleOrigin: {
+				// 		x: ratio,
+				// 		y: ratio
+				// 	}
+				// }
+			}).setProps({
+				gamesIds
+			}).setEvent({
+				onTouchInto: (gameInfo: HallGameGateType) => {
+					this.isDebouncerAsync(() => {
+						this.events.onTouchIntoHandler(gameInfo)
+					})
+				}
+			}).connect()
+		this.gateViewModelList.push(gateModelView)
 	}
 
 	private scrollPageViewListener() {
@@ -518,7 +568,8 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 				pageView.scrollToPage(1, 0)
 			}
 			const page = pageView.getPages()[pageView.curPageIdx];
-			this.swiperDatas.find(v => v.name === page.name).toggle.isChecked = true;
+			const targetToggle = this.swiperDatas.find(v => v.name === page.name).toggle
+			targetToggle && (targetToggle.isChecked = true)
 			this.swipeTimeScoll();
 		})
 	}
@@ -559,7 +610,8 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		node.active = true
 		insertIndex >= 0 ? this.propertyNode.props_PageView.insertPage(node, insertIndex) : this.propertyNode.props_PageView.addPage(node);
 		node.on(Node.EventType.TOUCH_END, () => {
-			item.jump && ModalBox.Instance().show({ url: item.detailUrl })
+			// item.jump && ModalBox.Instance().show({ url: item.detailUrl })
+			item.jump && sys.openURL(item.detailUrl)
 		})
 	}
 
@@ -594,14 +646,13 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	protected onDestroy() {
-		sktMsgListener.removeById("mainboard")
+		hallWebSocketDriver.sktMsgListener.removeById("mainboard")
 	}
 
 	/**设置子游戏图标入口的加载状态 */
 	public setSubGameGate(gameId: number, progress: number, isShow?: boolean) {
 		const gateViewModel = this.gateViewModelList.find(item => item.comp.props.gamesIds.indexOf(gameId) !== -1)
-		const isH5 = !DEV && getPackageName() === 'web' && window['installBundle']
-		gateViewModel.comp.setLoadingState(gameId, progress, isShow, isH5 ? 0.5 : 1)
+		gateViewModel.comp.setLoadingState(gameId, progress, isShow, isH5() ? 0.5 : 1)
 	}
 
 	/**
@@ -609,10 +660,11 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 	 * @param done 
 	 */
 	private isDebouncerAsync(done) {
-		Throttler.isDebouncerAsync('hall_entry', 200, true, () => {
+		Throttler.isDebouncerAsync('hall_entry', 1000, true, () => {
 		}).then(isPass => {
 			done && done();
 		})
 	}
+
 }
 

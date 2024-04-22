@@ -5,7 +5,7 @@
   "_native": "",
   "_skeletonJson": {
     "skeleton": {
-      "hash": "lnIWAH5H40c0x20xUHdyIcR4CME",
+      "hash": "jpdcHL0dmXs9NbQ9Qvn+mFsfs90",
       "spine": "3.8.99",
       "x": -113,
       "y": -53.15,
@@ -36,7 +36,7 @@
       {
         "name": "bao",
         "bone": "骨骼",
-        "attachment": "bao"
+        "attachment": "bao1"
       },
       {
         "name": "q",
@@ -46,7 +46,7 @@
       {
         "name": "zi",
         "bone": "root",
-        "attachment": "zi"
+        "attachment": "zi1"
       },
       {
         "name": "g",
@@ -59,7 +59,7 @@
         "name": "default",
         "attachments": {
           "bao": {
-            "bao": {
+            "bao1": {
               "x": 0.5,
               "y": 0.5,
               "width": 139,
@@ -175,7 +175,7 @@
             }
           },
           "zi": {
-            "zi": {
+            "zi1": {
               "x": 0.48,
               "y": 7.92,
               "rotation": 0.16,
@@ -318,5 +318,5 @@
     "tixianicon.png"
   ],
   "scale": 1,
-  "_atlasText": "\r\ntixianicon.png\r\nsize: 2048,512\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\n1\r\n  rotate: false\r\n  xy: 2, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n10\r\n  rotate: true\r\n  xy: 1757, 77\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n11\r\n  rotate: false\r\n  xy: 2, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n12\r\n  rotate: false\r\n  xy: 231, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n13\r\n  rotate: false\r\n  xy: 460, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n14\r\n  rotate: false\r\n  xy: 689, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n15\r\n  rotate: false\r\n  xy: 918, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n2\r\n  rotate: false\r\n  xy: 231, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n3\r\n  rotate: false\r\n  xy: 460, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n4\r\n  rotate: false\r\n  xy: 689, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n5\r\n  rotate: false\r\n  xy: 918, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n6\r\n  rotate: false\r\n  xy: 1147, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n7\r\n  rotate: false\r\n  xy: 1376, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n8\r\n  rotate: true\r\n  xy: 1605, 77\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n9\r\n  rotate: false\r\n  xy: 1147, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\nbao\r\n  rotate: true\r\n  xy: 1909, 165\r\n  size: 139, 105\r\n  orig: 139, 105\r\n  offset: 0, 0\r\n  index: -1\r\ndi\r\n  rotate: true\r\n  xy: 1376, 27\r\n  size: 125, 105\r\n  orig: 125, 105\r\n  offset: 0, 0\r\n  index: -1\r\nq\r\n  rotate: false\r\n  xy: 1483, 107\r\n  size: 44, 45\r\n  orig: 44, 45\r\n  offset: 0, 0\r\n  index: -1\r\nzi\r\n  rotate: true\r\n  xy: 1909, 24\r\n  size: 139, 105\r\n  orig: 139, 105\r\n  offset: 0, 0\r\n  index: -1\r\n"
+  "_atlasText": "\r\ntixianicon.png\r\nsize: 2048,512\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\n1\r\n  rotate: false\r\n  xy: 2, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n10\r\n  rotate: false\r\n  xy: 2, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n11\r\n  rotate: false\r\n  xy: 231, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n12\r\n  rotate: false\r\n  xy: 460, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n13\r\n  rotate: false\r\n  xy: 689, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n14\r\n  rotate: false\r\n  xy: 918, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n15\r\n  rotate: false\r\n  xy: 1147, 2\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n2\r\n  rotate: false\r\n  xy: 231, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n3\r\n  rotate: false\r\n  xy: 460, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n4\r\n  rotate: false\r\n  xy: 689, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n5\r\n  rotate: false\r\n  xy: 918, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n6\r\n  rotate: false\r\n  xy: 1147, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n7\r\n  rotate: false\r\n  xy: 1376, 154\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n8\r\n  rotate: true\r\n  xy: 1605, 77\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\n9\r\n  rotate: true\r\n  xy: 1757, 77\r\n  size: 227, 150\r\n  orig: 227, 150\r\n  offset: 0, 0\r\n  index: -1\r\nbao1\r\n  rotate: true\r\n  xy: 1909, 165\r\n  size: 139, 105\r\n  orig: 139, 105\r\n  offset: 0, 0\r\n  index: -1\r\ndi\r\n  rotate: true\r\n  xy: 1376, 27\r\n  size: 125, 105\r\n  orig: 125, 105\r\n  offset: 0, 0\r\n  index: -1\r\nq\r\n  rotate: false\r\n  xy: 1483, 107\r\n  size: 44, 45\r\n  orig: 44, 45\r\n  offset: 0, 0\r\n  index: -1\r\nzi1\r\n  rotate: true\r\n  xy: 1909, 24\r\n  size: 139, 105\r\n  orig: 139, 105\r\n  offset: 0, 0\r\n  index: -1\r\n"
 }

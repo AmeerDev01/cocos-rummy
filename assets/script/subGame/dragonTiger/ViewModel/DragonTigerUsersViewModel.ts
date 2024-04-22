@@ -8,7 +8,7 @@ import { StateType } from "../store/reducer"
 import { getStore } from '../store';
 import { PrefabPathDefine } from '../sourceDefine/prefabDefine';
 import { EffectType } from '../../../utils/NodeIOEffect';
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from '../socketConnect';
+import { dragonTigerWebSocketDriver, SKT_MAG_TYPE } from '../socketConnect';
 import { gameCacheData, ReqGiftSo } from '../type';
 
 const { ccclass, property } = _decorator;
@@ -34,7 +34,7 @@ class UsersViewModel extends ViewModel<DragonTiger_users, IProps, IEvent> {
               /** 总共需要花费的金币 */
               num: num
             }
-            sktInstance.sendSktMessage(SKT_MAG_TYPE.GIVE_GIFT, data)
+            dragonTigerWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GIVE_GIFT, data)
           }
         })
 
@@ -48,7 +48,6 @@ class UsersViewModel extends ViewModel<DragonTiger_users, IProps, IEvent> {
             roomRightInfoVos:state.history.roomRightInfoVos,
             memberId:state.userInfo.memberId,
             memberName:state.userInfo.memberName,
-            memberData: state.history.memberData,
             usersInfo: state.game.usersInfo,
             newBetData:state.game.newBetData,
           }

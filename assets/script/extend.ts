@@ -1,11 +1,29 @@
-Number.prototype.formatAmountWithCommas = function (): string {
+import { Node } from 'cc'
+
+Number.prototype.formatAmountWithCommas = function (fractionDigits: number = 2): string {
 	const amount = this as number;
-	const parts = amount.toFixed(2).split(".");
+	// const parts = amount.toFixed(2).split(".");
+	const parts = (amount + '').split(".");
 	const integerPart = parts[0];
-	const decimalPart = parts[1];
+	// const decimalPart = parts[1]
+	const decimalPart = parts[1] ? ("." + (parts[1].length > 2 ? parts[1].substring(0, fractionDigits) : parts[1])) : parts[1];
 	const formattedIntegerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	const formattedAmount = +decimalPart === 0 ? formattedIntegerPart : formattedIntegerPart + "." + decimalPart;
+	const formattedAmount = +decimalPart === 0 ? formattedIntegerPart : formattedIntegerPart + (decimalPart || '');
 	return formattedAmount;
+}
+
+Number.prototype.toFixedFix = function (fractionDigits: number = 2): number {
+	const number = this as number;
+	try {
+		const parts = (number + '').split(".");
+		const integerPart = parts[0];
+		const decimalPart = parts[1] ? ("." + (parts[1].length > 2 ? parts[1].substring(0, fractionDigits) : parts[1])) : parts[1];
+		const formattedAmount = +decimalPart === 0 ? integerPart : integerPart + (decimalPart || '');
+		return +formattedAmount;
+	} catch (e) {
+		console.trace(e)
+		return number
+	}
 }
 
 Number.prototype.formatAmountWithLetter = function (): string {
@@ -23,7 +41,7 @@ Number.prototype.formatAmountWithLetter = function (): string {
 		return num + units[unitIndex];
 	} else {
 		// 使用toFixed保留一位小数，并转换成字符串格式
-		return Number(num.toFixed(2)) + units[unitIndex];
+		return Number(num.toFixedFix()) + units[unitIndex];
 	}
 }
 
@@ -43,13 +61,39 @@ Number.prototype.formatAmountWithLetter2 = function (isInteger: boolean): string
 
 String.prototype.format = function (...value): string {
 	if (value.length == 0)
-        return this;
-    let str = this;
-    for ( var i = 0; i < value.length; i++) {
-        var re = new RegExp('\\{' + i + '\\}', 'gm');
-        str = this.replace(re, value[i]);
-    }
-    return str;
+		return this;
+	let str = this;
+	for (var i = 0; i < value.length; i++) {
+		var re = new RegExp('\\{' + i + '\\}', 'gm');
+		str = this.replace(re, value[i]);
+	}
+	return str;
 }
+
+Node.prototype.getDeepChildByName = function (nodeName: string): Node | undefined {
+	const l = (this as Node).children.length;
+	for (let i = 0; i < l; i++) {
+		if ((this as Node).children[i].name === nodeName) {
+			return (this as Node).children[i]
+		} else {
+			if ((this as Node).children[i].children.length) {
+				const result = (this as Node).children[i].getDeepChildByName(nodeName)
+				if (result) {
+					return result
+				}
+			} else {
+				continue
+			}
+		}
+	}
+}
+
+window.addEventListener(
+	"unhandledRejectedPromise",
+	function browserRejectionHandler(event) {
+		console.log(event)
+		event && event.preventDefault();
+	}
+)
 
 export { }

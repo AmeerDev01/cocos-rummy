@@ -2,7 +2,7 @@ import { Node } from "cc"
 import ViewModel from "../../base/ViewModel"
 import { Hall_PcMainPanel, IProps, IEvent } from "../components/Hall_PcMainPanel"
 import { StateType } from "../store/reducer"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, hallWebSocketDriver } from "../socketConnect"
 import { baseBoardView, lang } from "../index"
 import { addToastAction } from "../store/actions/baseBoard"
 import Throttler from "../../utils/Throttler"
@@ -13,11 +13,12 @@ class PersonCenterViewModel extends ViewModel<Hall_PcMainPanel, IProps, IEvent> 
   }
   private memberInfoMedifyDone: () => void
   protected begin() {
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, {}, { isLoading: true })
-    sktMsgListener.add(SKT_MAG_TYPE.MODIFY_MEMBER_INFO, "member", (data) => {
+    hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, '', { isLoading: true })
+    hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.MODIFY_MEMBER_INFO, "member", (data, error) => {
+      if (error) return
       this.memberInfoMedifyDone && this.memberInfoMedifyDone()
       this.dispatch(addToastAction({ content: lang.write(k => k.PersonCenterModule.PersonCenterEdit, {}, { placeStr: "玩家资料编辑成功" }) }))
-      sktInstance.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, {}, { isLoading: true })
+      hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, {}, { isLoading: true })
     })
     // sktMsgListener.add(SKT_MAG_TYPE.CONVERSION, 'member', () => {
     //   this.dispatch(addToastAction({ content: lang.write(k => k.BaseBoardModule.OPERATE_DONE, {}, { placeStr: "操作成功" }) }))
@@ -29,7 +30,7 @@ class PersonCenterViewModel extends ViewModel<Hall_PcMainPanel, IProps, IEvent> 
         }).then((isPass) => {
           if (!baseBoardView.mainPanelViewModel.isTouristPass()) return
           this.memberInfoMedifyDone = done
-          sktInstance.sendSktMessage(SKT_MAG_TYPE.MODIFY_MEMBER_INFO, {
+          hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.MODIFY_MEMBER_INFO, {
             gender, nickName, avatarIndex
           }, { isLoading: true })
         })
@@ -38,7 +39,7 @@ class PersonCenterViewModel extends ViewModel<Hall_PcMainPanel, IProps, IEvent> 
   }
 
   protected unMountCallBack(): void {
-    sktMsgListener.removeById("member")
+    hallWebSocketDriver.sktMsgListener.removeById("member")
   }
 
   public connect() {

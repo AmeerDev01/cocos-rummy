@@ -1,11 +1,11 @@
 {
 "skeleton": {
-	"hash": "i0rJ0XaIYKtjluG1Fyv8pfEkuno",
+	"hash": "8KV0ax+0OlMoWPVyHFuHFh0g9nE",
 	"spine": "3.8.99",
-	"x": -106,
+	"x": -123,
 	"y": -3.32,
-	"width": 212,
-	"height": 207.04,
+	"width": 246,
+	"height": 214.93,
 	"images": "",
 	"audio": ""
 },
@@ -24,7 +24,8 @@
 	{ "name": "guang", "parent": "hj", "length": 40.97, "rotation": -176.45, "x": -19.86, "y": 8.63 },
 	{ "name": "骨骼", "parent": "root", "y": -7.82 },
 	{ "name": "bg2", "parent": "骨骼", "length": 166.48, "rotation": -137.95, "x": 54.67, "y": 158.68 },
-	{ "name": "骨骼2", "parent": "骨骼", "length": 83.89, "rotation": -139.37, "x": 18.73, "y": 107.66 }
+	{ "name": "骨骼2", "parent": "骨骼", "length": 83.89, "rotation": -139.37, "x": 18.73, "y": 107.66 },
+	{ "name": "hui", "parent": "root" }
 ],
 "slots": [
 	{ "name": "bg", "bone": "root", "attachment": "crash_bg" },
@@ -32,7 +33,9 @@
 	{ "name": "crash-bg1", "bone": "bg2", "attachment": "crash-bg1" },
 	{ "name": "crash-xing", "bone": "骨骼2", "attachment": "crash-xing" },
 	{ "name": "crash_guang", "bone": "guang", "attachment": "crash_guang" },
-	{ "name": "huojian_hj", "bone": "hj", "attachment": "huojian_hj" }
+	{ "name": "huojian_hj", "bone": "hj", "attachment": "huojian_hj" },
+	{ "name": "bghui", "bone": "hui", "attachment": "crash_bghui" },
+	{ "name": "cs", "bone": "hui", "attachment": "Cs_xiao" }
 ],
 "skins": [
 	{
@@ -40,6 +43,9 @@
 		"attachments": {
 			"bg": {
 				"crash_bg": { "y": 97.18, "width": 212, "height": 201 }
+			},
+			"bghui": {
+				"crash_bghui": { "y": 97.57, "width": 212, "height": 201 }
 			},
 			"crash-bg1": {
 				"crash-bg1": { "x": 0.5, "scaleX": 1.2371, "scaleY": 1.2371, "width": 417, "height": 192 }
@@ -49,6 +55,9 @@
 			},
 			"crash_guang": {
 				"crash_guang": { "x": -4.74, "y": 1.9, "rotation": 136.28, "width": 129, "height": 122 }
+			},
+			"cs": {
+				"Cs_xiao": { "y": 126.11, "width": 246, "height": 171 }
 			},
 			"huojian_hj": {
 				"huojian_hj": { "x": 45.38, "y": 6.47, "rotation": -41.21, "width": 147, "height": 140 }
@@ -67,6 +76,18 @@
 ],
 "animations": {
 	"animation": {
+		"slots": {
+			"bghui": {
+				"attachment": [
+					{ "name": null }
+				]
+			},
+			"cs": {
+				"attachment": [
+					{ "name": null }
+				]
+			}
+		},
 		"bones": {
 			"hj": {
 				"translate": [
@@ -100,6 +121,35 @@
 				"translate": [
 					{ "x": 174.75, "y": 229.1, "curve": 0.25, "c3": 0.75 },
 					{ "time": 6, "x": -205.71, "y": -199.52 }
+				]
+			}
+		}
+	},
+	"animation1": {
+		"slots": {
+			"bg": {
+				"attachment": [
+					{ "name": null }
+				]
+			},
+			"crash-bg1": {
+				"attachment": [
+					{ "name": null }
+				]
+			},
+			"crash-xing": {
+				"attachment": [
+					{ "name": null }
+				]
+			},
+			"crash_guang": {
+				"attachment": [
+					{ "name": null }
+				]
+			},
+			"huojian_hj": {
+				"attachment": [
+					{ "name": null }
 				]
 			}
 		}

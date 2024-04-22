@@ -1,12 +1,12 @@
 import {_decorator,instantiate, Label, Node, Skeleton, sp, Sprite,Toggle,tween, UITransform,Vec3,Animation,SpriteFrame,sys, bezier,UIOpacity, find, game, Game,} from "cc";
 import { BaseComponent } from "../../../base/BaseComponent";
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect";
+import { SKT_MAG_TYPE, dragonTigerWebSocketDriver } from "../socketConnect";
 import { formatNumber, getNodeByNameDeep, getNodePositionInCanvas, getUUID, initToggle, omitStr } from "../../../utils/tool";
 import { SpriteFramePathDefine } from "../sourceDefine/spriteDefine";
 import { SkeletalPathDefine } from "../sourceDefine/skeletalDefine";
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine";
 import { sourceManageSeletor,bundleDragonTiger ,bundleCommon, mainGameViewModel, dragonTiger_Audio, playGetCoin} from "../index";
-import {changeSelectChipAction, setMemberBetAction, setMemberDataAction } from '../store/actions/history';
+import {changeSelectChipAction, setMemberBetAction } from '../store/actions/history';
 import {winViewModel,loseViewModel,historyViewModel, usersViewModel, onlineViewModel} from '../ViewModel/DragonTigerMainViewModel';
 import { paddingNum, removeComma} from './DragonTiger_win';
 import { bundlePkgName } from "../sourceDefine"
@@ -17,9 +17,10 @@ import { FontPathDefine } from "../sourceDefine/fontDefine";
 import { Tips } from "../store/actions/pokerDetail";
 import ChipViewModel from "../ViewModel/DragonTigerChipViewModel";
 import config, { initBetData } from "../config";
-import { BetData, BetInfo, BetType, DragonTigerCard, HeadType, MemberInfoVo, RepeatBet, SendBet, WinUser, gameCacheData } from "../type";
+import { BetData, BetInfo, BetType, Chips, DragonTigerCard, HeadType, MemberInfoVo, RepeatBet, SendBet, TotalBetArea, WinUser, gameCacheData } from "../type";
 import { changeGoldDataAction } from "../store/actions/game";
 import TaskScheduler, { Task } from "../../../utils/TaskScheduler";
+import { setUserInfoAction } from "../store/actions/userInfo";
 
 const { ccclass, property } = _decorator;
 export interface IState {
@@ -39,13 +40,13 @@ export interface IProps {
   winType?:number,
   memberBet:object,
   oddsList: number[];
-  oddNewList:number[];
-  pokerLeftNum:DragonTigerCard,
-  pokerRightNum: DragonTigerCard,
+  oddNewList: number[];
   pokerInfo: {
     pokerLeftNum:DragonTigerCard,
     pokerRightNum: DragonTigerCard,
   }
+  pokerLeftNum:DragonTigerCard,
+  pokerRightNum:DragonTigerCard,
   sendedP:number,
   readySendP:number,
   win:number,
@@ -62,7 +63,7 @@ export interface IProps {
   countDown: number,
   newBetData: BetData,
   allWinUsers: WinUser[],
-  goldData: object,
+  goldData: TotalBetArea,
   cancelBetData:BetData
   
 }
@@ -90,11 +91,13 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
   private isShowGame: boolean = true;
   private isBet: boolean = true;
   private isLockBet: boolean = false;
-  private betAreaInfo: Map<BetType, BetInfo[]> = new Map();
+  public betAreaInfo: Map<BetType, BetInfo[]> = new Map();
   private areaInfo = [1, 2, 3];
 	private isFlyStar: boolean = false;
   private taskScheduler = new TaskScheduler();
   private clearTime;
+  private isMe: boolean //是否当前用户下注
+  public isInit:boolean //是否初始进入
 
   /**牌节点 */
   private leftNode: Node;
@@ -106,6 +109,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
   }
   protected propertyNode = {
     props_ToggleGroup: new Node(),// toggle下注金币
+    props_bet_chip:new Node(),
     props_btn_history: new Node(),
     props_layout_history:new Node(),
     props_btn_dragon: new Node(),
@@ -155,17 +159,15 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
     winType:0,
     memberBet:{},
     oddNewList:[],
-    oddsList: [],
+    oddsList:[],
     pokerInfo: null,
     pokerRightNum:{
       suit:0,//花色
       rank:"",//数字
-      color:0
     },
     pokerLeftNum:{
       suit:0,//花色
       rank:"",//数字
-      color:0
     },
     tips: null,
     selectChip: 1000,
@@ -202,10 +204,10 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 		game.on(Game.EVENT_SHOW, () => {
       this.isShowGame=true
       if(this.node && this.node.isValid){
-        sktInstance.sendSktMessage(SKT_MAG_TYPE.GAME_SHOW, {roomId: gameCacheData.roomId });
+        dragonTigerWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GAME_SHOW, {data: gameCacheData.roomId });
       }
-      sktMsgListener.add(SKT_MAG_TYPE.GAME_SHOW,bundlePkgName,(data)=>{//810
-        if (data.seconds>0) {
+      dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_SHOW,bundlePkgName,(data)=>{//34
+        if (data.seconds>0 && data.gameType === 1) {
           if(this.node){
             const dragonTiger_VS=this.node.getChildByName("prefabs_dragonTiger_card").getChildByName("dragonTiger_VS")
             dragonTiger_VS.active=false;
@@ -227,7 +229,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 		});
     this.propertyNode.props_btn_history.on(Node.EventType.TOUCH_END, () => {
       playBtnClick();
-      sktInstance.sendSktMessage(SKT_MAG_TYPE.HISTORY,gameCacheData.roomId)
+      dragonTigerWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.HISTORY,{data:gameCacheData.roomId})
       this.events.openHistoryPanel();
     });
     this.propertyNode.props_btn_ulang.on(Node.EventType.TOUCH_END, () => {
@@ -236,11 +238,11 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
     });
     this.propertyNode.props_btn_dragon.on(Node.EventType.TOUCH_END,()=>{
       playBtnClick();
-      this.betArea(BetType.BLUE)
+      this.betArea(BetType.LONG)
     })
     this.propertyNode.props_btn_tiger.on(Node.EventType.TOUCH_END,()=>{
       playBtnClick();
-      this.betArea(BetType.RED)
+      this.betArea(BetType.HU)
     })
     this.propertyNode.props_btn_seri.on(Node.EventType.TOUCH_END, () => {
       playBtnClick();
@@ -265,6 +267,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
           this.rightNode && this.rightNode.destroy();
           return
         }
+        this.init(); //初始化
         this.leftNode && this.leftNode.destroy();
         this.rightNode && this.rightNode.destroy();
         window.clearTimeout(this.clearTime)
@@ -272,7 +275,6 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
         this.areaInfo=[1,2,3]
       
         this.node.getChildByName("prefabs_dragonTiger_card").getChildByName("dragonTiger_VS").active = false;
-        this.init(); //初始化
         this.dispatch(setMemberBetAction({})); //清空当前用户下注memberBet的数据
         // this.openCountDown(); // 播放倒计时
         this.sendCardAction() //发牌行为
@@ -334,32 +336,36 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       if( value.cur <= 0 || value.cur == undefined){
         this.propertyNode.props_label_user_goldNum.getComponent(Label).string = "0";
       }else{
-        this.propertyNode.props_label_user_goldNum.getComponent(Label).string = parseInt(value.cur).formatAmountWithCommas();
+        this.propertyNode.props_label_user_goldNum.getComponent(Label).string = value.cur.formatAmountWithCommas();
       }
     }
     if (key === "myInfo") {
       if (!value.cur) { return }
-      global.loadHeadSprite(value.cur.icon, this.propertyNode.props_spr_user_head.getComponent(Sprite));//加载头像
-      this.propertyNode.props_user_name.getComponent(Label).string = omitStr(value.cur.memberName + "", 12);
+      if (!value.pre) {
+        this.initChip()
+        global.loadHeadSprite(value.cur.icon, this.propertyNode.props_spr_user_head.getComponent(Sprite));//加载头像
+        this.propertyNode.props_user_name.getComponent(Label).string = omitStr(value.cur.memberName + "", 12);
+      }
 		}
     // key==="memberName" && (this.propertyNode.props_user_name.getComponent(Label).string=omitStr(value.cur+"",12) )
     if (key === "newBetData") {
       if (!value.cur) { return }
       if (value.cur.memberId === gameCacheData.memberId) { return };
+      this.isMe = false;
       this.flyChip(value.cur)
     }
     if (key === "allWinUsers") {
-      if(!value.cur){ return }
-      this.taskScheduler.joinqQueue(new Task((done)=>{
+      if (!value.cur) { return }
+      this.taskScheduler.joinQueue(new Task((done)=>{
           if(mainGameViewModel.isUnMount){ return }
           if (value.cur) {
-            value.cur.forEach(item=>{		 
-              this.flyWinAreaToUser(item)
-            })
+            // value.cur.forEach(item=>{		 
+              this.flyWinAreaToUser(value.cur)
+            // })
           }
 
         window.setTimeout(() => done(), 1000)
-      }),false).joinqQueue(new Task((done)=>{
+      }),false).joinQueue(new Task((done)=>{
           if(mainGameViewModel.isUnMount){ return }
           if(!value.cur){
             return
@@ -411,7 +417,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
         if(value.cur<=0){
           if(historyViewModel!==undefined){
             if(!historyViewModel.isUnMount){//历史记录面板未关，倒计时结束，重新请求
-              sktInstance.sendSktMessage(SKT_MAG_TYPE.HISTORY,gameCacheData.roomId)
+              dragonTigerWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.HISTORY,{data:gameCacheData.roomId})
             }
           }
           this.propertyNode.props_djs5_0.active=false;
@@ -434,11 +440,11 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       if (Object.keys(value.cur).length != 0) { 
         for(let key in value.cur){
           let areaNode:Node;
-          if(key==="1"){
+          if(key==="totalBetDragon"){
             areaNode=this.propertyNode.props_btn_dragon
-          }else if(key==="2"){
+          }else if(key==="totalBetTiger"){
             areaNode=this.propertyNode.props_btn_tiger
-          }else if(key==="3"){
+          }else if(key==="totalBetPeace"){
             areaNode=this.propertyNode.props_btn_seri
           }
           if (value.cur[key] === 0) {
@@ -454,13 +460,15 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       if (!value.cur || value.cur === undefined) { return };
       if(value.cur && Object.keys(value.cur).length != 0){   
         for (let key in value.cur) {    
-          let areaNode = this.getNodeByBetType(this.getNodeToBetType(Number(key)))
+          let areaNode = this.getNodeByBetType(this.getNodeToBetType(key))
 					getNodeByNameDeep("Label_bet_all", areaNode).getComponent(Label).string = formatNumber(value.cur[key]);
 				}
-			  }    
+			}    
     }
     if (key === 'cancelBetData') {
-      if(!value.cur){return}
+      if (!value.cur) { return }
+      // console.log("cancelBetData",value.cur);
+      
 			this.cancelBet(value.cur);
 		}
     if (key === "icon") {
@@ -474,7 +482,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
     if (key === "sendedP") {
       window.setTimeout(() => {
         if (mainGameViewModel.isUnMount) { return };
-        this.sendCard()
+      this.sendCard()
      },4000)
     }
     if (key === "readySendP") {
@@ -504,8 +512,6 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
     //       countDown:value.cur
     //     }) 
     // }
-    // if (key === "pokerLeftNum") { this.shuffleCard() }
-    // if( key==="pokerRightNum" ){ this.shuffleCard() }
     if(key==="pokerInfo"){ this.shuffleCard() }
     if( key==="oddsList" ){ this.changeHistoryMin(value.cur) }
     if(key==="oddNewList"){
@@ -514,11 +520,11 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       },4000)
     }
     if (key === "winType") {
-      window.setTimeout(()=>{  
+      // window.setTimeout(()=>{  
         if(this.node && this.node.isValid){
           this.settleAccount()
         }
-      },2000)
+      // },1000)
         
     }
     if(key==="winGold"){
@@ -552,13 +558,54 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       }
     }
   }
+
+  /**初始化下注金币资源 */
+  private initChip(): void {
+		this.propertyNode.props_ToggleGroup.removeAllChildren();
+		const startX = -306;
+    const offset = 110;
+    config.chipTypes.forEach((chip, index) => {
+			if(index === config.chipTypes.length - 1) return
+      const node = this.createBetChip(chip, new Vec3(startX + index * offset, 30));
+			this.propertyNode.props_ToggleGroup.addChild(node);
+			// index === 0 && (node.getChildByName("spr_chips").active = false);
+    });
+    
+  }
+  
+  private chipNodeNamePrefix = "props_chip_toggle_"
+	private createBetChip(chip: any, position: Vec3): Node {
+		const node = instantiate(this.propertyNode.props_bet_chip);
+		node.setPosition(position);
+		node.name = this.chipNodeNamePrefix + chip.value;
+
+		// this.bindChipEvent(node);
+
+		const chips = node.getChildByName("spr_chips");
+		const checkMark = node.getChildByName("Checkmark");
+		const sf = sourceManageSeletor().getFile(chip.fileUrl).source;
+
+		checkMark.getComponent(Sprite).spriteFrame = sf;
+		chips.getComponent(Sprite).spriteFrame = sf;
+
+		const chipLabel = chips.getChildByName("Label_chips").getComponent(Label);
+		chipLabel.string = chip.valueStr;
+		chipLabel.font = sourceManageSeletor().getFile(chip.fontUrl).source;
+
+
+		const checkMarkChipLabel = checkMark.getChildByName("Label_chips").getComponent(Label);
+		checkMarkChipLabel.string = chip.valueStr;
+		checkMarkChipLabel.font = sourceManageSeletor().getFile(chip.fontUrl).source;
+
+		return node;
+	}
   /** 创造对应选取的金币  */
 	private createChip(chipValue: number, parent: Node): ChipViewModel {
-		return new ChipViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.MAIN_CHIP).source).appendTo(parent).connect().setProps({ value: chipValue });
+		return new ChipViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.MAIN_CHIP).source).appendTo(parent).connect().setProps({ value: chipValue, isMe:this.isMe});
 	}
   protected betArea(betType: BetType) { 
     if(this.props.gameType >= 2){ return }
-    if (this.props.tips && this.props.tips.length > 0) {
+    if (this.props.tips && this.props.tips.length > 0 && this.isPower('vip')) {
           const tips = this.props.tips[0]
           if ('vip' === tips.name.toLowerCase()) {
             return; 
@@ -568,7 +615,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
             return;
           }
     }
-    if (this.isLockBet = this.props.gold < 5000) {
+    if (this.isLockBet = this.props.gold < config.gameOption.unlockBetMinGold) {
 			return;
     }
     if (this.props.gold < this.props.selectChip) {
@@ -578,17 +625,17 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 			return;
     }
     const betData = initBetData(this.props.myInfo.index, this.props.myInfo.memberId, betType, this.props.selectChip);
-		betData.isMyBet = true;//当前用户是否下注
+    betData.isMyBet = true;//当前用户是否下注
+    this.isMe = true ;
     const sendBet:SendBet = {
 			roomId: gameCacheData.roomId,
-      memberId: this.props.myInfo.memberId,
-      memberName: this.props.myInfo.memberName,
       gold: betData.betAmount,
       betType: betData.betType,
-			isMe: betData.isMyBet,
+      // isMe: betData.isMyBet,
+      betId: betData.betId,
 		}
 	   // 下注信息发送给服务器
-	   sktInstance.sendSktMessage(SKT_MAG_TYPE.BET_RESPONSE, sendBet);
+	   dragonTigerWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.BET_RESPONSE, sendBet);
      this.flyChip(betData)
     //  this.amountArr.push(sendBet);
   } 
@@ -603,7 +650,8 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 			return;
 		}
 		isFly = betData.isFly;
-		isFly = this.isShowGame;
+    isFly = this.isShowGame;
+    
 		const betArea = this.getNodeByBetType(betData.betType).getChildByName("Layout_bet");
 		const viewModel = this.createChip(betData.betAmount, this.propertyNode.props_add_chips);
 		let radom = Math.random()*90-90;//旋转角度
@@ -615,8 +663,12 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 			playChip()
 			const uiTransform = this.node.getComponent(UITransform);
 			const startPosition = this.getBetStartPosition(betData);
-			chipNode.setWorldPosition(uiTransform.convertToWorldSpaceAR(startPosition));
-			tween(chipNode).to(1, { position: endPosition , angle:-radom,},{easing: 'quintOut'}).start();
+      chipNode.setWorldPosition(uiTransform.convertToWorldSpaceAR(startPosition));
+      
+      tween(chipNode).to(1, { position: endPosition, angle: -radom, }, { easing: 'quintOut' }).call(() => {
+        // console.log("chipNode",viewModel,(viewModel.comp.getPropertyNode().props_ChipTail as Node));
+        viewModel && ((viewModel.comp.getPropertyNode().props_ChipTail as Node).active = false);
+      }).start();
       // if (!isWinRateBet && betData.index === config.gameOption.winRateMaxIndex) {
       if (betData.memberId !== gameCacheData.memberId) {
         if (betData.index > config.gameOption.seatNumber) {
@@ -645,29 +697,33 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 		}
   }
   	/** 赢的区域飞金币到用户头像 */
-	private flyWinAreaToUser(betInfo,isFly: boolean = true): void{
+	private flyWinAreaToUser(winUsers:WinUser[]): void{
 		if(!this.props.win ){ return}
     const betInfos = this.betAreaInfo.get(this.props.win);
     if (betInfos) {
       playGetCoin()
       betInfos.forEach(betInfo => {
-        betInfo.chips.forEach(chip => {
-          const chipNode = chip.comp.node;
+        const isExist = winUsers.some(item => item.memberId === betInfo.userId);
+        if (!isExist) {
+          betInfo.index = config.gameOption.lookOnIndex;
+        }
+        betInfo.chips.forEach(chips => {
+          const chipNode = chips.chip.comp.node;
           const endPositon = this.getFlyToHeadEndPosition(betInfo);
           const uiTransform = this.node.getComponent(UITransform);
           tween(chipNode).to(0.8, { worldPosition: uiTransform.convertToWorldSpaceAR(endPositon) ,scale:new Vec3(0.1,0.1)},{easing: 'quintOut'})
             .call(() => {
-              chip.unMount();
+              chips.chip.unMount();
             })
             .start();
           })
       });
-			}
-		// })
+		}
+
   }
     /**清除所有下注区域的金币 */
   public clearAllBetAreaGold() {
-    this.dispatch(changeGoldDataAction({}));
+    this.dispatch(changeGoldDataAction(null));
 		this.clearBetAreaGold(this.propertyNode.props_btn_dragon);
 		this.clearBetAreaGold(this.propertyNode.props_btn_seri);
 		this.clearBetAreaGold(this.propertyNode.props_btn_tiger);
@@ -685,9 +741,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 	}
   	/**筹码飞向头像的结束坐标 */
 	private getFlyToHeadEndPosition(betInfo: BetInfo) {
-		if (betInfo.isMe) {
-			// 播放获得金币的音效
-			// playGetCoin();
+		if (betInfo.userId === gameCacheData.memberId) {
 			return new Vec3(config.gameOption.myHeadPosition.x, config.gameOption.myHeadPosition.y);
 		}
 
@@ -700,7 +754,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 	/** 金币飞向荷官 */
 	private flyToHeGuan(){//this.betAreaInfo 的chip存储了金币节点，可遍历它进行位置移动
 		// playGetCoin()
-    let chips: ChipViewModel[] = [];
+    let chips: Chips[] = [];
 		this.betAreaInfo.forEach((v, k) => {
 			if(!this.props.win){//没有中奖区域
 				v.forEach(betInfo => {
@@ -724,39 +778,39 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 		this.FlyLossAreaToHe(chips)
 	} 
 	/** 未中奖区域飞金币到荷官位置 */
-	private FlyLossAreaToHe(chips: ChipViewModel[]) {
+	private FlyLossAreaToHe(chips: Chips[]) {
 		if (chips.length != 0) {
 			playGetCoin()
 		}
-		chips.forEach(chip => {
-			const chipNode = chip.comp.node;
+		chips.forEach(chipItem => {
+			const chipNode = chipItem.chip.comp.node;
 			const endPositon = new Vec3 (config.gameOption.dealerPosition.x,config.gameOption.dealerPosition.y);
 			const uiTransform = this.node.getComponent(UITransform);
 
 			tween(chipNode).to(0.8, { worldPosition: uiTransform.convertToWorldSpaceAR(endPositon),scale:new Vec3(0.1,0.1) }, {easing: 'quintOut'})
 				.call(() => {
 					// this.lossAnimationEnd();
-					chip.unMount();
+					chipItem.chip.unMount();
 				})
 				.start();
 		})
   }
-	private  copyBetInfo(betInfos: BetInfo[], parent: Node, odds: number): BetInfo[] {
-		const arr: BetInfo[] = [];
+	// private  copyBetInfo(betInfos: BetInfo[], parent: Node, odds: number): BetInfo[] {
+	// 	const arr: BetInfo[] = [];
     
-		new Array(odds).fill(0).forEach(v => {
-			betInfos.forEach(betInfo => {
-				arr.push({
-					index: betInfo.index,
-					userId: betInfo.userId,
-					isMe: betInfo.isMe,
-					chips: betInfo.chips.filter(chip => chip.comp.props).map(chip => this.createChip(chip.comp.props.value, parent))
-				})
-			})
-		})
+	// 	new Array(odds).fill(0).forEach(v => {
+	// 		betInfos.forEach(betInfo => {
+	// 			arr.push({
+	// 				index: betInfo.index,
+	// 				userId: betInfo.userId,
+	// 				isMe: betInfo.isMe,
+	// 				chips: betInfo.chips.filter(chipItem => chipItem.chip.comp.props).map(chipItem => this.createChip(chipItem.chip.comp.props.value, parent))
+	// 			})
+	// 		})
+	// 	})
 
-		return arr;
-	}
+	// 	return arr;
+	// }
   	/**获得星星 */
 	private getStar(parentNode:Node, betType: BetType) {
 		return usersViewModel.comp.getPropertyNode().props_spr_icon as Node
@@ -847,22 +901,28 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 	 * @param betData 
 	 * @param viewModel 
 	 */
-	private addBetInfo(betData: BetData, viewModel: ChipViewModel) {
+  private addBetInfo(betData: BetData, viewModel: ChipViewModel) {
 		let betInfos = this.betAreaInfo.get(betData.betType);
 		if (!betInfos) {
 			betInfos = [];
 			this.betAreaInfo.set(betData.betType, betInfos);
 		}  
 		
-		let betInfo = betInfos.find(v => v.userId === betData.memberId);
+    let betInfo = betInfos.find(v => v.userId === betData.memberId);
+    const chip: Chips = {
+      betId: betData.betId,
+      betType: betData.betType,
+      betAmount: betData.betAmount,
+      chip:viewModel
+    }
 		if (betInfo) {
-			betInfo.chips.push(viewModel);
+			betInfo.chips.push(chip);
 		} else {
 			betInfos.push({
 				index: betData.index,
 				userId: betData.memberId,
-				isMe: betData.isMyBet,
-				chips: [viewModel]
+        isMe: betData.isMyBet,
+				chips: [chip]
 			})
 		}
 
@@ -898,26 +958,26 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 	}
   /** 获取点击区域的节点 */
   private getNodeByBetType(betType: BetType) {
-    if (BetType.BLUE === betType) {
+    if (BetType.LONG === betType) {
       return this.propertyNode.props_btn_dragon;
-    } else if (BetType.RED === betType) {
+    } else if (BetType.HU === betType) {
       return this.propertyNode.props_btn_tiger;
     } else if (BetType.SERI === betType) {
       return this.propertyNode.props_btn_seri;
     }
   }
-  private getNodeToBetType(betType: number) {
-    if (1 === betType) {
-      return BetType.BLUE;
-    } else if (2 === betType) {
-      return BetType.RED;
-    } else if (3 === betType) {
+  private getNodeToBetType(betType: string) {
+    if ("totalBetDragon" === betType) {
+      return BetType.LONG;
+    } else if ("totalBetTiger" === betType) {
+      return BetType.HU;
+    } else if ("totalBetPeace" === betType) {
       return BetType.SERI;
     } 
   }
   /**更新历史记录min*/
   protected changeHistoryMin(list:number[]){
-    if(this.node && this.node.isValid){
+    if (this.node && this.node.isValid) {  
       for(let i = 0 ; i < list.length ; i++){  
         let gameWinIcon= instantiate(this.propertyNode.props_layout_history.getChildByName("spr_history_icon1"))
             gameWinIcon.active=true;
@@ -948,22 +1008,19 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
   protected closePopup(){
     //五秒后自动关闭结算弹框
     if (mainGameViewModel.isUnMount) { return }
-    console.log("this.initSeconds",this.initSeconds);
     
-    let time:number=this.initSeconds*1000
+    let time: number = (this.initSeconds - 1) * 1000;
     window.setTimeout(() => {
-
-      if (this.node && this.node.isValid) {    
-        this.removeChip()
+      if (this.node && this.node.isValid) {   
         if(winViewModel!=undefined){
           if(!winViewModel.isUnMount){
-            // this.removeChip()
+            this.removeChip()
             winViewModel.unMount()
           }
         }
         if (loseViewModel != undefined) {
           if(!loseViewModel.isUnMount){
-            // this.removeChip()
+            this.removeChip()
             loseViewModel.unMount()
           }
         }
@@ -989,7 +1046,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
             }
           }
       }                 
-    },1)
+    },1)                
   }
     /**重复下注按钮*/ 
   protected repeatBet() {
@@ -1004,7 +1061,8 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 			.start()
       return
     };
-    if (this.props.tips && this.props.tips.length > 0) {
+    let isLock = this.props.gold < config.gameOption.unlockBetMinGold;//自己判断一下用户金币是否满足
+    if (isLock && this.props.tips && this.props.tips.length > 0) {
 			return;
 		}
     let toggleArr: Node[] = this.propertyNode.props_ToggleGroup.children;
@@ -1032,23 +1090,22 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       let type2Total: number = 0;
       let type3Total: number = 0;
       for (var i = 0; i < this.repeatArr.length; i++) { 
-        total += this.repeatArr[i].gold;
+        total += this.repeatArr[i].betAmount;
         if (this.repeatArr[i].betType === 1) {
-          type1Total += this.repeatArr[i].gold;
+          type1Total += this.repeatArr[i].betAmount;
         }else if (this.repeatArr[i].betType === 2) {
-          type2Total += this.repeatArr[i].gold;
+          type2Total += this.repeatArr[i].betAmount;
         }else if (this.repeatArr[i].betType === 3) {
-          type3Total += this.repeatArr[i].gold;
+          type3Total += this.repeatArr[i].betAmount;
         }
       }
+      
       let betData1 = { typeTotal: type1Total, type: 1, betId:"" };
       let betData2 = { typeTotal: type2Total, type: 2, betId:"" };
       let betData3 = { typeTotal: type3Total, type: 3, betId:"" };
-      let lastBetArr = [betData1,betData2,betData3];
+      let lastBetArr = [betData1, betData2, betData3];
+            
       if (this.props.gold >= total) {//只有用户总金额大于所有重复下注的金币额之和 才可以下注
-        // for (var i = 0; i < this.repeatArr.length; i++) { 
-        //   sktInstance.sendSktMessage(SKT_MAG_TYPE.BET_RESPONSE, this.repeatArr[i])
-        // }
         for (let i = 0; i < lastBetArr.length; i++){
           if (lastBetArr[i].typeTotal <= 0) { continue };
           lastBetArr[i].betId = getUUID();
@@ -1061,19 +1118,18 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
           usersViewModel.comp.splitChip(lastBetArr[i].typeTotal, chips)
 
           chips.forEach(chip => {
+            const betData = initBetData(this.props.myInfo.index, this.props.myInfo.memberId, lastBetArr[i].type, chip);
             const sendBet: SendBet = {
               roomId: gameCacheData.roomId,
-              memberId: this.props.myInfo.memberId,
-              memberName: this.props.myInfo.memberName,
               gold: chip,
               betType: lastBetArr[i].type,
-              betId: lastBetArr[i].betId,
-              isMe: true,
+              betId: betData.betId,
+              // isMe: true,
             }
-            const betData = initBetData(this.props.myInfo.index, this.props.myInfo.memberId, lastBetArr[i].type, chip);
             betData.isMyBet = true;
-            sktInstance.sendSktMessage(SKT_MAG_TYPE.BET_RESPONSE, sendBet);
+            this.isMe = true;
             this.flyChip(betData);
+            dragonTigerWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.BET_RESPONSE, sendBet);
             // this.amountArr.push(sendBet);
           })
        
@@ -1137,6 +1193,8 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       playTurnCard()
       // this.propertyNode.props_cards_left.getChildByName("spr_cardBg_left").active=false
       // this.propertyNode.props_dragonTiger_pokerLeft.active=true;
+      this.propertyNode.props_dragonTiger_pokerLeft.active = true;
+      this.propertyNode.props_dragonTiger_pokerRight.active = true;
       this.leftNode = instantiate(this.propertyNode.props_cards_left)
       this.propertyNode.props_cards_left.active = false;
       this.leftNode.active = true;
@@ -1190,7 +1248,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
   /**发牌--资源的变化*/ 
   protected sendCard() {
      // 发牌数量的变化，影响图片资源的变化
-    if(this.node && this.node.isValid){
+     if(this.node && this.node.isValid){
       let pokerTotalNum: number = 414;
       if (!this.node || this.node === undefined) { return };
       let sendCardNode = getNodeByNameDeep("prefabs_dragonTiger_sendCard", this.node);
@@ -1202,10 +1260,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 
       if (this.props.sendedP / pokerTotalNum < 1 / 3) {
         this.node.getChildByName("prefabs_dragonTiger_sendCard").getChildByName("spr_poker_heng").getComponent(Sprite).spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.DRAGONTIGER_HENG_PAI_MINI).source;
-      } else if (
-        this.props.sendedP / pokerTotalNum < 2 / 3 &&
-        this.props.sendedP / pokerTotalNum > 1 / 3
-      ) {
+      } else if ( this.props.sendedP / pokerTotalNum < 2 / 3 && this.props.sendedP / pokerTotalNum > 1 / 3) {
         this.node.getChildByName("prefabs_dragonTiger_sendCard").getChildByName("spr_poker_heng").getComponent(Sprite).spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.DRAGONTIGER_HENG_PAI_MIDDLE).source;
       } else {
         this.node.getChildByName("prefabs_dragonTiger_sendCard").getChildByName("spr_poker_heng").getComponent(Sprite).spriteFrame = sourceManageSeletor().getFile( SpriteFramePathDefine.DRAGONTIGER_HENG_PAI_BIG).source;
@@ -1213,10 +1268,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       // 竖牌--未使用的牌
       if (this.props.readySendP/ pokerTotalNum > 2 / 3) {
         this.node.getChildByName("prefabs_dragonTiger_sendCard").getChildByName("spr_poker_shu").getComponent(Sprite).spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.DRAGONTIGER_SHU_PAI_BIG).source;
-      } else if (
-        this.props.readySendP / pokerTotalNum < 2 / 3 &&
-        this.props.readySendP / pokerTotalNum > 1 / 3
-      ) {
+      } else if (this.props.readySendP / pokerTotalNum < 2 / 3 && this.props.readySendP / pokerTotalNum > 1 / 3) {
         this.node.getChildByName("prefabs_dragonTiger_sendCard").getChildByName("spr_poker_shu").getComponent(Sprite).spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.DRAGONTIGER_SHU_PAI_MIDDLE).source;
       } else {
         this.node.getChildByName("prefabs_dragonTiger_sendCard").getChildByName("spr_poker_shu").getComponent(Sprite).spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.DRAGONTIGER_SHU_PAI_MINI).source;
@@ -1258,13 +1310,16 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
   /**洗牌*/ 
   protected shuffleCard() {
     if (mainGameViewModel.isUnMount || !this.propertyNode) { return };
-      let leftCard=this.propertyNode.props_dragonTiger_pokerLeft
+    let leftCard=this.propertyNode.props_dragonTiger_pokerLeft
     let rightCard = this.propertyNode.props_dragonTiger_pokerRight
     if (this.node && this.node.isValid) {
       if (this.props && this.props.pokerInfo) {
         let dragonTigerLeftCard:DragonTigerCard={...this.props.pokerInfo.pokerLeftNum}
-        let dragonTigerRightCard:DragonTigerCard={...this.props.pokerInfo.pokerRightNum}     
-        bundleDragonTiger.load(dragonTigerLeftCard.color==1?`poker/poker_num_b${dragonTigerLeftCard.rank}/spriteFrame`:`poker/poker_num_r${dragonTigerLeftCard.rank}/spriteFrame`, SpriteFrame, (err, sp) => {
+        let dragonTigerRightCard: DragonTigerCard = { ...this.props.pokerInfo.pokerRightNum }  
+        const isLeftBlack = dragonTigerLeftCard.suit == 1 || dragonTigerLeftCard.suit == 3 ? true : false;
+        const isRightBlack = dragonTigerRightCard.suit == 1 || dragonTigerRightCard.suit == 3 ? true : false;
+
+        bundleDragonTiger.load(isLeftBlack ? `poker/poker_num_b${dragonTigerLeftCard.rank}/spriteFrame`:`poker/poker_num_r${dragonTigerLeftCard.rank}/spriteFrame`, SpriteFrame, (err, sp) => {
           if (!err) {
             if (!leftCard || !leftCard.children) { return };
             // getNodeByNameDeep("spr_poker_num", leftCard).getComponent(Sprite).spriteFrame = sp;
@@ -1285,7 +1340,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
             }
           })
         }else{
-          bundleDragonTiger.load(dragonTigerLeftCard.color==1?`poker/poker_flower_b${dragonTigerLeftCard.rank}/spriteFrame`:`poker/poker_flower_r${dragonTigerLeftCard.rank}/spriteFrame`, SpriteFrame, (err, sp) => {
+          bundleDragonTiger.load(dragonTigerLeftCard.suit==1 ||dragonTigerLeftCard.suit == 3?`poker/poker_flower_b${dragonTigerLeftCard.rank}/spriteFrame`:`poker/poker_flower_r${dragonTigerLeftCard.rank}/spriteFrame`, SpriteFrame, (err, sp) => {
             if (!err) {
             if (!leftCard || !leftCard.children) { return };
               leftCard.getChildByName("spr_poker_flower").getComponent(Sprite).spriteFrame = sp
@@ -1293,8 +1348,8 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
           })
         }
         leftCard.setPosition(-122,254)
-  
-        bundleDragonTiger.load(dragonTigerRightCard.color==1?`poker/poker_num_b${dragonTigerRightCard.rank}/spriteFrame`:`poker/poker_num_r${dragonTigerRightCard.rank}/spriteFrame`, SpriteFrame, (err, sp) => {
+
+        bundleDragonTiger.load(isRightBlack ?`poker/poker_num_b${dragonTigerRightCard.rank}/spriteFrame`:`poker/poker_num_r${dragonTigerRightCard.rank}/spriteFrame`, SpriteFrame, (err, sp) => {
           if (!err) {
             if (!rightCard || !rightCard.children) { return };
             rightCard.getChildByName("spr_poker_num").getComponent(Sprite).spriteFrame = sp
@@ -1314,7 +1369,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
             }
           })
         }else{
-          bundleDragonTiger.load(dragonTigerRightCard.color==1?`poker/poker_flower_b${dragonTigerRightCard.rank}/spriteFrame`:`poker/poker_flower_r${dragonTigerRightCard.rank}/spriteFrame`, SpriteFrame, (err, sp) => {
+          bundleDragonTiger.load(isRightBlack ?`poker/poker_flower_b${dragonTigerRightCard.rank}/spriteFrame`:`poker/poker_flower_r${dragonTigerRightCard.rank}/spriteFrame`, SpriteFrame, (err, sp) => {
             if (!err) {
             if (!rightCard || !rightCard.children) { return };
               rightCard.getChildByName("spr_poker_flower").getComponent(Sprite).spriteFrame = sp
@@ -1324,21 +1379,19 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
         rightCard.setPosition(118,254)
       }
     }
-  }
+}
   /**结算输赢*/
   protected settleAccount(){
     if (this.node && this.node.isValid) {
-      console.log("this.props.winType",this.props.winType);
-      
       if (this.props.winType === 1) {
-        this.taskScheduler.joinqQueue(new Task((done) => {
+        this.taskScheduler.joinQueue(new Task((done) => {
           this.events.openWinPanel()
           playWin()
           window.setTimeout(()=>done(),1000)
           
         }),false)
       } else if (this.props.winType === 2) {
-        this.taskScheduler.joinqQueue(new Task((done) => {
+        this.taskScheduler.joinQueue(new Task((done) => {
           this.events.openLosePanel()
           playDefeat()
           window.setTimeout(()=>done(),1000)
@@ -1350,32 +1403,17 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
   protected removeChip(){
     //移除添加的金币节点
     if (this.node === null) { return }
-    // this.betAreaInfo.clear();
-    // this.clearAllBetAreaGold()
     this.areaInfo = [1, 2, 3];
     this.propertyNode.props_add_chips.removeAllChildren()
-    // let child=this.node.getChildByName("props_add_chips").children
-    // let chip:Node[]=[]
-    //  for(let i=0;i<child.length;i++){
-    //    if(child[i].name==="prefabs_dragonTiger_chip"){
-    //     chip.push(child[i])
-    //    }
-    //  }
-    // chip.forEach((item)=>{
-		// 	tween(item).to(0.2,{scale:new Vec3(0,0,0)}).start();
-    //   // item.destroy()
-    //   this.node.getChildByName("props_add_chips").removeChild(item)
-    // })
   }
   /**初始化*/
   protected init(){
-    if(this.node && this.node.isValid){
-      this.lastArr=this.amountArr //留存上一把的下注情况
+    if (this.node && this.node.isValid) {
+      
+      // this.dispatch(setUserInfoAction({ ...data }))
+      this.lastArr = this.amountArr; //留存上一把的下注情况
       this.amountArr = [];
-      this.removeChip()
-      // 被翻过来的牌
-      // this.propertyNode.props_dragonTiger_pokerLeft.active=false;
-      // this.propertyNode.props_dragonTiger_pokerRight.active=false;
+      !this.isInit && this.removeChip()
       // vsIcon隐藏
       this.node.getChildByName("prefabs_dragonTiger_card").getChildByName("dragonTiger_VS").active=false;
       // 倒计时12-6节点
@@ -1389,12 +1427,11 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       this.propertyNode.props_btn_dragon.getChildByName("spr_bet_bg").active=false;
       this.propertyNode.props_btn_seri.getChildByName("spr_bet_bg").active=false;
       this.propertyNode.props_btn_tiger.getChildByName("spr_bet_bg").active=false;
-      // this.propertyNode.props_btn_dragon.getChildByName("Label_bet_all").getComponent(Label).string="0";
-      // this.propertyNode.props_btn_tiger.getChildByName("Label_bet_all").getComponent(Label).string="0";
-      // this.propertyNode.props_btn_seri.getChildByName("Label_bet_all").getComponent(Label).string="0";
       if(!this.isShowGame){      
-        this.propertyNode.props_cards_right.active=true;
+        this.propertyNode.props_cards_right.active = true;
+        this.propertyNode.props_dragonTiger_pokerRight.active = false;
         this.propertyNode.props_cards_left.active = true;
+        this.propertyNode.props_dragonTiger_pokerLeft.active = false;
         this.leftNode && this.leftNode.destroy();
         this.rightNode && this.rightNode.destroy();
       }
@@ -1420,11 +1457,10 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
         item.children[2].active=false;
       }else{
         item.getChildByName("spr_chips").getComponent(Sprite).grayscale=false;
-        item.getComponent(Toggle).interactable=true;
-        let amountNum:string = item.getChildByName("spr_chips").getChildByName("Label_chips").getComponent(Label).string
-        let font=amountNum=="1000"?sourceManageSeletor().getFile(FontPathDefine.GREEN_BET).source:amountNum=="5000"?sourceManageSeletor().getFile(FontPathDefine.BLUE_BET).source:
-                  amountNum=="10K"?sourceManageSeletor().getFile(FontPathDefine.DARK_BLUE_BET).source:amountNum=="100K"?sourceManageSeletor().getFile(FontPathDefine.RED_BET).source:
-                  amountNum=="500K"?sourceManageSeletor().getFile(FontPathDefine.PURPLE_BET).source:sourceManageSeletor().getFile(FontPathDefine.ORANGE_BET).source
+        item.getComponent(Toggle).interactable = true;
+        let amountNum: string = item.getChildByName("spr_chips").getChildByName("Label_chips").getComponent(Label).string
+
+        let font = this.getFontSpriteFrame(Number(amountNum))
         item.getChildByName("spr_chips").getChildByName("Label_chips").getComponent(Label).font=font          
         item.getComponent(Toggle).isChecked=false;
         item.children[0].active=true;
@@ -1442,32 +1478,53 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 
 
   }
+
+  private getFontSpriteFrame(result: number): SpriteFrame {
+		let fileName = '';
+		if (result === config.chipTypes[0].value) {
+			fileName = config.chipTypes[0].fontUrl;
+		}else if (result === config.chipTypes[1].value) {
+			fileName = config.chipTypes[1].fontUrl;
+		} else if (result === config.chipTypes[2].value) {
+			fileName = config.chipTypes[2].fontUrl;
+		}else if (result === config.chipTypes[3].value) {
+			fileName = config.chipTypes[3].fontUrl;
+		} else if (result === config.chipTypes[4].value) {
+			fileName = config.chipTypes[4].fontUrl;
+		} else if (result === config.chipTypes[5].value) {
+			fileName = config.chipTypes[5].fontUrl;
+		} else if (result == config.chipTypes[6].value) {
+			fileName = config.chipTypes[6].fontUrl;
+		} 
+		return sourceManageSeletor().getFile(fileName).source;
+	}
   protected destroyCallBack(): void {
 		this.taskScheduler.destoryQueue();
     this.taskScheduler.stopQueue(false)
 	}
   protected bindUI(): void {
-
+    
     //充值弹框隐藏
     this.propertyNode.props_layout_lock.active = false;
   }
   /**更新锁定下注区域状态 */
   private updateLockBetState() { 
     // 是否锁定下注  金币不足5千时出现充值弹框
-		let isLock = this.props.gold < 5000 || this.props.gold == undefined || this.props.gold == 0;;
+		let isLock = this.props.gold < config.gameOption.unlockBetMinGold || this.props.gold == undefined || this.props.gold == 0;;
     
-		if (this.props.tips && this.props.tips.length > 0) {
+		if (this.props.tips && this.props.tips.length > 0 && this.isPower("vip")) {
 			isLock = true;
-    } else {
-      isLock = false;
     }
+    // else {
+    //   isLock = false;
+    // }
     if (isLock) {
-			this.updateTipsValue(this.propertyNode.props_tips_gold, String(5000));
+			this.updateTipsValue(this.propertyNode.props_tips_gold, String(config.gameOption.unlockBetMinGold));
       this.updateTipsShow();  
     }
     this.propertyNode.props_layout_lock.active = isLock;
      
-    if(this.props.gold < 5000){
+    if(this.props.gold < config.gameOption.unlockBetMinGold){
       // 停止下注
       this.propertyNode.props_ToggleGroup.children.forEach(item=>{
         item.getComponent(Toggle).interactable=false
@@ -1479,6 +1536,18 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
     }
       
   }
+
+  private isPower(value: string) {
+		if (this.props.tips && this.props.tips.length > 0) {
+			for (let i = 0; i < this.props.tips.length; i++) {
+				const power = this.props.tips[i];
+				if (value === power.name.toLowerCase()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
   private updateTipsShow() {
 		this.propertyNode.props_tips_vip.active = false
 		this.propertyNode.props_tips_gold.active = false
@@ -1519,34 +1588,43 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 				chip.unMount();
 			})
 			.start();
-	}
+  }
+  
+  /**下注失败 回收 */
   private cancelBet(cancelBetData: BetData) {
 
-		if (cancelBetData) {
+    if (cancelBetData) {
+      let recycleChip = false;
       const betInfos = this.betAreaInfo.get(cancelBetData.betType);
       if (betInfos === undefined) return;
 			if (betInfos && betInfos.length > 0) {
-				const chips = betInfos.find(v => v.userId === gameCacheData.memberId || v.isMe).chips;
-
+        // const chips = betInfos.find(v => v.userId === gameCacheData.memberId || v.isMe).chips;
+				const chips = betInfos.find(v => v.userId === gameCacheData.memberId).chips;
+        // console.log("cancel betInfos",betInfos);
+        // console.log("betInfos chips",chips);
+        
 				for (let i = 0; i < chips.length; i++) {
-					const chip = chips[i];
-					if (chip.comp.props.value === cancelBetData.betAmount) {
+					const chip = chips[i].chip;
+					if (chip.comp.props && chip.comp.props.value && chip.comp.props.value === cancelBetData.betAmount) {
 						chips.splice(i, 1);
-						this.chipFlyToHead(chip, undefined);
+            this.chipFlyToHead(chip, undefined);
+            recycleChip = true;
 						break;
 					}
 				}
-			}
-			const betArea = this.getNodeByBetType(cancelBetData.betType).getChildByName("Layout_bet");
-			// this.updateBetAreaGold(cancelBetData, betArea.parent);
-			const betAmount = cancelBetData.betAmount < 10000 ? cancelBetData.betAmount.formatAmountWithCommas() : cancelBetData.betAmount.formatAmountWithLetter();
-			global.hallDispatch(
-				addToastAction({
-					position: ToastPosition.MIDDLE,
-					content:
-						lang.write(k => k.InitGameModule.BetFaild, {}, { placeStr: "{0} 筹码下注失败" }).format(betAmount)
-				})
-			)
+      }
+      
+      if (recycleChip) { 
+        const betArea = this.getNodeByBetType(cancelBetData.betType).getChildByName("Layout_bet");
+        const betAmount = cancelBetData.betAmount < 10000 ? cancelBetData.betAmount.formatAmountWithCommas() : cancelBetData.betAmount.formatAmountWithLetter();
+        global.hallDispatch(
+          addToastAction({
+            position: ToastPosition.MIDDLE,
+            content:
+              lang.write(k => k.InitGameModule.BetFaild, {}, { placeStr: "{0} 筹码下注失败" }).format(betAmount)
+          })
+        )
+      }
 		}
 	}
   update(deltaTime: number) {}

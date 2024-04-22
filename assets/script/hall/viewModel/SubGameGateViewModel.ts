@@ -2,7 +2,6 @@ import { Node } from "cc"
 import ViewModel from "../../base/ViewModel"
 import { Hall_SubGameGate, IProps, IEvent } from "../components/Hall_SubGameGate"
 import { StateType } from "../store/reducer"
-import { SubGameRunState } from "../config"
 
 class SubGameGateViewModel extends ViewModel<Hall_SubGameGate, IProps, IEvent> {
   constructor() {

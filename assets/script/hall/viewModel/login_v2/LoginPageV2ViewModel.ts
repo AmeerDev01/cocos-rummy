@@ -71,21 +71,25 @@ class LoginPageV2ViewModel extends ViewModel<Hall_LoginPageV2, IProps, IEvent> {
 
   private async loginTodo(isforce: boolean = false) {
     if (this.comp.props.isAutoLogin || isforce) {
-      const isFastLogin = await this.checkFastLogin()
-      if (isFastLogin === 'faild') {
-        //没有token
-        this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.GuestAutoLogin, {}, { placeStr: "游客登录中..." }) }))
-        this.guestLogin()
-      } else if (!isFastLogin) {
-        //有token但是登录失败
-        sys.localStorage.removeItem("token")
-        this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.AutoLoginFaild, {}, { placeStr: "请手动登录" }) }))
-      } else {
-        // this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.LoginMark, {}, { placeStr: "已自动登录" }) }))
-        //登录操作完成之后
-        sendNativeVibrate(200)
-        // this.dispatch(addToastAction({ content: "已自动登录" }))
-        this.comp.events.onLoginSuccess()
+      try {
+        const isFastLogin = await this.checkFastLogin()
+        if (isFastLogin === 'faild') {
+          //没有token
+          this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.GuestAutoLogin, {}, { placeStr: "游客登录中..." }) }))
+          this.guestLogin()
+        } else if (!isFastLogin) {
+          //有token但是登录失败
+          sys.localStorage.removeItem("token")
+          this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.AutoLoginFaild, {}, { placeStr: "请手动登录" }) }))
+        } else {
+          // this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.LoginMark, {}, { placeStr: "已自动登录" }) }))
+          //登录操作完成之后
+          sendNativeVibrate(200)
+          // this.dispatch(addToastAction({ content: "已自动登录" }))
+          this.comp.events.onLoginSuccess()
+        }
+      } catch (e) {
+        this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.AutoLoginFaild, {}, { placeStr: "请手动登录" }) + ':' + e }))
       }
     }
   }
@@ -112,26 +116,30 @@ class LoginPageV2ViewModel extends ViewModel<Hall_LoginPageV2, IProps, IEvent> {
   /**是否可以快读登录 */
   private checkFastLogin(): Promise<boolean | 'faild'> {
     return new Promise((reslove, reject) => {
-      let token = sys.localStorage.getItem("token");
-      if (token && token.trim()) {
-        fetcher.send(ApiUrl.LOGIN_FAST, {
-          pkgCode: getPackageName(),
-          macCode: deviceInfo.getUniqueId(),
-          token: token
-        }, "post", {
-          // "Content-Type": "application/x-www-form-urlencoded"
-        }).then((data) => {
-          const values = data.split(",")
-          token = values.length === 1 ? data : values[0];
-          sys.localStorage.setItem('token', token)
-          reslove(token ? true : false)
-        }).catch((e) => {
-          // this.dispatch(addToastAction({ content: e }))
-          this.comp.showRetryButton()
-          reslove(false)
-        })
-      } else {
-        reslove('faild')
+      try {
+        let token = sys.localStorage.getItem("token");
+        if (token && token.trim()) {
+          fetcher.send(ApiUrl.LOGIN_FAST, {
+            pkgCode: getPackageName(),
+            macCode: deviceInfo.getUniqueId(),
+            token: token
+          }, "post", {
+            // "Content-Type": "application/x-www-form-urlencoded"
+          }).then((data) => {
+            const values = data.split(",")
+            token = values.length === 1 ? data : values[0];
+            sys.localStorage.setItem('token', token)
+            reslove(token ? true : false)
+          }).catch((e) => {
+            // this.dispatch(addToastAction({ content: e }))
+            this.comp.showRetryButton()
+            reslove(false)
+          })
+        } else {
+          reslove('faild')
+        }
+      } catch (e) {
+        reject(e)
       }
     })
   }

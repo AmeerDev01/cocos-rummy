@@ -4,6 +4,7 @@ import { default as reduxAct } from 'redux-act'
 import { AutoLauncherType, GameType } from "../../type";
 import { cacheData } from "../../dataTransfer";
 import UseSetOption from "../../../../utils/UseSetOption";
+import config from "../../config";
 
 export default reduxAct.createReducer<InitStateType>({
   [ActionTypes.PHOENIXV2_INIT_GAME_STORE]: (state, payload: ActionPayLoad<ActionTypes.PHOENIXV2_INIT_GAME_STORE>): InitStateType => {
@@ -30,10 +31,12 @@ export default reduxAct.createReducer<InitStateType>({
     }
   },
   [ActionTypes.PHOENIXV2_UPDATE_POSITION_ID]: (state, payload: ActionPayLoad<ActionTypes.PHOENIXV2_UPDATE_POSITION_ID>): InitStateType => {
-    UseSetOption.Instance().setGameOption("phoenixV2", { betTarget: payload.positionId })
+    const positionItem = config.betSwitcher[0].amount.find(v => v.positionId === payload.positionId)
+    const positionId = positionItem ? positionItem.positionId : config.betSwitcher[0].amount[0].positionId;
+    UseSetOption.Instance().setGameOption("phoenixV2", { betTarget: positionId })
     return {
       ...state,
-      positionId: payload.positionId
+      positionId: positionId
     }
   },
   [ActionTypes.PHOENIXV2_UPDATE_WINLOSS]: (state, payload: ActionPayLoad<ActionTypes.PHOENIXV2_UPDATE_WINLOSS>): InitStateType => {
@@ -45,7 +48,7 @@ export default reduxAct.createReducer<InitStateType>({
   [ActionTypes.PHOENIXV2_UPDATE_GOLD]: (state, payload: ActionPayLoad<ActionTypes.PHOENIXV2_UPDATE_GOLD>): InitStateType => {
     return {
       ...state,
-      gold: Number(payload.gold.toFixed(0))
+      gold: payload.gold
     }
   },
   [ActionTypes.PHOENIXV2_UPDATE_DIALOGINFO]: (state, payload: ActionPayLoad<ActionTypes.PHOENIXV2_UPDATE_DIALOGINFO>): InitStateType => {

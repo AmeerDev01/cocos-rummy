@@ -23,6 +23,8 @@ export type FishPrawnCrabMemberInfoVo = {
  * 进入游戏详细数据
  */
 export type FishPrawnCrabJoinGameRoomInfoVo = {
+  /**下注金额 */
+  betList: number[],
   /**自己信息 */
   myInfo: FishPrawnCrabMemberInfoVo;
   /**左边用户 */

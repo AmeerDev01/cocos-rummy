@@ -1,10 +1,10 @@
 import { _decorator, Button, Component, EditBox, Label, Node, Sprite, SpriteFrame } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
-import { bundleCommon, fetcher, global, lang, sourceManageSeletor } from '../../index';
+import { baseBoardView, bundleCommon, fetcher, global, lang, sourceManageSeletor } from '../../index';
 import { ApiUrl } from '../../apiUrl';
 import { addToastAction, ToastPosition, ToastType } from '../../store/actions/baseBoard';
 import { Hall_WaterHelp, IState as HHIState, IProps as HHIprops, IEvent as HHIEvent } from '../Hall_WaterHelp';
-import { SKT_MAG_TYPE, sktInstance } from '../../socketConnect';
+import { SKT_MAG_TYPE, hallWebSocketDriver } from '../../socketConnect';
 const { ccclass, property } = _decorator;
 import { InitStateType } from '../../store/actions/memberInfo';
 import BaseViewModel from '../../viewModel/BaseViewModel';
@@ -64,12 +64,12 @@ export class Hall_PC_BackWater extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_water_cuci.node.on(Node.EventType.TOUCH_END, () => {
 			fetcher.send(ApiUrl.DRAW_WATER, { type: 1 }).then((data) => {
 				global.hallDispatch(addToastAction({ content: lang.write(k => k.BaseBoardModule.operateDone, {}, { placeStr: "操作完成" }), type: ToastType.SUCCESS }))
-				sktInstance.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, {})
+				hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, {})
 			})
 		})
 		this.propertyNode.props_btn_ratio_help.node.on(Node.EventType.TOUCH_END, () => {
 			const waterHelpViewModel = new BaseViewModel<Hall_WaterHelp, HHIState, HHIprops, HHIEvent>("Hall_WaterHelp").mountView(sourceManageSeletor().getFile(PrefabPathDefine.HELL_WATER_HELP).source)
-				.appendTo(this.node, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({ onCloseHandler: () => waterHelpViewModel.unMount(EffectType.EFFECT2) })
+				.appendTo(baseBoardView.viewNode, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({ onCloseHandler: () => waterHelpViewModel.unMount(EffectType.EFFECT2) })
 		})
 	}
 

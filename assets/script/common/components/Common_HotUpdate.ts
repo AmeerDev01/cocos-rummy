@@ -1,11 +1,11 @@
 import { _decorator, Asset, assetManager, Component, director, dynamicAtlasManager, game, Label, log, macro, native, Node, ProgressBar, screen, sys, view } from 'cc';
 import Hot, { HotOptions } from '../../utils/HotUpdate';
 import App from '../../App';
-import { GameConfig } from '../../config/GameConfig';
+import { GameConfig, getIsTest } from '../../config/GameConfig';
 import { config, initConfig } from '../../hall/config';
 import { fetcher, lang } from '../../hall';
 import { NATIVE } from 'cc/env';
-import { BridgeCode, nativeDownloadApk, getAppVersionName, getPackageName, hideNativeSplash, installApk, getRedirectUrl } from '../bridge';
+import { BridgeCode, nativeDownloadApk, getAppVersionName, getPackageName, hideNativeSplash, installApk, getRedirectUrl, showNativeSplash } from '../bridge';
 import { LanguageItemType } from '../../language/languagePkg';
 import { ApiUrl } from '../../hall/apiUrl';
 const { ccclass, property } = _decorator;
@@ -19,6 +19,8 @@ export class Common_HotUpdate extends Component {
 
 	@property({ displayName: 'project.manifest', type: Asset })
 	manifest: Asset = null;
+	@property({ displayName: 'project.versionManifest', type: Asset })
+	versionManifest: Asset = null;
 
 	@property(Label)
 	versionLabel: Label = null
@@ -38,14 +40,17 @@ export class Common_HotUpdate extends Component {
 		local: "",
 		server: ""
 	}
+
+	private _storagePath: string;
+	private localProjectManifest: native.Manifest;
 	start() {
 		window['pageDone'] && window['pageDone']()
+		console.warn("envKsy", GameConfig.envKey)
 	}
 	protected onLoad(): void {
-		!NATIVE && sys.isMobile &&  screen.requestFullScreen();
-		// console.log('getPackageName ====', getPackageName())
-		lang.use(GameConfig.isDev ? LanguageItemType.ZH : LanguageItemType.IDA)
+		lang.use(getIsTest() ? LanguageItemType.ZH : LanguageItemType.EN)
 		if (NATIVE) {
+			this._storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : "/") + 'remote-asset')
 			hideNativeSplash();
 			native.bridge.onNative = (arg0: string, arg1: string) => {
 				if (BridgeCode.APP_VERSION === arg0) {
@@ -55,8 +60,23 @@ export class Common_HotUpdate extends Component {
 			}
 			getAppVersionName()
 		} else {
+			sys.isMobile && screen.requestFullScreen();
 			this.initGame()
 		}
+	}
+
+	/**版本号判断 */
+	shouldUpdate(oldVersion, newVersion) {
+		const trnsfer = (version: string) => {
+			const arr = version.split('.')
+			const frist = ((+arr[0]) * 10) + ""
+			const second = (arr[1] === '0' ? '00' : (+arr[1]) * 10) + ""
+			const thrid = (arr[2] === '0' ? '00' : (+arr[2]) * 10) + ""
+			return +(frist + second + thrid)
+		}
+		const oldtansferVersion = trnsfer(oldVersion)
+		const newtansferVersion = trnsfer(newVersion)
+		return newtansferVersion > oldtansferVersion
 	}
 
 	initGame() {
@@ -74,7 +94,7 @@ export class Common_HotUpdate extends Component {
 					if (NATIVE && content && content.isApkUpdate === false) {
 						isApkUpdate = false;
 					}
-					if (isApkUpdate && GameConfig.appLocalVersion < config.appOnlineVersion) {
+					if (isApkUpdate && this.shouldUpdate(GameConfig.appLocalVersion, config.appOnlineVersion)) {
 						//弹出更新提示
 						this.initConfirm([lang.write(k => k.UpdateModule.GameConfig, { version: config.appOnlineVersion },
 							{ placeStr: `请更新App至最新版(${config.appOnlineVersion})` }), config.upgradeDesc], () => {
@@ -110,9 +130,10 @@ export class Common_HotUpdate extends Component {
 			if (e === 'config_error') {
 				this.initConfirm([lang.write(k => k.InitGameModule.GameBoardInitAndGotoUrl)], () => {
 					game.restart()
+					showNativeSplash();
 					return true
 				}, () => {
-					sys.openURL('https://hugewin777d.com/')
+					// sys.openURL('https://hugewin777d.com/')
 				})
 			}
 		})
@@ -121,7 +142,7 @@ export class Common_HotUpdate extends Component {
 	update(deltaTime: number) { }
 
 	private enterGame() {
-		this.updateProgress.progress = 1
+		this.updateProgress.progress = 0
 		window.setTimeout(() => {
 			App.Instance().start()
 			// effect1(this.node).out().then(() => {
@@ -157,18 +178,19 @@ export class Common_HotUpdate extends Component {
 
 		let options = new HotOptions();
 		options.OnVersionInfo = (data) => {
-			let { local, server } = data;
-			this.versionInfo = data
+			console.log('OnVersionInfo', JSON.stringify(data || {}))
+			let { local, server } = data || {};
+			this.versionInfo = data || {}
 			this.versionLabel.string = lang.write(k => k.UpdateModule.VersionLabel,
 				{ localVersion: local, serverVersion: server },
 				{ placeStr: `本地版本:v${local}, 线上版本:v${server}` })
 
-			if (local > server) {
-				let storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : '/') + 'remote-asset');
-				native.fileUtils.removeDirectory(storagePath)
-				this.versionLabel.string += ' &Cache clear'
-				console.log('Cache clear')
-			}
+			// if (local > server) {
+			// 	let storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : '/') + 'remote-asset');
+			// 	native.fileUtils.removeDirectory(storagePath)
+			// 	this.versionLabel.string += ' &Cache clear'
+			// 	console.log('Cache clear')
+			// }
 		};
 		options.OnUpdateProgress = (event: jsb.EventAssetsManager) => {
 			let bytes = event.getDownloadedBytes() + '/' + event.getTotalBytes();
@@ -179,7 +201,7 @@ export class Common_HotUpdate extends Component {
 			let msg = event.getMessage();
 
 			// console.log('[update]: 进度=' + file);
-			this.updateProgress.progress = 1 - parseFloat(file);
+			this.updateProgress.progress = parseFloat(file);
 			this.tipsLabel.string = lang.write(k => k.UpdateModule.UpdateProgress, { time: (parseFloat(file) * 100).toFixed(0) },
 				{ placeStr: `正在更新中,请耐心等待（${(parseFloat(file) * 100).toFixed(0)}%）...` });
 			console.log(msg);
@@ -200,12 +222,16 @@ export class Common_HotUpdate extends Component {
 			this.enterGame();
 		};
 		options.OnUpdateSucceed = () => {
+			native.fileUtils.purgeCachedEntries()
 			game.restart();
+			showNativeSplash();
 		};
-		options.OnUpdateFailed = () => {
+		options.OnUpdateFailed = (code) => {
+			console.log("OnUpdateFailed code: " + code);
 			this.tipsLabel.string = lang.write(k => k.UpdateModule.UpdateFail, {}, { placeStr: `更新失败` })
 			this.initConfirm([lang.write(k => k.UpdateModule.RestartProgram, {}, { placeStr: `更新失败，是否要重启程序？` })], () => {
 				game.restart()
+				showNativeSplash();
 			}, () => {
 				game.end()
 			})
@@ -217,7 +243,7 @@ export class Common_HotUpdate extends Component {
 				this.logLabel.string += lang.write(k => k.UpdateModule.ClientCheck, {}, { placeStr: `客户端开始检查>>` })
 				this.tipsLabel.string = lang.write(k => k.UpdateModule.CheckUpdatedPkg, {}, { placeStr: `检查更新包...` })
 				if (this.manifest) {
-					hotInstance.init(this.manifest, options);
+					hotInstance.init(this.localProjectManifest, this._storagePath, options);
 					hotInstance.checkUpdate();
 				}
 			}
@@ -229,29 +255,35 @@ export class Common_HotUpdate extends Component {
 
 	private handleManifestFile(newRemotUr: string) {
 		if (!NATIVE) return;
-		const storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : "/") + 'remote-asset')
-		// this.storagePath = storagePath
-		// console.log('updateManifestFile - Storage path for remote asset:' + storagePath)
-		this.updateManifestFile(newRemotUr, storagePath + '/project.manifest');
-		this.updateManifestFile(newRemotUr, storagePath + '/version.manifest');
+		const afterVersionString = this.updateManifestFile(newRemotUr, this._storagePath + '/project.manifest', this.manifest);
+		this.loadManifestFile(afterVersionString);
+
+		this.updateManifestFile(newRemotUr, this._storagePath + '/version.manifest', this.versionManifest);
 	}
 
-	private updateManifestFile(newRemotUr: string, fileName: string) {
+	private loadManifestFile(data: string) {
+		this.localProjectManifest = new native.Manifest(data, this._storagePath);
+	}
+
+	private updateManifestFile(newRemotUr: string, fileName: string, manifest: Asset) {
 		const fileExist = native.fileUtils.isFileExist(fileName)
 		console.log('updateManifestFile - filename:' + fileName, 'fileExist: ', fileExist)
+		let obj = undefined;
 		if (fileExist) {
 			let filestring_version = native.fileUtils.getStringFromFile(fileName)
-			let obj = JSON.parse(filestring_version);
+			obj = JSON.parse(filestring_version);
 			console.log('updateManifestFile - handleManifestFile ', obj.packageUrl, ' newRemotUr: ', newRemotUr);
-
-			obj.packageUrl = newRemotUr;
-			obj.remoteManifestUrl = newRemotUr + '/project.manifest';
-			obj.remoteVersionUrl = newRemotUr + '/version.manifest';
-			let afterVersionString = JSON.stringify(obj);
-			const res = native.fileUtils.writeStringToFile(afterVersionString, fileName);
-			// this.mainfestObj = obj;
-			console.log('updateManifestFile - Modify the results of the file: ', fileName, res);
+		} else {
+			obj = JSON.parse(manifest._nativeAsset);
 		}
+		obj.packageUrl = newRemotUr;
+		obj.remoteManifestUrl = newRemotUr + '/project.manifest';
+		obj.remoteVersionUrl = newRemotUr + '/version.manifest';
+		let afterVersionString = JSON.stringify(obj);
+		const res = native.fileUtils.writeStringToFile(afterVersionString, fileName);
+		// this.mainfestObj = obj;
+		console.log('updateManifestFile - Modify the results of the file: ', fileName, res);
+		return afterVersionString;
 	}
 
 	private downloadApkHandle(appDumpUrl: string, appOnlineVersion: string) {
@@ -266,7 +298,7 @@ export class Common_HotUpdate extends Component {
 		//进度回调
 		downloader.onProgress = (task, bytesReceived, totalBytesReceived, totalBytesExpected) => {
 			let progress: number = totalBytesReceived / totalBytesExpected; //已经下载的字节数 / 需要下载的总字节数
-			this.updateProgress.progress = 1 - progress;
+			this.updateProgress.progress = progress;
 			// this.getProgress(progress);
 			let bKReceived: string = (totalBytesReceived / 1024).toFixed(1);
 			let totalReceived: string = (totalBytesExpected / 1024).toFixed(1);

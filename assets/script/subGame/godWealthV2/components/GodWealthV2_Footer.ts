@@ -56,8 +56,8 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		props_toggle_fast: new Node(),
 		props_min_btn: new Node(),
 		props_max_btn: new Node(),
-		props_maxBet_btn: new Node(),
-		props_SZX_bz_btn: new Node(),
+		// props_maxBet_btn: new Node(),
+		// props_SZX_bz_btn: new Node(),
 		props_goodluck: new Node(),
 		props_bottom_score: new Label(),
 		props_word_down_menang: new Node(),
@@ -123,10 +123,16 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.schedule(this.longPressHandleCallback, config.normalRollOption.startButtonLangTime / 1000);
 		})
 		this.propertyNode.props_btn_down_auto.getComponent(Button).node.on(Node.EventType.TOUCH_END, () => { //打开自动弹框
+			const isDisable = this.getBtnStatus(this.propertyNode.props_btn_down_auto)
+			if (!isDisable) {
+				godWealthV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
+			}
+			// godWealthV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
 			if(this.getAutoLauncherType()!== AutoLauncherType.NONE){
 				mainViewModel.comp.clearAuto()
 			}else{
-				if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
+				// if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
+				if (this.isBtnDisable()) {
 					return;
 				}else if
 				(this.isMain()){
@@ -139,6 +145,10 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.unscheduleLong();
 		})
 		this.propertyNode.props_startButton.on(Node.EventType.TOUCH_END, () => {
+			const isDisable = this.getBtnStatus(this.propertyNode.props_startButton)
+			if (!isDisable) {
+				godWealthV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
+			}
 			// this.stepNumberV2.stop();
 			this.unscheduleLong();
 			// this.unscheduleAllCallbacks();
@@ -146,6 +156,7 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 				this.isLongPress = false;
 				return;
 			};
+			if(!mainViewModel.isAuthDone) return
 			if (this.isMain() && this.isEnd() && this.props.gold < calBetAmount(this.props.positionId)) {
 				global.openShop();
 				return;
@@ -188,7 +199,11 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 		const amount = config.betSwitcher[0].amount;
 		this.propertyNode.props_min_btn.on(Node.EventType.TOUCH_END, () => {
-			godWealthV2_Audio.playOneShot(SoundPathDefine.MIN_COIN)
+			const isDisable = this.getBtnStatus(this.propertyNode.props_min_btn)
+			if (!isDisable) {
+				godWealthV2_Audio.playOneShot(SoundPathDefine.MIN_COIN)
+			}
+			// godWealthV2_Audio.playOneShot(SoundPathDefine.MIN_COIN)
 			if (this.isBtnDisable() || !this.propertyNode.props_min_btn.getComponent(Button).enabled) {
 				return;
 			}
@@ -199,7 +214,11 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.updateSprMoney();
 		})
 		this.propertyNode.props_max_btn.on(Node.EventType.TOUCH_END, () => {
-			godWealthV2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
+			const isDisable = this.getBtnStatus(this.propertyNode.props_max_btn)
+			if (!isDisable) {
+				godWealthV2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
+			}
+			// godWealthV2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
 			if (this.isBtnDisable() || !this.propertyNode.props_max_btn.getComponent(Button).enabled) {
 				return;
 			}
@@ -210,17 +229,17 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.updateSprMoney();
 		})
 		// 最大下注
-		this.propertyNode.props_maxBet_btn.on(Node.EventType.TOUCH_END, () => {
-			godWealthV2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
-			if (this.isBtnDisable() ||  !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
-				return;
-			}
-			this.dispatch(updatePositionId(this.getMaxBetPositionId()));
-		})
+		// this.propertyNode.props_maxBet_btn.on(Node.EventType.TOUCH_END, () => {
+		// 	godWealthV2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
+		// 	if (this.isBtnDisable() ||  !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
+		// 		return;
+		// 	}
+		// 	this.dispatch(updatePositionId(this.getMaxBetPositionId()));
+		// })
 		// 帮助按钮
-		this.propertyNode.props_SZX_bz_btn.on(Node.EventType.TOUCH_END, () => {
-			godWealthV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
-			this.events.openHelpPanel();
+		// this.propertyNode.props_SZX_bz_btn.on(Node.EventType.TOUCH_END, () => {
+		// 	godWealthV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
+		// 	this.events.openHelpPanel();
 			// this.dispatch(updateDialogInfo({
 			// 	dialogType: DialogType.FREE_GAME_ENTRY,
 			// 	params: [10]
@@ -229,8 +248,9 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			// 	dialogType: DialogType.JACKPOT,
 			// 	params: [250],
 			// }, () => { })
-		})
+		// })
 		this.propertyNode.props_spr_nomoney.on(Node.EventType.TOUCH_END, () => {
+			godWealthV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
 			global.openShop();
 		})
 	
@@ -353,7 +373,7 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		const isDisable = this.isBtnDisable();
 		this.updateBtnStatus(this.propertyNode.props_max_btn, isDisable);
 		this.updateBtnStatus(this.propertyNode.props_min_btn, isDisable);
-		this.updateBtnStatus(this.propertyNode.props_maxBet_btn, isDisable);
+		// this.updateBtnStatus(this.propertyNode.props_maxBet_btn, isDisable);
 		if (!isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)) {
 			this.updateBtnStatus(this.propertyNode.props_btn_down_auto,isDisable);
 		} else {
@@ -369,7 +389,7 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		// this.propertyNode.props_SZX_bz_btn.getComponent(Sprite).grayscale = isDisable;
 		this.propertyNode.props_max_btn.getComponent(Button).enabled = !isDisable;
 		this.propertyNode.props_min_btn.getComponent(Button).enabled = !isDisable;
-		this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = !isDisable;
+		// this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = !isDisable;
 		this.propertyNode.props_btn_down_auto.getComponent(Button).enabled = !isDisable;
 		// this.propertyNode.props_SZX_bz_btn.getComponent(Button).enabled = !isDisable;
 
@@ -377,6 +397,10 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 	private updateBtnStatus(btnNode: Node, isDisable: boolean) {
 		btnNode.getChildByName("disable").active = isDisable;
+	}
+
+	private getBtnStatus(btnNode: Node) {
+		return btnNode.getChildByName("disable").active
 	}
 
 	/**更新最大最小状态 */
@@ -427,15 +451,15 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	private updateMaxBetStatus() {
 		const isMaxBet = this.props.positionId >= this.getMaxBetPositionId();
 
-		if (this.isBtnDisable()) {
-			this.updateBtnStatus(this.propertyNode.props_maxBet_btn, true);
-			// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = true;
-			this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = false;
-		} else {
-			this.updateBtnStatus(this.propertyNode.props_maxBet_btn, false);
-			// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = false;
-			this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = true;
-		}
+		// if (this.isBtnDisable()) {
+		// 	this.updateBtnStatus(this.propertyNode.props_maxBet_btn, true);
+		// 	// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = true;
+		// 	this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = false;
+		// } else {
+		// 	this.updateBtnStatus(this.propertyNode.props_maxBet_btn, false);
+		// 	// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = false;
+		// 	this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = true;
+		// }
 	}
 
 	private updateBetInfo() {
@@ -451,7 +475,7 @@ export class GodWealthV2_Footer extends BaseComponent<IState, IProps, IEvent> {
         
 		new StepNumber(value.pre, value.cur, (num) => {
 			if (this.node && this.node.isValid) {
-				const value = Number(num.toFixed(0));
+				const value = Number(num);
 				this.propertyNode.props_bottom_score.string = value.formatAmountWithCommas();
 			}
 		}).set(config.normalRollOption.numberRollerTime).start();

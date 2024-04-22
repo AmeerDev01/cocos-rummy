@@ -7,7 +7,6 @@ export default class SkeletonAnimationPlayer {
     private animationName: string = "";
     private loop: boolean = false;
     private onAnimationComplete: (() => void) | null = null;
-
     constructor(
         skeleton: sp.Skeleton,
         animationName: string,
@@ -41,7 +40,9 @@ export default class SkeletonAnimationPlayer {
             this.skeleton.clearTracks();
         }
     }
-
+    getAnimationName() {
+       return this.animationName
+    }
     /*切换到不同的动画 */
     changeAnimation(animationName: string, isLoop = false, onAnimationComplete = null) {
         this.animationName = animationName;

@@ -133,7 +133,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1624,
+      "width": 1334,
       "height": 750
     },
     "_anchorPoint": {
@@ -385,7 +385,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1624,
+      "width": 1334,
       "height": 750
     },
     "_anchorPoint": {
@@ -406,7 +406,7 @@
     "node": {
       "__id__": 1
     },
-    "_enabled": false,
+    "_enabled": true,
     "__prefab": {
       "__id__": 19
     },

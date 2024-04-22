@@ -189,7 +189,6 @@ export class DragonV2_SingleIconRoller extends BaseComponent<IState, IProps, IEv
 		this.stopIconIndex = this.addIconIndex(this.stopIconIndex, diff);
 		this.addLastJoinIconIndex(this.stopIconIndex, 3);
 
-		console.log(`stopRoll--- columnIndex:${this.columnIndex},slotIndex:${this.slotIndex},stopIconIndex:${this.stopIconIndex}, lastIndex:${this.lastIndex}`)
 	}
 
 	private addLastJoinIconIndex(stopIndex: number, value: number) {
@@ -237,7 +236,6 @@ export class DragonV2_SingleIconRoller extends BaseComponent<IState, IProps, IEv
 	public playWinIcon(index) {
 		const icon = this.iconArr[index];
 		
-		console.log("playWinIcon", index, this.columnIndex,'++++++++++');
 		// 如果是WILD图标，并且合并了图标，就不在显示边框了
 		if (icon.getId() !== IconId.WILD) {
 			icon.playWin(this.iconAnimationNode)

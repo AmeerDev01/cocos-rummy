@@ -36,7 +36,9 @@ export class Hall_VipUp extends BaseComponent<IState, IProps, IEvent> {
 
 	protected bindEvent(): void {
 		this.propertyNode.props_vipshengji.getComponent(sp.Skeleton).setCompleteListener(() => {
-			this.events.close();
+			this.scheduleOnce(() => {
+				this.events.close();
+			})
 		});
 	}
 

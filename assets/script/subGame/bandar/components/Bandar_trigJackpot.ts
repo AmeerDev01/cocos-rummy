@@ -60,7 +60,7 @@ export class Bandar_trigJackpot extends BaseComponent<IState, IProps, IEvent> {
         let pre=123456;
         let cur=234567;
         // let stepNum=new StepNumber((pre, cur, (num) => {}))
-        this.taskScheduler.joinqQueue(new Task((done) => {
+        this.taskScheduler.joinQueue(new Task((done) => {
             this.stepNumber && this.stepNumber.stop()
             this.stepNumber = new StepNumber(pre, cur, (num) => {
                 // this.propertyNode && this.propertyNode.props_Label_up_goldNum && (this.propertyNode.props_Label_up_goldNum.string = (+num.toFixed(0)).formatAmountWithCommas())

@@ -2,28 +2,29 @@ import ChipViewModel from "./ViewModel/DragonTigerChipViewModel"
 
 /**下注类型 */
 export enum BetType {
-    /**蓝 */
-    BLUE = 1,
-    /**红 */
-    RED = 2,
+    /**龙 */
+    LONG = 1,
+    /**虎 */
+    HU = 2,
     /**平 */
     SERI = 3,
 
 }
+
 /**头像类型 */
 export type HeadType = {
     index: number,
     memberId: string,
     memberName: string,
     gold: number,
-    goldStr: string,
-    winGold: number,
+    goldStr?: string,
+    winGold?: number,
     betAmount?: number,
     /**头像类型 */
     icon?: number,
-    memberBet?: object,
-    
-    }
+    /**输赢类型 */
+    winType?: number,
+  }
 
 export type BetData = {
     /**下注位置 */
@@ -49,11 +50,9 @@ export type BetData = {
 /**发送下注信息 */
 export type SendBet = {
     roomId: string,
-    memberId: string,
-    memberName: string,
     gold: number,
     betType: number,
-    isMe: boolean,
+    isMe?: boolean,
     betId?:string
 }
 export type WinUser={
@@ -66,24 +65,38 @@ export type WinUser={
   
 export type BetInfo = {
 	index: number,
-	userId: string,
-	isMe: boolean,
-	chips: ChipViewModel[]
+  userId: string,
+	isMe?: boolean,
+  chips: Chips[],
+}
+
+export type Chips = {
+  betId: string,
+  betType: BetType,
+  betAmount:number
+  chip: ChipViewModel,
 }
 /**牌 */
 export type DragonTigerCard={
     suit:number,//花色
     rank:string,//数字
-    color:number,//颜色
   }
 /**重复下注数据 */
-export type RepeatBet={
-    roomId:string,
-    memberId:string,
-    memberName:string,
-    gold:number,
-    betType:number,
-  }
+export type RepeatBet = {
+    index?: number,
+    userId?: string,
+    roomId?:string,
+    betAmount?:number,
+    betType?: number,
+    betId?: string,
+    isMe?: boolean,
+}
+/**每个区域的总下注值 */  
+export type TotalBetArea = {
+  totalBetDragon: number,
+  totalBetTiger: number,
+  totalBetPeace: number,
+}
   
 /*
 * 玩家详情的参数
@@ -146,4 +159,6 @@ export type ResGiftVo = {
   receiveMemberId: string,
   /**礼物ID */
   giftId: number,
+  /**玩家剩余金币数 */
+  residueGold: number,
 }

@@ -4,7 +4,7 @@ import { global } from "../../../hall"
 import { IEvent, IProps, Yxx_BetArea } from "../components/Yxx_BetArea"
 import config from "../config"
 import { MebmerBet, SendBet, convertBetData, convertToServerBetType, gameCacheData } from "../serverType"
-import { SKT_MAG_TYPE, sktInstance } from "../socketConnect"
+import { SKT_MAG_TYPE, yxxWebSocketDriver } from "../socketConnect"
 import { getStore } from "../store"
 import { clearBet, seatBet } from "../store/actions/bet"
 import { changeSeatBet } from "../store/actions/game"
@@ -39,7 +39,7 @@ class BetAreaViewModel extends ViewModel<Yxx_BetArea, IProps, IEvent> {
           }
 
           // 下注信息发送给服务器
-          sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCHER_BET, sendBet);
+          yxxWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCHER_BET, sendBet);
         }
 
       },
@@ -50,7 +50,7 @@ class BetAreaViewModel extends ViewModel<Yxx_BetArea, IProps, IEvent> {
         global.openShop();
       },
       sendGameShowEvent: () => {
-        sktInstance.sendSktMessage(SKT_MAG_TYPE.GAME_SHOW, { roomId: gameCacheData.roomId });
+        yxxWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GAME_SHOW, { data: gameCacheData.roomId });
       }
     })
   }

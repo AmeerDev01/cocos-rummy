@@ -5,8 +5,8 @@ import { PrefabPathDefine } from "./sourceDefine/prefabDefine";
 import LoaderPanelViewModel from "../../common/viewModel/LoaderPanelViewModel";
 import SourceManage from "../../base/SourceManage";
 import fruit777FileMap from './sourceDefine';
-import { SubGameRunState, config as hallConfig, subGameList } from "../../hall/config";
-import socketConnect from "./socketConnect";
+import { config as hallConfig, subGameList } from "../../hall/config";
+import socketConnect, { gameLogin } from "./socketConnect";
 import HeaderViewModel from "./viewModel/HeaderViewModel";
 import FooterViewModel from "./viewModel/FooterViewModel";
 import GameBoardViewModel from "./viewModel/GameBoardViewModel";
@@ -17,14 +17,17 @@ import { setActiveAudio } from "../../utils/UseSetOption";
 import config from "./config";
 import { baseBoardView, global, lang } from "../../hall";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
+import { SubGameRunState } from "../../hallType";
 
 
 let sourceManageMap: Array<SourceManage> = []
 export let bundleFruit777: AssetManager.Bundle = null
+export let loaderviweModel: LoaderPanelViewModel
 export let gameBoardViewModel: GameBoardViewModel
 export let footerViewModel: FooterViewModel
 export let headerViewModel: HeaderViewModel
 export let fruit777_Audio: AudioMgr<SoundPathDefine>
+
 export const sourceManageSeletor = (bundleName: string = 'fruit777') => sourceManageMap.find(i => i.bundle.name === bundleName)
 
 export enum NORMAL_MAG_TYPE {
@@ -44,7 +47,7 @@ export const startUp = (rootNode: Node) => {
     }, (err, prefab) => {
       if (!global.isAllowOpenSubGame(config.gameId)) return
       global.hallDispatch(setSubGameRunState(SubGameRunState.READY))
-      const loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({
+      loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({
         loadBarType: 1
       }).setEvent({
         onLoadDone: (_sourceManageMap) => {
@@ -56,9 +59,15 @@ export const startUp = (rootNode: Node) => {
           global.hallDispatch(setSubGameRunState(SubGameRunState.RUN))
           socketConnect().then(() => {
             loaderviweModel.unMount().then(() => {
-              gameBoardViewModel = new GameBoardViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.GAME_BOARD).source).appendTo(rootNode).connect()
-              headerViewModel = new HeaderViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.HEADER_UP).source).appendTo(gameBoardViewModel.comp.getWrapNode()).connect()
-              footerViewModel = new FooterViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.FOOTER_DOWN).source).appendTo(gameBoardViewModel.comp.getWrapNode()).connect()
+              try {
+                gameBoardViewModel = new GameBoardViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.GAME_BOARD).source).appendTo(rootNode).bindDoneHandler(gameLogin).connect()
+                headerViewModel = new HeaderViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.HEADER_UP).source).appendTo(gameBoardViewModel.comp.getWrapNode()).connect()
+                footerViewModel = new FooterViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.FOOTER_DOWN).source).appendTo(gameBoardViewModel.comp.getWrapNode()).connect()
+              } catch (e) {
+                global.closeSubGame({
+                  confirmContent: lang.write(k => k.WebSocketModule.ErrorGeneral) + ":mount"
+                })
+              }
             })
           }).catch(e => {
             loaderviweModel.comp.setTipContent(e || 'error')

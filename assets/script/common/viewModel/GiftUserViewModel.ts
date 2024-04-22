@@ -124,21 +124,25 @@ class GiftUserViewModel extends ViewModel<Common_GiftUser, IProps, IEvent> {
 
     const source = sourceManageSeletor("common").getFile(iconConfig.skeletonPath).source
     skeleton.skeletonData = source;
-    skeleton.setAnimation(0, "animation", false);
-    skeleton.paused = true;
+    // skeleton.paused = true;
     giftAnimationNode.active = false;
     skeleton.setCompleteListener(() => {
-      node.destroy();
-    })
-    node.setWorldPosition(startPos)
-
-    endPos = endPos.add(iconConfig.offset)
-    tween(node).to(0.5, { worldPosition: endPos, angle: iconConfig.angle }).call(() => {
+      // this.instance && this.instance.comp && this.instance.comp.scheduleOnce(() => {
       if (node.isValid) {
-        giftAnimationNode.active = true;
-        sprGiftNode.node.active = false;
-        skeleton.paused = false;
-        commonAudio.playOneShot(iconConfig.dub);
+        node.destroy();
+      }
+        // })
+      })
+      node.setWorldPosition(startPos)
+      
+      endPos = endPos.add(iconConfig.offset)
+      tween(node).to(0.5, { worldPosition: endPos, angle: iconConfig.angle }).call(() => {
+        if (node.isValid) {
+          skeleton.setAnimation(0, "animation", false);
+          giftAnimationNode.active = true;
+          sprGiftNode.node.active = false;
+          // skeleton.paused = false;
+          commonAudio.playOneShot(iconConfig.dub);
       }
     }).start();
   }

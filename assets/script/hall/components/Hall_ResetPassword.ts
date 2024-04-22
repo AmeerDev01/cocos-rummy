@@ -77,7 +77,7 @@ export class Hall_ResetPassword extends BaseComponent<IState, IProps, IEvent> {
 			const phone = this.propertyNode.props_intput_phone_phoneNum.getComponent(EditBox).string
 			const verificationCode = this.propertyNode.props_intput_phone_captcha.getComponent(EditBox).string
 			const password = this.propertyNode.props_intput_phone_password.getComponent(EditBox).string
-			new InputValidator().begin().isChartLength([6, 40], password).isPhoneNumber(phone).isSmsCode(verificationCode).done(() => {
+			new InputValidator().begin().isCharLength([6, 40], password).isPhoneNumber(phone).isSmsCode(verificationCode).done(() => {
 				fetcher.send(ApiUrl.RESET_PASSWORD, { phone, verificationCode, password }).then((data) => {
 					sys.localStorage.setItem("token", data)
 					this.events.pwdLoginSuccess()

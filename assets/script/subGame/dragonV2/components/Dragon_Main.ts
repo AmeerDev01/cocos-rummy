@@ -105,7 +105,6 @@ export class Dragon_Main extends BaseComponent<IState, IProps, IEvent> {
 		this.node.getChildByName('props_jackpot_panel').getChildByName('Board_ScrollView').active = !e.isChecked
 	}
 	protected bindEvent(): void {
-		console.log(this.propertyNode.props_autoLauncher);
 
 		// this.propertyNode.props_autoLauncher.getComponent(Animation).on(Animation.EventType.FINISHED, (e, state: AnimationState) => {
 		// 	if (state.name === 'animation_autoLauncher_down') {

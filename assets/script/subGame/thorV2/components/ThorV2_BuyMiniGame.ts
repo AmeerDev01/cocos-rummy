@@ -53,12 +53,12 @@ export class ThorV2_BuyMiniGame extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_bg_node.on(Node.EventType.TOUCH_END, () => {
 			this.events.onClose();
 		})
-		this.propertyNode.props_btn_box_on.on(Button.EventType.CLICK, () => {
+		this.propertyNode.props_btn_box_on.on(Node.EventType.TOUCH_END, () => {
 			this.events.onClose();
 			this.events.onBuy();
 			thorv2_Audio.playOneShot(SoundPathDefine.BUY_FREE_DIALOG_CLOSE);
 		})
-		this.propertyNode.props_btn_box_off.on(Button.EventType.CLICK, () => {
+		this.propertyNode.props_btn_box_off.on(Node.EventType.TOUCH_END, () => {
 			this.events.onClose();
 		})
 	}

@@ -3,7 +3,7 @@ import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { IEvent, IProps, Yxx_Head } from "../components/Yxx_Head"
 import { getStore } from "../store"
 import { StateType } from "../store/reducer"
-import { SKT_MAG_TYPE, sktInstance } from "../socketConnect"
+import { SKT_MAG_TYPE, yxxWebSocketDriver } from "../socketConnect"
 import { ReqGiftSo } from "../type"
 import { gameCacheData } from "../serverType"
 
@@ -25,7 +25,7 @@ class HeadViewModel extends ViewModel<Yxx_Head, IProps, IEvent> {
           /** 总共需要花费的金币 */
           num: num
         }
-        sktInstance.sendSktMessage(SKT_MAG_TYPE.GIVE_GIFT, data)
+        yxxWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GIVE_GIFT, data)
       }
     })
   }

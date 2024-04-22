@@ -107,7 +107,7 @@ export class Fruit777_Roller extends BaseComponent<IState, IProps, IEvent> {
 						this.dispatch(setRollSpeed(this.props.isSpeedUp ? 1.5 : 1))
 					}
 				}
-				
+
 				if (value.pre.rolling === false && value.cur.rolling === true) {
 					// while ((this.props.rollerType.direction === DirectionType.DOWN && this.lastInsertIconViewModel.comp.node.position.y < 0) ||
 					// 	(this.props.rollerType.direction === DirectionType.UP && this.lastInsertIconViewModel.comp.node.position.y > -this.getRollerHeight())) {
@@ -151,6 +151,8 @@ export class Fruit777_Roller extends BaseComponent<IState, IProps, IEvent> {
 			this.nextJoinIconIndex = rollerType.stopIconIndex + stopSpeed - this.props.rollerType.iconQueue.length
 		} else {
 			this.nextJoinIconIndex = rollerType.stopIconIndex + stopSpeed
+		}
+		if (!this.nextJoinIconIndex && this.nextJoinIconIndex !== 0) {
 		}
 	}
 
@@ -208,7 +210,6 @@ export class Fruit777_Roller extends BaseComponent<IState, IProps, IEvent> {
 		}
 		this.nextJoinIconIndex--
 		this.nextJoinIconIndex === -1 && (this.nextJoinIconIndex = this.props.rollerType.iconQueue.length - 1);
-
 		// console.log(iconViewModel.comp.props.iconData.iconId)
 		(!this.displayIconList.some(i => i.viewNode.uuid === iconViewModel.viewNode.uuid)) && this.displayIconList.push(iconViewModel)
 		this.lastInsertIconViewModel = iconViewModel
@@ -222,6 +223,7 @@ export class Fruit777_Roller extends BaseComponent<IState, IProps, IEvent> {
 		if (lastChild.position.y < -(lastChild.getComponent(UITransform).height / 2)) {
 			this.joinIcon()
 			if (this.props.rollerType.stopIconIndex === this.lastInsertIconViewModel.comp.props.iconData.queueIndex) {
+				fruit777_Audio.playOneShot(SoundPathDefine.DING)
 				//需要停止的ICON出现
 				this.dispatch(endRollingAction(this.props.rollerType.index, false))
 				const geidArr = this.getIconStopSet()

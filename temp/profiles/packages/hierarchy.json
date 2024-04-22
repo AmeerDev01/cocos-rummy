@@ -5,5 +5,22 @@
     "expandLevels": [
       "0"
     ]
+  },
+  "5522c3e7-8946-4e1b-9411-431571b27564": {
+    "assetUuid": "5522c3e7-8946-4e1b-9411-431571b27564",
+    "animationUuid": "",
+    "expandLevels": [
+      "0",
+      "0_0",
+      "0_0_4"
+    ]
+  },
+  "8f4a2f24-0e74-48ea-9be5-81cea89f4c74": {
+    "assetUuid": "8f4a2f24-0e74-48ea-9be5-81cea89f4c74",
+    "animationUuid": "",
+    "expandLevels": [
+      "0",
+      "0_1"
+    ]
   }
 }

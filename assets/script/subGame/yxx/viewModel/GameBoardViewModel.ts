@@ -6,7 +6,7 @@ import config, { initBetData, initHeadType } from "../config"
 import { longStop, sourceManageSeletor, yxxAudio } from "../index"
 import { playMainBg } from "../index"
 import { BetReturnData, FishPrawnCrabBalanceVo, FishPrawnCrabGameTypeVo, FishPrawnCrabJoinGameRoomInfoVo, FishPrawnCrabLotteryVo, FishPrawnCrabMemberInfoVo, FishPrawnCrabPushBetVo, FishPrawnCrabResultVo, convertBetType, convertGameStatus, convertHeadType, convertResult, convertUserInfo, gameCacheData } from "../serverType"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, yxxWebSocketDriver } from "../socketConnect"
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { getStore } from "../store"
 import { cancelBetAmount, changeMeGold, changeOnlineNumber, changeSeat, changeSeatBet, changeSeatWinlose, clearData, joinGame, otherJoinGame, quitGame, updatePower } from "../store/actions/game"
@@ -20,7 +20,7 @@ import HistoryMinViewModel from "./HistoryMinViewModel"
 import LosePanelViewModel from "./LosePanelViewModel"
 import SettingViewModel from "./SettingViewModel"
 import WinPanelViewModel from "./WinPanelViewModel"
-import { cancelBet, clearBet, seatBet } from "../store/actions/bet"
+import { cancelBet, clearBet, seatBet, selectChip } from "../store/actions/bet"
 import { global, lang } from "../../../hall"
 import { bundlePkgName } from "../sourceDefine"
 import TaskScheduler, { Task, TaskSchedulerDefault } from "../../../utils/TaskScheduler"
@@ -28,6 +28,8 @@ import RuleViewModel from "./RuleViewModel"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
 import { addToastAction } from "../../../hall/store/actions/baseBoard"
 import GiftUserViewModel, { BANKER_ID } from "../../../common/viewModel/GiftUserViewModel"
+import HistoryMaxViewModel from "./HistoryMaxViewModel"
+import { copy } from "../../../utils/tool"
 
 @StoreInject(getStore())
 class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
@@ -44,6 +46,8 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
 
   private countdown: number;
 
+  private isLogin = false;
+
   protected begin() {
     // 
     this.clear();
@@ -51,7 +55,7 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
     this.setEvent({
       openSettingView: () => {
         new SettingViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.SET_PANEL).source)
-          .appendTo(find("Canvas"), { effectType: EffectType.EFFECT2, isModal: true }).connect();
+          .appendTo(this.viewNode, { effectType: EffectType.EFFECT2, isModal: true }).connect();
       },
       openWinLossView: (userInfos: UserInfo[], balance: number) => {
         userInfos = gameCacheData.winList.map(v => convertUserInfo(v));
@@ -86,7 +90,7 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
       },
       openRulePanel: () => {
         new RuleViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.RULE_PANEL).source)
-          .appendTo(find("Canvas"), { effectType: EffectType.EFFECT2, isModal: true }).connect();
+          .appendTo(this.comp.node, { effectType: EffectType.EFFECT2, isModal: true }).connect();
       },
       changeAnimationStatus: (animationStatus: AnimationStatus) => {
         this.dispatch(changeAnimationStatus(animationStatus));
@@ -101,7 +105,7 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
           /** 总共需要花费的金币 */
           num: num
         }
-        sktInstance.sendSktMessage(SKT_MAG_TYPE.GIVE_GIFT, data)
+        yxxWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GIVE_GIFT, data)
       }
     })
 
@@ -111,28 +115,7 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
    * 认证消息监听及处理
    */
   private listenerAuth() {
-    sktMsgListener.addOnce(SKT_MAG_TYPE.AUTH, bundlePkgName, (data: any) => {
-      sys.localStorage.setItem("auth", JSON.stringify(data));
-    })
-
-    if (config.testConfig.wsUrl) {
-      const token = sys.localStorage.getItem("tokentest");
-      sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-        token
-      })
-    } else {
-      sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-        token: sys.localStorage.getItem("token"),
-        gameId: config.gameId
-      })
-    }
-  }
-
-  /**
-   * 监听用户进出游戏
-   */
-  private listenerUserJoinOrQuit() {
-    sktMsgListener.add(SKT_MAG_TYPE.JOIN_GAME, bundlePkgName, (data: FishPrawnCrabJoinGameRoomInfoVo, error: string) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JOIN_GAME, bundlePkgName, (data: FishPrawnCrabJoinGameRoomInfoVo, error: string) => {
       if (error) {
         global.hallDispatch(addToastAction({ content: lang.write(k => k.InitGameModule.GameBoardInit, {}, { placeStr: "进入游戏失败" }) }))
         global.closeSubGame({
@@ -147,6 +130,11 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
         });
         return;
       }
+
+      this.isLogin = true;
+
+      this.setChipTypesDynamic(data.betList);
+
       gameCacheData.leftUsers = data.leftMember;
       gameCacheData.rightUsers = data.rightMember;
       gameCacheData.roomId = data.roomId;
@@ -187,22 +175,66 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
       isNotBet && this.dispatch(changeGameStatus(GameStatus.STOP_BET, 0, result));
     })
 
-    sktMsgListener.add(SKT_MAG_TYPE.ONLINE_NUMBER_CHANGE, bundlePkgName, (data: any) => {
+    const msgObj = yxxWebSocketDriver.loginGame(SKT_MAG_TYPE.JOIN_GAME)
+    msgObj.bindTimeoutHandler(() => {
+      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
+      return false
+    })
+
+  }
+
+  private setChipTypesDynamic(betList: number[]) {
+    if (betList && betList.length > 0) {
+      betList.forEach((v, i) => {
+        if (i <= config.chipTypes.length - 1) {
+          const value = config.chipTypes[i]
+          value.value = v;
+          value.valueStr = v >= 10000 ? v.formatAmountWithLetter() : v + '';
+        }
+      })
+
+      this.dispatch(selectChip(config.chipTypes[0].value));
+    }
+  }
+
+  /**
+   * 监听用户进出游戏
+   */
+  private listenerUserJoinOrQuit() {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.ONLINE_NUMBER_CHANGE, bundlePkgName, (data: any) => {
+      if (!this.isLogin) {
+        return;
+      }
       this.dispatch(changeOnlineNumber(data));
     })
 
-    sktMsgListener.add(SKT_MAG_TYPE.GOLD_CHANGE, bundlePkgName, (data: ChangeGoldVo) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GOLD_CHANGE, bundlePkgName, (data: ChangeGoldVo) => {
+      if (!this.isLogin) {
+        return;
+      }
       const gold = typeof (data) === 'number' ? data : data.gold;
       this.dispatch(changeMeGold(gold));
       this.dispatch(changeAnimationStatus(AnimationStatus.RECHANGE_ADD_GOLD));
     })
-    sktMsgListener.add(SKT_MAG_TYPE.POWER_VERIFY, bundlePkgName, (data: PowerVo[]) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.POWER_VERIFY, bundlePkgName, (data: PowerVo[]) => {
+      if (!this.isLogin) {
+        return;
+      }
+      if (data) {
+        const value = data.find(v => v.name.toLowerCase() === 'gold')
+        if (value) {
+          config.gameOption.unlockBetMinGold = Number(value.num);
+        }
+      }
       this.dispatch(updatePower(data));
     })
-    sktMsgListener.add(SKT_MAG_TYPE.QUIT_GAME, bundlePkgName, (data: any) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.QUIT_GAME, bundlePkgName, (data: any) => {
 
     })
-    sktMsgListener.add(SKT_MAG_TYPE.GAME_SHOW, bundlePkgName, (data: any) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_SHOW, bundlePkgName, (data: any) => {
+      if (!this.isLogin) {
+        return;
+      }
       if (GameStatus.BET === this.comp.props.gameStatus) {
         // 拿到最新的倒计时后，就减掉1秒
         this.countdown = data.seconds - 1;
@@ -295,7 +327,10 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
    * 监听下注
    */
   private listenerBet() {
-    sktMsgListener.add(SKT_MAG_TYPE.PUSH_BET, bundlePkgName, (data: FishPrawnCrabPushBetVo) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.PUSH_BET, bundlePkgName, (data: FishPrawnCrabPushBetVo) => {
+      if (!this.isLogin) {
+        return;
+      }
       const userId = data.memberData.memberId + "";
       const index = this.getSeatIndex(userId);
       const isMyBet = this.comp.props.myHead.userId === userId;
@@ -313,7 +348,10 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
         this.dispatch(seatBet(betData));
       }
     })
-    sktMsgListener.add(SKT_MAG_TYPE.LAUNCHER_BET, bundlePkgName, (data: BetReturnData, error: string) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCHER_BET, bundlePkgName, (data: BetReturnData, error: string) => {
+      if (!this.isLogin) {
+        return;
+      }
       if (!config.preBet) {
         this.dispatch(changeMeGold(data.gold));
       } else if (data.resultCode !== undefined && data.resultCode !== 0) {
@@ -332,10 +370,13 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
         this.dispatch(cancelBetAmount(betData.betAmount))
       }
     })
-    sktMsgListener.add(SKT_MAG_TYPE.PUSH_RESULT, bundlePkgName, (data: FishPrawnCrabResultVo) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.PUSH_RESULT, bundlePkgName, (data: FishPrawnCrabResultVo) => {
       // this.dispatch(changeGameStatus(GameStatus.STOP_BET, 0, convertResult(data.lotteryVo)));
     })
-    sktMsgListener.add(SKT_MAG_TYPE.GAME_STATUE, bundlePkgName, (data: FishPrawnCrabGameTypeVo) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_STATUE, bundlePkgName, (data: FishPrawnCrabGameTypeVo) => {
+      if (!this.isLogin) {
+        return;
+      }
       if (convertGameStatus(data.gameType) === GameStatus.BET) {
         // 重新构建座位
         this.refactorSeat();
@@ -348,7 +389,10 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
     })
 
     // 接受赠送礼物消息
-    sktMsgListener.add(SKT_MAG_TYPE.GIVE_GIFT, bundlePkgName, (data: ResGiftVo) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GIVE_GIFT, bundlePkgName, (data: ResGiftVo) => {
+      if (!this.isLogin) {
+        return;
+      }
       const seats = this.comp.props.seats.filter(v => v.userId === data.receiveMemberId);
       // 如果展示座位上有两个相同人，就同时送两次
       if (seats && seats.length > 1) {
@@ -390,7 +434,7 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
   }
 
   private listenerBalance() {
-    sktMsgListener.add(SKT_MAG_TYPE.MY_BALANCE_PUSH, bundlePkgName, (data: FishPrawnCrabBalanceVo) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.MY_BALANCE_PUSH, bundlePkgName, (data: FishPrawnCrabBalanceVo) => {
       // const myHead = instantiate(this.comp.props.myHead);
 
       // gameCacheData.winList = data.roomWinInfo;
@@ -403,7 +447,7 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
 
       // this.dispatch(changeSeat(myHead));
     })
-    sktMsgListener.add(SKT_MAG_TYPE.BALANCE_PUSH, bundlePkgName, (data: FishPrawnCrabBalanceVo) => {
+    yxxWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.BALANCE_PUSH, bundlePkgName, (data: FishPrawnCrabBalanceVo) => {
       // gameCacheData.leftUsers = data.roomLeftInfoVos;
       // gameCacheData.rightUsers = data.roomRightInfoVos;
 
@@ -487,6 +531,7 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
 
     // 完成之后的回调，卸载加载界面
     this.completeCallback && this.completeCallback();
+    yxxWebSocketDriver.sktMsgListener.removeById(bundlePkgName);
   }
 
   private clear() {
@@ -524,10 +569,10 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
   }
 
   public initConnect(completeCallback: Function) {
-    this.listenerAuth();
     this.listenerUserJoinOrQuit();
     this.listenerBet();
     this.listenerBalance();
+    this.listenerAuth();
 
     this.completeCallback = completeCallback;
     return this;
@@ -546,6 +591,16 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
     // 完成之后的回调，卸载加载界面
     this.completeCallback();
     playMainBg();
+
+    this.historyMinViewModel.setEvent({
+      openHistoryMax: () => {
+        const hih = new HistoryMaxViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.HISOTRY_MAX_PANEL).source)
+          .appendTo(this.comp.node, { effectType: EffectType.EFFECT2, isModal: true })
+          .connect().setProps({
+            results: this.historyMinViewModel.comp.props.results
+          })
+      }
+    })
 
     return this;
   }

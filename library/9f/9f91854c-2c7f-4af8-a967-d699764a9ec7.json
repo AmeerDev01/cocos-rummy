@@ -268,7 +268,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 405,
-      "height": 631
+      "height": 636
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -303,7 +303,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "123a7f39-6c9d-45b4-82e7-d45f13e74fe7@f9941",
+      "__uuid__": "24c59745-e95f-4ed4-8f11-f7602e1f5d69@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -444,7 +444,7 @@
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -499,8 +499,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 30,
-      "y": 22,
+      "x": 24,
+      "y": 8,
       "z": 0
     },
     "_lrot": {
@@ -539,7 +539,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 543.13,
+      "width": 525,
       "height": 200
     },
     "_anchorPoint": {
@@ -574,14 +574,14 @@
       "b": 255,
       "a": 255
     },
-    "_string": "SELAMAT DATANG DI HUGEWINI.KAMI \nTELAH MEMPERSIAPKAN BANYAK \nPERMAINAN MENYENANGKAN \nDAN 000 KOIN UNTUKMU. SEMOGA \nPERMAINANMENYENANGKAN.",
+    "_string": "WELCOME TO RUMMY! WISH YOU HAVE A GREAT DAY! WE HAVE PREPARED 000 COINS AND A WEALTH OF PROMOTIONS FOR YOU, WISH YOU GET LOTS OF PROFITS!",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
-    "_fontSize": 20,
+    "_actualFontSize": 10,
+    "_fontSize": 10,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
-    "_overflow": 0,
+    "_overflow": 3,
     "_enableWrapText": true,
     "_font": {
       "__uuid__": "ef38165e-cb8d-48b3-8e67-23baec27df51",
@@ -609,8 +609,6 @@
       "__id__": 0
     },
     "fileId": "a7UerWLcVAyL8cmq0YQmCP",
-    "instance": null,
-    "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
   },
   {
@@ -731,8 +729,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 138,
-      "height": 22
+      "width": 103,
+      "height": 27
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -767,7 +765,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "eed263ac-abc9-476f-bec2-a14fd7823596@f9941",
+      "__uuid__": "af1df1f7-f23f-41a9-80f0-339068cb571d@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,

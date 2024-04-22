@@ -186,7 +186,7 @@
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -281,8 +281,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 190,
-      "height": 30
+      "width": 277,
+      "height": 34
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -322,7 +322,7 @@
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 2,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -377,7 +377,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -216.358,
+      "x": -200,
       "y": 27.73,
       "z": 0
     },
@@ -417,8 +417,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 190,
-      "height": 30
+      "width": 216,
+      "height": 62
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -453,12 +453,12 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "50065664-47a3-4f87-a30f-260c1b1a10a0@f9941",
+      "__uuid__": "3f9a4ac2-7626-4a84-ba3d-dfa57623a8ae@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 2,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -1046,7 +1046,7 @@
     },
     "_type": 1,
     "_fillType": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 2,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -1841,7 +1841,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 19.642,
+      "x": 50,
       "y": -71.27,
       "z": 0
     },
@@ -1881,7 +1881,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 319,
+      "width": 374,
       "height": 28
     },
     "_anchorPoint": {
@@ -1922,7 +1922,7 @@
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 2,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -1980,8 +1980,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 346.354,
-      "y": 204.725,
+      "x": 343,
+      "y": 218,
       "z": 0
     },
     "_lrot": {

@@ -1,9 +1,5 @@
-import { Node, Toggle, Vec3, Widget, _decorator, tween } from 'cc';
-import { sourceManageSelector } from '../index';
+import { Node, Scheduler, Toggle, Tween, Vec2, Vec3, Widget, _decorator, director, tween } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
-import { EffectType } from '../../../utils/NodeIOEffect';
-import { PrefabPathDefine } from '../sourceDefine/prefabDefine';
-import HelpViewModel from '../viewModel/HelpViewModel';
 const { ccclass, property } = _decorator;
 
 export interface IState {
@@ -26,6 +22,9 @@ export class Fish_Room extends BaseComponent<IState, IProps, IEvent> {
 	start() {
 	}
 
+	private autoWorldPosition: Vec3;
+	private lockWorldPosition: Vec3;
+
 	protected propertyNode = {
 		props_background_node: new Node(),
 		props_fish_pond_node: new Node(),
@@ -35,7 +34,6 @@ export class Fish_Room extends BaseComponent<IState, IProps, IEvent> {
 		props_side_board: new Node(),
 		props_side_jiantou: new Node(),
 		props_sidebtn_exit: new Node(),
-		props_sidebtn_help: new Node(),
 	}
 	public props: IProps = {
 	}
@@ -79,15 +77,14 @@ export class Fish_Room extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_sidebtn_exit.on(Node.EventType.TOUCH_END, (e) => {
 			this.events.exitRoom();
 		})
-		this.propertyNode.props_sidebtn_help.on(Node.EventType.TOUCH_END, () => {
-			this.openHelp();
-		})
 	}
 
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
 	}
 
 	protected bindUI(): void {
+		this.autoWorldPosition = this.propertyNode.props_auto.worldPosition;
+		this.lockWorldPosition = this.propertyNode.props_lock.worldPosition;
 	}
 
 	private isTweenIn = false;
@@ -119,22 +116,22 @@ export class Fish_Room extends BaseComponent<IState, IProps, IEvent> {
 		}, 0.1)
 	}
 
-	public hideSideBoard() {
+	public hideSideBoard(){
 		this.propertyNode.props_side_board.getComponent(Widget).right = -74;
 	}
 
 	public setBtnLocaltion(scaleRatio: number) {
+		// this.propertyNode.props_auto.setWorldPosition(new Vec3(this.autoWorldPosition.x, 30).multiplyScalar(scaleRatio))
+		// this.propertyNode.props_lock.setWorldPosition(new Vec3(this.lockWorldPosition.x, 30).multiplyScalar(scaleRatio))
 	}
 
 	public setScale(scale) {
+		// this.propertyNode.props_background_node.setScale(new Vec3(scale, scale))
+		// this.propertyNode.props_battery_node.setScale(new Vec3(scale, scale))
 	}
 
 	update(deltaTime: number) {
 		this.events.update(deltaTime);
-	}
-
-	private openHelp() {
-		new HelpViewModel().mountView(sourceManageSelector().getFile(PrefabPathDefine.HELP).source).appendTo(this.node.parent, { effectType: EffectType.EFFECT1 }).connect();
 	}
 
 	protected onDestroy(): void {

@@ -1,3 +1,4 @@
+import { SKT_HOST } from "../../common/WebSocketStarter";
 import { getUUID } from "../../utils/tool";
 import { sourceManageSelector } from "./index";
 import { FontPathDefine } from "./sourceDefine/fontDefine";
@@ -5,8 +6,9 @@ import { SpriteFramePathDefine } from "./sourceDefine/spriteDefine";
 import { BetData, BetType, HeadType } from "./type";
 
 export default {
-    sktCode: "QIU_QIU",
-    name: "QIU_QIU",
+    gameHost: SKT_HOST.MULTI,
+    gameServer: "QIUQIU",
+    gameName: "QIUQIU",
     gameId: 13,
     testConfig: {
       wsUrl: "ws://192.168.110.243:18004/ws",
@@ -31,6 +33,7 @@ export default {
       lookOnIndex: 99, //==>用于其他online玩家的index,便于判定飞金币的位置
       /**胜率最大的索引位置 */
       winRateMaxIndex: 3,//==>用于判定飞星星的动画展示
+      unlockBetMinGold:10,
     },
     /**上榜头像位置 */
     headLocations: [
@@ -85,7 +88,7 @@ export default {
         fileUrl: SpriteFramePathDefine.CHIP_ZERO,
         fontUrl: FontPathDefine.WU_BET
       },
-    ],
+  ],
     /**牌组 */
     cardType:[
       {up:0,down:0},{up:0,down:1},{up:0,down:2},{up:0,down:3},{up:0,down:4},{up:0,down:5},{up:0,down:6},

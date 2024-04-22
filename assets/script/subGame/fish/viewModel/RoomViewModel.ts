@@ -15,10 +15,6 @@ import { Fish } from "../../../common/fish/Fish";
 import { isSelf } from "../fishTool";
 import { SkillPlayer } from "../../../common/fish/SkillPlayer";
 import { FishLabelFntManager } from "../../../common/fish/FishLabelFntManager";
-import GetnewwwepViewModel from "./GetnewwwepViewModel";
-import { sourceManageSelector } from "../index";
-import { PrefabPathDefine } from "../sourceDefine/prefabDefine";
-import { EffectType } from "../../../utils/NodeIOEffect";
 
 @StoreInject(getStore())
 class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
@@ -36,9 +32,6 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
   private stage: number = 0;
 
   private is_use_rotation = false;
-
-  /**自己的信息 */
-  private selfUserInfo: UserInfo;
 
   constructor(fishManager: FishManager, bulletManager: BulletManager, batteryManager: BatteryManager, backgroundSceneManager: BackgroundSceneManager,
     skillPlayer: SkillPlayer, fishLabelFntManager: FishLabelFntManager) {
@@ -67,6 +60,7 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
   }
 
   private unListenerSocket() {
+    console.log("unListenerSocket ============= ", this.isListenerWs);
     if (!this.isListenerWs) return;
     sktMsgListener.remove(SKT_MAG_TYPE.GENERATE_FISH, config.name)
     sktMsgListener.remove(SKT_MAG_TYPE.SEND_BULLET, config.name)
@@ -167,7 +161,7 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
 
   private levelRoom(playerId: string) {
     if (isSelf(playerId)) {
-
+      
     } else {
       this.batteryManager.removeBatteryByPlayerId(playerId);
       this.bulletManager.removeBulletObjectByPlayerId(playerId);
@@ -267,6 +261,7 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
     this.comp.getFishPondNode().angle = 0;
     this.createAllBatteryByPosition();
 
+    let selfUserInfo: UserInfo = null;
     this.userInfos = data.seats.map(v => {
       const userInfo: UserInfo = {
         player_id: v.playerId,
@@ -286,13 +281,13 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
         offline: v.offline, //0:没有离线,非0:离线
         bullet: v.bullet, //剩余子弹  
       }
-      userInfo.is_local && (this.selfUserInfo = userInfo);
+      userInfo.is_local && (selfUserInfo = userInfo);
       return userInfo;
     });
     this.stage = data.stage;
     this.roomId = data.roomId;
 
-    if (this.selfUserInfo.set_id === 3 || this.selfUserInfo.set_id === 4) {
+    if (selfUserInfo.set_id === 3 || selfUserInfo.set_id === 4) {
       this.fishManager.setUseSkew(true);
       this.skillPlayer.setUseSkew(true);
       this.batteryManager.rotationOtherUserInfo();
@@ -397,11 +392,7 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
       cancelLock: this.send_yrby_ReqCancelLock.bind(this),
       switchBattery: this.send_yrby_ReqSwitchBattery.bind(this),
     }, {
-      wepShow: {
-        show: (textureConfig, batterySkinConfig) => {
-          this.showChangeBatteryUI(textureConfig, batterySkinConfig);
-        }
-      },
+      wepShow: {},
       dataManager: {
         getRoomType: () => { return 1 },
         getRoomInfo: (param) => {
@@ -432,25 +423,6 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
 
   private send_yrby_ReqSwitchBattery(msg) {
     sktInstance.sendSktMessage(SKT_MAG_TYPE.CHANGE_BATTERY, msg);
-  }
-
-  private showChangeBatteryUI(textureConfig, batterySkinConfig) {
-    const getnewwwepViewModel = new GetnewwwepViewModel().mountView(sourceManageSelector().getFile(PrefabPathDefine.GET_NEWWAP).source)
-      .appendTo(this.viewNode.parent, { effectType: EffectType.EFFECT2 }).connect()
-      .setProps({
-        vipLevel: this.selfUserInfo.vip_level,
-        myBatteryId: this.batteryManager.getMyselfBatteryObj().getUserInfo().battery_id,
-        textureConfig: textureConfig,
-        batterySkinConfig: batterySkinConfig,
-      });
-
-    getnewwwepViewModel.setEvent({
-      changeBattery: (batteryId: number) => {
-        sktInstance.sendSktMessage(SKT_MAG_TYPE.CHANGE_BATTERY_SKIN, {
-          skin: batteryId
-        });
-      }
-    })
   }
 
   public connect() {

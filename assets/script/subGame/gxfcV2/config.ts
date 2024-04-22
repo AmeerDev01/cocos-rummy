@@ -11,7 +11,7 @@ export default {
     token: ""
   },
   /**默认底注 */
-  betAmount: 45,
+  betAmount: 9,
   /**默认的列数 */
   columnCount: 5,
   /**下注金额上线点，用于配置jackpot金额的显示 */
@@ -34,8 +34,10 @@ export default {
     expectBorderScaleY: 0.86,
     /**停止的动作时间 */
     stopSpeed: 0.4,
+    /**金发图标的高度 */
+    jinFaRollerHeight: 150,
     /**单图标的高度 */
-    singleRollerHeight: 150,
+    singleRollerHeight: 145,
     /**单图标的宽度 */
     singleRollerWidth: 146,
     /**滚轴的下内边距 */
@@ -43,7 +45,7 @@ export default {
     /**滚轴的高度 */
     rollerHeight: 450,
     /**单图标的上下间隔 */
-    intervalHeight: 0,
+    intervalHeight: 4,
     /**列间隔 */
     columnInterval: 0,
     /**滚动窗口的X坐标 */
@@ -73,7 +75,7 @@ export default {
     /**小游戏2的滚轴的高度 */
     rollerHeight2: 450,
     /**单图标的上下间隔 */
-    intervalHeight1: 0,
+    intervalHeight1: 4,
     /**单图标的上下间隔 */
     intervalHeight2: 0,
     /**列间隔 */
@@ -173,7 +175,7 @@ export default {
       "name": "wild1",
       "fileName": SpriteFramePathDefine.icon_baifa,
       "skeletonName": SkeletalPathDefine.icon_bai_wild,
-      "animationArr": ["", "animation"],
+      "animationArr": [" ", "animation"],
       "distance": [0, 0],
       "scale": [1, 1]
     }, {
@@ -189,12 +191,12 @@ export default {
       "name": "scatter",
       "fileName": SpriteFramePathDefine.icon_scatter,
       "skeletonName": SkeletalPathDefine.scatter,
-      "animationArr": ["animation4", "animation2","animation3"],
+      "animationArr": ["animation4", "animation2", "animation3"],
       "distance": [4, 1],
       "scale": [1, 1]
     }
   ],
-    
+
   /**普通图标的滑槽(5条滑槽)排列(数据：从左至有=>游戏：从上至下) */
   iconRollerQueue: [
     [5, 3, 3, 10, 2, 3, 6, 8, 6, 2, 2, 5, 1, 2, 3, 5, 5, 5, 7, 1, 5, 4, 1, 7, 11, 5, 3, 4, 1, 3, 2, 9, 3, 7, 1, 1, 4, 4, 2, 7, 11, 1, 1, 4, 6, 3, 8, 6, 2, 9, 10, 2, 3, 4, 11, 7, 6, 6, 2, 7],
@@ -212,152 +214,103 @@ export default {
       "amount": [
         {
           "positionId": 1,
-          "value": 1,
-          "jackpot": 0
+          "value": 0.02,
+          "jackpot": 1
         },
         {
           "positionId": 2,
-          "value": 2,
-          "jackpot": 0
+          "value": 0.080,
+          "jackpot": 1
         },
         {
           "positionId": 3,
-          "value": 4,
-          "jackpot": 0
+          "value": 0.180,
+          "jackpot": 1
         },
         {
           "positionId": 4,
-          "value": 8,
-          "jackpot": 0
+          "value": 0.400,
+          "jackpot": 1
         },
         {
           "positionId": 5,
-          "value": 16,
-          "jackpot": 0
+          "value": 0.800,
+          "jackpot": 1
         },
         {
           "positionId": 6,
-          "value": 20,
-          "jackpot": 0
+          "value": 2.000,
+          "jackpot": 1
         },
         {
           "positionId": 7,
-          "value": 40,
+          "value": 4.000,
           "jackpot": 0
         },
         {
           "positionId": 8,
-          "value": 60,
+          "value": 8.000,
           "jackpot": 0
         },
         {
           "positionId": 9,
-          "value": 90,
+          "value": 20.000,
           "jackpot": 0
         },
         {
           "positionId": 10,
-          "value": 120,
+          "value": 30.000,
           "jackpot": 0
         },
         {
           "positionId": 11,
-          "value": 150,
+          "value": 60.000,
           "jackpot": 0
         },
         {
           "positionId": 12,
-          "value": 200,
-          "jackpot": 1
+          "value": 90.000,
+          "jackpot": 0
         },
         {
           "positionId": 13,
-          "value": 400,
-          "jackpot": 1
-        },
-        {
-          "positionId": 14,
-          "value": 600,
-          "jackpot": 1
-        },
-        {
-          "positionId": 15,
-          "value": 900,
-          "jackpot": 1
-        },
-        {
-          "positionId": 16,
-          "value": 1200,
-          "jackpot": 1
-        },
-        {
-          "positionId": 17,
-          "value": 1500,
-          "jackpot": 1
-        },
-        {
-          "positionId": 18,
-          "value": 2000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 19,
-          "value": 3000
-        },
-        {
-          "positionId": 20,
-          "value": 4000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 21,
-          "value": 6000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 22,
-          "value": 8000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 23,
-          "value": 10000,
-          "jackpot": 1
+          "value": 180.000,
+          "jackpot": 0
         }
       ]
     }
   ],
 
-    /**中奖配置 */
+  /**中奖配置 */
   winning: [
-      {
-        "id": 1,
-        "name": DialogType.BIG_WIN,
-        "fileName": ["atlas/dialog/bigwin/cs_bw", "atlas/dialog/superwin/slots_common_game_sw_gold"],//sb_lbjs_BIGWIN  slots_common_game_bw_gold
-        "minRate": 100,
-        "maxRate": 300
-      },
-      {
-        "id": 2,
-        "name": DialogType.MEGA_WIN,
-        "fileName": ["atlas/dialog/megawin/cs_mw","atlas/dialog/superwin/slots_common_game_sw_gold" ],// "sb_lbjs_MEGAWIN" "slots_common_game_ew_gold"
-        "minRate": 301,
-        "maxRate": 1250
-      },
-      {
-        "id": 3,
-        "name": DialogType.SUPER_WIN,
-        "fileName": ["atlas/dialog/superwin/cs_sw", "atlas/dialog/superwin/slots_common_game_sw_gold"],
-        "minRate": 1251,
-        "maxRate": 3000
-      },
-      {
-        "id": 4,
-        "name": DialogType.JACKPOT,
-        "fileName": ["atlas/dialog/jackpot/sb_lbjs_JACKPOT", "atlas/dialog/jackpot/slots_common_game_uw_gold"],
-        "minRate": 3001,
-        "maxRate": 99999
-      },
+    {
+      "id": 1,
+      "name": DialogType.BIG_WIN,
+      "fileName": ["atlas/dialog/bigwin/cs_bw", "atlas/dialog/superwin/slots_common_game_sw_gold"],//sb_lbjs_BIGWIN  slots_common_game_bw_gold
+      "minRate": 100,
+      "maxRate": 300
+    },
+    {
+      "id": 2,
+      "name": DialogType.MEGA_WIN,
+      "fileName": ["atlas/dialog/megawin/cs_mw", "atlas/dialog/superwin/slots_common_game_sw_gold"],// "sb_lbjs_MEGAWIN" "slots_common_game_ew_gold"
+      "minRate": 301,
+      "maxRate": 1250
+    },
+    {
+      "id": 3,
+      "name": DialogType.SUPER_WIN,
+      "fileName": ["atlas/dialog/superwin/cs_sw", "atlas/dialog/superwin/slots_common_game_sw_gold"],
+      "minRate": 1251,
+      "maxRate": 3000
+    },
+    {
+      "id": 4,
+      "name": DialogType.JACKPOT,
+      "fileName": ["atlas/dialog/jackpot/sb_lbjs_JACKPOT", "atlas/dialog/jackpot/slots_common_game_uw_gold"],
+      "minRate": 3001,
+      "maxRate": 99999
+    },
 
-    ]
-  }
+  ]
+}

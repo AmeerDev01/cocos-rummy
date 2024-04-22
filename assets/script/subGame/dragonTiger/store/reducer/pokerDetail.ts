@@ -7,8 +7,8 @@ export default reduxAct.createReducer<InitStateType>({
     ...state,
 
     pokerInfo: payload.pokerInfo,
- 
   }),
+
   [ActionTypes.DRAGONTGER_POKER_LEFT]: (state, payload: ActionPayLoad<ActionTypes.DRAGONTGER_POKER_LEFT>): InitStateType => ({
     ...state,
 
@@ -63,5 +63,4 @@ export default reduxAct.createReducer<InitStateType>({
   [ActionTypes.DRAGONTGER_POKER_RESET_STORE]: (state, payload: ActionPayLoad<ActionTypes.DRAGONTGER_POKER_RESET_STORE>): InitStateType => {
     return instantiate(initState)
   }
-
 }, initState);

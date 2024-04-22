@@ -1,11 +1,9 @@
-import { default as redux } from "redux"
-import WebSocketToDo from "../../common/WebSocketToDo"
-import { sktListenerFactoy } from "../../common/sktListenerFactoy"
 import { initConfig, subGameList } from "../../hall/config"
 import config from "./config"
 import { getStore } from "../../hall/store"
 import { ToastType, addToastAction, setLoadingAction } from "../../hall/store/actions/baseBoard"
 import { global, lang } from "../../hall"
+import WebSocketStarter, { WebSocketDriver } from "../../common/WebSocketStarter"
 
 export enum SKT_MAG_TYPE {
   /**心跳 */
@@ -13,13 +11,13 @@ export enum SKT_MAG_TYPE {
   /**认证 */
   AUTH = "2",
   /**进入游戏 */
-  JOIN_GAME = "4",
+  JOIN_GAME = "21",
   /**金额变化 */
   GOLD_CHANGE = "10",
   /**权限验证 */
   POWER_VERIFY = "11",
   /**启动下注 */
-  LAUNCHER_BET = "802",
+  LAUNCHER_BET = "22",
   /**推送下注 */
   PUSH_BET = "8102",
   /**游戏状态 */
@@ -33,63 +31,58 @@ export enum SKT_MAG_TYPE {
   /**其他数据 */
   BALANCE_PUSH = "808",
   /**退出游戏 */
-  QUIT_GAME = "506",
+  QUIT_GAME = "26",
   /**游戏唤醒消息 */
-  GAME_SHOW = "810",
+  GAME_SHOW = "24",
   /**赠送礼物 */
-  GIVE_GIFT = "812",
+  GIVE_GIFT = "25",
 }
 
-export const sktMsgListener = sktListenerFactoy<SKT_MAG_TYPE>()
 
-export let sktInstance: WebSocketToDo<SKT_MAG_TYPE> = null
+export let yxxWebSocketDriver: WebSocketDriver<SKT_MAG_TYPE> = null
 export default () => {
-  const dispatch = getStore().dispatch
   return new Promise((resolve, reject) => {
-    if (sktInstance) {
-      resolve(sktInstance)
-    } else {
-      sktInstance = new WebSocketToDo<SKT_MAG_TYPE>()
-      initConfig().then(() => {
-        let gameIdTmp = config.gameId;
-        let wsUrl = config.testConfig.wsUrl;
-        if (!config.testConfig.wsUrl) {
-          const { gameId, websocketUrl } = subGameList.find(i => i.gameId === config.gameId)
-          wsUrl = websocketUrl;
-          gameIdTmp = gameId;
-        }
-        sktInstance.init(config.sktCode, gameIdTmp, wsUrl, {
-          onMessage: (code, data, error?: string) => {
-            sktMsgListener.dispath(code, data, error)
-          },
-          onDataFail: (data: any) => {
+    initConfig().then(() => {
+      let gameIdTmp = config.gameId;
+      const { gameId, gameHost } = subGameList.find(i => i.gameId === config.gameId)
+      gameIdTmp = gameId;
 
-            dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDateFail, {}, { placeStr: "连接失败" }) }))
-            dispatch(setLoadingAction({ isShow: false }))
-          },
-          onAnthFail: () => {
-            dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "Auth Faild" }) }))
-            global.closeSubGame({
-              confirmContent: lang.write(k => k.WebSocketModule.socketConnectAuthFaild)
-            });
-          },
-          onDisconnect: (data: any) => {
-            // dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDisconnect, {}, { placeStr: "socket disconnect" }), type: ToastType.ERROR }))
-            // dispatch(setLoadingAction({ isShow: false }))
-            global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.socketConnectDisconnect) })
-          },
-          onReConnect: () => true
-        })
-        sktInstance.initSocket().then(() => {
-          resolve(sktInstance)
-        })
+      WebSocketStarter.Instance().initSocket().then(() => {
+        yxxWebSocketDriver = new WebSocketDriver<SKT_MAG_TYPE>(gameIdTmp, gameHost)
+        yxxWebSocketDriver.filterData = (data) => {
+          if (data.success) {
+            return {
+              data: data.data,
+              error: undefined
+            }
+          } else {
+            let error = ''
+            if (data.success === undefined) {
+              //数据格式错误
+              error = 'data format error'
+              console.error('data format error', data)
+            } else {
+              error = data.reason || 'error'
+              console.error(data.reason)
+            }
+            global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }), type: ToastType.ERROR }))
+            return {
+              data: '', error
+            }
+          }
+        }
+
+        // const msgObj = yxxWebSocketDriver.loginGame(SKT_MAG_TYPE.JOIN_GAME)
+        // msgObj.bindTimeoutHandler(() => {
+        //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
+        //   return false
+        // })
+        resolve(yxxWebSocketDriver)
       })
-    }
+    })
   })
 }
 
 export const removeInstance = () => {
-  sktInstance && sktInstance.close();
-  sktInstance = null
-  sktMsgListener && sktMsgListener.removeById("yxx");
+  yxxWebSocketDriver && yxxWebSocketDriver.logoutGame(SKT_MAG_TYPE.QUIT_GAME)
 }

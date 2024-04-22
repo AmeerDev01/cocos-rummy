@@ -113,7 +113,7 @@ export class Bandar_bet_history extends BaseComponent<IState, IProps, IEvent> {
         let newResultList = []
 		let oldAllResult = []
 		const resultII = resultItem;
-		this.taskScheduler.joinqQueue(new Task((done) => {
+		this.taskScheduler.joinQueue(new Task((done) => {
 			if (mainGameViewModel.isUnMount || !resultItem || !resultII) return;
 			resultII.forEach((item,index)=>{
 				const childNode = instantiate(iconNode);//克隆输赢图标
@@ -136,7 +136,7 @@ export class Bandar_bet_history extends BaseComponent<IState, IProps, IEvent> {
 	
 			})
 			done()
-		}), false).joinqQueue(new Task((done) => {
+		}), false).joinQueue(new Task((done) => {
 			if (mainGameViewModel.isUnMount || !this.oldAllResultList) return;
 			this.oldAllResultList.forEach((v,i)=>{//移除后九个节点，避免在移动时出现重影
 				if (i % 10 !== 0) {
@@ -147,7 +147,7 @@ export class Bandar_bet_history extends BaseComponent<IState, IProps, IEvent> {
 				}
 			})
 			done()
-		}),false).joinqQueue(new Task((done) => {
+		}),false).joinQueue(new Task((done) => {
 			if (mainGameViewModel.isUnMount || !oldAllResult || !newResultList) return;
 			oldAllResult.forEach((item,i)=>{
 				tween(item).to(0.5,{position:new Vec3(item.position.x-offset,item.position.y)}).call(()=>{

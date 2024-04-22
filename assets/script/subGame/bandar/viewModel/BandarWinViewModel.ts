@@ -4,7 +4,7 @@ import { Bandar_win, IProps, IEvent } from "../components/Bandar_win"
 import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { StateType } from "../store/reducer"
 import { getStore } from '../store';
-import { SKT_MAG_TYPE, sktMsgListener } from '../socketConnect';
+import { SKT_MAG_TYPE } from '../socketConnect';
 import { setUserInfoAction } from '../store/actions/userInfo';
 const { ccclass, property } = _decorator;
 

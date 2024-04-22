@@ -59,6 +59,8 @@ export class Yxx_BetArea extends BaseComponent<IState, IProps, IEvent> {
 	// 是否锁定下注
 	private isLockBet = false;
 	private betTimer: Set<number> = new Set();
+	public isMe:boolean //是否当前用户下注
+
 
 	protected propertyNode = {
 		props_btn_deer: new Node(),
@@ -309,7 +311,7 @@ export class Yxx_BetArea extends BaseComponent<IState, IProps, IEvent> {
 			// this.betLoading = false;
 			// console.log("my flyChip", betData);
 		}
-
+        this.isMe = betData.isMyBet
 		const isRobot = betData.userId.startsWith('170');
 		if (!isRobot) {
 			if (this.betTimer.has(betData.time)) {
@@ -339,7 +341,9 @@ export class Yxx_BetArea extends BaseComponent<IState, IProps, IEvent> {
 			const uiTransform = this.node.getComponent(UITransform);
 			const startPosition = this.getBetStartPosition(betData);
 			chipNode.setWorldPosition(uiTransform.convertToWorldSpaceAR(startPosition));
-			tween(chipNode).to(this.getFlyChipSpeedSecond(), { position: endPositon }, { easing: 'quintOut' }).start();
+			tween(chipNode).to(this.getFlyChipSpeedSecond(), { position: endPositon }, { easing: 'quintOut' }).call(() => {
+				viewModel && ((viewModel.comp.getPropertyNode().props_ChipTail as Node).active = false);
+			}).start();
 			if (!isWinRateBet && betData.index === config.gameOption.winRateMaxIndex) {
 				this.flyStar(startPosition, betData.betType);
 			}
@@ -597,7 +601,7 @@ export class Yxx_BetArea extends BaseComponent<IState, IProps, IEvent> {
 
 	private copyBetInfo(betInfos: BetInfo[], parent: Node, odds: number): BetInfo[] {
 		const arr: BetInfo[] = [];
-
+		this.isMe = false;
 		new Array(odds).fill(0).forEach(v => {
 			betInfos.forEach(betInfo => {
 				arr.push({
@@ -685,7 +689,7 @@ export class Yxx_BetArea extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	private createChip(chipValue: number, betId: string, parent: Node): ChipViewModel {
-		return new ChipViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.CHIP).source).appendTo(parent).connect().setProps({ value: chipValue, betId });
+		return new ChipViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.CHIP).source).appendTo(parent).connect().setProps({ value: chipValue, betId, isMe:this.isMe });
 	}
 
 	/**
@@ -736,9 +740,21 @@ export class Yxx_BetArea extends BaseComponent<IState, IProps, IEvent> {
 			return;
 		}
 		this.isLockBet = this.props.myHead.gold < config.gameOption.unlockBetMinGold;
-		if (!this.isLockBet && this.props.powers && this.props.powers.length > 0) {
+		if (!this.isLockBet && this.isPower('vip')) {
 			this.isLockBet = true;
 		}
+	}
+
+	private isPower(value: string) {
+		if (this.props.powers && this.props.powers.length > 0) {
+			for (let i = 0; i < this.props.powers.length; i++) {
+				const power = this.props.powers[i];
+				if (value === power.name.toLowerCase()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private cancelBet(cancelBetData: BetData) {

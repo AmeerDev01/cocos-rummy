@@ -1,4 +1,4 @@
-import { _decorator, Component, ImageAsset, instantiate, Label, log, native, Node, ScrollView, Sprite, SpriteFrame, sys, systemEvent, Texture2D, tween, UIOpacity, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, Component, ImageAsset, instantiate, Label, log, native, Node, ScrollView, Sprite, SpriteFrame, sys, Texture2D, tween, UIOpacity, UITransform, Vec2, Vec3 } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 const { ccclass, property } = _decorator;
 import { fetcher, lang } from '../../index';

@@ -4,9 +4,11 @@ import { StateType } from "../../store/reducer"
 import { Hall_RegPageV2, IProps, IEvent } from "../../components/login_v2/Hall_RegPageV2"
 import { EffectType } from "../../../utils/NodeIOEffect"
 import { ApiUrl } from "../../apiUrl"
-import { fetcher, sourceManageSeletor } from "../../index"
-import { deviceInfo } from "../../config"
+import { fetcher, lang, sourceManageSeletor } from "../../index"
+import { config, deviceInfo } from "../../config"
 import { getPackageName, registerAppsflyerEvents } from "../../../common/bridge"
+import { addToastAction } from "../../store/actions/baseBoard"
+import { defaultLanguageType } from "../../../language/languagePkg"
 
 export default class RegV2ViewModel extends ViewModel<Hall_RegPageV2, IProps, IEvent> {
   constructor() {
@@ -20,11 +22,12 @@ export default class RegV2ViewModel extends ViewModel<Hall_RegPageV2, IProps, IE
       closeHandler: () => {
         this.unMount(EffectType.EFFECT2)
       },
-      regHandler: (loginName, password) => {
+      regHandler: (loginName, password, verificationCode) => {
         fetcher.send(ApiUrl.REG, {
           pkgCode: getPackageName(),
           macCode: deviceInfo.getUniqueId(),
-          memberName: loginName, password
+          memberName: defaultLanguageType[config.country].phoneAreaNum + loginName, password,
+          verificationCode
         }).then((data) => {
           const values = data.split(",")
           let token = values.length === 1 ? data : values[0];
@@ -34,6 +37,17 @@ export default class RegV2ViewModel extends ViewModel<Hall_RegPageV2, IProps, IE
           registerAppsflyerEvents(loginName, password);
         }).catch((e) => {
           console.log(e)
+        })
+      },
+      sendSmsCode: (phoneNumber: string) => {
+        return new Promise((reslove, reject) => {
+          fetcher.send(ApiUrl.SEND_SMS, { phone: phoneNumber }).then((rsp) => {
+            this.dispatch(addToastAction({ content: lang.write(k => k.BindPhoneModule.BindPhoneSend, {}, { placeStr: "验证信息已经发送，请注意查收" }) }))
+            reslove(rsp)
+          }).catch((e) => {
+            this.dispatch(addToastAction({ content: lang.write(k => k.BindPhoneModule.BindPhonesSendError, {}, { placeStr: "请求失败：${e}" }) }))
+            reject(e)
+          })
         })
       }
     })

@@ -184,7 +184,7 @@ export class GxfcV2_Main extends BaseComponent<IState, IProps, IEvent> {
 		// console.log("key", key, "value", value);
 		if (this.node && this.node.isValid) {
 			if (key === 'betDropDownlist') {
-				this.showOrHideBetDropDownlist(value.cur)
+				// this.showOrHideBetDropDownlist(value.cur)
 			} else if (key === 'subGameAnimationPlayInfo') {
 				if (value.cur) {
 					this.createFlyBg();
@@ -312,7 +312,7 @@ export class GxfcV2_Main extends BaseComponent<IState, IProps, IEvent> {
 		gameTypeInfo.lastGameType = gameTypeInfo.viewGameType;
 		gameTypeInfo.viewGameType = gameTypeInfo.currGameType;
 		this.dispatch(changeGame(gameTypeInfo))
-        console.log("gameTypeInfo",gameTypeInfo,type);
+        // console.log("gameTypeInfo",gameTypeInfo,type);
 		
 		// 进入到小游戏1之后，把进入前的这一局的输赢设置为0
 		if (gameTypeInfo.viewGameType === GameType.SUBGAME1) {
@@ -333,7 +333,7 @@ export class GxfcV2_Main extends BaseComponent<IState, IProps, IEvent> {
 	private getHour() {
 		const currentTime = new Date();
 		const currentHour = currentTime.getHours();
-		console.log("index currentHour",currentHour);
+		// console.log("index currentHour",currentHour);
 		
 		if (currentHour >= 6 && currentHour < 12) {
 		  this.bgIndex = 0; // 早上
@@ -346,7 +346,7 @@ export class GxfcV2_Main extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	private changeBg(index) {
-		console.log("index",index);
+		// console.log("index",index);
 		// let sprite = this.propertyNode.props_main_bg.getComponent(Sprite).spriteFrame;
 		
 		// if (index === 0) {

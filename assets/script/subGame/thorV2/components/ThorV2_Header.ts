@@ -123,7 +123,7 @@ export class ThorV2_Header extends BaseComponent<IState, IProps, IEvent> {
 		})
 	}
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
-		console.log(`useProps: ${key} ${JSON.stringify(value)}`);
+		// console.log(`useProps: ${key} ${JSON.stringify(value)}`);
 		if (this.node && this.node.isValid) {
 			if (key === 'gold') {
 				if (this.init) {
@@ -137,8 +137,8 @@ export class ThorV2_Header extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	private goldFormat(gold: number) {
-		gold = Math.floor(gold);
-		return gold >= 1000000 ? gold.formatAmountWithLetter() : gold.formatAmountWithCommas();
+		// gold = Math.floor(gold);
+		return  gold.formatAmountWithCommas();
 	}
 
 	private updateGold(value: { pre: any, cur: any }) {

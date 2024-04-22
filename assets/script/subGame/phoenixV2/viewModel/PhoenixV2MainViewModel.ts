@@ -8,7 +8,7 @@ import { PhoenixV2_Main, IEvent, IProps } from "../components/PhoenixV2_Main"
 import config from "../config"
 import { cacheData, clearCacheData } from "../dataTransfer"
 import { mainViewModel, phoenixV2_Audio, sourceManageSeletor } from "../index"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, phoenixGameLogin, phoenixWebSocketDriver, sktMsgListener } from "../socketConnect"
 import { bundlePkgName } from "../sourceDefine"
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { getStore } from "../store"
@@ -24,6 +24,7 @@ import PhoenixV2RulePanelViewModel from "./PhoenixV2RulePanelViewModel"
 import { EffectType } from "../../../utils/NodeIOEffect"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
 import PhoenixV2SgChooseSmallViewMode from "./PhoenixV2SgChooseSmallViewModel"
+import { SktMessager } from "../../../common/WebSocketStarter"
 
 @StoreInject(getStore())
 class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
@@ -75,24 +76,24 @@ class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
       }
     })
 
-    sktMsgListener.add(SKT_MAG_TYPE.AUTH, bundlePkgName, (data: AuthDataVo, error) => {
+    phoenixWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LOGIN, bundlePkgName, (data: AuthDataVo, error) => {
       if (error) {
         return;
       }
 
       if (!data) {
         global.closeSubGame({
-          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.AUTH
+          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.LOGIN
         });
         return;
       }
-      this.isAuthDone = true
+      this.isAuthDone = true;
 
       cacheData.authData = data;
-      this.dispatch(updateGold(data.coinsBeforeBetting));
+      this.dispatch(updateGold(data.bl));
 
-      if (data.freeGameCoins > 0 && data.gameType === GameType.SUBGAME1) {
-        this.dispatch(updateWinloss(data.freeGameCoins));
+      if (data.freeGameAmount > 0 && data.gameType === GameType.SUBGAME1) {
+        this.dispatch(updateWinloss(data.freeGameAmount));
       }
 
       this.dispatch(changeGame({
@@ -100,10 +101,10 @@ class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
         viewGameType: data.gameType,
         currGameType: data.gameType,
         leftCount: data.freeGameCount,
-        freeGameAmount: data.freeGameCoins,
+        freeGameAmount: data.freeGameAmount,
       }))
 
-      if (data.gameType === GameType.SUBGAME1 && data.totalFreeGameCount <= 0) {//还未选择小游戏时
+      if ((data.gameType === GameType.SUBGAME1 && data.totalFreeGameCount <= 0) || (data.gameType === GameType.SUBGAME1 && !data.totalFreeGameCount)) {//还未选择小游戏时
         mainViewModel.comp.getSlotNode().active = false;
         mainViewModel.comp.getFreeNumNode().active = false;
         this.rollerPanelViewModel.viewNode.active = false;
@@ -155,12 +156,20 @@ class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
         }
       }, 0.1)
     })
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-      token: localStorage.getItem("token"),
-      gameId: config.gameId
-    });
+    // const msgObj = phoenixWebSocketDriver.loginGame(SKT_MAG_TYPE.LOGIN)
+    // msgObj.bindReceiveHandler((message) => {
+    //   if (!message.data.success) {
+    //     global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "认证失败" }) })
+    //   }
+    // })
+    // //超时
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
+    //   return false
+    // })
+    phoenixGameLogin()
 
-    sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
+    phoenixWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
       this.comp.unschedule(this.betCallbackFun);
       this.betCallbackFun = undefined;
       this.isBetResult = true;
@@ -236,13 +245,13 @@ class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
     })
 
     // 更新金额
-    sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
+    phoenixWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
       this.dispatch(updateGold(data));
     })
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
+    phoenixWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
       this.dispatch(updateJackpotDatas(data))
     })
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data, error) => {
+    phoenixWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data, error) => {
       this.dispatch(updateJackpotAmount(data))
     })
 
@@ -298,17 +307,40 @@ class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
 
     //发送下注
     if (this.gameType === GameType.MAIN) {//主游戏
-      sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
-        "positionId": this.comp.props.positionId,
-        "tableId": cacheData.authData.tableId,
-      })
+      const msgObj = phoenixWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
+        positionId: this.comp.props.positionId,
+        tableId: cacheData.authData.tableId,
+        gameId: config.gameId,
+      }, {
+        timeOut: 5000
+      });
+
+      // this.sendBetTimeOutHandle(msgObj);
     } else if (this.gameType === GameType.SUBGAME1) {//小游戏
-      sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
-        "positionId": this.comp.props.positionId,
-        "freeGamePositionId": this.smallGameInfo.id,
-        "tableId": cacheData.authData.tableId,
-      })
+      const msgObj = phoenixWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
+        positionId: this.comp.props.positionId,
+        tableId: cacheData.authData.tableId,
+        gameId: config.gameId,
+        freeGamePositionId: this.smallGameInfo.id,
+      }, {
+        timeOut: 10000
+      });
+
+      this.sendBetTimeOutHandle(msgObj);
     }
+  }
+
+  private sendBetTimeOutHandle(msgObj: SktMessager<SKT_MAG_TYPE>) {
+    msgObj.bindReceiveHandler((message) => {
+      if (!message.data.success) {
+        global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }) })
+      }
+    })
+    //超时
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
   }
 
   private betListenerTimeHandle() {
@@ -326,7 +358,7 @@ class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
   }
 
   protected unMountCallBack(): void {
-    sktMsgListener.removeById(bundlePkgName)
+    phoenixWebSocketDriver.sktMsgListener.removeById(bundlePkgName)
     this.footerViewModel.unMount();
     this.headerViewModel.unMount();
     this.rollerPanelViewModel.unMount();

@@ -1,4 +1,4 @@
-import { error, log, sys } from "cc";
+
 import { InitStateType, ToastType, addToastAction, setLoadingAction } from "../hall/store/actions/baseBoard";
 import Singleton from "../utils/Singleton";
 import { default as redux } from "redux"
@@ -12,6 +12,21 @@ type SktMessageType = {
   messageId: string,
   success: boolean,
   data?: any
+}
+
+export enum SKT_OPERATION {
+  GENERAL = "GENERAL", //非加密操作
+  ENCRYPT = "ENCRYPT", //加密操作
+  LOGIN = "LOGIN", //登录房间
+  LOGOUT = "LOGOUT", //登出房间
+  HEART = "HEART", //心跳
+  INTERACTION = "INTERACTION" //交互指令
+}
+
+export enum SKT_HOST {
+  HALL = "HALL",
+  SLOTS = "SLOTS",
+  MULTI = "MULTI"
 }
 
 export enum SKT_MAG_TYPE {
@@ -147,26 +162,31 @@ export default class WebSocketToDo<T> {
       const result = await this.initSocket()
       // result && this.sendSktMessage(SKT_MAG_TYPE.AUTH, sys.localStorage.getItem("token"))
       result && (this.isConnect = true)
-      result && this.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-        token: sys.localStorage.getItem("token"),
-        gameId: this.gameId,
-        isReconnection: 1
-      })
+      // result && this.sendSktMessage(SKT_MAG_TYPE.AUTH, {
+      //   token: sys.localStorage.getItem("token"),
+      //   gameId: this.gameId,
+      //   isReconnection: 1
+      // })
     }
+  }
+  /**生成信息ID */
+  private generateMessageId() {
+    const readom = parseInt((Math.random() * Math.pow(10, 10)).toString())
+    return Date.now() + readom
   }
   /**接受socket消息 */
   public onmessage(ev: MessageEvent<any> | SktMessageType) {
     // const result = decodeRSA(ev.data)
 
     const evData = JSON.parse(ev.data) as SktMessageType
-    // evData.code !== `${this.sktCode}:-${SKT_MAG_TYPE.HEART_BEAT}` && evData.code !== `${this.sktCode}:-7` && console.log(evData)
+    // evData.code !== `${this.sktCode}:-${SKT_MAG_TYPE.HEART_BEAT}` && console.log(evData)
     const msgArr = evData.code.split(":-")
     // evData.success = true;
     if (this.timeoutArr[evData.code]) {
       //清理掉超时等待的数据
       // console.log(this.timeoutArr)
       delete this.timeoutArr[evData.code]
-      global.hallDispatch(setLoadingAction({ isShow: false }))
+      global.hallDispatch(setLoadingAction({ isShow: false, flagId: '' }))
     }
     if (evData.success) {
       const typeCode = msgArr[1] as T
@@ -212,7 +232,8 @@ export default class WebSocketToDo<T> {
   public sendSktMessage(msgType: T | SKT_MAG_TYPE, data?: string | ArrayBuffer | Blob | ArrayBufferView | any, option?: {
     isLoading?: boolean,
     isReSend?: boolean,
-    reSendTimeOut?: number
+    reSendTimeOut?: number,
+    operation?: SKT_OPERATION
   }) {
     // (msgType === '501' || msgType === '802') && sendNativeVibrate(50)
     if (this.ws.readyState !== 1) {
@@ -222,25 +243,15 @@ export default class WebSocketToDo<T> {
     const _option = Object.assign({
       isLoading: false,
       isReSend: false,
-      reSendTimeOut: 2000
+      reSendTimeOut: 2000,
+      operation: SKT_OPERATION
     }, option || {})
     if (_option.isLoading) {
-      global.hallDispatch(setLoadingAction({ isShow: true }))
+      global.hallDispatch(setLoadingAction({ isShow: true, flagId: '' }))
     }
-    // if (_option.isReSend) {
-    //   this.timeoutArr[`${this.sktCode}:-${msgType}`] = new Date().getTime()
-    //   // console.log(this.timeoutArr)
-    //   this.resendTime && window.clearTimeout(this.resendTime)
-    //   this.resendTime = window.setTimeout(() => {
-    //     //如果超时后对应的信息还在，说明没被清理掉，那么就重发
-    //     if (this.timeoutArr[`${this.sktCode}:-${msgType}`]) {
-    //       global.hallDispatch(setLoadingAction({ isShow: true, isAllowCloseLoading: true }))
-    //       this.sendSktMessage(msgType, data, option)
-    //     }
-    //   }, _option.reSendTimeOut)
-    // }
-    // console.log('sendmessage ======== ' + JSON.stringify({ code: `${this.sktCode}:${msgType}`, data }))
-    this.ws && this.ws.send(JSON.stringify({ code: `${this.sktCode}:${msgType}`, data }))
+    // this.ws && this.ws.send(JSON.stringify({ code: `${this.sktCode}:${msgType}`, data }))
+    // const operation = _option.isEncrypt ? SKT_OPERATION.ENCRYPT : SKT_OPERATION.GENERAL
+    this.ws && this.ws.send(`${this.generateMessageId()}|${_option.operation}|${this.sktCode}|${msgType}|${this.sktCode}`)
   }
   /**主动关闭ws，不会默认重连 */
   public close() {

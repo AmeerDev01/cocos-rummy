@@ -3,6 +3,8 @@ import { BaseComponent } from '../../../base/BaseComponent';
 import TaskScheduler, { Task } from '../../../utils/TaskScheduler';
 import { footerViewModel } from '../index';
 import config from '../config';
+import { config as hallConfig } from '../../../hall/config';
+import { Country } from '../../../language/languagePkg';
 const { ccclass, property } = _decorator;
 
 export interface IState {
@@ -74,7 +76,7 @@ export class Fruit777_JackPot extends BaseComponent<IState, IProps, IEvent> {
 			this.propertyNode.props_spr_jackpot_watermelon.getChildByName("light").active = this.props.fruitHeader.watermelon
 		}
 		if (key === "level") {
-			this.taskScheduler.joinqQueue(new Task((done) => {
+			this.taskScheduler && this.taskScheduler.joinQueue(new Task((done) => {
 				this.propertyNode.props_spr_level_bg.active = true
 				const { x, y, z } = this.propertyNode.props_spr_level_bg.position
 				tween(this.propertyNode.props_spr_level_bg).to(0.3, { position: new Vec3(x, y + 37.8, z) }).call(() => done()).start()
@@ -84,12 +86,19 @@ export class Fruit777_JackPot extends BaseComponent<IState, IProps, IEvent> {
 
 	protected bindUI(): void {
 		const value = footerViewModel.comp.getPositionData().value
+		let title = 'Rotasi gratis'
+		switch (hallConfig.country) {
+			case Country.INDONESIA:
+				title = 'Rotasi gratis'
+				break;
+			case Country.INDIA:
+				title = 'Free rotation'
+				break;
+		}
 		this.propertyNode.props_level_body.children[0].getComponent(Label).string = "+" + (value * config.treasureBoxAddition.multiple1).formatAmountWithCommas()
 		this.propertyNode.props_level_body.children[1].getComponent(Label).string = "+" + (value * config.treasureBoxAddition.multiple2).formatAmountWithCommas()
-		// this.propertyNode.props_level_body.children[2].getComponent(Label).string = "3 Rotasi gratis + " + this.getGratisAmount(value * config.treasureBoxAddition.multiple3)//(value * config.treasureBoxAddition.multiple3 / 1000).toFixed(1) + "K"
-		// this.propertyNode.props_level_body.children[3].getComponent(Label).string = "6 Rotasi gratis + " + this.getGratisAmount(value * config.treasureBoxAddition.multiple3)
-		this.propertyNode.props_level_body.children[2].getComponent(Label).string = "3 Rotasi gratis + " + (value * config.treasureBoxAddition.multiple3).formatAmountWithLetter()
-		this.propertyNode.props_level_body.children[3].getComponent(Label).string = "6 Rotasi gratis + " + (value * config.treasureBoxAddition.multiple4).formatAmountWithLetter()
+		this.propertyNode.props_level_body.children[2].getComponent(Label).string = `3 ${title} + ` + (value * config.treasureBoxAddition.multiple3).formatAmountWithLetter()
+		this.propertyNode.props_level_body.children[3].getComponent(Label).string = `6 ${title} + ` + (value * config.treasureBoxAddition.multiple4).formatAmountWithLetter()
 	}
 
 	private getGratisAmount(amount: number) {

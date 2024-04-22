@@ -2,7 +2,6 @@ import { instantiate, log } from "cc";
 import { ActionTypes, ActionPayLoad, InitStateType, initState } from "../actions/bet";
 import { default as reduxAct } from 'redux-act'
 import { BetData } from "../../type";
-import { SKT_MAG_TYPE, sktMsgListener } from "../../socketConnect";
 import config from "../../config";
 
 export default reduxAct.createReducer<InitStateType>({

@@ -307,7 +307,7 @@ export class Bandar_card_user extends BaseComponent<IState, IProps, IEvent> {
 		this.userCard.forEach((itemCard, index) => {
 			// playTurnCard()
 			let banker;
-			this.taskScheduler.joinqQueue(new Task((done) => {
+			this.taskScheduler.joinQueue(new Task((done) => {
 				// console.log("111");
 				playTurnCard()	
 				getNodeByNameDeep("props_user_all_card",itemCard).children.forEach(c=>{
@@ -315,7 +315,7 @@ export class Bandar_card_user extends BaseComponent<IState, IProps, IEvent> {
 					// getNodeByNameDeep("props_skeleton_rollcard",c).getComponent(sp.Skeleton).animation="animation";
 				});
 				window.setTimeout(() => done(), 100)
-			}), false).joinqQueue(new Task((done) => {
+			}), false).joinQueue(new Task((done) => {
 				// console.log("222");
 				getNodeByNameDeep("props_user_all_card",itemCard).children.forEach(c=>{
 					getNodeByNameDeep("spr_card_bg",c).active=true;
@@ -328,7 +328,7 @@ export class Bandar_card_user extends BaseComponent<IState, IProps, IEvent> {
 				} else if (index === 3) { banker = this.diamondCard }
 				// console.log("banker111111",banker);
 				window.setTimeout(() => done(), 100);
-			}), false).joinqQueue(new Task((done) => {
+			}), false).joinQueue(new Task((done) => {
 				// console.log("3333");
 				
 				let userAllCard=[];

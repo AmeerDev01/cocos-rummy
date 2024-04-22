@@ -1,15 +1,15 @@
-import { _decorator, Button, Component, instantiate, Label, Node, PageView, sys, UITransform } from 'cc';
+import { _decorator, Button, Component, instantiate, Label, Node, PageView, Prefab, sys, UITransform } from 'cc';
 import { BaseComponent } from '../../base/BaseComponent';
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from '../socketConnect';
-import { setLoadingAction } from '../store/actions/baseBoard';
+import { SKT_MAG_TYPE, hallWebSocketDriver } from '../socketConnect';
+import { addToastAction, setLoadingAction, ToastType } from '../store/actions/baseBoard';
 import { global, hallAudio, lang, sourceManageSeletor } from '../index';
 import BaseViewModel from '../viewModel/BaseViewModel';
 import { Hall_ChooseBank, IState as CBState, IProps as CBProps, IEvent as CBEvent } from './Hall_ChooseBank';
 import { PrefabPathDefine } from '../sourceDefine/prefabDefine';
 import { EffectType } from '../../utils/NodeIOEffect';
 import ModalBox from '../../common/ModalBox';
-import { purchaseAppsflyerEvents } from '../../common/bridge';
 import { SoundPathDefine } from '../sourceDefine/soundDefine';
+import { getPackageName } from '../../common/bridge';
 const { ccclass, property } = _decorator;
 
 export type GiftItemType = {
@@ -59,7 +59,7 @@ export class Hall_GiftBag extends BaseComponent<IState, IProps, IEvent> {
 		props_PageView_gift_bag: new PageView(),
 		props_page_template_item: new Node(),
 		props_btn_left: new Node(),
-		props_btn_right: new Node(),
+		props_btn_right: new Node()
 	}
 
 	public props: IProps = {
@@ -79,7 +79,7 @@ export class Hall_GiftBag extends BaseComponent<IState, IProps, IEvent> {
 
 	protected bindEvent(): void {
 		this.propertyNode.props_btn_close.node.on(Node.EventType.TOUCH_END, () => {
-			!hallAudio.getAudioInstance().playing && hallAudio.play(SoundPathDefine.MAIN_BGM, true)
+			getPackageName() === 'web' && !hallAudio.getAudioInstance().playing && hallAudio.play(SoundPathDefine.MAIN_BGM, true)
 			this.events.onClosePanel()
 		})
 
@@ -118,8 +118,7 @@ export class Hall_GiftBag extends BaseComponent<IState, IProps, IEvent> {
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
 		if (key === "giftList") {
 			if (!this.props.giftList.length) {
-
-				sktInstance.sendSktMessage(SKT_MAG_TYPE.GIFT_LIST, {}, { isLoading: true })
+				hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GIFT_LIST, {}, { isLoading: true })
 			} else {
 				this.setState({ giftList: this.props.giftList })
 			}
@@ -128,14 +127,19 @@ export class Hall_GiftBag extends BaseComponent<IState, IProps, IEvent> {
 
 	protected bindUI(): void {
 		this.propertyNode.props_page_template_item.active = false
-		sktMsgListener.add(SKT_MAG_TYPE.GIFT_LIST, "gift", (data) => {
-			global.hallDispatch(setLoadingAction({ isShow: false }))
+		hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GIFT_LIST, "gift", (data, error) => {
+			if (error) return
+			// global.hallDispatch(setLoadingAction({ isShow: false }))
 			this.setState({ giftList: data })
 		})
-		sktMsgListener.add(SKT_MAG_TYPE.RECHARGE_ORDER, 'gift', (data) => {
-			global.hallDispatch(setLoadingAction({ isShow: false }))
-			sys.openURL(data)
-			// ModalBox.Instance().show({ url: data })
+		hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.RECHARGE_ORDER, 'gift', (data, error) => {
+			if (error) {
+				return
+			} else {
+				// global.hallDispatch(setLoadingAction({ isShow: false }))
+				sys.openURL(data)
+				// ModalBox.Instance().show({ url: data })
+			}
 		})
 		this.useState((key, value) => {
 			if (!this.state.giftList.filter(i => i.separatePage === 1).length) {
@@ -145,23 +149,24 @@ export class Hall_GiftBag extends BaseComponent<IState, IProps, IEvent> {
 				})
 			}
 			this.propertyNode.props_PageView_gift_bag.removeAllPages()//.content.removeAllChildren()
-			this.state.giftList.filter(i => i.separatePage === 1).forEach((item, index) => {
+			this.state.giftList.filter(i => i.separatePage === 1).forEach(async (item, index) => {
 				const node = instantiate(this.propertyNode.props_page_template_item)
 				node.getChildByName("label_name").getComponent(Label).string = item.giftName
 				node.getChildByName("label_gole_old").getComponent(Label).string = item.normalGoldCoin.formatAmountWithCommas()
 				node.getChildByName("label_gole_old").getComponent(Label).updateRenderData(true)
 				node.getChildByName("label_gole").getComponent(Label).string = item.discountCoins.formatAmountWithCommas()
-				node.getChildByName("label_price_buy").getComponent(Label).string = item.amount.formatAmountWithCommas()
+				node.getChildByName("btn_buy").getChildByName("label_price_buy").getComponent(Label).string = item.amount.formatAmountWithCommas()
 				node.getChildByName("label_free").getComponent(Label).string = `+${item.discountRate}%`
-				node.getChildByName("btn_buy").on(Node.EventType.TOUCH_END, () => {
+				node.getChildByName("btn_buy").on(Node.EventType.TOUCH_END, async () => {
 					//购买
-					const chooseBankVM = new BaseViewModel<Hall_ChooseBank, CBState, CBProps, CBEvent>('Hall_ChooseBank').mountView(sourceManageSeletor().getFile(PrefabPathDefine.HELL_CHOOSE_BANK).source)
-						.appendTo(this.node, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({
+					const chooseBankVM = new BaseViewModel<Hall_ChooseBank, CBState, CBProps, CBEvent>('Hall_ChooseBank')
+						.mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._HELL_CHOOSE_BANK, Prefab)).source)
+						.appendTo(this.node.parent, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({
 							onClosePanel: () => {
 								chooseBankVM.unMount(EffectType.EFFECT2)
 							},
 							onOrder: (rechargeChannelId) => {
-								sktInstance.sendSktMessage(SKT_MAG_TYPE.RECHARGE_ORDER, {
+								hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.RECHARGE_ORDER, {
 									rechargeChannelId,
 									money: item.amount,
 									orderRechargeType: 2,
@@ -195,7 +200,7 @@ export class Hall_GiftBag extends BaseComponent<IState, IProps, IEvent> {
 		}, ["giftList"])
 	}
 	protected onDestroy() {
-		sktMsgListener.removeById("gift")
+		hallWebSocketDriver.sktMsgListener.removeById("gift")
 	}
 
 	private startCountdown(timeLabel: Label) {

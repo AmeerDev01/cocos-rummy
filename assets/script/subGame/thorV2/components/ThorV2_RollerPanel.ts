@@ -13,6 +13,7 @@ import { SoundPathDefine } from '../sourceDefine/soundDefine';
 import { ThorV2Icon } from './ThorV2_Icon';
 import { global } from '../../../hall';
 import { setLoadingAction } from '../../../hall/store/actions/baseBoard';
+import { bundlePkgName } from '../sourceDefine';
 const { ccclass, property } = _decorator;
 
 export interface IState {
@@ -104,7 +105,7 @@ export class ThorV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 	private startRoll() {
 		let sendBetTime = cacheData.sendBetTime;
 		this.sendBetTime = sendBetTime;
-		console.log("start roll time " + sendBetTime)
+		// console.log("start roll time " + sendBetTime)
 
 		thorv2_Audio.playOneShot(SoundPathDefine.ROLLER_BEGIN)
 
@@ -126,7 +127,8 @@ export class ThorV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 	private setWaitReturnSchedule() {
 		this.scheduleOnce(() => {
 			global.hallDispatch(setLoadingAction({
-				isShow: true
+				isShow: true,
+				flagId: bundlePkgName,
 			}));
 		}, config.waitDataReturnTime)
 	}
@@ -143,7 +145,8 @@ export class ThorV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 		}
 		this.unscheduleAllCallbacks();
 		global.hallDispatch(setLoadingAction({
-			isShow: false
+			isShow: false,
+			flagId: bundlePkgName,
 		}));
 		this.inStop = true;
 
@@ -153,7 +156,7 @@ export class ThorV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 
 		this.playStopRollSound();
 
-		console.log("rollerpanel stop roll time " + sendBetTime);
+		// console.log("rollerpanel stop roll time " + sendBetTime);
 
 		let count = 0;
 		this.rollerViewModelArr.forEach((v, i) => {
@@ -221,10 +224,22 @@ export class ThorV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 		})
 	}
 
+	/**处理小游戏剩余次数 */
+	private handleSubGameLeftCount() {
+		const nextLeftCount = this.props.gameTypeInfo.nextLeftCount
+		if (nextLeftCount > 0) {
+			const value = { ...this.props.gameTypeInfo };
+			value.nextLeftCount = -1;
+			value.leftCount = nextLeftCount;
+			this.dispatch(changeGame(value))
+		}
+	}
+
 	private updateEndStatus(rollerLaunchResult: RollerLaunchResult) {
 		const si = rollerLaunchResult.dl.si[0]
 		const isChangeGame = this.isChangeGame();
 		const overHandle = (isUpdateGold: boolean = true) => {
+			this.handleSubGameLeftCount();
 			if (!isChangeGame) {
 				mainViewModel.comp.updateEndStatus(isUpdateGold);
 			} else {

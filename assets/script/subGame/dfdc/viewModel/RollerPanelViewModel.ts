@@ -138,8 +138,8 @@ class RollerPanelViewModel extends ViewModel<BlessedWealthy_rollerPanel, IProps,
         }).subscribeDone("total", () => {
           this.dispatch(setIconFreeGameEffect(IconEffectType.NONE, []));     
         })
-        this.taskScheduler.joinqQueue(allFlicherTask)
-        this.taskScheduler.joinqQueue(freeGameTask)
+        this.taskScheduler.joinQueue(allFlicherTask)
+        this.taskScheduler.joinQueue(freeGameTask)
 
         const showAwardTask = new Task((done) => {
           //图标效果执行完之后要执行的任务，检查是否有爆奖 弹jackpot框
@@ -150,7 +150,7 @@ class RollerPanelViewModel extends ViewModel<BlessedWealthy_rollerPanel, IProps,
           //   this.isWining = !this.isWining;
           //  }
         })
-        this.taskScheduler.joinqQueue(showAwardTask, false)
+        this.taskScheduler.joinQueue(showAwardTask, false)
         //游戏不跳转，才显示每一条线，并且没有自动,11/6日：如果处于加速模式，也不显示每一个闪动了
         if (dataTransfer(DataKeyType.GAME_TYPE) === this.viewGameType && this.autoLaunchType === AutoLauncherType.NONE && this.comp.props.stopMode === 'jump') {
           //将闪动加入任务调度器队列
@@ -162,7 +162,7 @@ class RollerPanelViewModel extends ViewModel<BlessedWealthy_rollerPanel, IProps,
             }).subscribeDone(`${index}`, () => {
               this.dispatch(setIconEffect(IconEffectType.NONE, []))
             })
-            this.taskScheduler.joinqQueue(task, false)
+            this.taskScheduler.joinQueue(task, false)
           })
         }
 
@@ -172,7 +172,7 @@ class RollerPanelViewModel extends ViewModel<BlessedWealthy_rollerPanel, IProps,
           //切换游戏
           if (this.gameType === GameType.SUBGAME1) {
             // this.dispatch(changeGame(GameType.MAIN))
-            this.taskScheduler.joinqQueue(new Task((done) => {
+            this.taskScheduler.joinQueue(new Task((done) => {
               console.log("2222");
               // gameBoardViewModel.currentGameViewModel.unMount((EffectType.EFFECT1))
               let chooseSmall:ChooseSmallGame = {
@@ -185,10 +185,10 @@ class RollerPanelViewModel extends ViewModel<BlessedWealthy_rollerPanel, IProps,
             }
             //禁用掉主下注按钮
             this.dispatch(setRollRoundEnd(false))
-            this.taskScheduler.joinqQueue(gameBoardViewModel.changeGameTypeTask)
+            this.taskScheduler.joinQueue(gameBoardViewModel.changeGameTypeTask)
         } else {
           //不切换游戏
-          this.taskScheduler.joinqQueue(new Task((done) => {
+          this.taskScheduler.joinQueue(new Task((done) => {
             this.dispatch(setWaiting(true))
             done()
           }))
@@ -220,7 +220,7 @@ class RollerPanelViewModel extends ViewModel<BlessedWealthy_rollerPanel, IProps,
         this.rollerMap.forEach((rollerItem, index) => {
           //顺序停止，stopMode=index的时候不使用这种方案，因为一轮可能就会花不少时间，所以最好不用这种
           if (this.comp.props.stopMode === 'jump' && this.comp.props.isSortStop) {
-            _taskScheduler.joinqQueue(new Task((done) => {
+            _taskScheduler.joinQueue(new Task((done) => {
               this.dispatch(setStopRollAction(index, stopIndex ? stopIndex[index] : 0))
               if (index < 5) {
                 const t = window.setInterval(() => {

@@ -1,12 +1,18 @@
 import {MyInfo} from './userInfo';import { default as reduxAct } from "redux-act";
 
 export type History ={
-    data: number[];
-    dragonNum: number;
-    tigerNum: number;
-    dragon: number;
-    tiger: number;
-    drawNum:number
+  /**100场开奖结果 */
+  data: number[];
+  /**龙个数 */
+  dragonNum: number;
+  /**虎个数 */
+  tigerNum: number;
+  /**平个数 */
+  drawNum:number
+  /**龙概率 */
+  dragon: number;
+  /**虎概率 */
+  tiger: number;
   
 }
 export type MemberData = {
@@ -32,8 +38,6 @@ export type InitStateType = {
   roomWinInfo:WinInfo[]
    /**在线人数 */
   roomInfoSize:number
-   /**所有用户下注信息 */
-  memberData:MemberData
   /**当前用户下注信息 */
   memberBet?:object
   /**当前用户金币值 */
@@ -57,12 +61,6 @@ export const initState: InitStateType = {
   roomRightInfoVos:[],
   roomWinInfo:[],
   roomInfoSize:0,
-  memberData:{
-    gold: 0,
-    memberId: "",
-    type:0,
-    memberName:"",
-  },
   memberBet:null,
   gold: 0,
   gameType: null,
@@ -102,13 +100,7 @@ export type ActionPayLoad<A extends ActionTypes> =
   A extends ActionTypes.DRAGONTGER_ROOM_RIGHT_INFOS?{roomRightInfoVos:MyInfo[]}:
   A extends ActionTypes.DRAGONTGER_ROOM_WIN_INFO?{roomWinInfo:WinInfo[]}:
   A extends ActionTypes.DRAGONTGER_ROOM_INFO_SIZE?{roomInfoSize:number}:
-  A extends ActionTypes.DRAGONTGER_MEMBER_DATA?{memberData:{
-    gold: number;
-    memberId: string;
-    type:number;
-    memberName:string;
-  }}
-  : A extends ActionTypes.DRAGONTGER_GOLD ? { gold: number } : 
+  A extends ActionTypes.DRAGONTGER_GOLD ? { gold: number } : 
    A extends ActionTypes.DRAGONTGER_GAMETYPE ? {gameType:number}: 
    A extends ActionTypes.DRAGONTGER_SELECT_CHIP ? {selectChip:number}: 
   
@@ -146,15 +138,6 @@ export const setRoomWinInfosAction = reduxAct.createAction(ActionTypes.DRAGONTGE
   (roomWinInfo:WinInfo[]): ActionPayLoad<ActionTypes.DRAGONTGER_ROOM_WIN_INFO> => {
     return { roomWinInfo }
 })
-export const setMemberDataAction = reduxAct.createAction(ActionTypes.DRAGONTGER_MEMBER_DATA,
-  (memberData:{
-    gold: number;
-    memberId: string;
-    type:number;
-    memberName:string;
-  }): ActionPayLoad<ActionTypes.DRAGONTGER_MEMBER_DATA> => {
-    return { memberData }
-})
 export const setRoomInfoSizeAction = reduxAct.createAction(ActionTypes.DRAGONTGER_ROOM_INFO_SIZE,
   (roomInfoSize:number): ActionPayLoad<ActionTypes.DRAGONTGER_ROOM_INFO_SIZE> => {
     return { roomInfoSize }
@@ -180,3 +163,4 @@ export const resetHistoryStore = reduxAct.createAction(ActionTypes.DRAGONTGER_HI
   (): ActionPayLoad<ActionTypes.DRAGONTGER_HISTORY_RESET_STORE> => {
     return { initState }
   })
+  

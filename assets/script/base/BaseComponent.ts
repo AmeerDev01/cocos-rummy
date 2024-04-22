@@ -1,6 +1,5 @@
 import { Button, Component, find, instantiate, Label, log, Node, sys, view } from "cc";
 // import isEqual from "fast-deep-equal"
-import { shallowEqual } from 'fast-equals'
 import { SoundPathDefine } from "../hall/sourceDefine/soundDefine";
 import { viewModelMap } from "./ViewModel";
 import { copy, equalValue } from "../utils/tool";

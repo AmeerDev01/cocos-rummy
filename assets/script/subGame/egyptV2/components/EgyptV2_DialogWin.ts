@@ -141,10 +141,12 @@ export class EgyptV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 			this.detryCloseWindow();
 		});
 		this.propertyNode.props_bigWin.getChildByName("sk_aj_win").getComponent(sp.Skeleton).setCompleteListener(() => {
-			if (this.node && this.node.isValid) {
-				this.node.destroy();
-				this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
-			}
+			this.scheduleOnce(() => {
+				if (this.node && this.node.isValid) {
+					this.node.destroy();
+					this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
+				}
+			})
 		})
 	}
 
@@ -165,10 +167,12 @@ export class EgyptV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 			// this.detryCloseWindow();
 		});
 		this.propertyNode.props_megaWin.getChildByName("sk_aj_win").getComponent(sp.Skeleton).setCompleteListener(() => {
-			if (this.node && this.node.isValid) {
-				this.node.destroy();
-				this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
-			}
+			this.scheduleOnce(() => {
+				if (this.node && this.node.isValid) {
+					this.node.destroy();
+					this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
+				}
+			})
 		})
 	}
 
@@ -181,10 +185,12 @@ export class EgyptV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 		});
 
 		this.propertyNode.props_superWin.getChildByName("sk_aj_win").getComponent(sp.Skeleton).setCompleteListener(() => {
-			if (this.node && this.node.isValid) {
-				this.node.destroy();
-				this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
-			}
+			this.scheduleOnce(() => {
+				if (this.node && this.node.isValid) {
+					this.node.destroy();
+					this.events.onWindowCloseHandler(this.props.dialogInfo.dialogType);
+				}
+			})
 		})
 	}
 
@@ -227,7 +233,7 @@ export class EgyptV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 	private startStepNumber(label: Label, start, end, done) {
 		new StepNumber(start, end, (num) => {
 			if (this.node && this.node.isValid) {
-				label.string = Number(num.toFixed(0)).formatAmountWithCommas();
+				label.string = Number(num).formatAmountWithCommas();
 			}
 		}, () => this.node && this.node.isValid && done()).set(config.normalRollOption.numberRollerTime).start();
 		// this.stepNumberV2.start(start, end, (num) => {

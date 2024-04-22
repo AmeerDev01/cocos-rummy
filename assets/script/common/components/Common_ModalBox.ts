@@ -11,7 +11,8 @@ export interface IState {
 export interface IProps {
 	content: string,
 	type: "Prompt" | "Confirm",
-	url: string
+	url: string,
+	isVertical: boolean
 }
 export interface IEvent {
 	/**返回true，自动关闭 */
@@ -28,7 +29,8 @@ export class Common_ModalBox extends BaseComponent<IState, IProps, IEvent> {
 	public props: IProps = {
 		content: "",
 		type: "Confirm",
-		url: ""
+		url: "",
+		isVertical: false
 	}
 
 	public events: IEvent = {
@@ -46,9 +48,9 @@ export class Common_ModalBox extends BaseComponent<IState, IProps, IEvent> {
 		props_btn_updata_cancel: new Button(),
 		props_btn_updata_ok: new Button(),
 		props_spr_updata_tipsBg: new Node(),
-		props_webView_spr_updata_tipsBg: new Node(),
-		props_WebView: new WebView(),
-		props_btn_dt_off: new Button()
+		// props_webView_spr_updata_tipsBg: new Node(),
+		// props_WebView: new WebView(),
+		// props_btn_dt_off: new Button()
 	}
 
 	protected bindEvent(): void {
@@ -62,12 +64,12 @@ export class Common_ModalBox extends BaseComponent<IState, IProps, IEvent> {
 				this.events.onCloseHandler()
 			}
 		})
-		this.propertyNode.props_btn_dt_off.node.on(Node.EventType.TOUCH_END, () => {
-			this.events.onCloseHandler()
-		})
+		// this.propertyNode.props_btn_dt_off.node.on(Node.EventType.TOUCH_END, () => {
+		// 	this.events.onCloseHandler()
+		// })
 	}
 
-	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
+	protected useProps(key: keyof IProps | '_setDone', value: { pre: any, cur: any }) {
 		if (key === "content") {
 			this.propertyNode.props_spr_updata_tipsBg.active = true
 			this.propertyNode.props_Label_content.string = this.props.content
@@ -83,18 +85,30 @@ export class Common_ModalBox extends BaseComponent<IState, IProps, IEvent> {
 		}
 		if (key === "url" && this.props.url) {
 			this.propertyNode.props_spr_updata_tipsBg.active = false
-			this.propertyNode.props_webView_spr_updata_tipsBg.active = true
-			this.propertyNode.props_WebView.url = this.props.url
+			// this.propertyNode.props_webView_spr_updata_tipsBg.active = true
+			// this.propertyNode.props_WebView.url = this.props.url
 		}
+		if (key === "_setDone") {
+			if (this.props.isVertical) {
+				this.propertyNode.props_spr_updata_tipsBg.angle = 90;
+			} else {
+				this.propertyNode.props_spr_updata_tipsBg.angle = 0;
+			}
+		}
+
 	}
 	protected bindUI(): void {
-		this.propertyNode.props_webView_spr_updata_tipsBg.active = this.props.url ? true : false
+		// this.propertyNode.props_webView_spr_updata_tipsBg.active = this.props.url ? true : false
 		if (this.props.url) {
-			this.propertyNode.props_spr_updata_tipsBg.active = false
-			this.propertyNode.props_WebView.url = this.props.url
-			this.propertyNode.props_WebView.node.on(WebView.EventType.ERROR, () => {
-				global.hallDispatch(addToastAction({ content: lang.write(k => k.MainPaneModule.LoadUrlError, {}, { placeStr: "此链接无法加载" }), type: ToastType.ERROR }))
-			}, this);
+			this.propertyNode.props_spr_updata_tipsBg.active = true
+			// this.propertyNode.props_WebView.node.active = true
+			// this.propertyNode.props_WebView.url = this.props.url
+			// this.propertyNode.props_WebView.node.on(WebView.EventType.ERROR, () => {
+			// 	global.hallDispatch(addToastAction({ content: lang.write(k => k.MainPaneModule.LoadUrlError, {}, { placeStr: "此链接无法加载" }), type: ToastType.ERROR }))
+			// }, this);
+		} else {
+			// this.propertyNode.props_webView_spr_updata_tipsBg.active = false
+			// this.propertyNode.props_WebView.node.active = false
 		}
 	}
 

@@ -271,8 +271,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
+      "x": 7.759999999999991,
+      "y": -0.5389999999999304,
       "z": 0
     },
     "_lrot": {
@@ -323,8 +323,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 635.502,
-      "y": 306.718,
+      "x": 622,
+      "y": 336,
       "z": 0
     },
     "_lrot": {
@@ -369,7 +369,7 @@
     "_anchorPoint": {
       "__type__": "cc.Vec2",
       "x": 0.5,
-      "y": 0.5
+      "y": 1
     },
     "_id": ""
   },
@@ -808,7 +808,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 190,
+      "width": 244,
       "height": 29
     },
     "_anchorPoint": {
@@ -849,7 +849,7 @@
     },
     "_type": 0,
     "_fillType": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 2,
     "_fillCenter": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -857,7 +857,7 @@
     },
     "_fillStart": 0,
     "_fillRange": 0,
-    "_isTrimmedMode": true,
+    "_isTrimmedMode": false,
     "_useGrayscale": false,
     "_atlas": {
       "__uuid__": "ab53e74c-ce67-4c07-8b57-26eb8ec5a638",

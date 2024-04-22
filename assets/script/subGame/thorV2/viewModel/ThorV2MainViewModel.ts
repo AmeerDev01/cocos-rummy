@@ -8,7 +8,7 @@ import { ThorV2_Main, IEvent, IProps } from "../components/ThorV2_Main"
 import config from "../config"
 import { cacheData, clearCacheData } from "../dataTransfer"
 import { thorv2_Audio, sourceManageSeletor } from "../index"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, thorGameLogin, thorV2WebSocketDriver } from "../socketConnect"
 import { bundlePkgName } from "../sourceDefine"
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { getStore } from "../store"
@@ -26,6 +26,7 @@ import { SoundPathDefine } from "../sourceDefine/soundDefine"
 import ThorV2BuyMiniViewModel from "./ThorV2BuyMiniViewModel"
 import ThorV2SubGameCalculateViewModel from "./ThorV2SubGameCalculateViewModel"
 import ThorV2AuthLauncherViewModel from "./ThorV2AuthLauncherViewModel"
+import { SktMessager } from "../../../common/WebSocketStarter"
 
 @StoreInject(getStore())
 class ThorV2MainViewModel extends ViewModel<ThorV2_Main, IProps, IEvent> {
@@ -40,11 +41,11 @@ class ThorV2MainViewModel extends ViewModel<ThorV2_Main, IProps, IEvent> {
   private rollerPanelViewModel: ThorV2RollerPanelViewModel;
   public isAuthDone: boolean = false
   private isBetResult = true;
+  private betCallbackFun;
 
   /**奖励的坐标 */
   private goodLuckPos: Vec3;
 
-  private betCallbackFun;
   protected begin() {
     this.footerViewModel = new ThorV2FoolerViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.FOOTER).source).appendTo(this.comp.getActionBarNode()).connect();
     this.headerViewModel = new ThorV2HeaderViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.HEADER).source).appendTo(this.comp.getActionBarNode()).connect();
@@ -78,20 +79,20 @@ class ThorV2MainViewModel extends ViewModel<ThorV2_Main, IProps, IEvent> {
       }
     })
 
-    sktMsgListener.addOnce(SKT_MAG_TYPE.AUTH, bundlePkgName, (data: AuthDataVo, error) => {
+    thorV2WebSocketDriver.sktMsgListener.addOnce(SKT_MAG_TYPE.LOGIN, bundlePkgName, (data: AuthDataVo, error) => {
       if (error) {
         return;
       }
 
       if (!data) {
         global.closeSubGame({
-          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.AUTH
+          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.LOGIN
         });
         return;
       }
       this.isAuthDone = true
       cacheData.authData = data;
-      this.dispatch(updateGold(data.coinsBeforeBetting));
+      this.dispatch(updateGold(data.bl));
 
       this.dispatch(changeGame({
         lastGameType: data.gameType,
@@ -105,7 +106,7 @@ class ThorV2MainViewModel extends ViewModel<ThorV2_Main, IProps, IEvent> {
       this.playBgMusic();
 
       if (data.gameType === GameType.SUBGAME1) {
-        this.dispatch(updateFreeGameOdds(data.lessGodFreeGameMultiple))
+        data.lessGodFreeGameMultiple && this.dispatch(updateFreeGameOdds(data.lessGodFreeGameMultiple))
         if (data.freeGameCoins > 0) {
           this.dispatch(updateSubGameWinloss(data.freeGameCoins));
         }
@@ -124,12 +125,11 @@ class ThorV2MainViewModel extends ViewModel<ThorV2_Main, IProps, IEvent> {
 
       }, 0.1)
     })
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-      token: localStorage.getItem("token"),
-      gameId: config.gameId
-    });
-    sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
-      this.comp.unschedule(this.betCallbackFun);
+
+    thorGameLogin();
+
+    thorV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
+      this.betCallbackFun && this.comp.unschedule(this.betCallbackFun);
       this.betCallbackFun = undefined;
       this.isBetResult = true;
       const result = verifyBetResultData(data)
@@ -151,32 +151,36 @@ class ThorV2MainViewModel extends ViewModel<ThorV2_Main, IProps, IEvent> {
       for (let i = 0; i < rollerId.length; i++) {
         rollerId[i]--;
       }
-      console.log("rollerId ", si.rollerId)
+      // console.log("rollerId ", si.rollerId)
       let leftCount = si.freeCount;
+      if (si.freeCount > this.comp.props.gameTypeInfo.leftCount) {
+        leftCount = this.comp.props.gameTypeInfo.leftCount
+      }
       this.dispatch(changeGame({
         lastGameType: GameType.NONE,
         viewGameType: si.indexGameType,
         currGameType: si.nextGameType,
         leftCount: leftCount,
+        nextLeftCount: si.freeCount,
         freeGameAmount: si.freeGameAmount,
       }))
     })
     // 更新金额
-    sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
+    thorV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
       this.dispatch(updateGold(data));
     })
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
+    thorV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
       this.dispatch(updateJackpotDatas(data))
     })
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data, error) => {
+    thorV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data, error) => {
       this.dispatch(updateJackpotAmount(data))
     })
-    sktMsgListener.add(SKT_MAG_TYPE.VACATETHEROOM, bundlePkgName, (data) => {
+    thorV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.EXIT, bundlePkgName, (data) => {
       global.closeSubGame({ confirmContent: lang.write(k => k.UpdateModule.GameNotice, {}, { placeStr: "对不起，系统维护中，请稍后再尝试登录" }) })
     })
 
-    if (UseSetOption.Instance().option.gameSet.egyptV2 && UseSetOption.Instance().option.gameSet.egyptV2.betTarget) {
-      this.dispatch(updatePositionId(UseSetOption.Instance().option.gameSet.egyptV2.betTarget))
+    if (UseSetOption.Instance().option.gameSet.thorV2 && UseSetOption.Instance().option.gameSet.thorV2.betTarget) {
+      this.dispatch(updatePositionId(UseSetOption.Instance().option.gameSet.thorV2.betTarget))
     } else {
       this.dispatch(updatePositionId(1))
     }
@@ -226,41 +230,47 @@ class ThorV2MainViewModel extends ViewModel<ThorV2_Main, IProps, IEvent> {
     }
 
     cacheData.sendBetTime = Date.now();
-    console.log("sendBet time " + cacheData.sendBetTime)
+    // console.log("sendBet time " + cacheData.sendBetTime)
 
     cacheData.rollerLaunchResult = null;
     this.dispatch(updateRollerStatus(RollerStatus.RUNNING));
     this.isBetResult = false;
-    this.betCallbackFun = this.betListenerTimeHandle.bind(this);
-    this.comp.schedule(this.betCallbackFun, 10);
 
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
+    this.betCallbackFun = () => {
+      if (!this.isBetResult) {
+        this.isBetResult = true;
+        const content = lang.write(k => k.WebSocketModule.WebSocketError) + '-' + SKT_MAG_TYPE.LAUNCH;
+        global.closeSubGame({ confirmContent: content })
+      }
+    }
+    this.comp.schedule(this.betCallbackFun, 10, 0);
+
+    const msgObj = thorV2WebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
       positionId: this.comp.props.positionId,
       tableId: cacheData.authData.tableId,
+      gameId: config.gameId,
       buy: gameModeType,
+    }, {
+      timeOut: 10000
     });
+    this.sendBetTimeOutHandle(msgObj);
   }
 
-  private betListenerTimeHandle() {
-    if (!this.isBetResult) {
-      this.isBetResult = true;
-
-      global.hallDispatch(setLoadingAction({
-        isShow: false
-      }));
-
-      const content = lang.write(k => k.WebSocketModule.WebSocketError) + '-' + SKT_MAG_TYPE.LAUNCH;
-      ModalBox.Instance().show({
-        content: content, type: 'Prompt'
-      }, () => {
-        this.onQuitGame();
-        return true
-      })
-    }
+  private sendBetTimeOutHandle(msgObj: SktMessager<SKT_MAG_TYPE>) {
+    msgObj.bindReceiveHandler((message) => {
+      if (!message.data.success) {
+        global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }) })
+      }
+    })
+    //超时
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
   }
 
   protected unMountCallBack(): void {
-    sktMsgListener.removeById(bundlePkgName)
+    thorV2WebSocketDriver.sktMsgListener.removeById(bundlePkgName)
     this.footerViewModel.unMount();
     this.headerViewModel.unMount();
     this.rollerPanelViewModel.unMount();
@@ -323,12 +333,16 @@ class ThorV2MainViewModel extends ViewModel<ThorV2_Main, IProps, IEvent> {
   }
 
   public playBgMusic() {
-    thorv2_Audio.stop();
-    if (this.comp.props.gameTypeInfo.viewGameType === GameType.MAIN) {
-      thorv2_Audio.play(SoundPathDefine.BG_MUSIC_MAIN, true)
-    } else {
-      thorv2_Audio.play(SoundPathDefine.BG_MUSIC_1, true)
-    }
+    this.comp.scheduleOnce(() => {
+      thorv2_Audio.stop();
+      this.comp.scheduleOnce(() => {
+        if (this.comp.props.gameTypeInfo.viewGameType === GameType.MAIN) {
+          thorv2_Audio.play(SoundPathDefine.BG_MUSIC_MAIN, true)
+        } else {
+          thorv2_Audio.play(SoundPathDefine.BG_MUSIC_1, true)
+        }
+      })
+    })
   }
 
   private openBubMiniPanel() {

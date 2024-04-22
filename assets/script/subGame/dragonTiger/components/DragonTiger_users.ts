@@ -1,7 +1,7 @@
 import { _decorator,instantiate,Label,Node, Sprite, SpriteFrame, tween, Vec3, Animation, UIOpacity,bezier, Skeleton, sp, game, Game} from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import { initToggle, omitStr } from '../../../utils/tool';
-import { SKT_MAG_TYPE, sktMsgListener } from '../socketConnect';
+import { SKT_MAG_TYPE,} from '../socketConnect';
 import { sourceManageSeletor,bundleDragonTiger ,bundleCommon} from "../index";
 import {getNodePositionInCanvas,getNodeByNameDeep} from '../../../utils/tool';
 import {mainGameViewModel} from '../index';
@@ -29,7 +29,6 @@ export interface IProps {
 	roomLeftInfoVos:MyInfo[],
     roomRightInfoVos:MyInfo[],
 	memberId:string,
-	memberData:MemberData,
 	memberName: string,
 	usersInfo: MemberInfoVo[];
 	newBetData:BetData
@@ -93,12 +92,6 @@ export class DragonTiger_users extends BaseComponent<IState, IProps, IEvent> {
 		roomLeftInfoVos:[],
         roomRightInfoVos:[],
 		memberId:"",
-		memberData:{
-			gold: 0,
-			memberId: "",
-			type:0,
-			memberName:'',
-		},
 		memberName: "",
 		usersInfo: null,
 		newBetData:null,
@@ -135,8 +128,6 @@ export class DragonTiger_users extends BaseComponent<IState, IProps, IEvent> {
  
 		}
 		if (key === "usersInfo") {
-			// console.log("usersInfo",value.cur);
-			
 			// window.setTimeout(() => {
 				if(mainGameViewModel.isUnMount || !value.cur){ return }
 				this.initUsers();
@@ -170,23 +161,22 @@ export class DragonTiger_users extends BaseComponent<IState, IProps, IEvent> {
 		if (!usersNode || !userHead) { return }
 		userHead.active = true;
 		global.loadHeadSprite(usersInfo.icon,userHead.getComponent(Sprite));//加载头像
-		getNodeByNameDeep("Label_gold",usersNode).getComponent(Label).string=usersInfo.gold.formatAmountWithLetter();
-		getNodeByNameDeep("Label_name",usersNode).getComponent(Label).string=omitStr(usersInfo.memberName,12);
+		getNodeByNameDeep("Label_gold", usersNode).getComponent(Label).string = usersInfo.gold.formatAmountWithLetter();
+		getNodeByNameDeep("Label_name", usersNode).getComponent(Label).string = omitStr(usersInfo.memberName, 12);
 	}
 
 
 
 	/**飞金币的动画 */
-	private playFlyChipWinAnimation(betInfo){
-
+	private playFlyChipWinAnimation(betInfo) {
 		if(betInfo.index > 6 || betInfo.memberId === gameCacheData.memberId){
 			return
 		}
-		let num = betInfo.index+1;
+		let num = betInfo.index + 1;
 		const usersNode = this.node.children.find( u => u.name.startsWith("props_btn_users"+num) );
 		const users = this.node.children.find( u => u.name.startsWith("spr_user"+num) );
-		usersNode.getComponent(Animation).play();
-		users.getComponent(Animation).play();
+		usersNode && usersNode.getComponent(Animation).play();
+		users && users.getComponent(Animation).play();
 	}
 	
 
@@ -196,7 +186,7 @@ export class DragonTiger_users extends BaseComponent<IState, IProps, IEvent> {
 		let num = betInfo.index + 1;
 		const usersNode = this.node.children.find( u => u.name.startsWith("props_btn_users"+num) )
 		const node = getNodeByNameDeep("Label_gold_up", usersNode);
-		node.getComponent(Label).string="+" + betInfo.gold.formatAmountWithLetter()
+		node.getComponent(Label).string = "+" + betInfo.winGold.formatAmountWithLetter();
 		if(winGold <= 0) return;
 		const startPosition = new Vec3(node.position.x, node.position.y);
 		node.active = true;

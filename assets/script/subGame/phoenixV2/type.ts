@@ -170,9 +170,9 @@ export enum JactpotType {
 }
 
 export type AuthDataVo = {
-  coinsBeforeBetting: number,
+  bl: number,
   fixedChessboardIcon?: any[],
-  freeGameCoins: number,
+  freeGameAmount: number,
   freeGameCount: number,
   gameType: number,
   iconStay?: number,

@@ -5,12 +5,12 @@
   "_native": "",
   "_skeletonJson": {
     "skeleton": {
-      "hash": "k83L1uKhxZ1AxOAi9JKua6JWQdk",
+      "hash": "2RepzJRTBKy0dizHQNxvSgeesoo",
       "spine": "3.8.99",
-      "x": -115,
-      "y": -2.53,
-      "width": 230,
-      "height": 460,
+      "x": -123,
+      "y": 0.24,
+      "width": 246,
+      "height": 429.14,
       "images": "",
       "audio": "E:/新版UI/平台/入口新源文件/火箭"
     },
@@ -58,6 +58,10 @@
         "rotation": -139.37,
         "x": 18.73,
         "y": 107.66
+      },
+      {
+        "name": "hui",
+        "parent": "root"
       }
     ],
     "slots": [
@@ -90,6 +94,16 @@
         "name": "huojian_hj",
         "bone": "hj",
         "attachment": "huojian_hj"
+      },
+      {
+        "name": "bghui",
+        "bone": "hui",
+        "attachment": "bg_barqiuhui_da"
+      },
+      {
+        "name": "csda",
+        "bone": "hui",
+        "attachment": "Cs_da"
       }
     ],
     "skins": [
@@ -99,6 +113,13 @@
           "bg": {
             "bg_barqiu_da": {
               "y": 210.24,
+              "width": 206,
+              "height": 420
+            }
+          },
+          "bghui": {
+            "bg_barqiuhui_da": {
+              "y": 210.36,
               "width": 206,
               "height": 420
             }
@@ -129,6 +150,13 @@
               "height": 122
             }
           },
+          "csda": {
+            "Cs_da": {
+              "y": 325.88,
+              "width": 246,
+              "height": 207
+            }
+          },
           "huojian_hj": {
             "huojian_hj": {
               "x": 45.38,
@@ -141,7 +169,7 @@
           "root": {
             "root": {
               "type": "clipping",
-              "end": "root",
+              "end": "huojian_hj",
               "vertexCount": 26,
               "vertices": [
                 -92.27,
@@ -205,6 +233,22 @@
     ],
     "animations": {
       "animation": {
+        "slots": {
+          "bghui": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "csda": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          }
+        },
         "bones": {
           "hj": {
             "translate": [
@@ -324,6 +368,52 @@
             ]
           }
         }
+      },
+      "animation1": {
+        "slots": {
+          "bg": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "crash-bg1": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "crash-xing": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "crash_guang": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "huojian_hj": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          },
+          "root": {
+            "attachment": [
+              {
+                "name": null
+              }
+            ]
+          }
+        }
       }
     }
   },
@@ -337,5 +427,5 @@
     "Crash_da.png"
   ],
   "scale": 1,
-  "_atlasText": "\r\nCrash_da.png\r\nsize: 2048,256\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\nbg_barqiu_da\r\n  rotate: true\r\n  xy: 2, 2\r\n  size: 206, 420\r\n  orig: 206, 420\r\n  offset: 0, 0\r\n  index: -1\r\ncrash-bg1\r\n  rotate: false\r\n  xy: 424, 16\r\n  size: 417, 192\r\n  orig: 417, 192\r\n  offset: 0, 0\r\n  index: -1\r\ncrash-xing\r\n  rotate: false\r\n  xy: 843, 36\r\n  size: 389, 172\r\n  orig: 389, 172\r\n  offset: 0, 0\r\n  index: -1\r\ncrash_guang\r\n  rotate: true\r\n  xy: 1376, 79\r\n  size: 129, 122\r\n  orig: 129, 122\r\n  offset: 0, 0\r\n  index: -1\r\nhuojian_hj\r\n  rotate: true\r\n  xy: 1234, 61\r\n  size: 147, 140\r\n  orig: 147, 140\r\n  offset: 0, 0\r\n  index: -1\r\n"
+  "_atlasText": "\r\nCrash_da.png\r\nsize: 1024,512\r\nformat: RGBA8888\r\nfilter: Linear,Linear\r\nrepeat: none\r\nCs_da\r\n  rotate: true\r\n  xy: 612, 27\r\n  size: 246, 207\r\n  orig: 246, 207\r\n  offset: 0, 0\r\n  index: -1\r\nbg_barqiu_da\r\n  rotate: false\r\n  xy: 2, 27\r\n  size: 206, 420\r\n  orig: 206, 420\r\n  offset: 0, 0\r\n  index: -1\r\nbg_barqiuhui_da\r\n  rotate: false\r\n  xy: 210, 27\r\n  size: 206, 420\r\n  orig: 206, 420\r\n  offset: 0, 0\r\n  index: -1\r\ncrash-bg1\r\n  rotate: true\r\n  xy: 418, 30\r\n  size: 417, 192\r\n  orig: 417, 192\r\n  offset: 0, 0\r\n  index: -1\r\ncrash-xing\r\n  rotate: false\r\n  xy: 612, 275\r\n  size: 389, 172\r\n  orig: 389, 172\r\n  offset: 0, 0\r\n  index: -1\r\ncrash_guang\r\n  rotate: true\r\n  xy: 821, 2\r\n  size: 129, 122\r\n  orig: 129, 122\r\n  offset: 0, 0\r\n  index: -1\r\nhuojian_hj\r\n  rotate: false\r\n  xy: 821, 133\r\n  size: 147, 140\r\n  orig: 147, 140\r\n  offset: 0, 0\r\n  index: -1\r\n"
 }

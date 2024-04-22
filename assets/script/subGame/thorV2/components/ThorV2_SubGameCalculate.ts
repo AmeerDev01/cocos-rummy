@@ -106,7 +106,7 @@ export class ThorV2_SubGameCalculate extends BaseComponent<IState, IProps, IEven
 	private startStepNumber(label: Label, start, end, done) {
 		this.stepNumber = new StepNumber(start, end, (num) => {
 			if (this.node && this.node.isValid) {
-				label.string = Number(num.toFixed(0)).formatAmountWithCommas();
+				label.string = Number(num.toFixed(2)).formatAmountWithCommas();
 			}
 		}, () => this.node && this.node.isValid && done());
 		this.stepNumber.set(config.normalRollOption.numberRollerTime).start();

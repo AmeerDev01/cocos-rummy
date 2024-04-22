@@ -42,7 +42,7 @@ export const initState: InitStateType = {
   // currGameType: GameType.MAIN,
   betDropDownlist: false,
   autoLauncherInfo: null,
-  positionId: 0,
+  positionId: 1,
   winloss: 0,
   gold: 0,
   dialogInfo: null,

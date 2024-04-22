@@ -1,4 +1,4 @@
-import { Node, UITransform, Vec3, instantiate, sp, Sprite, Label, Animation, Mask, Graphics, UIOpacity, tween } from "cc";
+import { Node, UITransform, Vec3, instantiate, sp, Sprite, Label, Animation, Mask, Graphics, UIOpacity, tween, Component } from "cc";
 import { sourceManageSeletor } from "../index";
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine";
 import { getNodeByNameDeep } from "../../../utils/tool";
@@ -6,6 +6,9 @@ import { GameType, IconId, getWild } from "../type";
 import config from "../config";
 import { SkeletalPathDefine } from "../sourceDefine/skeletalDefine";
 import SkeletonAnimationPlayer from "../../../utils/SkeletonPlay";
+class IconComponent extends Component {
+
+}
 
 export class PhoenixV2Icon {
   private node: Node;
@@ -25,6 +28,7 @@ export class PhoenixV2Icon {
 
   private isPoolObject = true;
   private callback;
+  private iconComponent: IconComponent;
 
   constructor(iconConfig, isPoolObject: boolean = true) {
     this.iconConfig = iconConfig;
@@ -32,6 +36,8 @@ export class PhoenixV2Icon {
     this.node = instantiate(sourceManageSeletor().getFile(PrefabPathDefine.ICON).source);
     this.node.getComponent(UITransform).width = config.normalRollOption.singleRollerWidth;
     this.node.getComponent(UITransform).height = config.normalRollOption.singleRollerHeight;
+    
+    this.iconComponent = this.node.addComponent(IconComponent)
 
     this.faceNode = getNodeByNameDeep("face", this.node);
     this.faceAnimationNode = getNodeByNameDeep("face-animation", this.node);
@@ -57,11 +63,13 @@ export class PhoenixV2Icon {
 
   private listenerSkeletonEvent() {
     this.skeleton.setCompleteListener(() => {
-      if (this.node.isValid && this.callback) {
-        this.callback && this.callback();
-        this.callback = null;
-        this.hideWin();
-      }
+      this.iconComponent.scheduleOnce(()=>{
+        if (this.node.isValid && this.callback) {
+          this.callback && this.callback();
+          this.callback = null;
+          this.hideWin();
+        }
+      })
     })
   }
 
@@ -120,7 +128,7 @@ export class PhoenixV2Icon {
   public changeIcon(id) {
     const { fileName, skeletonName } = getWild(id);
     this.sprite.spriteFrame = sourceManageSeletor().getFile(fileName).source;
-    this.skeleton.skeletonData = sourceManageSeletor().getFile(skeletonName).source;
+    // this.skeleton.skeletonData = sourceManageSeletor().getFile(skeletonName).source;
   }
 
   private buildIcon() {

@@ -6,6 +6,9 @@ import { addToastAction } from '../store/actions/baseBoard';
 import InputValidator from '../../utils/InputValidator';
 import ModalBox from '../../common/ModalBox';
 import { registerAppsflyerEvents } from '../../common/bridge';
+import { CountDowner } from '../../utils/CountDowner';
+import { defaultLanguageType } from '../../language/languagePkg';
+import { config } from '../config';
 const { ccclass, property } = _decorator;
 
 export interface IState {
@@ -18,6 +21,7 @@ export interface IProps {
 export interface IEvent {
 	onClosePanel: () => void
 	doneHandler: () => void
+	sendSmsCode?: (phoneNumber: string) => Promise<string>
 }
 
 @ccclass('Hall_Upgrade')
@@ -28,15 +32,21 @@ export class Hall_Upgrade extends BaseComponent<IState, IProps, IEvent> {
 		props_btn_spr_upgrade_close: new Button(),
 		/**账户名 */
 		props_intput_akun: new EditBox(),
-		/**密码 */
+		/**验证码 */
 		props_intput_sandi: new EditBox(),
-		/**确认密码 */
+		/**密码 */
 		props_intput_kSandi: new EditBox(),
+		/**确认密码 */
+		props_intput_confirm: new EditBox(),
 		/**升级会获取到的金币 */
 		props_text_shuzi: new Label(),
 		/**确认 */
 		props_btn_sure: new Button(),
-		props_label_uid: new Label()
+		props_label_uid: new Label(),
+		/**发送按钮 */
+		props_button_send: new Button(),
+		/**倒计时 */
+		props_spr_send_cooling: new Node()
 	}
 
 	public props: IProps = {
@@ -45,7 +55,8 @@ export class Hall_Upgrade extends BaseComponent<IState, IProps, IEvent> {
 
 	public events: IEvent = {
 		onClosePanel: () => { },
-		doneHandler: () => { }
+		doneHandler: () => { },
+		sendSmsCode: (phoneNumber: string) => new Promise((reslove) => reslove(""))
 	}
 
 	protected initState() {
@@ -56,18 +67,29 @@ export class Hall_Upgrade extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_btn_spr_upgrade_close.node.on(Node.EventType.TOUCH_END, () => {
 			this.events.onClosePanel()
 		})
+		/**发送验证码 */
+		this.propertyNode.props_button_send.node.on(Node.EventType.TOUCH_END, () => {
+			const phoneNumber = this.propertyNode.props_intput_akun.getComponent(EditBox).string
+			new InputValidator().begin().isLocalPhoneNumber(phoneNumber).done(() => {
+				(window['countDownerUpgrade'] as CountDowner).begin()
+				this.events.sendSmsCode(defaultLanguageType[config.country].phoneAreaNum + phoneNumber).then(code => {
+					this.propertyNode.props_intput_sandi.getComponent(EditBox).string = code
+				})
+			})
+		})
 		this.propertyNode.props_btn_sure.node.on(Node.EventType.TOUCH_END, () => {
 			const memberName = this.propertyNode.props_intput_akun.string.trim()
-			const password = this.propertyNode.props_intput_sandi.string.trim()
-			const password_re = this.propertyNode.props_intput_kSandi.string.trim()
-			new InputValidator().begin().isIDAPhoneNumber(memberName).isChartLength([6, 30], password).isChartLength([6, 30], password_re).done(() => {
+			const password = this.propertyNode.props_intput_kSandi.string.trim()
+			const password_re = this.propertyNode.props_intput_confirm.string.trim()
+			const verificationCode = this.propertyNode.props_intput_sandi.string.trim()
+			new InputValidator().begin().isLocalPhoneNumber(memberName).isSmsCode(verificationCode).isCharLength([6, 30], password).isCharLength([6, 30], password_re).done(() => {
 				if (password !== password_re) {
 					global.hallDispatch(addToastAction({ content: lang.write(k => k.HallModule.pwdRepetitionError, {}, { placeStr: "两次输入的密码不一致" }) }))
 					return
 				}
 
 				fetcher.send(ApiUrl.MEMBER_UPGRADES, {
-					memberId: this.props.memberId, memberName, password
+					memberId: this.props.memberId, memberName: defaultLanguageType[config.country].phoneAreaNum + memberName, password, verificationCode
 				}).then((data) => {
 					//操作成功
 					if (data !== -1 && data !== 0) {
@@ -101,6 +123,21 @@ export class Hall_Upgrade extends BaseComponent<IState, IProps, IEvent> {
 		}).catch((e) => {
 
 		})
+
+		const render = (isRunning: boolean, phoneCountDown: number) => {
+			if (!this.propertyNode) return
+			if (isRunning) {
+				this.propertyNode.props_spr_send_cooling.active = true
+				this.propertyNode.props_spr_send_cooling.getChildByName("Label_send_cooling").getComponent(Label).string = phoneCountDown + "S"
+			} else {
+				this.propertyNode.props_spr_send_cooling.active = false
+			}
+		}
+		if (!window['countDownerUpgrade']) {
+			window['countDownerUpgrade'] = new CountDowner(60, render)
+		} else {
+			(window['countDownerUpgrade'] as CountDowner).goOn(render)
+		}
 	}
 
 	update(deltaTime: number) {

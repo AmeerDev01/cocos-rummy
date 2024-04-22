@@ -6,7 +6,7 @@ import Fetcher from "../../utils/Fetcher"
 import { ApiUrl } from "../apiUrl"
 import { fetcher } from "../index"
 import { updateActivityStatus } from "../store/actions/memberInfo"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, hallWebSocketDriver } from "../socketConnect"
 
 class ActivityViewModel extends ViewModel<Hall_ActivityPanel, IProps, IEvent> {
   constructor() {
@@ -115,7 +115,8 @@ class ActivityViewModel extends ViewModel<Hall_ActivityPanel, IProps, IEvent> {
   /**初始化转盘数据 */
   private initTurntabledateStatus(activityList: ActivityItem[]) {
     const turntableData = activityList.find(v => v.gameId === ActivityType.TURNPLATE)
-    sktMsgListener.addOnce(SKT_MAG_TYPE.TURNTABLEDATA, "main", (data) => {
+    hallWebSocketDriver.sktMsgListener.addOnce(SKT_MAG_TYPE.TURNTABLEDATA, "main", (data, error) => {
+      if (error) return
       if (data[0]) {
         if (data[0].count > 0) {
           this.deleteReadStatus(turntableData.id);
@@ -126,7 +127,7 @@ class ActivityViewModel extends ViewModel<Hall_ActivityPanel, IProps, IEvent> {
         this.setReadStatus(activityList, turntableData.id);
       }
     })
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.TURNTABLEDATA)
+    hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.TURNTABLEDATA)
   }
 
   private getCacheActIds() {

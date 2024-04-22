@@ -63,7 +63,7 @@ export class Hall_ChangePassword extends BaseComponent<IState, IProps, IEvent> {
 				global.hallDispatch(addToastAction({ content: lang.write(k => k.HallModule.pwdRepetitionError, {}, { placeStr: "两次输入的密码不一致" }), type: ToastType.ERROR }))
 				return
 			}
-			new InputValidator().begin().isChartLength([6, 30], oldPwd).isChartLength([6, 30], newPwd).isChartLength([6, 30], newPwd_re).done(() => {
+			new InputValidator().begin().isCharLength([6, 30], oldPwd).isCharLength([6, 30], newPwd).isCharLength([6, 30], newPwd_re).done(() => {
 				fetcher.send(ApiUrl.RESET_PASSWORD, {
 					password: newPwd, oldPassword: oldPwd
 				}).then((data) => {

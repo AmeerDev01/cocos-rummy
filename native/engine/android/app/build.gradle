@@ -7,8 +7,8 @@ COCOS_ENGINE_PATH = COCOS_ENGINE_PATH.replace("\\", "/")
 
 buildDir = "${RES_PATH}/proj/build/$project.name"
 android {
-    compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
-    buildToolsVersion PROP_BUILD_TOOLS_VERSION
+    compileSdk 30
+    buildToolsVersion '29.0.2'
     ndkPath PROP_NDK_PATH
 
     compileOptions {
@@ -21,7 +21,7 @@ android {
         minSdkVersion PROP_MIN_SDK_VERSION
         targetSdkVersion PROP_TARGET_SDK_VERSION
         versionCode 1
-        versionName "8.2.6"
+        versionName "8.0.9"
 
         externalNativeBuild {
             cmake {
@@ -46,9 +46,11 @@ android {
 
                 /**
                  * 渠道包名，这里打包时根据需要修改名称，可选值如下：
-                 * development 测试包
+                 * development 开发包
+                 * test 包
                  * miMarket
                  * master 主包
+                 * advance 预发包
                  */
                 PACKAGE_CODE : "master"
         ]

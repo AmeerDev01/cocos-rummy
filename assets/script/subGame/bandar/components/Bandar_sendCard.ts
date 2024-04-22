@@ -69,7 +69,7 @@ export class Bandar_sendCard extends BaseComponent<IState, IProps, IEvent> {
         if (key === "gameStatus") {
             this.propertyNode.props_spr_card.active = value.cur===GameStatus.BET
             if(value.cur===GameStatus.BET){
-                this.taskScheduler.joinqQueue(new Task((done) => {
+                this.taskScheduler.joinQueue(new Task((done) => {
                     //  console.log(this.state.seconds);
                     //  console.log(this.props.seconds);
                      
@@ -77,7 +77,7 @@ export class Bandar_sendCard extends BaseComponent<IState, IProps, IEvent> {
                         this.createCard();
                     }
                     done()
-                }),false).joinqQueue(new Task((done)=>{
+                }),false).joinQueue(new Task((done)=>{
                     this.propertyNode.props_spr_card.active=false;
                     done()
                 }),false)
@@ -115,7 +115,7 @@ export class Bandar_sendCard extends BaseComponent<IState, IProps, IEvent> {
                 window.setTimeout(()=>done(),100)
             })
                
-            this.taskScheduler.joinqQueue(task, false);
+            this.taskScheduler.joinQueue(task, false);
         })
 
     }
@@ -126,7 +126,7 @@ export class Bandar_sendCard extends BaseComponent<IState, IProps, IEvent> {
             this.propertyNode.props_all_card.removeAllChildren();
             window.setTimeout(()=>done(),1000)
         })
-        this.taskScheduler.joinqQueue(task,false)
+        this.taskScheduler.joinQueue(task,false)
     }
 
     protected destroyCallBack(): void {

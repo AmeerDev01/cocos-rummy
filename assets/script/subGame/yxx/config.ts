@@ -6,6 +6,7 @@ import { getUUID } from "../../utils/tool";
 
 export default {
   sktCode: "FISH_PRAWN_CRAB",
+  gameServer: "YXX",
   name: "yxx",
   gameId: 11,
   isTest: false,
@@ -37,7 +38,7 @@ export default {
     /**胜率最大的索引位置 */
     winRateMaxIndex: 3,
     /**解锁下注最小金币 */
-    unlockBetMinGold: 5000
+    unlockBetMinGold: 10
   },
 
   /**头像位置 */

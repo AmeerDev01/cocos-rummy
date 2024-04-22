@@ -1,6 +1,7 @@
 import { _decorator, Button, Component, Node, sys, WebView } from 'cc';
 import { BaseComponent } from '../../base/BaseComponent';
 import { config } from '../config';
+import { getIsTest } from '../../config/GameConfig';
 const { ccclass, property } = _decorator;
 
 export interface IState {
@@ -50,7 +51,7 @@ export class Hall_WaterHelp extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	protected bindUI(): void {
-		this.propertyNode.props_web_help.url = `${config.backwaterHelpUrl}?token=${sys.localStorage.getItem('token')}`
+		this.propertyNode.props_web_help.url = `${config.backwaterHelpUrl}?token=${sys.localStorage.getItem('token')}&env=${getIsTest() ? 'test' : 'pro'}`
 	}
 
 	update(deltaTime: number) {

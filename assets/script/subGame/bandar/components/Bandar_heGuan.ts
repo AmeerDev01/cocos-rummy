@@ -4,7 +4,7 @@ import { getNodePositionInCanvas, initToggle } from '../../../utils/tool';
 import { global } from '../../../hall';
 import { BANKER_ID, GameType } from '../../../common/viewModel/GiftUserViewModel';
 import { gameCacheData, ReqGiftSo } from '../type';
-import { SKT_MAG_TYPE, sktInstance } from '../socketConnect';
+import { bandarWebSocketDriver, SKT_MAG_TYPE } from '../socketConnect';
 const { ccclass, property } = _decorator;
 
 
@@ -57,7 +57,7 @@ export class Bandar_heGuan extends BaseComponent<IState, IProps, IEvent> {
 					/** 总共需要花费的金币 */
 					num: 0
 				}
-				sktInstance.sendSktMessage(SKT_MAG_TYPE.GIVE_GIFT, data)
+				bandarWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GIVE_GIFT, data)
 
 			})
 		});

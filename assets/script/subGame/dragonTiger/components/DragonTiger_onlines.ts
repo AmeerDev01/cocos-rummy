@@ -7,7 +7,7 @@ import { PrefabPathDefine } from '../sourceDefine/prefabDefine';
 import { formatNumber } from './DragonTiger_win';
 import {divideNumber} from './DragonTiger_users';
 import { MemberData, setRoomLeftInfosAction, setRoomRightInfosAction } from '../store/actions/history';
-import { SKT_MAG_TYPE, sktMsgListener } from '../socketConnect';
+import { SKT_MAG_TYPE } from '../socketConnect';
 import { bundlePkgName } from '../sourceDefine';
 import { playChip, playGetCoin } from '../index';
 import {DragonTiger_users} from './DragonTiger_users';
@@ -23,7 +23,6 @@ export interface IState {
 
 export interface IProps {
 	roomInfoSize:number
-	memberData:MemberData,
 	memberId:string,
 	memberName:string,
 	roomLeftInfoVos:MyInfo[],
@@ -39,7 +38,6 @@ export interface IEvent {
 
 @ccclass('DragonTiger_onlines')
 export class DragonTiger_onlines extends BaseComponent<IState, IProps, IEvent> {
-	private memberData:MemberData[];
 	private goldNum:number[]=[];
 	start() { 
 
@@ -55,12 +53,6 @@ export class DragonTiger_onlines extends BaseComponent<IState, IProps, IEvent> {
 		roomLeftInfoVos:[],
         roomRightInfoVos:[],
         roomInfoSize:0,
-		memberData:{
-			gold: 0,
-			memberId: "",
-			type:0,
-			memberName:"",
-		},
 		memberId:"",
 		memberName:"",
 		memberBet:{},
@@ -87,7 +79,6 @@ export class DragonTiger_onlines extends BaseComponent<IState, IProps, IEvent> {
         if(key==="roomInfoSize"){
 			this.propertyNode.props_label_onlines_num.string=value.cur+''
         }
-		if(key==="memberData"){}
 		if(key==="winGold"){		
 			if(this.props.winType===2){
 				this.goldNum=divideNumber(Math.abs(value.cur))

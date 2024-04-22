@@ -212,7 +212,6 @@ export class DragonV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 	}
 	private joinToStartMoving(key) {
 		let node = instantiate(sourceManageSeletor().getFile(PrefabPathDefine.PYROSPHERE).source)
-		console.log(key);
 		node.key = key[1]
 		this.nodeMOve(node, (key[1] * config.normalRollOption.singleRollerHeight + config.normalRollOption.singleRollerHeight), false)
 		this.propertyNode.props_pyrosphere.addChild(node)
@@ -224,7 +223,6 @@ export class DragonV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 				item.key = item.key - 1
 				item.getChildByName('wlid').active = false
 				item.getChildByName('moveRingOfFire').active = true
-				console.log(item.getPosition().y - config.normalRollOption.singleRollerHeight,'111111111');
 				let ty=item.key < 0? -300 :(item.key * config.normalRollOption.singleRollerHeight + config.normalRollOption.singleRollerHeight)
 				this.nodeMOve(item, ty, item.key < 0)
 			})
@@ -520,10 +518,12 @@ export class DragonV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 		for (let i = 0; i < this.showIconCount; i++) {
 			const element = this.iconArr[i];
 			const freeGame = cacheData.rollerLaunchResult.dl.si[0].freegame;
-			const isLoop = Object.keys(freeGame).length > 0 ? true : false;
-			if (element.getId() === IconId.SCATTER) {
-				element.faceAnimationNode.scale = new Vec3(0.9, 0.9);
-				element.playWin(this.propertyNode.props_big_icon, false, isLoop);
+			if(freeGame){
+				const isLoop = Object.keys(freeGame).length > 0 ? true : false;
+				if (element.getId() === IconId.SCATTER) {
+					element.faceAnimationNode.scale = new Vec3(0.9, 0.9);
+					element.playWin(this.propertyNode.props_big_icon, false, isLoop);
+				}
 			}
 		}
 	}

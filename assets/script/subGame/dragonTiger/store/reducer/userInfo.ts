@@ -14,9 +14,7 @@ export default reduxAct.createReducer<InitStateType>({
     winType:payload.winType,
     memberBet:payload.memberBet
   }),
-
   [ActionTypes.DRAGONTGER_MENBER_RESET_STORE]: (state, payload: ActionPayLoad<ActionTypes.DRAGONTGER_MENBER_RESET_STORE>): InitStateType => {
     return instantiate(initState)
   }
-
 }, initState);

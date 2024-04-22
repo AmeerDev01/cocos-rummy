@@ -10,14 +10,10 @@ export default reduxAct.createReducer<InitStateType>({
     }
   },
   [ActionTypes.FISH_QUIT_GAME]: (state, payload: ActionPayLoad<ActionTypes.FISH_QUIT_GAME>): InitStateType => {
+    const _state = instantiate(state);
+    _state.roomInfos = [];
     return {
-      ...payload.initState,
-    }
-  },
-  [ActionTypes.FISH_CHANGE_BATTERY]: (state, payload: ActionPayLoad<ActionTypes.FISH_CHANGE_BATTERY>): InitStateType => {
-    return {
-      ...state,
-      myBatteryId: payload.batteryId
+      ..._state,
     }
   },
 }, initState);

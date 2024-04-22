@@ -5,6 +5,7 @@ import config from '../config';
 import { thorv2_Audio } from '../index';
 import { AutoLauncherInfo, GameType, GameTypeInfo } from '../type';
 import { SoundPathDefine } from '../sourceDefine/soundDefine';
+import { outCountdown } from '../../domino/store/action/game';
 const { ccclass, property } = _decorator;
 
 export interface IState {
@@ -89,40 +90,49 @@ export class ThorV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 
 		const titleSkeleton = this.propertyNode.props_bigWin.getComponent(sp.Skeleton)
 		titleSkeleton.setCompleteListener((e: sp.spine.TrackEntry) => {
-			if (e.animation.name === 'start') {
-				this.startStepNumber(this.propertyNode.props_number, 0, this.props.amount, () => {
-					this.isStepNumberOver = true;
-					titleSkeleton.timeScale = 3;
-				})
-				titleSkeleton.setAnimation(0, 'keep', true);
-			} else if (e.animation.name === 'keep') {
-				if (this.isStepNumberOver) {
-					this.playBigEndSound(defaultSkin);
-					titleSkeleton.timeScale = 1;
-					titleSkeleton.setAnimation(0, 'end', false);
-					this.showOrHideNode(this.propertyNode.props_number, false);
-				}
-			} else if (e.animation.name === 'end') {
-				// this.events.onUnMount();
-				// this.events.onWindowCloseHandler();
-			}
-		})
-
-		gameGoldNode.children.forEach(v => {
-			const sk = v.getComponent(sp.Skeleton);
-			sk.setCompleteListener((e: sp.spine.TrackEntry) => {
-				if (e.animation.name === startName) {
-					sk.setAnimation(0, 'keep', true);
+			this.scheduleOnce(() => {
+				if (e.animation.name === 'start') {
+					this.startStepNumber(this.propertyNode.props_number, 0, this.props.amount, () => {
+						this.isStepNumberOver = true;
+						titleSkeleton.timeScale = 3;
+					})
+					titleSkeleton.setAnimation(0, 'keep', true);
 				} else if (e.animation.name === 'keep') {
 					if (this.isStepNumberOver) {
-						sk.setAnimation(0, 'end', false);
+						this.playBigEndSound(defaultSkin);
+						titleSkeleton.timeScale = 1;
+						titleSkeleton.setAnimation(0, 'end', false);
+						this.showOrHideNode(this.propertyNode.props_number.node, false);
 					}
 				} else if (e.animation.name === 'end') {
-					if (this.node && this.node.isValid) {
-						this.events.onUnMount();
-						this.events.onWindowCloseHandler();
-					}
+					// this.events.onUnMount();
+					// this.events.onWindowCloseHandler();
 				}
+			})
+		})
+
+		let count = 0;
+		let totalCount = gameGoldNode.children.length;
+		gameGoldNode.children.forEach((v, i) => {
+			const sk = v.getComponent(sp.Skeleton);
+			sk.setCompleteListener((e: sp.spine.TrackEntry) => {
+				this.scheduleOnce(() => {
+					if (e.animation.name === startName) {
+						sk.setAnimation(0, 'keep', true);
+					} else if (e.animation.name === 'keep') {
+						if (this.isStepNumberOver) {
+							sk.setAnimation(0, 'end', false);
+						}
+					} else if (e.animation.name === 'end') {
+						count++;
+						if (count >= totalCount) {
+							if (this.node && this.node.isValid) {
+								this.events.onUnMount();
+								this.events.onWindowCloseHandler();
+							}
+						}
+					}
+				})
 			})
 		})
 		titleSkeleton.setSkin(defaultSkin)
@@ -165,20 +175,21 @@ export class ThorV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 		}
 	}
 
-	private showOrHideNode(nodePanel: Label, isShow: boolean, hideOp: number = 0) {
-		if (isShow && nodePanel.color.a === 255) {
+	private showOrHideNode(nodePanel: Node, isShow: boolean, hideOp: number = 0) {
+		const opacity = nodePanel.getComponent(UIOpacity);
+		if (isShow && opacity.opacity === 255) {
 			return;
 		}
-		if (!isShow && nodePanel.color.a === hideOp) {
+		if (!isShow && opacity.opacity === hideOp) {
 			return;
 		}
-		tween(nodePanel.color).delay(0.8333).to(0.3, { a: isShow ? 255 : hideOp }).start();
+		tween(opacity).delay(0.8333).to(0.3, { opacity: isShow ? 255 : hideOp }).start();
 	}
 
 	private startStepNumber(label: Label, start, end, done) {
 		this.stepNumber = new StepNumber(start, end, (num) => {
 			if (this.node && this.node.isValid) {
-				label.string = Number(num.toFixed(0)).formatAmountWithCommas();
+				label.string = Number(num).formatAmountWithCommas();
 			}
 		}, () => this.node && this.node.isValid && done());
 		this.stepNumber.set(0.5).start();

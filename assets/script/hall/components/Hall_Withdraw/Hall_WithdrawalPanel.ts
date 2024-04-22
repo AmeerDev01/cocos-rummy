@@ -1,7 +1,6 @@
 import { _decorator, assetManager, Button, Component, EditBox, ImageAsset, instantiate, Label, Node, ScrollView, Sprite, SpriteFrame, tween, UITransform } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import { WithdrawBankChannelType } from '../../store/actions/withdraw';
-import { bundleHall } from '../../index';
 import { maskBankCardNumber } from '../../../utils/tool';
 import InputValidator from '../../../utils/InputValidator';
 import { addToastAction } from '../../store/actions/baseBoard';
@@ -32,11 +31,13 @@ export interface IEvent {
 }
 
 export type WithDrawHistoryType = {
-	elapsedTime: string,
+	currency: string,
 	nickName: string,
 	orderMoney: number,
 	orderStatus: number,
-	transferTime: string
+	transferTime: string,
+	second: number,
+	minute: number
 }
 
 @ccclass('Hall_WithdrawalPanel')
@@ -115,7 +116,7 @@ export class Hall_WithdrawalPanel extends BaseComponent<IState, IProps, IEvent> 
 			if (amount <= 100) {
 				this.propertyNode.props_EditBox_jumlah.getComponent(EditBox).string = 0 + ''
 			} else {
-				this.propertyNode.props_EditBox_jumlah.getComponent(EditBox).string = (amount - 10000) + ''
+				this.propertyNode.props_EditBox_jumlah.getComponent(EditBox).string = (amount - 10000 > 0 ? amount - 10000 : 0) + ''
 			}
 		})
 		this.propertyNode.props_btn_withdrawal_add.on(Node.EventType.TOUCH_END, () => {
@@ -139,7 +140,7 @@ export class Hall_WithdrawalPanel extends BaseComponent<IState, IProps, IEvent> 
 				const amount2 = this.propertyNode.props_EditBox_jumlah.getComponent(EditBox).string;
 				new InputValidator().begin().isDecimal(amount2, false).done(() => {
 					if (+amount2 > this.props.memberAssetGoldPieces) {
-						this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.HallWithdrawalNoEnough, {}, { placeStr: "对不起，您的可提现金额不足~" }) }))
+						this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.HallWithdrawalNoEnough, {}, { placeStr: "对不起，您的可提现金额不足~" }), forceLandscape: true }))
 						return
 					}
 					if (+amount2 < this.props.withdrawBankChannelChoose.limitDown || +amount2 > this.props.withdrawBankChannelChoose.limitUp) {
@@ -147,7 +148,8 @@ export class Hall_WithdrawalPanel extends BaseComponent<IState, IProps, IEvent> 
 							content: lang.write(k => k.HallModule.HallWithdrawalglod, {
 								down: this.props.withdrawBankChannelChoose.limitDown.formatAmountWithCommas(),
 								up: this.props.withdrawBankChannelChoose.limitUp.formatAmountWithCommas()
-							}, { placeStr: "对不起，提现金额应在{down}~{up}之间" })
+							}, { placeStr: "对不起，提现金额应在{down}~{up}之间" }),
+							forceLandscape: true
 						}))
 						return
 					}
@@ -200,7 +202,7 @@ export class Hall_WithdrawalPanel extends BaseComponent<IState, IProps, IEvent> 
 		}
 		dataList.forEach((data, index) => {
 			if (isFrist && index < 5) return
-			this.taskScheduler.joinqQueue(new Task((done) => {
+			this.taskScheduler.joinQueue(new Task((done) => {
 				const l = this.propertyNode.props_scrollView_withDraw.getComponent(ScrollView).content.children.length
 				if (l > 10) {
 					this.propertyNode.props_scrollView_withDraw.getComponent(ScrollView).content.children[l - 3].destroy()
@@ -220,8 +222,8 @@ export class Hall_WithdrawalPanel extends BaseComponent<IState, IProps, IEvent> 
 		node.active = true
 		node.getChildByName("label_time").getComponent(Label).string = data.transferTime
 		node.getChildByName("label_name").getComponent(Label).string = data.nickName
-		node.getChildByName("label_menarik").getComponent(Label).string = data.orderMoney.formatAmountWithCommas() + ' RP'
-		node.getChildByName("label_waktu").getComponent(Label).string = data.elapsedTime
+		node.getChildByName("label_menarik").getComponent(Label).string = data.orderMoney.formatAmountWithCommas() + ' ' + data.currency
+		node.getChildByName("label_waktu").getComponent(Label).string = lang.write(k => k.withdrawal.ElapsedTime, { minutes: data.minute, second: data.second }, { placeStr: "多少分多少秒" })
 		return node
 	}
 
@@ -252,11 +254,11 @@ export class Hall_WithdrawalPanel extends BaseComponent<IState, IProps, IEvent> 
 			const guide_2 = new Guide(this.propertyNode.props_EditBox_jumlah, this.propertyNode.props_layout_remind_jumlah)
 			const guide_3 = new Guide(this.propertyNode.props_btn_withdrawal_kirim, this.propertyNode.props_layout_remind_kirim)
 			// this.taskScheduler.stopQueue(false)
-			this.taskScheduler2.joinqQueue(new Task((done) => {
+			this.taskScheduler2.joinQueue(new Task((done) => {
 				guide_1.begin().bindDone(() => done())
-			})).joinqQueue(new Task((done) => {
+			})).joinQueue(new Task((done) => {
 				guide_2.begin().bindDone(() => done())
-			})).joinqQueue(new Task((done) => {
+			})).joinQueue(new Task((done) => {
 				guide_3.begin().bindDone(() => done())
 			}))
 		}

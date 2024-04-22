@@ -1,17 +1,13 @@
-import { _decorator, animation, Animation, AnimationState, Button, Graphics, instantiate, Label, Mask, Node, ScrollView, sp, Sprite, Tween, tween, UIOpacity, UITransform, Vec3 } from 'cc';
+import { _decorator, Animation, Button, instantiate, Label, Node, ScrollView, sp, Sprite, Tween, tween, UIOpacity, UITransform, Vec3 } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
-import { changeGame, setAutoLauncherInfo, setBetDropDownList, updateFreeGameOdds, updateGameMode, updateGold, updateSubGameWinloss, updateWinloss } from '../store/actions/game';
-import { AutoLauncherInfo, AutoLauncherType, calBetAmount, GameModeType, GameType, GameTypeInfo, getAutoCount, isLimit, JackpotData, PlayAnimationData, RollerStatus, SubGameAnimationPlayInfo, WinIconData } from '../type';
-import { updateRollerStatus } from '../store/actions/roller';
-import { thorv2_Audio, mainViewModel, sourceManageSeletor } from '../index';
-import { SoundPathDefine } from '../sourceDefine/soundDefine';
-import { getNodeByNameDeep } from '../../../utils/tool';
-import { global } from '../../../hall';
 import StepNumber from '../../../utils/StepNumber';
 import config from '../config';
-import { Shake } from '../../../utils/Shake';
-import StepNumberV2 from '../../../utils/StepNumberV2';
 import { cacheData } from '../dataTransfer';
+import { mainViewModel, sourceManageSeletor, thorv2_Audio } from '../index';
+import { SoundPathDefine } from '../sourceDefine/soundDefine';
+import { changeGame, updateFreeGameOdds, updateGameMode, updateGold, updateSubGameWinloss, updateWinloss } from '../store/actions/game';
+import { updateRollerStatus } from '../store/actions/roller';
+import { AutoLauncherInfo, calBetAmount, GameModeType, GameType, GameTypeInfo, isAuto, JackpotData, PlayAnimationData, RollerStatus, SubGameAnimationPlayInfo, WinIconData } from '../type';
 const { ccclass, property } = _decorator;
 
 export interface IState {
@@ -85,6 +81,8 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 	/**是否累加倍率动画结束 */
 	private isAddRateAnimationEnd: boolean;
 
+	private stepNumber: StepNumber;
+
 	protected propertyNode = {
 		props_action_bar: new Node(),
 		props_top: new Node(),
@@ -157,22 +155,28 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 
 	protected bindEvent(): void {
 		this.props_thorSk.setCompleteListener((e: sp.spine.TrackEntry) => {
-			if (e.animation.name === 'anima_1') {
-				this.props_thorSk.setAnimation(0, 'anima_3', false)
-				this.props_shandianSk.node.active = true;
-				this.props_shandianSk.setAnimation(0, 'animation', false)
-			}
+			this.scheduleOnce(() => {
+				if (e.animation.name === 'anima_1') {
+					this.props_thorSk.setAnimation(0, 'anima_3', false)
+					this.props_shandianSk.node.active = true;
+					this.props_shandianSk.setAnimation(0, 'animation', false)
+				}
+			})
 		})
 
 		this.props_shandianSk.setCompleteListener((e: sp.spine.TrackEntry) => {
-			this.props_shandianSk.node.active = false;
-			this.props_shandianSk.clearTracks();
+			this.scheduleOnce(() => {
+				this.props_shandianSk.node.active = false;
+				this.props_shandianSk.clearTracks();
+			})
 		})
 		this.props_transitionSk.setCompleteListener((e: sp.spine.TrackEntry) => {
-			this.props_transitionSk.node.active = false;
-			this.props_transitionSk.clearTracks();
+			this.scheduleOnce(() => {
+				this.props_transitionSk.node.active = false;
+				this.props_transitionSk.clearTracks();
 
-			this.subGameAnimationEndHandle(0);
+				this.subGameAnimationEndHandle(0);
+			})
 		})
 
 		this.winBoxAnimation.on(Animation.EventType.FINISHED, () => {
@@ -184,7 +188,10 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 			}
 		})
 
-		this.propertyNode.props_btn_rate.on(Button.EventType.CLICK, () => {
+		this.propertyNode.props_btn_rate.on(Node.EventType.TOUCH_END, () => {
+			if (!this.propertyNode.props_btn_rate.getComponent(Button).interactable) {
+				return;
+			}
 			const gameModeType = this.props.gameModeType === GameModeType.normal ? GameModeType.buyToWin : GameModeType.normal;
 
 			if (gameModeType === GameModeType.buyToWin) {
@@ -193,7 +200,11 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 			this.dispatch(updateGameMode(gameModeType))
 		})
 
-		this.propertyNode.props_spr_tools_beli.on(Button.EventType.CLICK, () => {
+		this.propertyNode.props_spr_tools_beli.on(Node.EventType.TOUCH_END, () => {
+			if (!this.propertyNode.props_spr_tools_beli.getComponent(Button).interactable
+				|| isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)) {
+				return;
+			}
 			thorv2_Audio.playOneShot(SoundPathDefine.BUY_FREE_BTN)
 			this.events.onOpenBuyMiniPanel();
 		})
@@ -220,6 +231,10 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 				}
 			}
 		})
+	}
+
+	private isBtnDisable(btnNode: Node) {
+		return !btnNode.getComponent(Button).interactable;
 	}
 
 	/**更新结束状态 */
@@ -342,12 +357,12 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 			const gameTypeInfo = { ...this.props.gameTypeInfo }
 			gameTypeInfo.lastGameType = gameTypeInfo.viewGameType;
 			gameTypeInfo.viewGameType = gameTypeInfo.currGameType;
-			this.dispatch(changeGame(gameTypeInfo))
 			// 进入到小游戏1之后，把进入前的这一局的输赢设置为0
 			if (gameTypeInfo.viewGameType === GameType.SUBGAME1) {
 				this.dispatch(updateWinloss(0));
 				this.dispatch(updateSubGameWinloss(0));
 			}
+			this.dispatch(changeGame(gameTypeInfo))
 		}, config.changeGameTypeTime)
 	}
 
@@ -416,18 +431,20 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	private updateWinloss(value: { pre: any, cur: any }, done = undefined) {
+		this.stepNumber && this.stepNumber.stop();
 		this.showOrHideNode(this.propertyNode.props_spr_win_box, value.cur > 0);
 		if (value.cur > 0) {
-			new StepNumber(value.pre, value.cur, (num) => {
+			this.stepNumber = new StepNumber(value.pre, value.cur, (num) => {
 				if (this.node && this.node.isValid) {
 					// const numStr = num > 10000 ? Number(num.toFixed(0)).formatAmountWithLetter() : Number(num.toFixed(0)).formatAmountWithCommas();
-					this.propertyNode.props_label_gold.string = Number(num.toFixed(0)).formatAmountWithCommas();
+					this.propertyNode.props_label_gold.string = Number(num.toFixed(2)).formatAmountWithCommas();
 				}
 			}, () => {
 				if (this.node && this.node.isValid) {
 					done && done();
 				}
-			}).set(config.normalRollOption.numberRollerTime).start();
+			})
+			this.stepNumber.set(config.normalRollOption.numberRollerTime).start();
 		}
 	}
 
@@ -455,12 +472,8 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 	private updateFreeAmount() {
 		this.propertyNode.props_label_beil.string = Number(this.getBuyMiniGameAmount()).formatAmountWithCommas();
 
-		let betAmount = calBetAmount(this.props.betAmount, this.props.positionId);
+		let betAmount = calBetAmount(config.rateAmount, this.props.positionId);
 		this.propertyNode.props_label_rateNum.string = Number(betAmount).formatAmountWithCommas();
-	}
-
-	private updateBtnStatus() {
-		this.props
 	}
 
 	public getBuyMiniGameAmount() {
@@ -486,7 +499,8 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	private changeRollerStatusHandle() {
-		const disable = this.props.rollerStatus !== RollerStatus.END
+		const auto = isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo);
+		const disable = this.props.rollerStatus !== RollerStatus.END || auto
 		const isDisableBuyMini = disable || this.props.gameModeType === GameModeType.buyToWin;
 		this.disableBtnBuyMini(isDisableBuyMini)
 		this.disableBtnDouble(disable)
@@ -500,15 +514,16 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 	/**禁用翻倍道具 */
 	private disableBtnDouble(value: boolean) {
 		const btnRate = this.propertyNode.props_btn_rate
-		btnRate.getComponent(Button).enabled = !value;
+		btnRate.getComponent(Button).interactable = !value;
 		Tween.stopAllByTarget(btnRate.getComponent(UIOpacity));
 		this.showOrHideNode(this.propertyNode.props_spr_tools_rate, !value, 100)
 	}
 
 	private disableBtn(btnNode: Node, value: boolean) {
-		btnNode.getComponent(Button).enabled = !value;
+		btnNode.getComponent(Button).interactable = !value;
 		Tween.stopAllByTarget(btnNode.getComponent(UIOpacity));
 		this.showOrHideNode(btnNode, !value, 100)
+		value ? btnNode.pauseSystemEvents(true) : btnNode.resumeSystemEvents(true);
 	}
 
 	private updateFreeGameOddsLabel() {
@@ -568,6 +583,10 @@ export class ThorV2_Main extends BaseComponent<IState, IProps, IEvent> {
 	/**获得赢的倍率的世界坐标 */
 	public getWinOddsPosition() {
 		return this.propsLabelRateOriginPos;
+	}
+
+	protected onDestroy(): void {
+		this.stepNumber && this.stepNumber.stop();
 	}
 
 	update(deltaTime: number) {

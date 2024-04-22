@@ -6,8 +6,9 @@ import { ApiUrl } from "../../apiUrl"
 import { addToastAction } from "../../store/actions/baseBoard"
 import { baseBoardView, fetcher, sourceManageSeletor } from "../../index"
 import { lang } from "../../index"
-import { deviceInfo } from "../../config"
+import { config, deviceInfo } from "../../config"
 import { getPackageName, loginEvents } from "../../../common/bridge"
+import { defaultLanguageType } from "../../../language/languagePkg"
 
 class LoginDialogV2ViewModel extends ViewModel<Hall_LoginDialogV2, IProps, IEvent> {
   constructor() {
@@ -17,10 +18,10 @@ class LoginDialogV2ViewModel extends ViewModel<Hall_LoginDialogV2, IProps, IEven
     this.setProps({})
 
     this.setEvent({
-      loginHandler: (loginName, password,done) => {
+      loginHandler: (loginName, password, done) => {
         fetcher.send(ApiUrl.LOGIN_PWD, {
           type: 4,
-          memberName: loginName, password,
+          memberName: defaultLanguageType[config.country].phoneAreaNum + loginName, password,
           macCode: deviceInfo.getUniqueId(),
           pkgCode: getPackageName()
         }).then((data) => {

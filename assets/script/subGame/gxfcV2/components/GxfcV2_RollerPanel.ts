@@ -104,7 +104,7 @@ export class GxfcV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 		let sendBetTime = cacheData.sendBetTime;
 		this.sendBetTime = sendBetTime;
 		this.isManualStop = false;
-		console.log("start roll time " + sendBetTime)
+		// console.log("start roll time " + sendBetTime)
 		const isMainGame = this.props.gameTypeInfo.viewGameType === GameType.MAIN;
 		if (isMainGame) {
 			this.dispatch(updateWinloss(0))
@@ -125,9 +125,13 @@ export class GxfcV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 	
 		this.scheduleOnce(() => {
 			// console.log("endRoll scheduleOnce " + sendBetTime + " currentTime " + new Date().getTime());
+			// console.log("cacheData.rollerLaunchResult",cacheData.rollerLaunchResult);
+			
 			if (!cacheData.rollerLaunchResult) {
 				this.isWaitEnding = true;
 			} else {
+				console.log("freeWildRollerId",cacheData.rollerLaunchResult.dl.si[0].freeWildRollerId);
+				
 				const ColumnIndex = cacheData.rollerLaunchResult.dl.si[0].freeWildRollerId
 				if (ColumnIndex && ColumnIndex.length > 0) {
 					for (let i = 0; i < ColumnIndex.length; i++) {
@@ -152,7 +156,7 @@ export class GxfcV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 			this.dispatch(updateRollerStatus(RollerStatus.ENDING))
 		}
 
-		console.log("rollerpanel stop roll time " + sendBetTime);
+		// console.log("rollerpanel stop roll time " + sendBetTime);
 		this.stopRoll(0, this.rollEndHandle.bind(this, rollerLaunchResult), rollerLaunchResult);
 	}
 
@@ -746,6 +750,13 @@ export class GxfcV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 	update(deltaTime: number) {
 		if (this.isWaitEnding && cacheData.rollerLaunchResult) {
 			this.isWaitEnding = false;
+			const ColumnIndex = cacheData.rollerLaunchResult.dl.si[0].freeWildRollerId
+			if (ColumnIndex && ColumnIndex.length > 0) {
+				for (let i = 0; i < ColumnIndex.length; i++) {
+					this.stopWildRoll(ColumnIndex[i],this.rollEndHandle.bind(this, cacheData.rollerLaunchResult), cacheData.rollerLaunchResult)
+					this.rollerViewModelArr[ColumnIndex[i]].comp.joinJinWildIcon(ColumnIndex[i],cacheData.rollerLaunchResult)
+				}
+			}
 			this.node.isValid && this.stopRollAll(false, this.sendBetTime, cacheData.rollerLaunchResult);
 		}
 	}

@@ -118,12 +118,13 @@ export class Yxx_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 	}
 
-	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
+	protected useProps(key: keyof IProps | '_setDone', value: { pre: any, cur: any }) {
 		// console.log("footer useProps == ", key, value);
 		if (key === 'myHead' && value.cur) { // 第一次初始化调用
 			// this.loadHead(value.cur.headUrl);
 			// this.props.myHead && console.log("footer == ", key, this.props.myHead.gold);
 			if (!value.pre) {
+				this.initChip();
 				global.loadHeadSprite(value.cur.icon, this.propertyNode.props_user_head);
 				this.propertyNode.props_user_name_label.string = omitStr(value.cur.name, config.gameOption.nicknameOmitLength);
 			}
@@ -157,7 +158,7 @@ export class Yxx_Footer extends BaseComponent<IState, IProps, IEvent> {
 				this.updateGoldLabel();
 				this.chipShowHandle();
 			}
-		} else if (key === 'powers') {
+		} else if (key === '_setDone') {
 			this.updatePowerShow();
 			this.chipShowHandle();
 		}
@@ -187,7 +188,6 @@ export class Yxx_Footer extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	protected bindUI(): void {
-		this.initChip();
 		this.propertyNode.props_layout_lock.active = false;
 	}
 
@@ -232,7 +232,7 @@ export class Yxx_Footer extends BaseComponent<IState, IProps, IEvent> {
 	/**获得是否锁定下注 */
 	public getLockBet(gold: number) {
 		let isLockBet = gold < config.gameOption.unlockBetMinGold;
-		if (!isLockBet && this.props.powers && this.props.powers.length > 0) {
+		if (!isLockBet && this.props.powers && this.props.powers.length > 0 && this.isPower("vip")) {
 			isLockBet = true;
 		}
 		return isLockBet;
@@ -247,7 +247,7 @@ export class Yxx_Footer extends BaseComponent<IState, IProps, IEvent> {
 		const myGold = this.props.myHead.gold;
 		// 是否锁定下注
 		let isLockBet = myGold < config.gameOption.unlockBetMinGold;
-		if (this.props.powers && this.props.powers.length > 0) {
+		if (this.props.powers && this.props.powers.length > 0 && this.isPower("vip")) {
 			isLockBet = true;
 		} else if (isLockBet) {
 			this.updatePowerShow();
@@ -350,11 +350,23 @@ export class Yxx_Footer extends BaseComponent<IState, IProps, IEvent> {
 			let node;
 			if ('vip' === power.name.toLowerCase()) {
 				node = this.propertyNode.props_tips_vip;
-			} else if ('gold' === power.name.toLowerCase()) {
+			} else if ('gold' === power.name.toLowerCase() && this.props.myHead.gold < config.gameOption.unlockBetMinGold) {
 				node = this.propertyNode.props_tips_gold;
 			}
 			node && this.updateTipsValue(node, power.num);
 		}
+	}
+
+	private isPower(value: string) {
+		if (this.props.powers && this.props.powers.length > 0) {
+			for (let i = 0; i < this.props.powers.length; i++) {
+				const power = this.props.powers[i];
+				if (value === power.name.toLowerCase()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private updateTipsValue(node: Node, num: string) {

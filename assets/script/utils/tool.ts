@@ -1,8 +1,8 @@
 import { tween, Node, math, NodeEventType, view, ToggleContainer, EventHandler, Vec3, assetManager, ImageAsset, SpriteFrame, Texture2D, sp, log, sys, native, ScrollView, UITransform, instantiate } from "cc";
 import Fingerprint2 from "fingerprintjs2"
 import { BridgeCode, EventType } from "../common/bridge";
-import { circularDeepEqual, strictShallowEqual } from "./fastEqual";
 import { createCopier } from "./fastCopy";
+import { circularDeepEqual, strictShallowEqual } from "./fastEqual";
 
 export enum EffectType {
   SCALE = "scale"
@@ -304,6 +304,11 @@ export const equalValue = (target1: any, target2: any, isDeep: boolean = false) 
     return target1 === target2
   }
 }
+
+/**复制一个Node并给一些函数 */
+// export const nodeCopier = (nodeTemplate: Node) => {
+//   const node = instantiate(nodeTemplate)
+// }
 
 /**添加聊天限制用户 */
 export const putChatShieldingUser = (memberId: string) => {

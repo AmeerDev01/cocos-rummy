@@ -126,9 +126,9 @@ export class Bandar_history extends BaseComponent<IState, IProps, IEvent> {
 			let label_winMatches=getNodeByNameDeep("label_winMatches", getNodeByNameDeep("props_spr_refresh"+num,this.node));
 			let label_loseMatches=getNodeByNameDeep("label_loseMatches", getNodeByNameDeep("props_spr_refresh"+num,this.node));
 			let tingkatNum=(item.tingkat*100).toFixed(2)
-			label_winRate.getComponent(Label).string="Tingkat Menang:"+tingkatNum+"%";
-			label_winMatches.getComponent(Label).string="Menang:"+item.menang;
-			label_loseMatches.getComponent(Label).string="Kalah:"+item.kalah;
+			label_winRate.getComponent(Label).string="Win Rate:"+tingkatNum+"%";
+			label_winMatches.getComponent(Label).string="Win:"+item.menang;
+			label_loseMatches.getComponent(Label).string="Lose:"+item.kalah;
 		})
 	}
 

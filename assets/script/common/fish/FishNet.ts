@@ -17,6 +17,10 @@ export const FishNetCreate: ICreateObj = {
 
 //////////////////////////////////////////////-
 
+class NetComponent extends Component {
+
+}
+
 export class FishNet {
   private fishNetConfig;
   private sourceManage: SourceManage;
@@ -26,10 +30,12 @@ export class FishNet {
   private end_call;
   private net_obj: Node;
   public uiRoot: Node;
+  private netComponent: NetComponent
   private rootNode: Node;
 
   constructor() {
     this.uiRoot = new Node();
+    this.netComponent = this.uiRoot.addComponent(NetComponent);
   }
 
   public init(info, fnConfig, sourceManage: SourceManage, rootNode: Node) {
@@ -81,7 +87,9 @@ export class FishNet {
     const sk = this.net_obj.getComponent(sp.Skeleton)
     sk.setAnimation(0, this.fshn_cfg.ani, false)
     sk.setCompleteListener(() => {
-      this.end_call && this.end_call(this);
+      this.netComponent.scheduleOnce(() => {
+        this.end_call && this.end_call(this);
+      })
     })
   }
 }

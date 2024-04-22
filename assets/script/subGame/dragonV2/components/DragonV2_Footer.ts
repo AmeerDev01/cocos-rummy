@@ -54,8 +54,8 @@ export class DragonV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		props_toggle_fast: new Node(),
 		props_min_btn: new Node(),
 		props_max_btn: new Node(),
-		props_maxBet_btn: new Node(),
-		props_SZX_bz_btn: new Node(),
+		// props_maxBet_btn: new Node(),
+		// props_SZX_bz_btn: new Node(),
 		props_goodluck: new Node(),
 		props_spr_nomoney: new Node(),
 		props_btn_down_auto: new Node(),
@@ -122,10 +122,16 @@ export class DragonV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.unscheduleLong();
 		})
 		this.propertyNode.props_btn_down_auto.getComponent(Button).node.on(Node.EventType.TOUCH_END, () => { //打开自动弹框
+			const isDisable = this.getBtnStatus(this.propertyNode.props_btn_down_auto)
+			if (!isDisable) {
+				Dragonv2_Audio.playOneShot(SoundPathDefine.btn_click)
+			}
+			Dragonv2_Audio.playOneShot(SoundPathDefine.btn_click)
 			if(this.getAutoLauncherType()!== AutoLauncherType.NONE){
 				mainViewModel.comp.clearAuto()
 			}else{
-				if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
+				// if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
+				if (this.isBtnDisable()) {
 					return;
 				}else if
 				(this.isMain()){
@@ -136,12 +142,16 @@ export class DragonV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		
 		this.propertyNode.props_startButton.on(Node.EventType.TOUCH_END, () => {
 			// this.stepNumberV2.stop();
+			const isDisable = this.getBtnStatus(this.propertyNode.props_startButton)
+			if (!isDisable) {
+				Dragonv2_Audio.playOneShot(SoundPathDefine.btn_click)
+			}
 			this.unscheduleLong();
+			if(!mainViewModel.isAuthDone) return;
 			if (this.isLongPress) {
 				this.isLongPress = false;
 				return;
 			};
-
 			// 在结束的时候才判断余额是否不足
 			if (this.isMain() && this.isEnd() && this.props.gold < calBetAmount(this.props.positionId)) {
 				global.openShop();
@@ -186,7 +196,11 @@ export class DragonV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 		const amount = config.betSwitcher[0].amount;
 		this.propertyNode.props_min_btn.on(Node.EventType.TOUCH_END, () => {
-			Dragonv2_Audio.playOneShot(SoundPathDefine.minCoin)
+			// Dragonv2_Audio.playOneShot(SoundPathDefine.minCoin)
+			const isDisable = this.getBtnStatus(this.propertyNode.props_min_btn)
+			if (!isDisable) {
+				Dragonv2_Audio.playOneShot(SoundPathDefine.minCoin)
+			}
 			if (this.isBtnDisable() || !this.propertyNode.props_min_btn.getComponent(Button).enabled) {
 				return;
 			}
@@ -198,7 +212,11 @@ export class DragonV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.updateSprMoney();
 		})
 		this.propertyNode.props_max_btn.on(Node.EventType.TOUCH_END, () => {
-			Dragonv2_Audio.playOneShot(SoundPathDefine.maxCoin)
+			// Dragonv2_Audio.playOneShot(SoundPathDefine.maxCoin)
+			const isDisable = this.getBtnStatus(this.propertyNode.props_max_btn)
+			if (!isDisable) {
+				Dragonv2_Audio.playOneShot(SoundPathDefine.maxCoin)
+			}
 			if (this.isBtnDisable() || !this.propertyNode.props_max_btn.getComponent(Button).enabled) {
 				return;
 			}
@@ -210,20 +228,21 @@ export class DragonV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.updateSprMoney();
 		})
 		// 最大下注
-		this.propertyNode.props_maxBet_btn.on(Node.EventType.TOUCH_END, () => {
-			Dragonv2_Audio.playOneShot(SoundPathDefine.maxCoin)
-			if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
-				return;
-			}
-			this.events.subnoteOperation()
-			this.dispatch(updatePositionId(this.getMaxBetPositionId()));
-		})
+		// this.propertyNode.props_maxBet_btn.on(Node.EventType.TOUCH_END, () => {
+		// 	Dragonv2_Audio.playOneShot(SoundPathDefine.maxCoin)
+		// 	if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
+		// 		return;
+		// 	}
+		// 	this.events.subnoteOperation()
+		// 	this.dispatch(updatePositionId(this.getMaxBetPositionId()));
+		// })
 		// 帮助按钮 改到了header
 		// this.propertyNode.props_SZX_bz_btn.on(Node.EventType.TOUCH_END, () => {
 		// 	Dragonv2_Audio.playOneShot(SoundPathDefine.btn_click)
 		// 	this.events.onOpenRule();
 		// })
 		this.propertyNode.props_spr_nomoney.on(Node.EventType.TOUCH_END, () => {
+			Dragonv2_Audio.playOneShot(SoundPathDefine.btn_click)
 			global.openShop();
 		})
 	}
@@ -346,7 +365,7 @@ export class DragonV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		const isDisable = this.isBtnDisable();
 		this.updateBtnStatus(this.propertyNode.props_max_btn, isDisable);
 		this.updateBtnStatus(this.propertyNode.props_min_btn, isDisable);
-		this.updateBtnStatus(this.propertyNode.props_maxBet_btn, isDisable);
+		// this.updateBtnStatus(this.propertyNode.props_maxBet_btn, isDisable);
 		if (!isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)) {
 			this.updateBtnStatus(this.propertyNode.props_btn_down_auto,isDisable);
 		} else {
@@ -362,13 +381,17 @@ export class DragonV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		// this.propertyNode.props_SZX_bz_btn.getComponent(Sprite).grayscale = isDisable;
 		this.propertyNode.props_max_btn.getComponent(Button).enabled = !isDisable;
 		this.propertyNode.props_min_btn.getComponent(Button).enabled = !isDisable;
-		this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = !isDisable;
+		// this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = !isDisable;
 		this.propertyNode.props_btn_down_auto.getComponent(Button).enabled = !isDisable;
 		// this.propertyNode.props_SZX_bz_btn.getComponent(Button).enabled = !isDisable;
 	}
 
 	private updateBtnStatus(btnNode: Node, isDisable: boolean) {
 		btnNode.getChildByName("disable").active = isDisable;
+	}
+
+	private getBtnStatus(btnNode: Node) {
+		return btnNode.getChildByName("disable").active
 	}
 
 	/**更新最大最小状态 */
@@ -419,15 +442,15 @@ export class DragonV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	private updateMaxBetStatus() {
 		// const isMaxBet = this.props.positionId >= this.getMaxBetPositionId();
 
-		if (this.isBtnDisable()) {
-			this.updateBtnStatus(this.propertyNode.props_maxBet_btn, true);
-			// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = true;
-			this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = false;
-		} else {
-			this.updateBtnStatus(this.propertyNode.props_maxBet_btn, false);
-			// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = false;
-			this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = true;
-		}
+		// if (this.isBtnDisable()) {
+		// 	this.updateBtnStatus(this.propertyNode.props_maxBet_btn, true);
+		// 	// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = true;
+		// 	this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = false;
+		// } else {
+		// 	this.updateBtnStatus(this.propertyNode.props_maxBet_btn, false);
+		// 	// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = false;
+		// 	this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = true;
+		// }
 	}
 
 	private updateBetInfo() {
@@ -443,7 +466,7 @@ export class DragonV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 		new StepNumber(value.pre, value.cur, (num) => {
 			if (this.node && this.node.isValid) {
-				const value = Number(num.toFixed(0));
+				const value = Number(num);
 				this.propertyNode.props_bottom_score.string = value.formatAmountWithCommas();
 			}
 		}).set(config.normalRollOption.numberRollerTime).start();

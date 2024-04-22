@@ -4,8 +4,8 @@
 	"spine": "3.8.99",
 	"x": -17,
 	"y": -17,
-	"width": 34,
-	"height": 34,
+	"width": 40,
+	"height": 40,
 	"images": "E:/新版UI/平台/大厅new/动画/源文件/hongdian",
 	"audio": ""
 },
@@ -20,7 +20,7 @@
 		"name": "default",
 		"attachments": {
 			"190": {
-				"190": { "width": 34, "height": 34 }
+				"190": { "width": 40, "height": 40 }
 			}
 		}
 	}

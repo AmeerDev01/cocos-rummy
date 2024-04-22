@@ -1,11 +1,13 @@
 import { instantiate } from "cc";
 import { ActionTypes, ActionPayLoad, InitStateType, initState } from "../actions/memberInfo";
 import { default as reduxAct } from 'redux-act'
+import { defaultLanguageType } from "../../../language/languagePkg";
+import { config } from "../../config";
 
 export default reduxAct.createReducer<InitStateType>({
   [ActionTypes.SET_MEMBER_INFO]: (state, payload: ActionPayLoad<ActionTypes.SET_MEMBER_INFO>): InitStateType => ({
     ...state,
-    memberName: payload.memberName,
+    memberName: payload.memberName ? payload.memberName.replace(new RegExp(`^${defaultLanguageType[config.country].phoneAreaNum}`, 'g'), "") : payload.memberName,
     avatarIndex: payload.avatarIndex,
     memberAssetGoldPieces: payload.memberAssetGoldPieces,
     memberAssetSafeGoldPieces: payload.memberAssetSafeGoldPieces,
@@ -48,5 +50,6 @@ export default reduxAct.createReducer<InitStateType>({
       isUnreadActivity: payload.isUnreadActivity
     }
   },
+
 }, initState);
 

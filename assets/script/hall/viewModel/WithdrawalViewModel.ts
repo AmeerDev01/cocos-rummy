@@ -3,19 +3,17 @@ import ViewModel from "../../base/ViewModel"
 import { Hall_WithdrawalPanel, IProps, IEvent } from "../components/Hall_Withdraw/Hall_WithdrawalPanel"
 import { Hall_WithdrawBankBind, IState as BBIState, IProps as BBIProps, IEvent as BBIEvent } from "../components/Hall_Withdraw/Hall_WithdrawBankBind"
 import { StateType } from "../store/reducer"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, hallWebSocketDriver } from "../socketConnect"
 import { baseBoardView, fetcher, sourceManageSeletor } from "../index"
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { EffectType } from "../../utils/NodeIOEffect"
 import WithdrawBankViewModel from "./WithdrawBankViewModel"
 import { setWithdrawChannelList, sizeChangeAction, WithdrawBankChannelType } from "../store/actions/withdraw"
-import Fetcher from "../../utils/Fetcher"
 import { ApiUrl } from "../apiUrl"
 import { addToastAction } from "../store/actions/baseBoard"
 import BaseViewModel from "../../common/viewModel/BaseViewModel"
 import { lang } from "../index"
 import ModalBox from "../../common/ModalBox"
-import Guide from "../../utils/Guide"
 
 
 class WithdrawalViewModel extends ViewModel<Hall_WithdrawalPanel, IProps, IEvent> {
@@ -38,10 +36,10 @@ class WithdrawalViewModel extends ViewModel<Hall_WithdrawalPanel, IProps, IEvent
                 onClosehandler: () => {
                   bankBindViewModel.unMount(EffectType.EFFECT1)
                 },
-                onBindDone: (hadChooseBankChannl: WithdrawBankChannelType, accountNumber: string, realName: string) => {
+                onBindDone: (hadChooseBankChannl: WithdrawBankChannelType, accountNumber: string, realName: string, ifscCode: string, branchName: string) => {
                   if (!baseBoardView.mainPanelViewModel.isTouristPass()) return
                   fetcher.send(ApiUrl.WITHDRAW_BIND_CARD, {
-                    rechargeChannelId: hadChooseBankChannl.id, accountNumber, realName
+                    rechargeChannelId: hadChooseBankChannl.id, accountNumber, realName, ifscCode, branchName
                   }).then((data) => {
                     if (data !== -1) {
                       ModalBox.Instance().show({ content: lang.write(k => k.withdrawal.withdrawalSuccess, { gold: data }, { placeStr: "绑定提款信息成功获取金币" }), type: "Prompt" }, () => {
@@ -118,11 +116,11 @@ class WithdrawalViewModel extends ViewModel<Hall_WithdrawalPanel, IProps, IEvent
         })
       }
     })
-    
-    sktMsgListener.add(SKT_MAG_TYPE.WITH_DRAW_LIST, "withdraw", (data) => {
-      this.comp.addWithdrawBill(data)
+
+    hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.WITH_DRAW_LIST, "withdraw", (data, error) => {
+      !error && this.comp.addWithdrawBill(data)
     })
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.WITH_DRAW_LIST)
+    hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.WITH_DRAW_LIST)
   }
   private refreshList() {
     //重新拉取数据
@@ -134,7 +132,7 @@ class WithdrawalViewModel extends ViewModel<Hall_WithdrawalPanel, IProps, IEvent
   }
 
   protected unMountCallBack(): void {
-    sktMsgListener.removeById('withdraw')
+    hallWebSocketDriver.sktMsgListener.removeById('withdraw')
   }
 
   public connect() {

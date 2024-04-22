@@ -6,7 +6,7 @@ import { addToastAction } from "../../../hall/store/actions/baseBoard"
 import { Dragon_Main, IEvent, IProps } from "../components/Dragon_Main"
 import config from "../config"
 import { cacheData, clearCacheData } from "../dataTransfer"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, dragonV2GameLogin, dragonV2WebSocketDriver, sktMsgListener } from "../socketConnect"
 import { bundlePkgName } from "../sourceDefine"
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { getStore } from "../store"
@@ -25,6 +25,7 @@ import UseSetOption from "../../../utils/UseSetOption"
 import DragonV2RulePanelViewModel from "./DragonV2RulePanelViewModel"
 import { EffectType } from "../../../utils/NodeIOEffect"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
+import { SktMessager } from "../../../common/WebSocketStarter"
 
 @StoreInject(getStore())
 class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
@@ -79,14 +80,14 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
       }
     })
 
-    sktMsgListener.add(SKT_MAG_TYPE.AUTH, bundlePkgName, (data: AuthDataVo, error) => {
+    dragonV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LOGIN, bundlePkgName, (data: AuthDataVo, error) => {
       if (error) {
         return;
       }
 
       if (!data) {
         global.closeSubGame({
-          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.AUTH
+          confirmContent: lang.write(k => k.InitGameModule.FetcherFaild) + '-' + SKT_MAG_TYPE.LOGIN
         });
         return;
       }
@@ -125,11 +126,19 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
 
       }, 0.1)
     })
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-      token: localStorage.getItem("token"),
-      gameId: config.gameId
-    });
-    sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
+    // dragonV2GameLogin();
+    const msgObj = dragonV2WebSocketDriver.loginGame(SKT_MAG_TYPE.LOGIN)
+    msgObj.bindReceiveHandler((message) => {
+      if (!message.data.success) {
+        global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "认证失败" }) })
+      }
+    })
+    //超时
+    msgObj.bindTimeoutHandler(() => {
+      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
+      return false
+    })
+    dragonV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
       this.comp.unschedule(this.betCallbackFun);
       this.betCallbackFun = undefined;
       this.isBetResult = true;
@@ -149,7 +158,7 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
       const si = cacheData.rollerLaunchResult.dl.si[0];
       if (si.gameType === GameType.SUBGAME2 || this.comp.props.gameTypeInfo.viewGameType === GameType.SUBGAME2) {
         //每局的锁定图标
-        cacheData.fixedChessboardIcon = si.fixedChessboardIcon;
+        cacheData.fixedChessboardIcon = si.fixedChessboardIconAndAmount;
       }
       if (si.fireRingSwitch) { // 龙喷火
         this.comp.scheduleOnce(() => {
@@ -169,7 +178,6 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
       for (let i = 0; i < rollerId.length; i++) {
         rollerId[i]--;
       }
-      console.log("rollerId ", si.rollerId)
 
       const localLeftCount = this.comp.props.gameTypeInfo.leftCount;
       let leftCount = si.freeCount;
@@ -205,14 +213,14 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
     })
 
     // 更新金额
-    sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
+    dragonV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.REFRESHCOINS, bundlePkgName, (data, error) => {
       this.dispatch(updateGold(data));
     })
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
+    dragonV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT, bundlePkgName, (data: JackpotData[], error) => {
       this.dispatch(updateJackpotDatas(data))
     })
     /* 更新jackpot */
-    sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data: number, error) => {
+    dragonV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JACKPOT_TOTAL, bundlePkgName, (data: number, error) => {
       if (this.comp.props.positionId >= 6) {
         this.dispatch(updateJackpotAmount(data))
       }
@@ -226,7 +234,6 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
   private sendBet() {
     if (!this.isAuthDone) return
     if (!this.isBetResult) {
-      console.log("已经发送过了下注，不能重复发送，等待服务器返回")
       return;
     }
 
@@ -258,18 +265,35 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
     this.betCallbackFun = this.betListenerTimeHandle.bind(this);
     this.comp.schedule(this.betCallbackFun, 10);
     if (this.positionId && this.comp.props.positionId !== this.positionId) {
+      this.positionId = this.comp.props.positionId
       this.rollerPanelViewModel.comp.hidePyrosphere(3)
     } else {
       this.positionId = this.comp.props.positionId
+      this.rollerPanelViewModel.comp.hidePyrosphere(2)
     }
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
-      "positionId": this.comp.props.positionId,
-      "tableId": cacheData.authData.tableId,
+    const msgObj = dragonV2WebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
+      positionId: this.comp.props.positionId,
+      tableId: cacheData.authData.tableId,
+      gameId: config.gameId,
+    }, {
+      timeOut: 10000
     });
+    this.sendBetTimeOutHandle(msgObj);
     this.rollerPanelViewModel.comp.oldFireCircle()
   }
 
-
+  private sendBetTimeOutHandle(msgObj: SktMessager<SKT_MAG_TYPE>) {
+    msgObj.bindReceiveHandler((message) => {
+      if (!message.data.success) {
+        global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }) })
+      }
+    })
+    //超时
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
+  }
   public openRule() {
     const rulePanelViewMode = new DragonV2RulePanelViewModel()
       .mountView(sourceManageSeletor().getFile(PrefabPathDefine.RULEPANEL).source)
@@ -289,7 +313,7 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
   }
 
   protected unMountCallBack(): void {
-    sktMsgListener.removeById(bundlePkgName)
+    dragonV2WebSocketDriver.sktMsgListener.removeById(bundlePkgName)
     this.footerViewModel.unMount();
     this.headerViewModel.unMount();
     this.rollerPanelViewModel.unMount();

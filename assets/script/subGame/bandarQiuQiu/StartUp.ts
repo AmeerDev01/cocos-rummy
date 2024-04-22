@@ -6,14 +6,10 @@ import { global } from "../../hall"
 export default (boardNode: Node) => {
 	startUp(boardNode)
 	return () => {
-		if (!mainGameViewModel) {
-			global.closeSubGame({ isPre: true })	
-		} else {
-			mainGameViewModel.unMount()
-			bandarQiuQiu_Audio.remove()
-		}
+		mainGameViewModel && mainGameViewModel.unMount()
+		bandarQiuQiu_Audio && bandarQiuQiu_Audio.remove()
 
 		removeInstance()
-		
+
 	}
 }

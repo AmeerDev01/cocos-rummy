@@ -106,14 +106,17 @@ export class Fruit777_RollerPanel extends BaseComponent<IState, IProps, IEvent> 
 			})
 		}
 		if (key === "jackpotAmount") {
-			if (footerViewModel.comp.getPositionData().value * config.linesQueueNum <= 1000) {
+			// if (footerViewModel.comp.getPositionData().value * config.linesQueueNum <= 1000) {
+			// 	return
+			// }
+			if (footerViewModel.comp.getPositionData().positionId <= 6) {
 				return
 			}
-			this.taskScheduler.joinqQueue(new Task((done) => {
+			this.taskScheduler && this.taskScheduler.joinQueue(new Task((done) => {
 				this.stepNumber && this.stepNumber.stop()
 				this.stepNumber = new StepNumber(value.pre, value.cur, (num) => {
 					// this.propertyNode && this.propertyNode.props_Label_up_goldNum && (this.propertyNode.props_Label_up_goldNum.string = (+num.toFixed(0)).formatAmountWithCommas())
-					this.propertyNode && this.propertyNode.props_Label_jackpot_num && (this.propertyNode.props_Label_jackpot_num.string = num.formatAmountWithCommas())
+					this.propertyNode && this.propertyNode.props_Label_jackpot_num && (this.propertyNode.props_Label_jackpot_num.string = num.formatAmountWithCommas().split('.')[0])
 				}, () => done())
 				this.stepNumber.start()
 			}))
@@ -148,12 +151,12 @@ export class Fruit777_RollerPanel extends BaseComponent<IState, IProps, IEvent> 
 					if (labelNum) {
 						const pre = labelNum.string.replace(/,/g, '')
 						const cur = (footerViewModel.comp.getPositionData().value * config.linesQueueNum * config.winning.find(i => i.name === 'jackpot').minRate)
-						this.taskScheduler.joinqQueue(new Task((done) => {
+						this.taskScheduler && this.taskScheduler.joinQueue(new Task((done) => {
 							this.stepNumber && this.stepNumber.stop()
 							this.stepNumber = new StepNumber(+pre, cur, (num) => {
 								if (this.propertyNode) {
 									const _labelNum = this.propertyNode.props_Label_jackpot_num
-									_labelNum && gameBoardViewModel && gameBoardViewModel.currentGameViewModel && (_labelNum.string = (+num.toFixed(0)).formatAmountWithCommas())
+									_labelNum && gameBoardViewModel && gameBoardViewModel.currentGameViewModel && (_labelNum.string = (+num.toFixed(2)).formatAmountWithCommas())
 								}
 							}, () => done())
 							this.stepNumber.start()

@@ -9,13 +9,13 @@ import OnlineViewModel from '../viewModel/BandarOnlineViewModel';
 import { mainGameViewModel, playChip, playGetCoin, sourceManageSelector, stopBet } from '../index';
 import { PrefabPathDefine } from '../sourceDefine/prefabDefine';
 import config, { initBetData } from '../config';
-import { SKT_MAG_TYPE, sktInstance } from '../socketConnect';
+import { SKT_MAG_TYPE, bandarWebSocketDriver } from '../socketConnect';
 import TaskScheduler, { Task } from '../../../utils/TaskScheduler';
 import { WinUser, changeGoldDataAction, setLastBetAction, setNewBetDataAction } from '../store/actions/bet';
 import { footerViewModel, onlineViewModel, usersViewModel } from '../viewModel/BandarGameBoardViewModel';
 const { ccclass, property } = _decorator;
 
-type BetInfo = {
+type BetInfo = { 
 	index: number,
 	userId: string,
 	isMe: boolean,
@@ -63,6 +63,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 	private taskScheduler = new TaskScheduler();
 	public sendBet: SendBet = null;
 	private betId: number = 0;
+	public isMe:boolean //是否当前用户下注
 	start() {}
 
 	protected propertyNode = {
@@ -119,6 +120,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 			// this.amountArr.push(this.sendBet);	
 			return
 		  };
+		  this.isMe = false;
 		  this.flyChip(value.cur)
 		}
 		if (key === 'cancelBetData') {
@@ -154,7 +156,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 	  if(key === "allWinUsers"){
 		  // console.log("allWinUsers",value.cur);
 		if(!value.cur){ return }
-		this.taskScheduler.joinqQueue(new Task((done)=>{
+		this.taskScheduler.joinQueue(new Task((done)=>{
 			window.setTimeout(() => {
 				if(mainGameViewModel.isUnMount){ return }
 				if(value.cur){
@@ -166,7 +168,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 			}, 100)
 			
 			window.setTimeout(() => done(), 1000)
-		}),false).joinqQueue(new Task((done)=>{
+		}),false).joinQueue(new Task((done)=>{
 			window.setTimeout(() => {
 				if(mainGameViewModel.isUnMount){ return }
 				if(!value.cur){
@@ -188,7 +190,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 			},100)
 		
 			window.setTimeout(()=>done(),1000)
-		}),false).joinqQueue(new Task((done)=>{
+		}),false).joinQueue(new Task((done)=>{
 			window.setTimeout(() => {
 				if(mainGameViewModel.isUnMount){ return }
 				// 清理下注区域数据
@@ -208,7 +210,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 			if (value.cur === GameStatus.STOP_BET) {
 				if (mainGameViewModel.isUnMount) { return }
 				this.lastArr=[...this.amountArr];
-				this.taskScheduler.joinqQueue(new Task((done) => {
+				this.taskScheduler.joinQueue(new Task((done) => {
 					window.setTimeout(() => {
 						if (mainGameViewModel.isUnMount) { return }
 						if (value.cur === GameStatus.STOP_BET && this.props) {
@@ -220,7 +222,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 					},4000)
 					
 					window.setTimeout(() => done(), 1000)
-				}),false).joinqQueue(new Task((done) => {
+				}),false).joinQueue(new Task((done) => {
 					window.setTimeout(() => {
 						if(mainGameViewModel.isUnMount){ return }
 						this.flyChipToWinArea();
@@ -248,6 +250,17 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 	private isBetStatus(): boolean {
 		return this.props.gameStatus === GameStatus.BET;
 	}
+	private isPower(value: string) {
+		if (this.props.tips && this.props.tips.length > 0) {
+			for (let i = 0; i < this.props.tips.length; i++) {
+				const power = this.props.tips[i];
+				if (value === power.name.toLowerCase()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * 自己下注
@@ -262,13 +275,13 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 		if (this.betLoading) {
 			return;
 		}
-		if (this.props.tips && this.props.tips.length > 0) {
+		if (this.props.tips && this.props.tips.length > 0  && this.isPower("vip")) {
 			return;
 		}
-		if (this.isLockBet = this.props.gold < 5000) {
+		if (this.isLockBet = this.props.gold < config.gameOption.unlockBetMinGold) {
 			return;
 		}
-		if (this.props.gold < this.props.selectChip*6) {
+		if (this.props.gold < this.props.selectChip * 6) {
 			// 提示用户余额不足
 			let bet_remind = footerViewModel.comp.getPropertyNode().props_spr_bet_remind as Node 
 			bet_remind.active = true;
@@ -283,6 +296,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 		const betData = initBetData(this.props.myInfo.index, this.props.myInfo.memberId, betType, this.props.selectChip);
 		betData.isMyBet = true;//当前用户是否下注
 		this.betLoading = true;
+		this.isMe = true ;
 		this.sendBet = {
 			roomId: gameCacheData.roomId,
             memberId: this.props.myInfo.memberId,
@@ -293,7 +307,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 			betId:betData.betId
 		}
 	   // 下注信息发送给服务器
-	   sktInstance.sendSktMessage(SKT_MAG_TYPE.BET_ALL, this.sendBet);
+	   bandarWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.BET_ALL, this.sendBet);
 	   this.flyChip(betData);
 
 	//    this.amountArr.push(this.sendBet);
@@ -327,7 +341,9 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 			const uiTransform = this.node.getComponent(UITransform);
 			const startPosition = this.getBetStartPosition(betData);
 			chipNode.setWorldPosition(uiTransform.convertToWorldSpaceAR(startPosition));
-			tween(chipNode).to(0.3, { position: endPosition , angle:-radom,},{easing: 'quintOut'}).start();
+			tween(chipNode).to(0.5, { position: endPosition, angle: -radom, }, { easing: 'quintOut' }).call(() => {
+				viewModel && ((viewModel.comp.getPropertyNode().props_ChipTail as Node).active = false);
+			}).start();
 			// if (!isWinRateBet && betData.index === config.gameOption.winRateMaxIndex) {
 			if (betData.index === config.gameOption.winRateMaxIndex) {
 				//判定是否是未展示星星的区域数组 若未展示，返回区域下标 否（即已展示） 返回-1
@@ -439,7 +455,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 
     /** 创造对应选取的金币  */
 	private createChip(chipValue: number, parent: Node): ChipViewModel {
-		return new ChipViewModel().mountView(sourceManageSelector().getFile(PrefabPathDefine.MAIN_CHIP).source).appendTo(parent).connect().setProps({ value: chipValue });
+		return new ChipViewModel().mountView(sourceManageSelector().getFile(PrefabPathDefine.MAIN_CHIP).source).appendTo(parent).connect().setProps({ value: chipValue, isMe:this.isMe });
 	}
 
 	/** 获得下注筹码飞的开始坐标 */
@@ -628,7 +644,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 
 	private  copyBetInfo(betInfos: BetInfo[], parent: Node, odds: number): BetInfo[] {
 		const arr: BetInfo[] = [];
-
+		this.isMe = false;
 		new Array(odds).fill(0).forEach(v => {
 			betInfos.forEach(betInfo => {
 				arr.push({
@@ -788,6 +804,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 		// console.log("cancelBetData",cancelBetData);
 		
 		if (cancelBetData) {
+			let recycleChip = false;
 			const betInfos = this.betAreaInfo.get(cancelBetData.betType);
 			// console.log("betInfos",betInfos);
 			if (betInfos === undefined) return;
@@ -797,26 +814,28 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 				
 				for (let i = 0; i < chips.length; i++) {
 					const chip = chips[i];
-					if (chip.comp.props.value === cancelBetData.betAmount) {
+					if (chip.comp.props && chip.comp.props.value && chip.comp.props.value === cancelBetData.betAmount) {
 						chips.splice(i, 1);
 						this.chipFlyToHead(chip, undefined);
+						recycleChip = true;
 						break;
 					}
 				}
 			}
 
-			const betArea = this.getNodeByBetType(cancelBetData.betType).getChildByName("Layout_bet_chips");
-			// this.updateBetAreaGold(cancelBetData, betArea.parent);
-
-			const betAmount = cancelBetData.betAmount < 10000 ? cancelBetData.betAmount.formatAmountWithCommas() : cancelBetData.betAmount.formatAmountWithLetter();
-
-			global.hallDispatch(
-				addToastAction({
-					position: ToastPosition.MIDDLE,
-					content:
-						lang.write(k => k.InitGameModule.BetFaild, {}, { placeStr: "{0} 筹码下注失败" }).format(betAmount)
-				})
-			)
+			if (recycleChip) {
+				
+				const betArea = this.getNodeByBetType(cancelBetData.betType).getChildByName("Layout_bet_chips");
+				// this.updateBetAreaGold(cancelBetData, betArea.parent);
+				const betAmount = cancelBetData.betAmount < 10000 ? cancelBetData.betAmount.formatAmountWithCommas() : cancelBetData.betAmount.formatAmountWithLetter();
+				global.hallDispatch(
+					addToastAction({
+						position: ToastPosition.MIDDLE,
+						content:
+							lang.write(k => k.InitGameModule.BetFaild, {}, { placeStr: "{0} 筹码下注失败" }).format(betAmount)
+					})
+				)
+			}
 		}
 	}
 

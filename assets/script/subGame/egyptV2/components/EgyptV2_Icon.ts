@@ -1,9 +1,13 @@
-import { Node, UITransform, Vec3, instantiate, sp, Sprite, Label, Mask, Graphics } from "cc";
+import { Node, UITransform, Vec3, instantiate, sp, Sprite, Label, Mask, Graphics, Component } from "cc";
 import { sourceManageSeletor } from "../index";
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine";
 import { getNodeByNameDeep } from "../../../utils/tool";
 import { IconId } from "../type";
 import config from "../config";
+
+class IconComponent extends Component {
+
+}
 
 export class EgyptV2Icon {
   private node: Node;
@@ -23,12 +27,16 @@ export class EgyptV2Icon {
   private isPoolObject = true;
   private callback;
 
+  private iconComponent: IconComponent;
+
   constructor(iconConfig, isPoolObject: boolean = true) {
     this.iconConfig = iconConfig;
     this.isPoolObject = isPoolObject;
     this.node = instantiate(sourceManageSeletor().getFile(PrefabPathDefine.ICON).source);
     this.node.getComponent(UITransform).width = config.normalRollOption.singleRollerWidth;
     this.node.getComponent(UITransform).height = config.normalRollOption.singleRollerHeight;
+
+    this.iconComponent = this.node.addComponent(IconComponent)
 
     this.faceNode = getNodeByNameDeep("face", this.node);
     this.faceAnimationNode = getNodeByNameDeep("face-animation", this.node);
@@ -61,11 +69,13 @@ export class EgyptV2Icon {
 
   private listenerSkeletonEvent() {
     this.skeleton.setCompleteListener(() => {
-      if (this.node.isValid && this.callback) {
-        this.callback && this.callback();
-        this.callback = null;
-        this.hideWin();
-      }
+      this.iconComponent.scheduleOnce(() => {
+        if (this.node.isValid && this.callback) {
+          this.callback && this.callback();
+          this.callback = null;
+          this.hideWin();
+        }
+      })
     })
   }
 

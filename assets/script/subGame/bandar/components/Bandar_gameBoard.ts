@@ -5,7 +5,7 @@ import { countdown } from '../../yxx/store/actions/gameFlow';
 import { gameCacheData, GameStatus, HeadType, MemberInfoVo } from '../type';
 import { setGameStatusAction, setMyWinLose, setUsersInfoAction } from '../store/actions/game';
 import { playBtnClick, playMyLose, playMyWin, mainGameViewModel } from '../index';
-import { SKT_MAG_TYPE, sktInstance } from '../socketConnect';
+import { bandarWebSocketDriver, SKT_MAG_TYPE } from '../socketConnect';
 import { bankerCardViewModel, betAreaViewModel, loseViewModel, userCardViewModel, winViewModel } from '../viewModel/BandarGameBoardViewModel';
 import TaskScheduler, { Task } from '../../../utils/TaskScheduler';
 import { setNewBetDataAction } from '../store/actions/bet';
@@ -90,7 +90,7 @@ export class Bandar_gameBoard extends BaseComponent<IState, IProps, IEvent> {
 
 	  this.propertyNode.props_bandar_ternd.on(Node.EventType.TOUCH_END,()=>{
 		 playBtnClick();
-		 sktInstance.sendSktMessage(SKT_MAG_TYPE.HISTORY,gameCacheData.roomId)
+		 bandarWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.HISTORY,{data:gameCacheData.roomId})
          this.events.openHistoryPanel()
 	  })
 
@@ -102,7 +102,7 @@ export class Bandar_gameBoard extends BaseComponent<IState, IProps, IEvent> {
 	   }
 	   if(key==="myWinLose"){
 			if(value.cur===0){ return }
-			this.taskScheduler.joinqQueue(new Task((done)=>{
+			this.taskScheduler.joinQueue(new Task((done)=>{
 
 				window.setTimeout(()=>{
 					if(value.cur===1){
@@ -122,7 +122,7 @@ export class Bandar_gameBoard extends BaseComponent<IState, IProps, IEvent> {
 					}
 				},2000)
 				window.setTimeout(()=>done(),1000)
-			}),false).joinqQueue(new Task((done)=>{
+			}),false).joinQueue(new Task((done)=>{
 				this.dispatch(setMyWinLose(0))
 				window.setTimeout(()=>done(),1000)
 			}),false)

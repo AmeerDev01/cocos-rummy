@@ -275,7 +275,7 @@ export class Bandar_card_banker extends BaseComponent<IState, IProps, IEvent> {
 		   window.setTimeout(() => done(), 300);
 		})
 
-		this.taskScheduler.joinqQueue(task1,false).joinqQueue(task2,false).joinqQueue(task3,false)
+		this.taskScheduler.joinQueue(task1,false).joinQueue(task2,false).joinQueue(task3,false)
 	}
 
 	/**改变牌资源 */

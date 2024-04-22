@@ -54,8 +54,8 @@ export class PhoenixV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		props_toggle_fast: new Node(),
 		props_min_btn: new Node(),
 		props_max_btn: new Node(),
-		props_maxBet_btn: new Node(),
-		props_SZX_bz_btn: new Node(),
+		// props_maxBet_btn: new Node(),
+		// props_SZX_bz_btn: new Node(),
 		props_goodluck: new Node(),
 		props_word_down_menang: new Node(),
 		props_spr_nomoney: new Node(),
@@ -124,47 +124,51 @@ export class PhoenixV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			
 		})
 		this.propertyNode.props_startButton.on(Node.EventType.TOUCH_END, () => {
-			// this.stepNumberV2.stop();
+			const isDisable = this.getBtnStatus(this.propertyNode.props_startButton)
+			if (!isDisable) {
+				phoenixV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
+			}
 			this.unscheduleLong();
 			if (this.isLongPress) {
 				this.isLongPress = false;
 				return;
 			};
+			if(!mainViewModel.isAuthDone) return
 			// 在结束的时候才判断余额是否不足
-		if (this.isMain() && this.isEnd() && this.props.gold < calBetAmount(this.props.positionId)) {
-			global.openShop();
-			return;
-		}
+			if (this.isMain() && this.isEnd() && this.props.gold < calBetAmount(this.props.positionId)) {
+				global.openShop();
+				return;
+			}
 
-		if (this.props.betDropDownlist) {
-			// 每次单击都要隐藏自动下注下拉列表
-			this.dispatch(setBetDropDownList(false))
-		}
+			if (this.props.betDropDownlist) {
+				// 每次单击都要隐藏自动下注下拉列表
+				this.dispatch(setBetDropDownList(false))
+			}
 
-		// 小游戏中自动，所以这里不做任何处理
-		if (this.isSubGame()) {
-			return;
-		}
+			// 小游戏中自动，所以这里不做任何处理
+			if (this.isSubGame()) {
+				return;
+			}
 
-		// 只有在主游戏中，点击就是取消自动状态
-		if (isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)) {
-			this.dispatch(setAutoLauncherInfo({
-				autoLauncherType: AutoLauncherType.NONE,
-				totalCount: 0,
-				leftCount: 0
-			}))
-		} else {
-			// 游戏状态不为结束状态并且不切换游戏时，才能下注
-			if (this.isEnd() && !this.isChangeGame()) {
-				this.events.onSendBet();
-			} else if (!this.isSubGame2() && this.props.rollerStatus === RollerStatus.RUNNING && !this.executeEnding) {
-				if (cacheData.rollerLaunchResult) {
-					this.dispatch(updateRollerStatus(RollerStatus.ENDING));
-				} else {
-					this.executeEnding = true;
+			// 只有在主游戏中，点击就是取消自动状态
+			if (isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)) {
+				this.dispatch(setAutoLauncherInfo({
+					autoLauncherType: AutoLauncherType.NONE,
+					totalCount: 0,
+					leftCount: 0
+				}))
+			} else {
+				// 游戏状态不为结束状态并且不切换游戏时，才能下注
+				if (this.isEnd() && !this.isChangeGame()) {
+					this.events.onSendBet();
+				} else if (!this.isSubGame2() && this.props.rollerStatus === RollerStatus.RUNNING && !this.executeEnding) {
+					if (cacheData.rollerLaunchResult) {
+						this.dispatch(updateRollerStatus(RollerStatus.ENDING));
+					} else {
+						this.executeEnding = true;
+					}
 				}
 			}
-		}
 		})
 
 		this.propertyNode.props_toggle_fast.on(Toggle.EventType.TOGGLE, (e: Toggle) => {
@@ -174,7 +178,11 @@ export class PhoenixV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 		const amount = config.betSwitcher[0].amount;
 		this.propertyNode.props_min_btn.on(Node.EventType.TOUCH_END, () => {
-			phoenixV2_Audio.playOneShot(SoundPathDefine.MIN_COIN)
+			const isDisable = this.getBtnStatus(this.propertyNode.props_min_btn)
+			if (!isDisable) {
+				phoenixV2_Audio.playOneShot(SoundPathDefine.MIN_COIN)
+			}
+			// phoenixV2_Audio.playOneShot(SoundPathDefine.MIN_COIN)
 			if (this.isBtnDisable() || !this.propertyNode.props_min_btn.getComponent(Button).enabled) {
 				return;
 			}
@@ -185,7 +193,11 @@ export class PhoenixV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.updateSprMoney();
 		})
 		this.propertyNode.props_max_btn.on(Node.EventType.TOUCH_END, () => {
-			phoenixV2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
+			const isDisable = this.getBtnStatus(this.propertyNode.props_max_btn)
+			if (!isDisable) {
+				phoenixV2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
+			}
+			// phoenixV2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
 			if (this.isBtnDisable() || !this.propertyNode.props_max_btn.getComponent(Button).enabled) {
 				return;
 			}
@@ -196,29 +208,35 @@ export class PhoenixV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.updateSprMoney();
 		})
 		// 最大下注
-		this.propertyNode.props_maxBet_btn.on(Node.EventType.TOUCH_END, () => {
-			phoenixV2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
-			if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
-				return;
-			}
-			this.dispatch(updatePositionId(this.getMaxBetPositionId()));
-		})
+		// this.propertyNode.props_maxBet_btn.on(Node.EventType.TOUCH_END, () => {
+		// 	phoenixV2_Audio.playOneShot(SoundPathDefine.MAX_COIN)
+		// 	if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
+		// 		return;
+		// 	}
+		// 	this.dispatch(updatePositionId(this.getMaxBetPositionId()));
+		// })
 		// 帮助按钮
-		this.propertyNode.props_SZX_bz_btn.on(Node.EventType.TOUCH_END, () => {
-			phoenixV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
-			this.events.onOpenRule();
-		})
+		// this.propertyNode.props_SZX_bz_btn.on(Node.EventType.TOUCH_END, () => {
+		// 	phoenixV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
+		// 	this.events.onOpenRule();
+		// })
 		this.propertyNode.props_spr_nomoney.on(Node.EventType.TOUCH_END, () => {
+			phoenixV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
 			global.openShop();
 		})
 		this.propertyNode.props_btn_down_auto.getComponent(Button).node.on(Node.EventType.TOUCH_END, () => { //打开自动弹框
+			const isDisable = this.getBtnStatus(this.propertyNode.props_btn_down_auto)
+			if (!isDisable) {
+				phoenixV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
+			}
+			// phoenixV2_Audio.playOneShot(SoundPathDefine.BTN_CLICK)
 			if(this.getAutoLauncherType()!== AutoLauncherType.NONE){
 				mainViewModel.comp.clearAuto()
 			}else{
-				if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
+				// if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
+				if (this.isBtnDisable()) {
 					return;
-				}else if
-				(this.isMain()){
+				}else if(this.isMain()){
 					mainViewModel.comp.openAoutoPanl()
 				}
 			}
@@ -343,13 +361,16 @@ export class PhoenixV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	private updateBtnStatus(btnNode: Node, isDisable: boolean) {
 		btnNode.getChildByName("disable").active = isDisable;
 	}
+	private getBtnStatus(btnNode: Node) {
+		return btnNode.getChildByName("disable").active
+	}
 
 	/**更新按钮禁用状态 */
 	private updateBtnDisableStatus() {
 		const isDisable = this.isBtnDisable();
 		this.updateBtnStatus(this.propertyNode.props_max_btn, isDisable);
 		this.updateBtnStatus(this.propertyNode.props_min_btn, isDisable);
-		this.updateBtnStatus(this.propertyNode.props_maxBet_btn, isDisable);
+		// this.updateBtnStatus(this.propertyNode.props_maxBet_btn, isDisable);
 		if (!isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)) {
 			this.updateBtnStatus(this.propertyNode.props_btn_down_auto,isDisable);
 		} else {
@@ -365,7 +386,7 @@ export class PhoenixV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		// this.propertyNode.props_SZX_bz_btn.getComponent(Sprite).grayscale = isDisable;
 		this.propertyNode.props_max_btn.getComponent(Button).enabled = !isDisable;
 		this.propertyNode.props_min_btn.getComponent(Button).enabled = !isDisable;
-		this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = !isDisable;
+		// this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = !isDisable;
 		this.propertyNode.props_btn_down_auto.getComponent(Button).enabled = !isDisable;
 		// this.propertyNode.props_SZX_bz_btn.getComponent(Button).enabled = !isDisable;
 	}
@@ -418,15 +439,15 @@ export class PhoenixV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	private updateMaxBetStatus() {
 		// const isMaxBet = this.props.positionId >= this.getMaxBetPositionId();
 
-		if (this.isBtnDisable()) {
-			this.updateBtnStatus(this.propertyNode.props_maxBet_btn, true);
-			// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = true;
-			this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = false;
-		} else {
-			this.updateBtnStatus(this.propertyNode.props_maxBet_btn, false);
-			// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = false;
-			this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = true;
-		}
+		// if (this.isBtnDisable()) {
+		// 	this.updateBtnStatus(this.propertyNode.props_maxBet_btn, true);
+		// 	// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = true;
+		// 	this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = false;
+		// } else {
+		// 	this.updateBtnStatus(this.propertyNode.props_maxBet_btn, false);
+		// 	// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = false;
+		// 	this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = true;
+		// }
 	}
 
 	private updateBetInfo() {
@@ -442,7 +463,7 @@ export class PhoenixV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 		new StepNumber(value.pre, value.cur, (num) => {
 			if (this.node && this.node.isValid) {
-				const value = Number(num.toFixed(0));
+				const value = Number(num);
 				this.propertyNode.props_bottom_score.string = value.formatAmountWithCommas();
 			}
 		}).set(config.normalRollOption.numberRollerTime).start();

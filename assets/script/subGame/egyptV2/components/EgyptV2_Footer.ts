@@ -53,8 +53,8 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		props_toggle_fast: new Node(),
 		props_min_btn: new Node(),
 		props_max_btn: new Node(),
-		props_maxBet_btn: new Node(),
-		props_SZX_bz_btn: new Node(),
+		// props_maxBet_btn: new Node(),
+		// props_SZX_bz_btn: new Node(),
 		props_goodluck: new Node(),
 		props_jackpot02: new Node(),
 		props_spr_nomoney: new Node(),
@@ -122,19 +122,29 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.unscheduleLong();
 		})
 		this.propertyNode.props_btn_down_auto.getComponent(Button).node.on(Node.EventType.TOUCH_END, () => { //打开自动弹框
-			if(this.getAutoLauncherType()!== AutoLauncherType.NONE){
+			const isDisable = this.getBtnStatus(this.propertyNode.props_btn_down_auto)
+			if (!isDisable) {
+				egyptv2_Audio.playOneShot(SoundPathDefine.btn_click)
+			}
+			// egyptv2_Audio.playOneShot(SoundPathDefine.btn_click)
+			if (this.getAutoLauncherType() !== AutoLauncherType.NONE) {
 				mainViewModel.comp.clearAuto()
-			}else{
-				if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
+			} else {
+				// if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).interactable) {
+				if (this.isBtnDisable()) {
 					return;
-				}else if
-				(this.isMain()){
+				} else if
+					(this.isMain()) {
 					mainViewModel.comp.openAoutoPanl()
 				}
 			}
 		})
-		
+
 		this.propertyNode.props_startButton.on(Node.EventType.TOUCH_END, () => {
+			const isDisable = this.getBtnStatus(this.propertyNode.props_startButton)
+			if (!isDisable) {
+				egyptv2_Audio.playOneShot(SoundPathDefine.btn_click)
+			}
 			// this.stepNumberV2.stop();
 			this.unscheduleLong();
 			if (this.isLongPress) {
@@ -186,45 +196,46 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 		const amount = config.betSwitcher[0].amount;
 		this.propertyNode.props_min_btn.on(Node.EventType.TOUCH_END, () => {
-			egyptv2_Audio.playOneShot(SoundPathDefine.minCoin)
-			if (this.isBtnDisable() || !this.propertyNode.props_min_btn.getComponent(Button).enabled) {
+			if (this.isBtnDisable() || !this.propertyNode.props_min_btn.getComponent(Button).interactable) {
 				return;
 			}
 			if (this.props.positionId <= amount[0].positionId) {
 				return;
 			}
+
+			egyptv2_Audio.playOneShot(SoundPathDefine.minCoin)
 			this.dispatch(updatePositionId(this.props.positionId - 1));
 
 			this.updateSprMoney();
 		})
 		this.propertyNode.props_max_btn.on(Node.EventType.TOUCH_END, () => {
-			egyptv2_Audio.playOneShot(SoundPathDefine.maxCoin)
-			if (this.isBtnDisable() || !this.propertyNode.props_max_btn.getComponent(Button).enabled) {
+			if (this.isBtnDisable() || !this.propertyNode.props_max_btn.getComponent(Button).interactable) {
 				return;
 			}
 			if (this.props.positionId >= amount[amount.length - 1].positionId) {
 				return;
 			}
+			egyptv2_Audio.playOneShot(SoundPathDefine.maxCoin)
 			this.dispatch(updatePositionId(this.props.positionId + 1));
 
 			this.updateSprMoney();
 		})
 		// 最大下注
-		this.propertyNode.props_maxBet_btn.on(Node.EventType.TOUCH_END, () => {
-			egyptv2_Audio.playOneShot(SoundPathDefine.maxCoin)
-			if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).enabled) {
-				return;
-			}
-			this.dispatch(updatePositionId(this.getMaxBetPositionId()));
-		})
+		// this.propertyNode.props_maxBet_btn.on(Node.EventType.TOUCH_END, () => {
+		// 	if (this.isBtnDisable() || !this.propertyNode.props_maxBet_btn.getComponent(Button).interactable) {
+		// 		return;
+		// 	}
+		// 	egyptv2_Audio.playOneShot(SoundPathDefine.maxCoin)
+		// 	this.dispatch(updatePositionId(this.getMaxBetPositionId()));
+		// })
 		// 帮助按钮
-		this.propertyNode.props_SZX_bz_btn.on(Node.EventType.TOUCH_END, () => {
-			egyptv2_Audio.playOneShot(SoundPathDefine.btn_click)
-			this.events.onOpenRule();
-		})
-		this.propertyNode.props_spr_nomoney.on(Node.EventType.TOUCH_END, () => {
-			global.openShop();
-		})
+		// this.propertyNode.props_SZX_bz_btn.on(Node.EventType.TOUCH_END, () => {
+		// 	egyptv2_Audio.playOneShot(SoundPathDefine.btn_click)
+		// 	this.events.onOpenRule();
+		// })
+		// this.propertyNode.props_spr_nomoney.on(Node.EventType.TOUCH_END, () => {
+		// 	global.openShop();
+		// })
 	}
 
 	private isEnd() {
@@ -244,10 +255,10 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			limitNode.active = false;
 			startBgNode.active = false;
 			stopBgNode.active = false;
-			props_sg_free.active=true;
+			props_sg_free.active = true;
 			props_sg_free.getChildByName('props_label_sg_num').getComponent(Label).string = this.props.gameTypeInfo.leftCount + "";
 		} else {
-			props_sg_free.active=false
+			props_sg_free.active = false
 			// 开始按钮背景，
 			startBgNode.active = !auto && this.props.rollerStatus === RollerStatus.END;
 			// 停止滚动按钮背景
@@ -286,7 +297,7 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	private updateStartButtonDisable() {
 		const auto = isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo);
 		// 结束过程中和不是自动游戏时，开始按钮禁用
-		if(auto){
+		if (auto) {
 			this.updateBtnStatus(this.propertyNode.props_startButton, true);
 			return
 		}
@@ -294,7 +305,7 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 			this.updateBtnStatus(this.propertyNode.props_startButton, true);
 			// this.propertyNode.props_startButton.getComponent(Sprite).grayscale = true;
 		} else {
-			if(!this.isChangeGame()){
+			if (!this.isChangeGame()) {
 				this.updateBtnStatus(this.propertyNode.props_startButton, false);
 			}
 			// this.propertyNode.props_startButton.getComponent(Sprite).grayscale = false;
@@ -346,29 +357,28 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		const isDisable = this.isBtnDisable();
 		this.updateBtnStatus(this.propertyNode.props_max_btn, isDisable);
 		this.updateBtnStatus(this.propertyNode.props_min_btn, isDisable);
-		this.updateBtnStatus(this.propertyNode.props_maxBet_btn, isDisable);
+		// this.updateBtnStatus(this.propertyNode.props_maxBet_btn, isDisable);
 		if (!isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)) {
-			this.updateBtnStatus(this.propertyNode.props_btn_down_auto,isDisable);
+			this.updateBtnStatus(this.propertyNode.props_btn_down_auto, isDisable);
 		} else {
 			if (!this.isMain()) {
-				this.updateBtnStatus(this.propertyNode.props_btn_down_auto,true);
+				this.updateBtnStatus(this.propertyNode.props_btn_down_auto, true);
 			} else {
-				this.updateBtnStatus(this.propertyNode.props_btn_down_auto,false);
+				this.updateBtnStatus(this.propertyNode.props_btn_down_auto, false);
 			}
 		}
-		// this.propertyNode.props_max_btn.getComponent(Sprite).grayscale = isDisable;
-		// this.propertyNode.props_min_btn.getComponent(Sprite).grayscale = isDisable;
-		// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = isDisable;
-		// this.propertyNode.props_SZX_bz_btn.getComponent(Sprite).grayscale = isDisable;
-		this.propertyNode.props_max_btn.getComponent(Button).enabled = !isDisable;
-		this.propertyNode.props_min_btn.getComponent(Button).enabled = !isDisable;
-		this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = !isDisable;
-		this.propertyNode.props_btn_down_auto.getComponent(Button).enabled = !isDisable;
-		// this.propertyNode.props_SZX_bz_btn.getComponent(Button).enabled = !isDisable;
+		this.propertyNode.props_max_btn.getComponent(Button).interactable = !isDisable;
+		this.propertyNode.props_min_btn.getComponent(Button).interactable = !isDisable;
+		this.propertyNode.props_btn_down_auto.getComponent(Button).interactable = !isDisable;
 	}
 
 	private updateBtnStatus(btnNode: Node, isDisable: boolean) {
 		btnNode.getChildByName("disable").active = isDisable;
+		btnNode.getComponent(Button).interactable = !isDisable;
+	}
+
+	private getBtnStatus(btnNode: Node) {
+		return btnNode.getChildByName("disable").active
 	}
 
 	/**更新最大最小状态 */
@@ -381,22 +391,22 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		if (isDisable || amount[amount.length - 1].positionId === this.props.positionId) {
 			this.updateBtnStatus(this.propertyNode.props_max_btn, true);
 			// this.propertyNode.props_max_btn.getComponent(Sprite).grayscale = true;
-			this.propertyNode.props_max_btn.getComponent(Button).enabled = false;
+			this.propertyNode.props_max_btn.getComponent(Button).interactable = false;
 		} else {
 			this.updateBtnStatus(this.propertyNode.props_max_btn, false);
 			// this.propertyNode.props_max_btn.getComponent(Sprite).grayscale = false;
-			this.propertyNode.props_max_btn.getComponent(Button).enabled = true;
+			this.propertyNode.props_max_btn.getComponent(Button).interactable = true;
 		}
 
 
 		if (isDisable || this.props.positionId === amount[0].positionId) {
 			this.updateBtnStatus(this.propertyNode.props_min_btn, true);
 			// this.propertyNode.props_min_btn.getComponent(Sprite).grayscale = true;
-			this.propertyNode.props_min_btn.getComponent(Button).enabled = false;
+			this.propertyNode.props_min_btn.getComponent(Button).interactable = false;
 		} else {
 			this.updateBtnStatus(this.propertyNode.props_min_btn, false);
 			// this.propertyNode.props_min_btn.getComponent(Sprite).grayscale = false;
-			this.propertyNode.props_min_btn.getComponent(Button).enabled = true;
+			this.propertyNode.props_min_btn.getComponent(Button).interactable = true;
 		}
 
 		this.updateMaxBetStatus();
@@ -419,15 +429,15 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	private updateMaxBetStatus() {
 		// const isMaxBet = this.props.positionId >= this.getMaxBetPositionId();
 
-		if (this.isBtnDisable()) {
-			this.updateBtnStatus(this.propertyNode.props_maxBet_btn, true);
-			// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = true;
-			this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = false;
-		} else {
-			this.updateBtnStatus(this.propertyNode.props_maxBet_btn, false);
-			// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = false;
-			this.propertyNode.props_maxBet_btn.getComponent(Button).enabled = true;
-		}
+		// if (this.isBtnDisable()) {
+		// 	this.updateBtnStatus(this.propertyNode.props_maxBet_btn, true);
+		// 	// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = true;
+		// 	this.propertyNode.props_maxBet_btn.getComponent(Button).interactable = false;
+		// } else {
+		// 	this.updateBtnStatus(this.propertyNode.props_maxBet_btn, false);
+		// 	// this.propertyNode.props_maxBet_btn.getComponent(Sprite).grayscale = false;
+		// 	this.propertyNode.props_maxBet_btn.getComponent(Button).interactable = true;
+		// }
 	}
 
 	private updateBetInfo() {
@@ -437,13 +447,13 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	private updateScore(value: { pre: any, cur: any }) {
-		console.log(`updateScore: ${JSON.stringify(value)}`);
+		// console.log(`updateScore: ${JSON.stringify(value)}`);
 		this.propertyNode.props_goodluck.active = value.cur === 0;
 		this.propertyNode.props_bottom_score.node.active = value.cur > 0;
 
 		new StepNumber(value.pre, value.cur, (num) => {
 			if (this.node && this.node.isValid) {
-				const value = Number(num.toFixed(0));
+				const value = Number(num);
 				this.propertyNode.props_bottom_score.string = value.formatAmountWithCommas();
 			}
 		}).set(config.normalRollOption.numberRollerTime).start();
@@ -481,6 +491,7 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 				this.updateBtnDisableStatus();
 			} else if (key === 'positionId') {
 				this.updateBetInfo();
+				this.updateSprMoney();
 			} else if (key === 'gold') {
 				this.updateSprMoney();
 			} else if (key === 'winloss') {

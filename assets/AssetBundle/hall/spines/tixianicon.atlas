@@ -12,43 +12,43 @@ repeat: none
   offset: 0, 0
   index: -1
 10
-  rotate: true
-  xy: 1757, 77
-  size: 227, 150
-  orig: 227, 150
-  offset: 0, 0
-  index: -1
-11
   rotate: false
   xy: 2, 2
   size: 227, 150
   orig: 227, 150
   offset: 0, 0
   index: -1
-12
+11
   rotate: false
   xy: 231, 2
   size: 227, 150
   orig: 227, 150
   offset: 0, 0
   index: -1
-13
+12
   rotate: false
   xy: 460, 2
   size: 227, 150
   orig: 227, 150
   offset: 0, 0
   index: -1
-14
+13
   rotate: false
   xy: 689, 2
   size: 227, 150
   orig: 227, 150
   offset: 0, 0
   index: -1
-15
+14
   rotate: false
   xy: 918, 2
+  size: 227, 150
+  orig: 227, 150
+  offset: 0, 0
+  index: -1
+15
+  rotate: false
+  xy: 1147, 2
   size: 227, 150
   orig: 227, 150
   offset: 0, 0
@@ -103,13 +103,13 @@ repeat: none
   offset: 0, 0
   index: -1
 9
-  rotate: false
-  xy: 1147, 2
+  rotate: true
+  xy: 1757, 77
   size: 227, 150
   orig: 227, 150
   offset: 0, 0
   index: -1
-bao
+bao1
   rotate: true
   xy: 1909, 165
   size: 139, 105
@@ -130,7 +130,7 @@ q
   orig: 44, 45
   offset: 0, 0
   index: -1
-zi
+zi1
   rotate: true
   xy: 1909, 24
   size: 139, 105

@@ -140,38 +140,44 @@ export class EgyptV2_Main extends BaseComponent<IState, IProps, IEvent> {
 		this.listenerBetDropDownListEvent();
 
 		this.portraitSkLeft.setCompleteListener((x: sp.spine.TrackEntry) => {
-			if (this.node.isValid) {
-				if (x.animation.name !== 'static') {
-					this.portraitSkLeft.setAnimation(0, 'static', false)
-					this.changeGateAnimation();
+			this.scheduleOnce(() => {
+				if (this.node.isValid) {
+					if (x.animation.name !== 'static') {
+						this.portraitSkLeft.setAnimation(0, 'static', false)
+						this.changeGateAnimation();
+					}
 				}
-			}
+			})
 		})
 		this.portraitSkRight.setCompleteListener(() => {
-			if (this.node.isValid) {
-				this.portraitSkRight.setAnimation(0, 'static', false)
-			}
+			this.scheduleOnce(() => {
+				if (this.node.isValid) {
+					this.portraitSkRight.setAnimation(0, 'static', false)
+				}
+			})
 		})
 
 		this.gateSk.setCompleteListener((x: sp.spine.TrackEntry) => {
-			if (this.node.isValid) {
-				if (x.animation.name === 'shimen_kaimen') {
-				} else if (x.animation.name === 'shimen_guanmenhuocheng') {
-				} else if (x.animation.name === 'shimen_zhuanquanding') {
-				} else if (x.animation.name === 'shimen_guangmen') {
-					// 关门后隐藏转圈动画
-					this.propertyNode.props_aiji_zhuanquanding.active = false;
-					this.gateSk.setAnimation(0, 'shimen_kaimen', false)
-					// 与开门同步进行，关门后开门表示从小游戏切换到主游戏
-					this.scheduleOnce(() => {
-						// 如果下一个是主游戏，直接就结束动画了
-						if (this.isNextMainGame()) {
-							this.propertyNode.props_aiji_kaiguanmen.active = false;
-							this.subGameAnimationEndHandle(0);
-						}
-					}, 1)
+			this.scheduleOnce(() => {
+				if (this.node.isValid) {
+					if (x.animation.name === 'shimen_kaimen') {
+					} else if (x.animation.name === 'shimen_guanmenhuocheng') {
+					} else if (x.animation.name === 'shimen_zhuanquanding') {
+					} else if (x.animation.name === 'shimen_guangmen') {
+						// 关门后隐藏转圈动画
+						this.propertyNode.props_aiji_zhuanquanding.active = false;
+						this.gateSk.setAnimation(0, 'shimen_kaimen', false)
+						// 与开门同步进行，关门后开门表示从小游戏切换到主游戏
+						this.scheduleOnce(() => {
+							// 如果下一个是主游戏，直接就结束动画了
+							if (this.isNextMainGame()) {
+								this.propertyNode.props_aiji_kaiguanmen.active = false;
+								this.subGameAnimationEndHandle(0);
+							}
+						}, 1)
+					}
 				}
-			}
+			})
 		})
 	}
 
@@ -455,7 +461,7 @@ export class EgyptV2_Main extends BaseComponent<IState, IProps, IEvent> {
 	private updateJackpotAmount(updatePositionId: boolean, value: { pre: any, cur: any }) {
 		let begin = value.pre;
 		let end = value.cur;
-		if (calBetAmount(this.props.positionId) < config.betAmountLimit) {
+		if (this.props.positionId <= config.betAmountLimit) {
 			if (updatePositionId) {
 				begin = 0
 				if (value.pre) {

@@ -92,7 +92,7 @@ export class BlessedWealthy_dialogWin extends BaseComponent<IState, IProps, IEve
 				this.propertyNode.props_label_shuzi.node.active = false
 				window.setTimeout(() => {
 					this.propertyNode.props_label_shuzi.node.active = true
-					TaskSchedulerDefault().joinqQueue(new Task((done) => {
+					TaskSchedulerDefault().joinQueue(new Task((done) => {
 						(new StepNumber(value.pre, value.cur, (num) => {
 							this.propertyNode && this.propertyNode.props_label_shuzi && (this.propertyNode.props_label_shuzi.string = (+num.toFixed(0)).formatAmountWithCommas())
 						}, () => {
@@ -105,7 +105,7 @@ export class BlessedWealthy_dialogWin extends BaseComponent<IState, IProps, IEve
 					}))
 				}, 1000)
 			} else {
-				TaskSchedulerDefault().joinqQueue(new Task((done) => {
+				TaskSchedulerDefault().joinQueue(new Task((done) => {
 					(new StepNumber(value.pre, value.cur, (num) => {
 						this.propertyNode && this.propertyNode.props_label_shuzi && (this.propertyNode.props_label_shuzi.string = (+num.toFixed(0)).formatAmountWithCommas())
 					}, () => {

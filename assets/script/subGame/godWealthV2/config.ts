@@ -3,19 +3,19 @@ import { SpriteFramePathDefine } from "./sourceDefine/spriteDefine";
 import { DirectionType } from "./type";
 
 export default {
-    sktCode: "GodWealth",
-    name: "GodWealth",
-    gameId: 6,
-    testConfig: {
-        wsUrl: "",
-        token: ""
+  sktCode: "GodWealth",
+  name: "GodWealth",
+  gameId: 6,
+  testConfig: {
+    wsUrl: "",
+    token: ""
   },
   /**默认底注 */
   betAmount: 50,
   /**默认的列数 */
   columnCount: 5,
   /**下注金额上线点，用于配置jackpot金额的显示 */
-  betAmountLimit: 1000,
+  betAmountLimit: 6,
   /**游戏默认的固定参数 */
   normalRollOption: {
     /**开始按钮长按的事件 */
@@ -69,8 +69,8 @@ export default {
     /**宝盒上面的数字飞的时长 */
     beetleFlyTime: 0.8
   },
-   /**普通图标 */
-   icon: [
+  /**普通图标 */
+  icon: [
     {
       /**图标id */
       "id": 1,
@@ -83,7 +83,7 @@ export default {
       /**图标的动效列表，第一个是静态 */
       "animationArr": ["static", "dynamic"],
       /**图标处于格子中的坐标偏移量 */
-       "distance": [0, 0],
+      "distance": [0, 0],
       /**图标的缩放 */
       "scale": [1, 1]
     }, {
@@ -186,117 +186,68 @@ export default {
       "amount": [
         {
           "positionId": 1,
-          "value": 1,
-          "jackpot": 0
+          "value": 0.004,
+          "jackpot": 1
         },
         {
           "positionId": 2,
-          "value": 2,
-          "jackpot": 0
+          "value": 0.016,
+          "jackpot": 1
         },
         {
           "positionId": 3,
-          "value": 4,
-          "jackpot": 0
+          "value": 0.032,
+          "jackpot": 1
         },
         {
           "positionId": 4,
-          "value": 8,
-          "jackpot": 0
+          "value": 0.08,
+          "jackpot": 1
         },
         {
           "positionId": 5,
-          "value": 16,
-          "jackpot": 0
+          "value": 0.160,
+          "jackpot": 1
         },
         {
           "positionId": 6,
-          "value": 20,
-          "jackpot": 0
+          "value": 0.360,
+          "jackpot": 1
         },
         {
           "positionId": 7,
-          "value": 40,
+          "value": 0.800,
           "jackpot": 0
         },
         {
           "positionId": 8,
-          "value": 60,
+          "value": 1.600,
           "jackpot": 0
         },
         {
           "positionId": 9,
-          "value": 90,
+          "value": 3.600,
           "jackpot": 0
         },
         {
           "positionId": 10,
-          "value": 120,
+          "value": 6.000,
           "jackpot": 0
         },
         {
           "positionId": 11,
-          "value": 150,
+          "value": 12.000,
           "jackpot": 0
         },
         {
           "positionId": 12,
-          "value": 200,
-          "jackpot": 1
+          "value": 16.000,
+          "jackpot": 0
         },
         {
           "positionId": 13,
-          "value": 400,
-          "jackpot": 1
-        },
-        {
-          "positionId": 14,
-          "value": 600,
-          "jackpot": 1
-        },
-        {
-          "positionId": 15,
-          "value": 900,
-          "jackpot": 1
-        },
-        {
-          "positionId": 16,
-          "value": 1200,
-          "jackpot": 1
-        },
-        {
-          "positionId": 17,
-          "value": 1500,
-          "jackpot": 1
-        },
-        {
-          "positionId": 18,
-          "value": 2000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 19,
-          "value": 3000
-        },
-        {
-          "positionId": 20,
-          "value": 4000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 21,
-          "value": 6000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 22,
-          "value": 8000,
-          "jackpot": 1
-        },
-        {
-          "positionId": 23,
-          "value": 10000,
-          "jackpot": 1
+          "value": 32.000,
+          "jackpot": 0
         }
       ]
     }
@@ -729,7 +680,7 @@ export default {
     {
       "id": 2,
       "name": "megawin",
-      "fileName": ["atlas/dialog/megawin/cs_mw","atlas/dialog/superwin/slots_common_game_sw_gold" ],// "sb_lbjs_MEGAWIN" "slots_common_game_ew_gold"
+      "fileName": ["atlas/dialog/megawin/cs_mw", "atlas/dialog/superwin/slots_common_game_sw_gold"],// "sb_lbjs_MEGAWIN" "slots_common_game_ew_gold"
       "minRate": 301,
       "maxRate": 1250
     },
@@ -748,5 +699,5 @@ export default {
       "maxRate": 99999
     },
 
-    ]
+  ]
 }

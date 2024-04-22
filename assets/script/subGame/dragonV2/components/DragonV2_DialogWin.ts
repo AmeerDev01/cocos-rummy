@@ -197,7 +197,7 @@ export class DragonV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_jackpotpopUps.active = true;
 		const numberLabel = getNodeByNameDeep("Label_Number", this.propertyNode.props_jackpotpopUps)
 		// mini
-		let length = cacheData.rollerLaunchResult.dl.si[0].fixedChessboardIcon.length
+		let length = cacheData.rollerLaunchResult.dl.si[0].fixedChessboardIconAndAmount.length
 		let count=0
 		if (length >= 15) {
 			this.propertyNode.props_jackpotpopUps.getChildByName('Title_Youwon').active = false
@@ -212,7 +212,6 @@ export class DragonV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 			count = this.getLw().mini
 			this.propertyNode.props_jackpotpopUps.getChildByName('Title_Youwon').active = true
 		}
-	
 		this.startStepNumber(numberLabel.getComponent(Label), 0, count, () => {
 			// 如果是自动模式，就等待关闭窗口
 			if (this.node && this.node.isValid && isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo)) {
@@ -260,7 +259,7 @@ export class DragonV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 	private startStepNumber(label: Label, start, end, done) {
 		this.stepNumberV2.start(start, end, (num) => {
 			if (this.node && this.node.isValid) {
-				label.string = Number(num.toFixed(0)).formatAmountWithCommas();
+				label.string = num.formatAmountWithCommas();
 			}
 		}, () => this.node && this.node.isValid && done(), config.normalRollOption.numberRollerTime);
 	}

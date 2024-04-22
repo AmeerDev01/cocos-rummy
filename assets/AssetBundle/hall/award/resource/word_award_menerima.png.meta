@@ -2,7 +2,7 @@
   "ver": "1.0.25",
   "importer": "image",
   "imported": true,
-  "uuid": "eed263ac-abc9-476f-bec2-a14fd7823596",
+  "uuid": "af1df1f7-f23f-41a9-80f0-339068cb571d",
   "files": [
     ".json",
     ".png"
@@ -10,7 +10,7 @@
   "subMetas": {
     "6c48a": {
       "importer": "texture",
-      "uuid": "eed263ac-abc9-476f-bec2-a14fd7823596@6c48a",
+      "uuid": "af1df1f7-f23f-41a9-80f0-339068cb571d@6c48a",
       "displayName": "word_award_menerima",
       "id": "6c48a",
       "name": "texture",
@@ -22,7 +22,7 @@
         "mipfilter": "none",
         "anisotropy": 0,
         "isUuid": true,
-        "imageUuidOrDatabaseUri": "eed263ac-abc9-476f-bec2-a14fd7823596",
+        "imageUuidOrDatabaseUri": "af1df1f7-f23f-41a9-80f0-339068cb571d",
         "visible": false
       },
       "ver": "1.0.22",
@@ -34,7 +34,7 @@
     },
     "f9941": {
       "importer": "sprite-frame",
-      "uuid": "eed263ac-abc9-476f-bec2-a14fd7823596@f9941",
+      "uuid": "af1df1f7-f23f-41a9-80f0-339068cb571d@f9941",
       "displayName": "word_award_menerima",
       "id": "f9941",
       "name": "spriteFrame",
@@ -46,10 +46,10 @@
         "offsetY": 0,
         "trimX": 0,
         "trimY": 0,
-        "width": 138,
-        "height": 22,
-        "rawWidth": 138,
-        "rawHeight": 22,
+        "width": 103,
+        "height": 27,
+        "rawWidth": 103,
+        "rawHeight": 27,
         "borderTop": 0,
         "borderBottom": 0,
         "borderLeft": 0,
@@ -61,17 +61,17 @@
         "meshType": 0,
         "vertices": {
           "rawPosition": [
-            -69,
-            -11,
+            -51.5,
+            -13.5,
             0,
-            69,
-            -11,
+            51.5,
+            -13.5,
             0,
-            -69,
-            11,
+            -51.5,
+            13.5,
             0,
-            69,
-            11,
+            51.5,
+            13.5,
             0
           ],
           "indexes": [
@@ -84,12 +84,12 @@
           ],
           "uv": [
             0,
-            22,
-            138,
-            22,
+            27,
+            103,
+            27,
             0,
             0,
-            138,
+            103,
             0
           ],
           "nuv": [
@@ -103,18 +103,18 @@
             1
           ],
           "minPos": [
-            -69,
-            -11,
+            -51.5,
+            -13.5,
             0
           ],
           "maxPos": [
-            69,
-            11,
+            51.5,
+            13.5,
             0
           ]
         },
         "isUuid": true,
-        "imageUuidOrDatabaseUri": "eed263ac-abc9-476f-bec2-a14fd7823596@6c48a",
+        "imageUuidOrDatabaseUri": "af1df1f7-f23f-41a9-80f0-339068cb571d@6c48a",
         "atlasUuid": ""
       },
       "ver": "1.0.12",
@@ -129,6 +129,6 @@
     "fixAlphaTransparencyArtifacts": true,
     "hasAlpha": true,
     "type": "sprite-frame",
-    "redirect": "eed263ac-abc9-476f-bec2-a14fd7823596@f9941"
+    "redirect": "af1df1f7-f23f-41a9-80f0-339068cb571d@f9941"
   }
 }

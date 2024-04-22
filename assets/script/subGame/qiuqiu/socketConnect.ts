@@ -1,4 +1,3 @@
-import { default as redux } from "redux"
 import WebSocketToDo from "../../common/WebSocketToDo"
 import { listenerFactoy } from "../../common/listenerFactoy"
 import { initConfig, subGameList } from "../../hall/config"

@@ -74,7 +74,7 @@ repeat: none
   orig: 237, 214
   offset: 0, 0
   index: -1
-che
+che1
   rotate: true
   xy: 1391, 142
   size: 110, 87
@@ -83,14 +83,14 @@ che
   index: -1
 di
   rotate: true
-  xy: 1082, 254
+  xy: 1082, 367
   size: 111, 101
   orig: 111, 101
   offset: 0, 0
   index: -1
 z1
   rotate: true
-  xy: 1082, 141
+  xy: 1082, 254
   size: 111, 101
   orig: 111, 101
   offset: 0, 0
@@ -118,56 +118,56 @@ z12
   index: -1
 z2
   rotate: true
-  xy: 1082, 28
+  xy: 1082, 141
   size: 111, 101
   orig: 111, 101
   offset: 0, 0
   index: -1
 z3
   rotate: true
-  xy: 1185, 367
+  xy: 1082, 28
   size: 111, 101
   orig: 111, 101
   offset: 0, 0
   index: -1
 z4
   rotate: true
-  xy: 1185, 254
+  xy: 1185, 367
   size: 111, 101
   orig: 111, 101
   offset: 0, 0
   index: -1
 z5
   rotate: true
-  xy: 1185, 141
+  xy: 1185, 254
   size: 111, 101
   orig: 111, 101
   offset: 0, 0
   index: -1
 z6
   rotate: true
-  xy: 1185, 28
+  xy: 1185, 141
   size: 111, 101
   orig: 111, 101
   offset: 0, 0
   index: -1
 z7
   rotate: true
-  xy: 1288, 367
+  xy: 1185, 28
   size: 111, 101
   orig: 111, 101
   offset: 0, 0
   index: -1
 z8
   rotate: true
-  xy: 1288, 254
+  xy: 1288, 367
   size: 111, 101
   orig: 111, 101
   offset: 0, 0
   index: -1
 z9
   rotate: true
-  xy: 1082, 367
+  xy: 1288, 254
   size: 111, 101
   orig: 111, 101
   offset: 0, 0

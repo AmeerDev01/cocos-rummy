@@ -93,7 +93,7 @@ export class BandarQiuQiu_gameBoard extends BaseComponent<IState, IProps, IEvent
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
 		if (key === "myWinLose") {
 			if (value.cur === 0) { return }
-			this.taskScheduler.joinqQueue(new Task((done) => {
+			this.taskScheduler.joinQueue(new Task((done) => {
 				window.setTimeout(()=>{
 					if (value.cur === 1) {
 						playMyWin();
@@ -112,7 +112,7 @@ export class BandarQiuQiu_gameBoard extends BaseComponent<IState, IProps, IEvent
 					}
 				},4000)
 				window.setTimeout(() => done(), 1000);
-			}), false).joinqQueue(new Task((done) => {
+			}), false).joinQueue(new Task((done) => {
 				this.dispatch(setMyWinLose(0));
 				window.setTimeout(() => done(), 1000);
 			}),false)

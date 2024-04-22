@@ -1,7 +1,7 @@
 {
     "version": "1.0.02",
     "serverRootDir": "https://hot.supfutce.com/appHotUpdate",
-    "resourceRootDir": "/Users/geliang/web/dibai/hall/build/android/data",
+    "resourceRootDir": "/Users/geliang/web/dibai/hall/build/web-mobile",
     "genManifestDir": "",
     "localServerPath": "",
     "hotAddressArray": [

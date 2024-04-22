@@ -326,13 +326,19 @@ export class Battery extends Component {
       }
     })
 
-    this.ui_lst.getChildByName('img_battery_bk').on(Node.EventType.TOUCH_END, (e) => {
-      if (this.user_info.is_local === true) {
-        this.show_change_battery_ui = !this.show_change_battery_ui
-        this.ui_lst.getChildByName('img_ctrlbk').active = this.show_change_battery_ui
-        this.ui_lst.getChildByName('btn_change_battery').active = this.show_change_battery_ui
-      }
-    })
+    // todo
+    // if (VersionManager.isResourceInvalide() === false) {
+    //   this.ui_lst.img_battery_bk.setTouchEnabled(true)
+    //   this.ui_lst.img_battery_bk.onTouch((e) => {
+    //     if (e.name === "ended") {
+    //       if (this.user_info.is_let === true) {
+    //         this.show_change_battery_ui = !this.show_change_battery_ui
+    //         this.ui_lst.img_ctrlbk.active = (this.show_change_battery_ui)
+    //         this.ui_lst.btn_change_battery.active = (this.show_change_battery_ui)
+    //       }
+    //     }
+    //   })
+    // }
   }
 
   private getSceneWidth() {
@@ -622,8 +628,11 @@ export class Battery extends Component {
     this.ui_lst.getChildByName('img_ctrlbk').active = false
 
     if ((this.isMyBattery() === true) && (this.dataManager.getRoomType() !== GAME_TYPE_FRIENDROOM)) {
-      this.ui_lst.getChildByName('img_ctrlbk').active = true
-      this.ui_lst.getChildByName('btn_change_battery').active = true
+      //todo
+      // if (VersionManager.isResourceInvalide() === false) {
+      //   this.ui_lst.btn_change_battery.active = true
+      //   this.ui_lst.img_ctrlbk.active = true
+      // }
       this.show_change_battery_ui = true
     } else {
       this.ui_lst.getChildByName('btn_minus').active = false
@@ -905,9 +914,11 @@ export class Battery extends Component {
         this.skeleton_obj.addComponent(UITransform).setAnchorPoint(new Vec2(0.35, 0.5))
         this.skeleton_obj.setPosition(30, 0)
         sk.setCompleteListener(() => {
-          this.is_play_over = false
-          sk.timeScale = this.sken_scale_org;
-          sk.setAnimation(0, skins.ani1, true)
+          this.scheduleOnce(() => {
+            this.is_play_over = false
+            sk.timeScale = this.sken_scale_org;
+            sk.setAnimation(0, skins.ani1, true)
+          })
         })
       }
     }

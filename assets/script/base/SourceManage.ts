@@ -1,5 +1,4 @@
 import { Asset, AssetManager, Label, __private, assetManager, instantiate, log } from "cc"
-import { DEV } from "cc/env"
 export interface ISourceFile {
   bundlePkgName: string,
   path: string,
@@ -18,7 +17,7 @@ export const loopFiles = (bundlePkgName: string, sourceType: __private._types_gl
       path: defineList[key],
       sourceType,
       source: null,
-      isPreLoad: key.substring(0, 1) === "_" && !DEV ? false : true
+      isPreLoad: (key.substring(0, 1) === "_") ? false : true
     })
   }
   return _arr
@@ -124,7 +123,10 @@ export default class SourceManage {
   public getFileAsync(filePath: string, sourceType: __private._types_globals__Constructor<Asset>): Promise<ISourceFile> {
     return new Promise((resolve, reject) => {
       const sourceFile = this.getFile(filePath)
-      sourceFile && resolve(sourceFile)
+      if (sourceFile) {
+        resolve(sourceFile)
+        return
+      }
       assetManager.loadBundle(this.bundle.name, (err, _bundle) => {
         if (!err) {
           _bundle.load(filePath, sourceType, (err, asset) => {

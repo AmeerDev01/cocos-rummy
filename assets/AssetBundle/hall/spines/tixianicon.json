@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "lnIWAH5H40c0x20xUHdyIcR4CME",
+	"hash": "jpdcHL0dmXs9NbQ9Qvn+mFsfs90",
 	"spine": "3.8.99",
 	"x": -113,
 	"y": -53.15,
@@ -16,9 +16,9 @@
 ],
 "slots": [
 	{ "name": "di", "bone": "root", "attachment": "di" },
-	{ "name": "bao", "bone": "骨骼", "attachment": "bao" },
+	{ "name": "bao", "bone": "骨骼", "attachment": "bao1" },
 	{ "name": "q", "bone": "q", "attachment": "q" },
-	{ "name": "zi", "bone": "root", "attachment": "zi" },
+	{ "name": "zi", "bone": "root", "attachment": "zi1" },
 	{ "name": "g", "bone": "root", "attachment": "9" }
 ],
 "skins": [
@@ -26,7 +26,7 @@
 		"name": "default",
 		"attachments": {
 			"bao": {
-				"bao": { "x": 0.5, "y": 0.5, "width": 139, "height": 105 }
+				"bao1": { "x": 0.5, "y": 0.5, "width": 139, "height": 105 }
 			},
 			"di": {
 				"di": { "x": 0.5, "y": 0.5, "width": 125, "height": 105 }
@@ -52,7 +52,7 @@
 				"q": { "x": -35.18, "y": -5.6, "width": 44, "height": 45 }
 			},
 			"zi": {
-				"zi": { "x": 0.48, "y": 7.92, "rotation": 0.16, "width": 139, "height": 105 }
+				"zi1": { "x": 0.48, "y": 7.92, "rotation": 0.16, "width": 139, "height": 105 }
 			}
 		}
 	}

@@ -30,7 +30,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import cocos.com.hugeWin777.R;
+import com.HG.IN001.R;
 
 public class NotificationUtil {
     private static final String CHECK_OP_NO_THROW = "checkOpNoThrow";

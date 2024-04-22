@@ -5,13 +5,13 @@
   "_native": "",
   "_skeletonJson": {
     "skeleton": {
-      "hash": "M2OX4kuG1eKar/Hqu7ekHModufg",
+      "hash": "KtTJmg9gLwhq3GuLYMxhuNfEapI",
       "spine": "3.8.99",
       "x": -162,
       "y": -56,
       "width": 325,
       "height": 113,
-      "images": "",
+      "images": "E:/新版UI/平台/大厅new/动画/源文件/中奖框",
       "audio": ""
     },
     "bones": [
@@ -32,7 +32,8 @@
       },
       {
         "name": "ww",
-        "bone": "root"
+        "bone": "root",
+        "blend": "screen"
       }
     ],
     "skins": [

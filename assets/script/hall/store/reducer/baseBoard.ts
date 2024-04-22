@@ -19,7 +19,7 @@ export default reduxAct.createReducer<InitStateType>({
   [ActionTypes.SET_LOADING]: (state, payload: ActionPayLoad<ActionTypes.SET_LOADING>): InitStateType => {
     return {
       ...state,
-      loadPayload: Object.assign({ isLoadPayload: false, isAllowCloseLoading: false }, payload.isLoadPayload),
+      loadPayload: Object.assign({ isLoadPayload: false, flagId: '_', isAllowCloseLoading: false }, payload.isLoadPayload),
     }
   },
   [ActionTypes.SET_ACTIVE_SUBGAME]: (state, payload: ActionPayLoad<ActionTypes.SET_ACTIVE_SUBGAME>): InitStateType => {
@@ -52,14 +52,31 @@ export default reduxAct.createReducer<InitStateType>({
     }
   },
   [ActionTypes.SOCKET_CONNECT]: (state, payload: ActionPayLoad<ActionTypes.SOCKET_CONNECT>): InitStateType => {
-    if (state.retryConnectTimes === undefined) {
-
-    }
+    if (state.remainRetryCount === undefined) { }
     return {
       ...state,
       isConnect: payload.connectData.isConnect,
-      retryConnectTimes: (payload.connectData.retryConnectTimes === undefined ? (state.retryConnectTimes + 1) : payload.connectData.retryConnectTimes)
+      remainRetryCount: payload.connectData.remainRetryCount
+      // remainRetryCount: (payload.connectData.remainRetryCount === undefined ? (state.remainRetryCount + 1) : payload.connectData.remainRetryCount)
     }
   },
-  [ActionTypes.RESET_DATA_BOARD]: (): InitStateType => instantiate(initState)
+  [ActionTypes.RESET_DATA_BOARD]: (): InitStateType => instantiate(initState),
+  [ActionTypes.UPDATE_MAIL_STATUS]: (state, payload: ActionPayLoad<ActionTypes.UPDATE_MAIL_STATUS>): InitStateType => {
+    return {
+      ...state,
+      UnreadMailNum: payload.UnreadMailNum
+    }
+  },
+  [ActionTypes.UPDATE_VIP_BONUSINFO]: (state, payload: ActionPayLoad<ActionTypes.UPDATE_VIP_BONUSINFO>): InitStateType => {
+    return {
+      ...state,
+      vipBonusInfo: payload.vipBonusInfo
+    }
+  },
+  [ActionTypes.TOP_UP_CHOOSE_AMOUNT]: (state, payload: ActionPayLoad<ActionTypes.TOP_UP_CHOOSE_AMOUNT>): InitStateType => {
+    return {
+      ...state,
+      chooseAmount: payload.chooseAmount
+    }
+  },
 }, initState);

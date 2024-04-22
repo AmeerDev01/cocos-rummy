@@ -79,12 +79,8 @@ class MainViewModel extends ViewModel<Fish_Main, IProps, IEvent> {
   public roomViewModel: RoomViewModel;
   private scale = 0;
 
-  private initCallback;
-
-  constructor(initCallback) {
+  constructor() {
     super('Fish_Main')
-
-    this.initCallback = initCallback;
 
     this.fishManager = new FishManager();
     this.objectPool = new ObjectPool();
@@ -110,10 +106,6 @@ class MainViewModel extends ViewModel<Fish_Main, IProps, IEvent> {
 
     this.listenerSocket();
     this.initUI();
-
-    this.comp.scheduleOnce(() => {
-      this.initCallback && this.initCallback();
-    }, 0.5)
   }
 
   private initManager() {

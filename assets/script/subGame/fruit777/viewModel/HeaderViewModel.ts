@@ -1,4 +1,4 @@
-import { Node } from "cc"
+import { Node, Prefab } from "cc"
 import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { Fruit777_Header, IProps, IEvent } from "../components/Fruit777_Header"
 import { StateType } from "../store/reducer"
@@ -18,8 +18,9 @@ class HeaderViewModel extends ViewModel<Fruit777_Header, IProps, IEvent> {
 
   protected begin() {
     this.setEvent({
-      openHelpPanel: () => {
-        const helpPanelPanel = new BaseViewModel<Fruit777_HelpPanel, FIState, FIProps, FIEvent>("Fruit777_HelpPanel").mountView(sourceManageSeletor().getFile(PrefabPathDefine.INTRODUCE).source)
+      openHelpPanel: async () => {
+        const helpPanelPanel = new BaseViewModel<Fruit777_HelpPanel, FIState, FIProps, FIEvent>("Fruit777_HelpPanel")
+          .mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._INTRODUCE, Prefab)).source)
           .appendTo(this.viewNode.parent, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({
             closeHandler: () => {
               helpPanelPanel.unMount(EffectType.EFFECT1)
