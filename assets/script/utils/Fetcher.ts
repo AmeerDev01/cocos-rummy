@@ -88,7 +88,7 @@ export default class Fetcher<T> {
                 }
                 if (!isDataPass) {
                   this.dispatch(setLoadingAction({ isShow: false, flagId: url.toString() }))
-                  this.dispatch(addToastAction({ content: lang.write(k => k.InitGameModule.FetcherFaild, {}, { placeStr: "json数据解析失败" }), type: ToastType.ERROR }))
+                  this.dispatch(addToastAction({ content: lang.write(k => k.InitGameModule.FetcherFaild, {}, { placeStr: "json数据解析失败" }), type: ToastType.ERROR, forceLandscape: false }))
                   reject("数据格式异常:" + url)
                 } else {
                   reslove(data)
@@ -108,26 +108,26 @@ export default class Fetcher<T> {
                     .setEvent({ onCloseHandle: () => prohibitViewModel.unMount(EffectType.EFFECT1) }).appendTo(baseBoardView.viewNode, { effectType: EffectType.EFFECT2, isModal: true })
                 })
               } else {
-                this.dispatch(addToastAction({ content: message, type: ToastType.ERROR }))
+                this.dispatch(addToastAction({ content: message, type: ToastType.ERROR, forceLandscape: false }))
                 this.dispatch(setLoadingAction({ isShow: false, flagId: url.toString() }))
                 reject(message)
               }
             }).catch(() => {
-              this.dispatch(addToastAction({ content: lang.write(k => k.InitGameModule.FetcherFaild, {}, { placeStr: "json数据解析失败" }), type: ToastType.ERROR }))
+              this.dispatch(addToastAction({ content: lang.write(k => k.InitGameModule.FetcherFaild, {}, { placeStr: "json数据解析失败" }), type: ToastType.ERROR, forceLandscape: false }))
               this.dispatch(setLoadingAction({ isShow: false, flagId: url.toString() }))
               // console.log("json数据解析失败", response)
               hallAudio.play(SoundPathDefine.ERROR)
               reject("json数据解析失败")
             })
           } else {
-            this.dispatch(addToastAction({ content: response.status.toString(), type: ToastType.ERROR }))
+            this.dispatch(addToastAction({ content: response.status.toString(), type: ToastType.ERROR, forceLandscape: false }))
             this.dispatch(setLoadingAction({ isShow: false, flagId: url.toString() }))
             hallAudio.play(SoundPathDefine.ERROR)
             reject(response)
           }
         }).catch((e) => {
           sendNativeVibrate(100)
-          this.dispatch(addToastAction({ content: e.toString(), type: ToastType.ERROR }))
+          this.dispatch(addToastAction({ content: e.toString(), type: ToastType.ERROR, forceLandscape: false }))
           this.dispatch(setLoadingAction({ isShow: false, flagId: url.toString() }))
           hallAudio.play(SoundPathDefine.ERROR)
           reject(e)

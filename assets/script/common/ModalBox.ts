@@ -1,4 +1,6 @@
-import { baseBoardView, sourceManageSeletor } from "../hall";
+import { baseBoardView, global, sourceManageSeletor } from "../hall";
+import { HallGameGateType } from "../hall/config";
+import { getStore } from "../hall/store";
 import { LanguageItemType } from "../language/languagePkg";
 import { EffectType } from "../utils/NodeIOEffect";
 import Singleton from "../utils/Singleton";
@@ -9,7 +11,9 @@ import BaseViewModel from "./viewModel/BaseViewModel";
 export type ModalOption = {
   content?: string,
   url?: string,
-  type?: "Prompt" | "Confirm"
+  type?: "Prompt" | "Confirm",
+  /**是否强制横屏，如果不横屏，就根据子游戏的情况自动横竖屏 */
+  forceLandscape?: boolean
 }
 
 export default class ModalBox extends Singleton {
@@ -28,7 +32,8 @@ export default class ModalBox extends Singleton {
       .setProps({
         content: option.content,
         type: option.type,
-        url: option.url
+        url: option.url,
+        isVertical: !option.forceLandscape && getStore().getState().baseBoard.subGameInfo && getStore().getState().baseBoard.subGameInfo.isVertical
       })
       .setEvent({
         onCloseHandler: () => {

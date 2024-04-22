@@ -34,6 +34,7 @@ import { changeAllCardRateAction, changeAllWinUsersAction, changeCardRateAction,
 import WinViewModel from './BandarWinViewModel';
 import LoseViewModel from './BandarLoseViewModel';
 import { BANKER_ID } from '../../../common/viewModel/GiftUserViewModel';
+import WebSocketStarter, { EVEVT_TYPE } from '../../../common/WebSocketStarter';
 
 
 const { ccclass, property } = _decorator;
@@ -65,12 +66,9 @@ class GameBoardViewModel extends ViewModel<Bandar_gameBoard, IProps, IEvent> {
   }
 
   protected begin() {
-    // const msgObj = bandarWebSocketDriver.loginGame(SKT_MAG_TYPE.LOGIN)
-    // msgObj.bindTimeoutHandler(() => {
-    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
-    //   return false
-    // })
-    // bandarGameLogin()
+    WebSocketStarter.Instance().eventListener.add(EVEVT_TYPE.DISCONNECT, bundlePkgName, () => {
+      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
+    })
     this.listenerAuth();//认证
     this.listenerUserJoinOrQuit();
     // 初始化界面

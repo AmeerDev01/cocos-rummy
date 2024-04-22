@@ -11,7 +11,8 @@ export interface IState {
 export interface IProps {
 	content: string,
 	type: "Prompt" | "Confirm",
-	url: string
+	url: string,
+	isVertical: boolean
 }
 export interface IEvent {
 	/**返回true，自动关闭 */
@@ -28,7 +29,8 @@ export class Common_ModalBox extends BaseComponent<IState, IProps, IEvent> {
 	public props: IProps = {
 		content: "",
 		type: "Confirm",
-		url: ""
+		url: "",
+		isVertical: false
 	}
 
 	public events: IEvent = {
@@ -67,7 +69,7 @@ export class Common_ModalBox extends BaseComponent<IState, IProps, IEvent> {
 		// })
 	}
 
-	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
+	protected useProps(key: keyof IProps | '_setDone', value: { pre: any, cur: any }) {
 		if (key === "content") {
 			this.propertyNode.props_spr_updata_tipsBg.active = true
 			this.propertyNode.props_Label_content.string = this.props.content
@@ -86,6 +88,14 @@ export class Common_ModalBox extends BaseComponent<IState, IProps, IEvent> {
 			// this.propertyNode.props_webView_spr_updata_tipsBg.active = true
 			// this.propertyNode.props_WebView.url = this.props.url
 		}
+		if (key === "_setDone") {
+			if (this.props.isVertical) {
+				this.propertyNode.props_spr_updata_tipsBg.angle = 90;
+			} else {
+				this.propertyNode.props_spr_updata_tipsBg.angle = 0;
+			}
+		}
+
 	}
 	protected bindUI(): void {
 		// this.propertyNode.props_webView_spr_updata_tipsBg.active = this.props.url ? true : false

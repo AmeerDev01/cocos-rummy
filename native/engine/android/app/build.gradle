@@ -7,8 +7,8 @@ COCOS_ENGINE_PATH = COCOS_ENGINE_PATH.replace("\\", "/")
 
 buildDir = "${RES_PATH}/proj/build/$project.name"
 android {
-    compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
-    buildToolsVersion PROP_BUILD_TOOLS_VERSION
+    compileSdk 30
+    buildToolsVersion '29.0.2'
     ndkPath PROP_NDK_PATH
 
     compileOptions {
@@ -21,7 +21,7 @@ android {
         minSdkVersion PROP_MIN_SDK_VERSION
         targetSdkVersion PROP_TARGET_SDK_VERSION
         versionCode 1
-        versionName "8.2.1"
+        versionName "8.0.9"
 
         externalNativeBuild {
             cmake {
@@ -32,15 +32,25 @@ android {
         }
 
         manifestPlaceholders = [
-                JPUSH_PKGNAME : applicationId,
-                JPUSH_APPKEY  : "6ad9c578298700ddea7452f8", //JPush 上注册的包名对应的 Appkey.
-                JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+//                JPUSH_PKGNAME : applicationId,
+//                JPUSH_APPKEY  : "6ad9c578298700ddea7452f8", //JPush 上注册的包名对应的 Appkey.
+//                JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+                //appKey，需要与控制台上的一样，与packageName是一对一关系
+                ENGAGELAB_PRIVATES_APPKEY : "a191cb6684d2ae0711e01fa2",
+                // Engagelab appChannel，用于渠道统计
+                ENGAGELAB_PRIVATES_CHANNEL: "developer",
+                // Engagelab process，Engagelabsdk工作所在的进程，注意:开头
+                ENGAGELAB_PRIVATES_PROCESS: ":remote",
+                //数据中心名称，填空""时，默认"Singapore"数据中心
+                ENGAGELAB_PRIVATES_SITE_NAME: "Singapore",
+
                 /**
                  * 渠道包名，这里打包时根据需要修改名称，可选值如下：
-                 * development 测试包
+                 * development 开发包
+                 * test 包
                  * miMarket
                  * master 主包
-                 * advance
+                 * advance 预发包
                  */
                 PACKAGE_CODE : "master"
         ]
@@ -124,11 +134,19 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     implementation 'com.adjust.sdk:adjust-android:4.37.0'
     implementation 'com.squareup.okhttp3:okhttp:3.3.1'
-    implementation 'com.google.firebase:firebase-messaging:17.3.4'//app/gradle
-    implementation 'com.google.android.gms:play-services-base:16.0.1' //app/gradle
-    implementation 'com.amazonaws:aws-android-sdk-sns:2.6.10'
-//    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
-//    implementation 'com.google.android.gms:play-services-appset:16.0.2'
+    implementation(platform("com.google.firebase:firebase-bom:25.4.0"))
+    implementation 'com.google.firebase:firebase-messaging'//app/gradle
+    implementation 'com.google.firebase:firebase-core'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-perf:20.0.6'
+    implementation 'io.sentry:sentry-android:7.3.0'
+//    //必须 主包
+//    implementation 'com.engagelab:engagelab:4.3.5' // 此处以4.3.3 版本为例。
+//    //可选，google厂商
+//    implementation 'com.engagelab.plugin:google:4.3.5' // 此处以4.3.3 版本为例。
 }
 //没有google服务就注释下面
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.firebase.firebase-perf'

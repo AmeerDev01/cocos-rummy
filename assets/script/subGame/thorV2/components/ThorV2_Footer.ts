@@ -272,42 +272,12 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	private updateStartButtonAutoType() {
 		const startBgNode = getNodeByNameDeep("props_word_down_pular", this.propertyNode.props_startButton);
 		const stopBgNode = getNodeByNameDeep("props_scrollingThePicture", this.propertyNode.props_startButton);
-		// const autoNode = getNodeByNameDeep("props_times", this.propertyNode.props_startButton);
-		// const limitNode = getNodeByNameDeep("props_autoLaunch_label", this.propertyNode.props_startButton);
-		// const auto = isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo);
+		const auto = isAuto(this.props.autoLauncherInfo, this.props.gameTypeInfo, true);
 
 		// 开始按钮背景，
-		startBgNode.active = this.props.rollerStatus === RollerStatus.END;
+		startBgNode.active = !auto && this.props.rollerStatus === RollerStatus.END;
 		// 停止滚动按钮背景
-		stopBgNode.active = this.props.rollerStatus !== RollerStatus.END;
-
-		// if (!this.isMain()) {
-		// 	// autoNode.active = false;
-		// 	// limitNode.active = false;
-
-		// 	// 开始按钮背景，
-		// 	startBgNode.active = this.props.rollerStatus === RollerStatus.END;
-		// 	// 停止滚动按钮背景
-		// 	stopBgNode.active = this.props.rollerStatus !== RollerStatus.END;
-		// } else {
-		// 	// 开始按钮背景，
-		// 	startBgNode.active = this.props.rollerStatus === RollerStatus.END;
-		// 	// 停止滚动按钮背景
-		// 	stopBgNode.active = this.props.rollerStatus !== RollerStatus.END;
-
-		// 	if (auto) {
-		// 		// 	autoNode.active = !this.isLimit();
-		// 		// 	limitNode.active = this.isLimit();
-		// 		// 	if (!this.isLimit()) {
-		// 		// 		autoNode.getComponent(Label).string = this.props.autoLauncherInfo.leftCount + "/" + this.props.autoLauncherInfo.totalCount;
-		// 		// 	} else {
-		// 		// 		limitNode.getComponent(Label).string = this.props.autoLauncherInfo.leftCount + "";
-		// 		// 	}
-		// 		// } else {
-		// 		// 	autoNode.active = false;
-		// 		// 	limitNode.active = false;
-		// 	}
-		// }
+		stopBgNode.active = auto || this.props.rollerStatus !== RollerStatus.END;
 
 		this.updateAutoBtn();
 	}
@@ -494,7 +464,7 @@ export class ThorV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 		this.stepNumber && this.stepNumber.stop();
 		this.stepNumber = new StepNumber(value.pre, value.cur, (num) => {
 			if (this.node && this.node.isValid) {
-				const value = Number(num.toFixed(2));
+				const value = Number(num);
 				this.propertyNode.props_word_down_winNum.string = value.formatAmountWithCommas();
 			}
 		})

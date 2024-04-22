@@ -5,7 +5,7 @@ import { PrefabPathDefine } from "./sourceDefine/prefabDefine";
 import LoaderPanelViewModel from "../../common/viewModel/LoaderPanelViewModel";
 import SourceManage from "../../base/SourceManage";
 import fruit777FileMap from './sourceDefine';
-import { SubGameRunState, config as hallConfig, subGameList } from "../../hall/config";
+import { config as hallConfig, subGameList } from "../../hall/config";
 import socketConnect, { gameLogin } from "./socketConnect";
 import HeaderViewModel from "./viewModel/HeaderViewModel";
 import FooterViewModel from "./viewModel/FooterViewModel";
@@ -17,6 +17,7 @@ import { setActiveAudio } from "../../utils/UseSetOption";
 import config from "./config";
 import { baseBoardView, global, lang } from "../../hall";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
+import { SubGameRunState } from "../../hallType";
 
 
 let sourceManageMap: Array<SourceManage> = []

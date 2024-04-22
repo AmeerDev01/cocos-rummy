@@ -1,4 +1,6 @@
-Number.prototype.formatAmountWithCommas = function (fractionDigits: number = 3): string {
+import { Node } from 'cc'
+
+Number.prototype.formatAmountWithCommas = function (fractionDigits: number = 2): string {
 	const amount = this as number;
 	// const parts = amount.toFixed(2).split(".");
 	const parts = (amount + '').split(".");
@@ -10,7 +12,7 @@ Number.prototype.formatAmountWithCommas = function (fractionDigits: number = 3):
 	return formattedAmount;
 }
 
-Number.prototype.toFixedFix = function (fractionDigits: number = 3): number {
+Number.prototype.toFixedFix = function (fractionDigits: number = 2): number {
 	const number = this as number;
 	try {
 		const parts = (number + '').split(".");
@@ -19,7 +21,7 @@ Number.prototype.toFixedFix = function (fractionDigits: number = 3): number {
 		const formattedAmount = +decimalPart === 0 ? integerPart : integerPart + (decimalPart || '');
 		return +formattedAmount;
 	} catch (e) {
-		console.error(e)
+		console.trace(e)
 		return number
 	}
 }
@@ -68,11 +70,29 @@ String.prototype.format = function (...value): string {
 	return str;
 }
 
+Node.prototype.getDeepChildByName = function (nodeName: string): Node | undefined {
+	const l = (this as Node).children.length;
+	for (let i = 0; i < l; i++) {
+		if ((this as Node).children[i].name === nodeName) {
+			return (this as Node).children[i]
+		} else {
+			if ((this as Node).children[i].children.length) {
+				const result = (this as Node).children[i].getDeepChildByName(nodeName)
+				if (result) {
+					return result
+				}
+			} else {
+				continue
+			}
+		}
+	}
+}
+
 window.addEventListener(
 	"unhandledRejectedPromise",
 	function browserRejectionHandler(event) {
 		console.log(event)
-			event && event.preventDefault();
+		event && event.preventDefault();
 	}
 )
 

@@ -112,7 +112,7 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
         if (isAuto(this.comp.props.autoLauncherInfo, this.comp.props.gameTypeInfo)) {
           this.comp.scheduleOnce(() => {
             this.sendBet();
-          },1)
+          }, 1)
         }
 
       }, 0.1)
@@ -246,8 +246,8 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
     cacheData.fixedChessboardIcon = null;
     this.dispatch(updateRollerStatus(RollerStatus.RUNNING));
     this.isBetResult = false;
-     // this.betCallbackFun = this.betListenerTimeHandle.bind(this);
-    // this.comp.schedule(this.betCallbackFun, 10);
+    this.betCallbackFun = this.betListenerTimeHandle.bind(this);
+    this.comp.schedule(this.betCallbackFun, 10);
 
     const msgObj = gxfcWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
       positionId: this.comp.props.positionId,
@@ -267,10 +267,10 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
       }
     })
     //超时
-    msgObj.bindTimeoutHandler(() => {
-      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
-      return false
-    })
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
   }
 
   private betListenerTimeHandle() {
@@ -307,7 +307,7 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
   public showDialogWin(dialogInfo: DialogInfo, done) {
     let gxfcv2DialogWinViewModel = new GxfcV2DialogWinViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.DIALOG_WIN).source)
       .appendTo(this.viewNode);
-      gxfcv2DialogWinViewModel.setProps({
+    gxfcv2DialogWinViewModel.setProps({
       dialogInfo: dialogInfo,
       gameTypeInfo: this.comp.props.gameTypeInfo,
       autoLauncherInfo: this.comp.props.autoLauncherInfo,
@@ -338,7 +338,7 @@ class GxfcV2MainViewModel extends ViewModel<GxfcV2_Main, IProps, IEvent> {
     if (this.comp.props.gameTypeInfo.viewGameType === GameType.MAIN) {
       GxfcV2_Audio.play(SoundPathDefine.Main_bg, true)
     } else if (this.comp.props.gameTypeInfo.viewGameType === GameType.SUBGAME1) {
-			GxfcV2_Audio.play(SoundPathDefine.Free_bg, true)
+      GxfcV2_Audio.play(SoundPathDefine.Free_bg, true)
     }
   }
 

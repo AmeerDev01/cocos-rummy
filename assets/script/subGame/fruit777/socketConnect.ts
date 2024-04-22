@@ -3,7 +3,7 @@ import config from "./config"
 import { ToastType, addToastAction, setLoadingAction } from "../../hall/store/actions/baseBoard"
 import store, { getStore } from "./store"
 import { global, lang } from "../../hall"
-import WebSocketStarter, { EVEVT_TYPE, SKT_OPERATION, WebSocketDriver } from "../../common/WebSocketStarter"
+import  { EVEVT_TYPE, SKT_OPERATION, WebSocketDriver } from "../../common/WebSocketStarter"
 
 export enum SKT_MAG_TYPE {
   LOGIN = "1",
@@ -24,7 +24,7 @@ export default () => {
   return new Promise((resolve, reject) => {
     initConfig().then(() => {
       const { gameId, gameHost } = subGameList.find(i => i.gameId === config.gameId)
-      WebSocketStarter.Instance().initSocket().then(() => {
+      window.HALL_GLOBAL.wsInstance.initSocket().then(() => {
         fruit777WebSocketDriver = new WebSocketDriver<SKT_MAG_TYPE>(gameId, gameHost)
         fruit777WebSocketDriver.filterData = (data, source) => {
           if (source.operation === SKT_OPERATION.RECOVER) {
@@ -54,7 +54,7 @@ export default () => {
         }
         resolve(fruit777WebSocketDriver)
       })
-      WebSocketStarter.Instance().eventListener.add(EVEVT_TYPE.RECONNECT_SUCCESS, 'fruit777', () => {
+      window.HALL_GLOBAL.wsInstance.eventListener.add(EVEVT_TYPE.RECONNECT_SUCCESS, 'fruit777', () => {
         
       })
     }).catch((e) => {
@@ -80,5 +80,5 @@ export const gameLogin = () => {
 
 export const removeInstance = () => {
   fruit777WebSocketDriver && fruit777WebSocketDriver.logoutGame(SKT_MAG_TYPE.LOGOUT)
-  WebSocketStarter.Instance().eventListener.removeById('fruit777')
+  window.HALL_GLOBAL.wsInstance.eventListener.removeById('fruit777')
 }

@@ -1,7 +1,7 @@
 import { _decorator, Asset, assetManager, Component, director, dynamicAtlasManager, game, Label, log, macro, native, Node, ProgressBar, screen, sys, view } from 'cc';
 import Hot, { HotOptions } from '../../utils/HotUpdate';
 import App from '../../App';
-import { GameConfig } from '../../config/GameConfig';
+import { GameConfig, getIsTest } from '../../config/GameConfig';
 import { config, initConfig } from '../../hall/config';
 import { fetcher, lang } from '../../hall';
 import { NATIVE } from 'cc/env';
@@ -19,6 +19,8 @@ export class Common_HotUpdate extends Component {
 
 	@property({ displayName: 'project.manifest', type: Asset })
 	manifest: Asset = null;
+	@property({ displayName: 'project.versionManifest', type: Asset })
+	versionManifest: Asset = null;
 
 	@property(Label)
 	versionLabel: Label = null
@@ -38,14 +40,17 @@ export class Common_HotUpdate extends Component {
 		local: "",
 		server: ""
 	}
+
+	private _storagePath: string;
+	private localProjectManifest: native.Manifest;
 	start() {
 		window['pageDone'] && window['pageDone']()
+		console.warn("envKsy", GameConfig.envKey)
 	}
 	protected onLoad(): void {
-		!NATIVE && sys.isMobile && screen.requestFullScreen();
-		// console.log('getPackageName ====', getPackageName())
-		lang.use(GameConfig.isDev ? LanguageItemType.ZH : LanguageItemType.EN)
+		lang.use(getIsTest() ? LanguageItemType.ZH : LanguageItemType.EN)
 		if (NATIVE) {
+			this._storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : "/") + 'remote-asset')
 			hideNativeSplash();
 			native.bridge.onNative = (arg0: string, arg1: string) => {
 				if (BridgeCode.APP_VERSION === arg0) {
@@ -55,6 +60,7 @@ export class Common_HotUpdate extends Component {
 			}
 			getAppVersionName()
 		} else {
+			sys.isMobile && screen.requestFullScreen();
 			this.initGame()
 		}
 	}
@@ -127,7 +133,7 @@ export class Common_HotUpdate extends Component {
 					showNativeSplash();
 					return true
 				}, () => {
-					sys.openURL('https://hugewin777d.com/')
+					// sys.openURL('https://hugewin777d.com/')
 				})
 			}
 		})
@@ -172,18 +178,19 @@ export class Common_HotUpdate extends Component {
 
 		let options = new HotOptions();
 		options.OnVersionInfo = (data) => {
-			let { local, server } = data;
-			this.versionInfo = data
+			console.log('OnVersionInfo', JSON.stringify(data || {}))
+			let { local, server } = data || {};
+			this.versionInfo = data || {}
 			this.versionLabel.string = lang.write(k => k.UpdateModule.VersionLabel,
 				{ localVersion: local, serverVersion: server },
 				{ placeStr: `本地版本:v${local}, 线上版本:v${server}` })
 
-			if (local > server) {
-				let storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : '/') + 'remote-asset');
-				native.fileUtils.removeDirectory(storagePath)
-				this.versionLabel.string += ' &Cache clear'
-				console.log('Cache clear')
-			}
+			// if (local > server) {
+			// 	let storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : '/') + 'remote-asset');
+			// 	native.fileUtils.removeDirectory(storagePath)
+			// 	this.versionLabel.string += ' &Cache clear'
+			// 	console.log('Cache clear')
+			// }
 		};
 		options.OnUpdateProgress = (event: jsb.EventAssetsManager) => {
 			let bytes = event.getDownloadedBytes() + '/' + event.getTotalBytes();
@@ -215,10 +222,12 @@ export class Common_HotUpdate extends Component {
 			this.enterGame();
 		};
 		options.OnUpdateSucceed = () => {
+			native.fileUtils.purgeCachedEntries()
 			game.restart();
 			showNativeSplash();
 		};
-		options.OnUpdateFailed = () => {
+		options.OnUpdateFailed = (code) => {
+			console.log("OnUpdateFailed code: " + code);
 			this.tipsLabel.string = lang.write(k => k.UpdateModule.UpdateFail, {}, { placeStr: `更新失败` })
 			this.initConfirm([lang.write(k => k.UpdateModule.RestartProgram, {}, { placeStr: `更新失败，是否要重启程序？` })], () => {
 				game.restart()
@@ -234,7 +243,7 @@ export class Common_HotUpdate extends Component {
 				this.logLabel.string += lang.write(k => k.UpdateModule.ClientCheck, {}, { placeStr: `客户端开始检查>>` })
 				this.tipsLabel.string = lang.write(k => k.UpdateModule.CheckUpdatedPkg, {}, { placeStr: `检查更新包...` })
 				if (this.manifest) {
-					hotInstance.init(this.manifest, options);
+					hotInstance.init(this.localProjectManifest, this._storagePath, options);
 					hotInstance.checkUpdate();
 				}
 			}
@@ -246,29 +255,35 @@ export class Common_HotUpdate extends Component {
 
 	private handleManifestFile(newRemotUr: string) {
 		if (!NATIVE) return;
-		const storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : "/") + 'remote-asset')
-		// this.storagePath = storagePath
-		// console.log('updateManifestFile - Storage path for remote asset:' + storagePath)
-		this.updateManifestFile(newRemotUr, storagePath + '/project.manifest');
-		this.updateManifestFile(newRemotUr, storagePath + '/version.manifest');
+		const afterVersionString = this.updateManifestFile(newRemotUr, this._storagePath + '/project.manifest', this.manifest);
+		this.loadManifestFile(afterVersionString);
+
+		this.updateManifestFile(newRemotUr, this._storagePath + '/version.manifest', this.versionManifest);
 	}
 
-	private updateManifestFile(newRemotUr: string, fileName: string) {
+	private loadManifestFile(data: string) {
+		this.localProjectManifest = new native.Manifest(data, this._storagePath);
+	}
+
+	private updateManifestFile(newRemotUr: string, fileName: string, manifest: Asset) {
 		const fileExist = native.fileUtils.isFileExist(fileName)
 		console.log('updateManifestFile - filename:' + fileName, 'fileExist: ', fileExist)
+		let obj = undefined;
 		if (fileExist) {
 			let filestring_version = native.fileUtils.getStringFromFile(fileName)
-			let obj = JSON.parse(filestring_version);
+			obj = JSON.parse(filestring_version);
 			console.log('updateManifestFile - handleManifestFile ', obj.packageUrl, ' newRemotUr: ', newRemotUr);
-
-			obj.packageUrl = newRemotUr;
-			obj.remoteManifestUrl = newRemotUr + '/project.manifest';
-			obj.remoteVersionUrl = newRemotUr + '/version.manifest';
-			let afterVersionString = JSON.stringify(obj);
-			const res = native.fileUtils.writeStringToFile(afterVersionString, fileName);
-			// this.mainfestObj = obj;
-			console.log('updateManifestFile - Modify the results of the file: ', fileName, res);
+		} else {
+			obj = JSON.parse(manifest._nativeAsset);
 		}
+		obj.packageUrl = newRemotUr;
+		obj.remoteManifestUrl = newRemotUr + '/project.manifest';
+		obj.remoteVersionUrl = newRemotUr + '/version.manifest';
+		let afterVersionString = JSON.stringify(obj);
+		const res = native.fileUtils.writeStringToFile(afterVersionString, fileName);
+		// this.mainfestObj = obj;
+		console.log('updateManifestFile - Modify the results of the file: ', fileName, res);
+		return afterVersionString;
 	}
 
 	private downloadApkHandle(appDumpUrl: string, appOnlineVersion: string) {

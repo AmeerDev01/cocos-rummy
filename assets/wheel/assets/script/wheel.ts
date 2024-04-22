@@ -11,7 +11,6 @@ import {
     math,
     sp,
   } from "cc";
-  import { DEV } from 'cc/env'
   const { ccclass, property } = _decorator;
   
 

@@ -8,7 +8,8 @@ class LoaderPanelViewModel extends ViewModel<Common_LoaderPanel, IProps, IEvent>
   constructor() {
     super('Common_LoaderPanel')
   }
-  protected begin() {}
+  protected begin() { }
+  protected init() { }
   public connect(initProps: Partial<IProps> = {}) {
     this.inject(initProps, () => {
       return {

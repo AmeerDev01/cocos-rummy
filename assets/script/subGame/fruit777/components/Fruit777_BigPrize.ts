@@ -96,7 +96,7 @@ export class Fruit777_BigPrize extends BaseComponent<IState, IProps, IEvent> {
 					this.propertyNode.props_slots_goldNum.node.active = true
 					this.taskScheduler && this.taskScheduler.joinQueue(new Task((done) => {
 						(new StepNumber(value.pre, value.cur, (num) => {
-							this.propertyNode && this.propertyNode.props_slots_goldNum && (this.propertyNode.props_slots_goldNum.string = (+num.toFixed(2)).formatAmountWithCommas())
+							this.propertyNode && this.propertyNode.props_slots_goldNum && (this.propertyNode.props_slots_goldNum.string = (+num).formatAmountWithCommas())
 						}, () => {
 							this.scheduleOnce(() => {
 								this.events && this.events.killSelfHandler()
@@ -109,7 +109,7 @@ export class Fruit777_BigPrize extends BaseComponent<IState, IProps, IEvent> {
 			} else {
 				this.taskScheduler && this.taskScheduler.joinQueue(new Task((done) => {
 					(new StepNumber(value.pre, value.cur, (num) => {
-						this.propertyNode && this.propertyNode.props_slots_goldNum && (this.propertyNode.props_slots_goldNum.string = (+num.toFixed(2)).formatAmountWithCommas())
+						this.propertyNode && this.propertyNode.props_slots_goldNum && (this.propertyNode.props_slots_goldNum.string = (+num).formatAmountWithCommas())
 					}, () => {
 						this.scheduleOnce(() => {
 							this.events && this.events.killSelfHandler()

@@ -35,7 +35,7 @@ import Singleton from "./Singleton"
 
 const taskMap = {}
 export class Task {
-  /**切记，声明主执行函数中，done一定要确保执行，否则任务无法停止，若使用了任务调度器，那么队列将会被挂起 */
+  /**切记，声明主执行函数中，done一定要确保执行，否则任务无法停止，若在此情况下使用了任务调度器，那么队列将会被挂起 */
   constructor(fn: (done: Function) => void, name?: string) {
     this.startUpHandler = fn
     name && (this.name = name)

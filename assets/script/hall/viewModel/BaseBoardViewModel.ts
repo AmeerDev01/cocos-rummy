@@ -2,7 +2,6 @@ import { Node, Prefab, native, sys } from "cc"
 import ViewModel from "../../base/ViewModel"
 import { StateType } from "../store/reducer"
 import { Hall_Baseboard, IProps, IEvent } from "../components/Hall_Baseboard"
-import LoginPageViewModel from "./LoginPageViewModel"
 import { fetcher, hallAudio, sourceManageSeletor } from "../index"
 import { PrefabPathDefine as HallPrefabPathDefine, PrefabPathDefine } from '../../hall/sourceDefine/prefabDefine';
 import { ToastPosition, ToastType, addToastAction, setLoadingAction, setSubGameInfoAction } from "../store/actions/baseBoard"
@@ -10,24 +9,24 @@ import socketConnect, { SKT_MAG_TYPE, hallWebSocketDriver } from "../socketConne
 import WebSocketStarter from "../../common/WebSocketStarter"
 import { EffectType } from "../../utils/NodeIOEffect"
 import MainPanelViewModel from "./MainPanelViewModel"
-import { HallGameGateType, SubGameRunState, config, deviceInfo, subGameList } from "../config"
+import { HallGameGateType, config, deviceInfo, subGameList } from "../config"
 import { ApiUrl } from "../apiUrl"
 import { resetMemberInfo } from "../store/actions/memberInfo"
 import { resetWithDrawInfo } from "../store/actions/withdraw"
 import { lang } from "../index"
 import { NATIVE } from "cc/env"
-import { BridgeCode, getDeviceUniqueId } from "../../common/bridge"
+import { BridgeCode, adjustWebEventConfig, getDeviceUniqueId } from "../../common/bridge"
 import LoginPageV2ViewModel from "./login_v2/LoginPageV2ViewModel"
 import BaseViewModel from "./BaseViewModel"
 import { Hall_GivePanel, IState as GPIState, IProps as GPIProps, IEvent as GPIEvent } from "../components/Hall_GivePanel"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
 import ModalBox from "../../common/ModalBox"
+import { SubGameRunState } from "../../hallType"
 
 class BaseBoardViewModel extends ViewModel<Hall_Baseboard, IProps, IEvent> {
   constructor() {
     super('Hall_Baseboard')
   }
-  private loginPageViewModel: LoginPageViewModel
   public loginPageV2ViewModel: LoginPageV2ViewModel
   public mainPanelViewModel: MainPanelViewModel
   // private personCanterMainPanel:
@@ -37,7 +36,7 @@ class BaseBoardViewModel extends ViewModel<Hall_Baseboard, IProps, IEvent> {
     getDeviceUniqueId();
 
     this.setProps({
-      toastData: { content: "", type: ToastType.NORMAL },
+      toastData: { content: "", type: ToastType.NORMAL, forceLandscape: false, position: ToastPosition.MIDDLE },
       loadPayload: {
         isShow: false,
         flagId: '_',
@@ -79,6 +78,7 @@ class BaseBoardViewModel extends ViewModel<Hall_Baseboard, IProps, IEvent> {
     this.initLoginPanel(baseBoard, true)
   }
 
+
   private initMainPanel(baseBoard) {
     this.mainPanelViewModel = new MainPanelViewModel().mountView(sourceManageSeletor().getFile(HallPrefabPathDefine.MAIN_PANEL).source).appendTo(baseBoard)
       .setEvent({
@@ -116,7 +116,7 @@ class BaseBoardViewModel extends ViewModel<Hall_Baseboard, IProps, IEvent> {
         }, 0.5)
       } else {
         fetcher.send(ApiUrl.LOGIN_OUT).then((data) => exit()).catch((e) => {
-          !isForce && this.dispatch(addToastAction({ content: lang.write(k => k.BaseBoardModule.BaseBoardExit, {}, { placeStr: "退出失败~" }) }))
+          !isForce && this.dispatch(addToastAction({ content: lang.write(k => k.BaseBoardModule.BaseBoardExit, {}, { placeStr: "退出失败~" }), forceLandscape: false }))
         })
       }
     }
@@ -221,6 +221,7 @@ class BaseBoardViewModel extends ViewModel<Hall_Baseboard, IProps, IEvent> {
 
       let referer = '';
       let ap = '';
+      let invite = '';
       const packageType = '0';
       const getParamValue = (param: string, key: string) => {
         return param.substring(param.indexOf("=") + 1);
@@ -232,6 +233,8 @@ class BaseBoardViewModel extends ViewModel<Hall_Baseboard, IProps, IEvent> {
             referer = getParamValue(v, 'referer');
           } else if (v.indexOf('ap') !== -1) {
             ap = getParamValue(v, 'ap');
+          } else if (v.indexOf('invite') !== -1) {
+            invite = getParamValue(v, 'invite');
           }
         })
       }
@@ -242,6 +245,39 @@ class BaseBoardViewModel extends ViewModel<Hall_Baseboard, IProps, IEvent> {
         })
       } else {
         console.log("ap not found");
+      }
+      if (invite) {
+        const url = config.httpBaseUrl + ApiUrl.INVITE + '?referer=' + referer + '&invite=' + invite + '&packageType=' + packageType;
+        fetch(url).then((response) => {
+        }).catch((e) => {
+        })
+
+        const channelPackageUrl = config.httpBaseUrl + ApiUrl.CHANNEL_PACKAGE + '?number=' + invite;
+        fetch(channelPackageUrl).then((response) => {
+          response.json().then((data) => {
+            if (data.content) {
+              if (data.content.register) {
+                adjustWebEventConfig.register = data.content.register
+              }
+              if (data.content.login) {
+                adjustWebEventConfig.login = data.content.login
+              }
+              if (data.content.firstPurchase) {
+                adjustWebEventConfig.firstPurchase = data.content.firstPurchase
+              }
+              if (data.content.purchase) {
+                adjustWebEventConfig.purchase = data.content.purchase
+              }
+              if (data.content.firstPullPurchase) {
+                adjustWebEventConfig.firstPullPurchase = data.content.firstPullPurchase
+              }
+              if (data.content.pullPurchase) {
+                adjustWebEventConfig.pullPurchase = data.content.pullPurchase
+              }
+            }
+          })
+        }).catch((e) => {
+        })
       }
     }
   }

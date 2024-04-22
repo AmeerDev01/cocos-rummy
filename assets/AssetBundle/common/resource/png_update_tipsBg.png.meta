@@ -43,13 +43,13 @@
         "trimThreshold": 1,
         "rotated": false,
         "offsetX": 0,
-        "offsetY": -3,
+        "offsetY": 0,
         "trimX": 0,
-        "trimY": 6,
+        "trimY": 0,
         "width": 740,
-        "height": 500,
+        "height": 473,
         "rawWidth": 740,
-        "rawHeight": 506,
+        "rawHeight": 473,
         "borderTop": 0,
         "borderBottom": 0,
         "borderLeft": 0,
@@ -62,16 +62,16 @@
         "vertices": {
           "rawPosition": [
             -370,
-            -250,
+            -236.5,
             0,
             370,
-            -250,
+            -236.5,
             0,
             -370,
-            250,
+            236.5,
             0,
             370,
-            250,
+            236.5,
             0
           ],
           "indexes": [
@@ -84,9 +84,9 @@
           ],
           "uv": [
             0,
-            500,
+            473,
             740,
-            500,
+            473,
             0,
             0,
             740,
@@ -98,18 +98,18 @@
             1,
             0,
             0,
-            0.9881422924901185,
             1,
-            0.9881422924901185
+            1,
+            1
           ],
           "minPos": [
             -370,
-            -250,
+            -236.5,
             0
           ],
           "maxPos": [
             370,
-            250,
+            236.5,
             0
           ]
         },

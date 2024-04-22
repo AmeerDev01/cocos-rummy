@@ -2,7 +2,9 @@ import { Animation, Color, Label, Node, Sprite, UIOpacity, Vec3, _decorator, twe
 import { BaseComponent } from '../../../base/BaseComponent';
 import { global } from '../../../hall';
 import config from '../config';
-import { DeskStatus, FlowInfo } from '../type';
+import { DeskStatus, FlowInfo, PlayerStatus } from '../type';
+import { rummyRoomChoseView } from '../index';
+import { SoundPathDefine } from '../sourceDefine/soundDefine';
 const { ccclass, property } = _decorator;
 
 export interface IState {
@@ -16,11 +18,15 @@ export interface IProps {
 	/**流程信息 */
 	flowInfo: FlowInfo,
 	seatIndex: number,
-	isBanker?: boolean,
+	winloss: number,
+	status: number,
+	isWin: boolean,
 	point?: number,
+	isBanker?: boolean,
 }
 export interface IEvent {
-	exitRoom: () => void,
+	/**更新结算余额 */
+	updateBalanceGold: () => void,
 }
 
 @ccclass('Rummy_Mine')
@@ -52,6 +58,7 @@ export class Rummy_Mine extends BaseComponent<IState, IProps, IEvent> {
 		props_balance_point: new Label(),
 
 		props_animation_winner: new Node(),
+		props_win_label: new Node(),
 	}
 
 	public props: IProps = {
@@ -62,11 +69,14 @@ export class Rummy_Mine extends BaseComponent<IState, IProps, IEvent> {
 		flowInfo: undefined,
 		seatIndex: 0,
 		isBanker: false,
+		isWin: false,
 		point: 0,
+		winloss: 0,
+		status: 0,
 	}
 
 	public events: IEvent = {
-		exitRoom: () => { },
+		updateBalanceGold: () => { },
 	}
 
 	protected initState() {
@@ -77,7 +87,9 @@ export class Rummy_Mine extends BaseComponent<IState, IProps, IEvent> {
 
 
 	/**倒计时次数 */
-	private countdownCount = 600;
+	private countdownCount = 300;
+	/**最大倒计时 */
+	private maxSecond = 30;
 	/**倒计时秒数 */
 	private countdwonSecond = 30;
 	/**倒计时颜色的Green通道的初始值 */
@@ -85,38 +97,47 @@ export class Rummy_Mine extends BaseComponent<IState, IProps, IEvent> {
 
 	/**倒计时方法 */
 	private countdownFun;
+	/**赢的label标签动画定时方法 */
+	private winLabelAnimationScheduleFun: Function;
 
 
 	protected bindEvent(): void {
-		this.node.on(Node.EventType.TOUCH_END, () => {
-			this.startCountdown();
-		})
 	}
 
 	/**开始倒计时 */
-	private startCountdown() {
+	private startCountdown(countdwonSecond: number, maxSecond: number = 30) {
+		this.countdwonSecond = countdwonSecond;
+		this.maxSecond = maxSecond;
+
+		// 已经进行百分比
+		const percent = this.countdwonSecond / this.maxSecond;
 		this.stopCountdown();
 		this.propertyNode.props_countdown.node.active = true;
 
-		let count = 0;
-		let range = 1;
-		let colorG = this.countdownColorInitG;
+		let count = this.countdownCount * (1 - percent);
+		let range = percent;
+		let colorG = this.countdownColorInitG * percent;
 		this.changeCountdownColor(colorG);
 
 		this.countdownFun = () => {
-			count++;
 			range -= this.getMinRange();
 			this.propertyNode.props_countdown.fillRange = range;
 
 			colorG -= this.countdownColorInitG / this.countdownCount
 			this.changeCountdownColor(colorG);
 
-			if (range <= 0) {
+			if (this.maxSecond - this.getRealitySecond(count) === 5) {
+				rummyRoomChoseView.playSound(SoundPathDefine.rummy_countdown)
+			}
+
+			if (count >= this.countdownCount) {
 				this.stopCountdown();
 			}
+			count++;
 		}
 
-		this.schedule(this.countdownFun, this.getInterval(this.countdwonSecond), this.countdownCount + 1)
+		this.countdownFun();
+		this.schedule(this.countdownFun, this.getInterval(this.maxSecond), this.countdownCount)
 	}
 
 	/**停止倒计时 */
@@ -129,7 +150,7 @@ export class Rummy_Mine extends BaseComponent<IState, IProps, IEvent> {
 
 	/**获得真实的倒计时秒数 */
 	private getRealitySecond(count) {
-		return this.getInterval(this.countdwonSecond) * count;
+		return this.getInterval(this.maxSecond) * count;
 	}
 
 	private changeCountdownColor(colorG: number) {
@@ -160,25 +181,31 @@ export class Rummy_Mine extends BaseComponent<IState, IProps, IEvent> {
 				this.propertyNode.props_banker.active = value.cur;
 			} else if (key === 'flowInfo' && value.cur) {
 				this.updateFlowInfo();
+			} else if (key === 'winloss') {
+				this.showWinLabel(this.props.winloss);
+			} else if (key === 'status') {
+				this.updateStatus();
+			} else if (key === 'isWin') {
+				this.showWinningAnimation(value.cur)
 			}
 		}
 	}
 
 	private updateFlowInfo() {
 		if (this.props.flowInfo.deskStatus === DeskStatus.DISTRIBUTE) {
-			this.dealHandle();
-		} else if (this.isMyOp()) {
-			if (this.props.flowInfo.curIndex === this.props.seatIndex) {
-				this.countdwonSecond = this.props.flowInfo.opCountdown;
-				this.startCountdown();
-			} else {
-				this.stopCountdown();
-			}
+			this.dealHandle(true);
+		} else if (this.isGameInStatus()) {
+			this.dealHandle(false);
 		}
 	}
 
-	private isMyOp() {
-		return this.props.flowInfo.curIndex === config.gameConfig.mySeatIndex;
+	private isGameInStatus() {
+		return this.props.flowInfo.deskStatus === DeskStatus.TOUCH_CARD || this.props.flowInfo.deskStatus === DeskStatus.OUT_CARD
+			|| this.props.flowInfo.deskStatus === DeskStatus.CONFIRM || this.props.flowInfo.deskStatus === DeskStatus.WAIT_BALANCE
+	}
+
+	private isMyTouch() {
+		return this.props.flowInfo.deskStatus === DeskStatus.TOUCH_CARD && this.props.flowInfo.curIndex === this.props.seatIndex;
 	}
 
 	private loadHead() {
@@ -198,11 +225,11 @@ export class Rummy_Mine extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	/**发牌处理 */
-	private dealHandle() {
-		this.hideShowNode(this.propertyNode.props_label_point, false, this.props_label_point_init_pos, true);
-		this.hideShowNode(this.propertyNode.props_point_number.node, false, this.props_point_number_init_pos, true);
-		this.moveNode(this.propertyNode.props_gold.node, this.props_gold_init_pos, true);
-		this.moveNode(this.propertyNode.props_spr_icon_money, this.props_spr_icon_money_init_pos, true);
+	private dealHandle(isTween: boolean = true) {
+		this.hideShowNode(this.propertyNode.props_label_point, false, this.props_label_point_init_pos, isTween);
+		this.hideShowNode(this.propertyNode.props_point_number.node, false, this.props_point_number_init_pos, isTween);
+		this.moveNode(this.propertyNode.props_gold.node, this.props_gold_init_pos, isTween);
+		this.moveNode(this.propertyNode.props_spr_icon_money, this.props_spr_icon_money_init_pos, isTween);
 	}
 
 	private moveNode(opNode: Node, pos: Vec3, isTween: boolean) {
@@ -229,9 +256,14 @@ export class Rummy_Mine extends BaseComponent<IState, IProps, IEvent> {
 	private showWinningAnimation(isShow: boolean) {
 		this.propertyNode.props_animation_winner.active = isShow;
 		this.propertyNode.props_banker.getComponent(Sprite).color = isShow ? Color.fromHEX(new Color(), "919191") : Color.fromHEX(new Color(), "FFFFFF")
+
+		if (isShow) {
+			rummyRoomChoseView.playSound(SoundPathDefine.rummy_win)
+		}
 	}
 
 	protected bindUI(): void {
+		this.propertyNode.props_countdown.node.active = false;
 		this.props_label_point_init_pos = this.propertyNode.props_label_point.position.clone();
 		this.props_point_number_init_pos = this.propertyNode.props_point_number.node.position.clone();
 		this.props_gold_init_pos = this.propertyNode.props_gold.node.position.clone();
@@ -252,6 +284,9 @@ export class Rummy_Mine extends BaseComponent<IState, IProps, IEvent> {
 		this.showWinningAnimation(false);
 
 		this.hideLostAt();
+
+		this.propertyNode.props_win_label.active = false;
+		this.propertyNode.props_banker.active = false;
 	}
 
 	private hideLostAt() {
@@ -259,15 +294,56 @@ export class Rummy_Mine extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_lost_at_label.getComponent(UIOpacity).opacity = 0;
 	}
 
-	private showLostAt(point: number) {
+	private showLostAt(lostAtStr: string, point: number) {
 		this.propertyNode.props_lost_at.active = true;
 
 		this.propertyNode.props_balance_point.string = point + '';
+
+		this.propertyNode.props_lost_at_label.getComponent(Label).string = lostAtStr;
 		this.propertyNode.props_lost_at_label.getComponent(Animation).play();
 	}
 
-	update(deltaTime: number) {
+	/**显示赢的金额 */
+	private showWinLabel(winloss: number) {
+		if (winloss <= 0) {
+			return;
+		}
+		this.winLabelAnimationScheduleFun && this.unschedule(this.winLabelAnimationScheduleFun);
 
+		this.propertyNode.props_win_label.active = true;
+		this.propertyNode.props_win_label.getComponent(Label).string = '+' + winloss.formatAmountWithLetter();
+		this.propertyNode.props_win_label.getComponent(Animation).play();
+
+		this.winLabelAnimationScheduleFun = () => {
+			this.propertyNode.props_win_label.active = false;
+			this.winLabelAnimationScheduleFun = undefined;
+		}
+		this.schedule(this.winLabelAnimationScheduleFun, 2, 0)
+
+		this.events.updateBalanceGold();
+	}
+
+	public getHeadPos() {
+		return this.propertyNode.props_head.node.worldPosition;
+	}
+
+	private updateStatus() {
+		if (this.props.status === PlayerStatus.TOUCH_COUTNDOWN || this.props.status === PlayerStatus.CONFIRM_COUNTDOWN) {
+			this.startCountdown(this.props.flowInfo.opCountdown);
+			rummyRoomChoseView.playSound(SoundPathDefine.rummy_shangjia_send)
+		} else {
+			this.stopCountdown();
+			if (this.props.status === PlayerStatus.DROP) {
+				this.showLostAt("Dropped", Math.abs(this.props.winloss));
+			} else if (this.props.status === PlayerStatus.BALANCE && this.props.winloss < 0) {
+				this.showLostAt("Lost at", Math.abs(this.props.winloss));
+			} else {
+				this.hideLostAt();
+			}
+		}
+	}
+
+	update(deltaTime: number) {
 	}
 }
 

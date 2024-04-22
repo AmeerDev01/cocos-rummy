@@ -270,7 +270,7 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
     } else {
       this.positionId = this.comp.props.positionId
       this.rollerPanelViewModel.comp.hidePyrosphere(2)
-    } 
+    }
     const msgObj = dragonV2WebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
       positionId: this.comp.props.positionId,
       tableId: cacheData.authData.tableId,
@@ -289,10 +289,10 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
       }
     })
     //超时
-    msgObj.bindTimeoutHandler(() => {
-      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
-      return false
-    })
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
   }
   public openRule() {
     const rulePanelViewMode = new DragonV2RulePanelViewModel()

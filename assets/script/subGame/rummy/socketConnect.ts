@@ -1,27 +1,46 @@
-import WebSocketToDo from "../../common/WebSocketToDo"
-import { listenerFactoy } from "../../common/listenerFactoy"
-import { initConfig, subGameList } from "../../hall/config"
-import config from "./config"
-import { ToastType, addToastAction, setLoadingAction } from "../../hall/store/actions/baseBoard"
-import store, { getStore } from "./store"
-import { global, lang } from "../../hall"
 import WebSocketStarter, { SKT_OPERATION, WebSocketDriver } from "../../common/WebSocketStarter"
+import { global, lang } from "../../hall"
+import { initConfig, subGameList } from "../../hall/config"
+import { ToastType, addToastAction } from "../../hall/store/actions/baseBoard"
+import config from "./config"
 
 export enum SKT_MAG_TYPE {
   /**认证 */
-  LOGIN = "2",
-  /**退出房间 */
-  QUIT_ROOM = "3",
+  LOGIN = "1",
   /**进入房间 */
-  JOIN_ROOM = "4",
-  /**准备 */
-  READY = "5",
-  EXIT = "10",
+  JOIN_ROOM = "2",
+  /**发牌 */
+  DEAL = "3",
+  /**摸牌 */
+  TOUCH_CARD = "4",
+  /**出牌 */
+  OUT = "5",
+  /**分组 */
+  GROUP = "6",
+  /**发送确认消息 */
+  SEND_CONFIRM = "7",
+  /**结算消息 */
+  BALANCE = "8",
+  /**投降 */
+  DROP = "9",
+  /**提前结算 */
+  SHOW = "10",
+  /**发送确认消息 */
+  CONFIRM_11 = "11",
+  /**换桌 */
+  CHANGE_ROOM = "12",
+  /**其他用户退出房间 */
+  OTHER_PLAYER_QUIT_ROOM = "13",
+  /**退出房间 */
+  QUIT_ROOM = "14",
+  /**退出游戏 */
+  EXIT_GAME = "15",
+  /**更新余额 */
+  UPDATE_GOLD = "16",
 }
 
 export let rummyWebSocketDriver: WebSocketDriver<SKT_MAG_TYPE> = null
 export default () => {
-  const dispatch = getStore().dispatch
   return new Promise((resolve, reject) => {
     initConfig().then(() => {
       const { gameId, gameHost } = subGameList.find(i => i.gameId === config.gameId)
@@ -29,7 +48,7 @@ export default () => {
         rummyWebSocketDriver = new WebSocketDriver<SKT_MAG_TYPE>(gameId, gameHost)
         rummyWebSocketDriver.filterData = (data, source) => {
           if (source.operation === SKT_OPERATION.RECOVER) {
-            starlightGameLogin();
+            rummyGameLogin();
             return;
           }
           if (data.success) {
@@ -43,11 +62,12 @@ export default () => {
               //数据格式错误
               error = 'data format error'
               console.error('data format error', data)
+              global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }), type: ToastType.ERROR }))
             } else {
-              error = data.reason || 'error'
-              console.error(data.reason)
+              error = data.message || 'error'
+              console.error(data.message)
+              global.hallDispatch(addToastAction({ content: data.message, type: ToastType.WARN }))
             }
-            global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }), type: ToastType.ERROR }))
             return {
               data: '', error
             }
@@ -61,7 +81,7 @@ export default () => {
   })
 }
 
-export const starlightGameLogin = () => {
+export const rummyGameLogin = () => {
   const msgObj = rummyWebSocketDriver.loginGame(SKT_MAG_TYPE.LOGIN)
   msgObj.bindReceiveHandler((message) => {
     if (!message.data.success) {
@@ -77,5 +97,5 @@ export const starlightGameLogin = () => {
 }
 
 export const removeInstance = () => {
-  rummyWebSocketDriver && rummyWebSocketDriver.logoutGame(SKT_MAG_TYPE.EXIT);
+  rummyWebSocketDriver && rummyWebSocketDriver.logoutGame(SKT_MAG_TYPE.EXIT_GAME);
 }

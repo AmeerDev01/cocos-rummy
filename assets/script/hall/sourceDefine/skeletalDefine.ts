@@ -31,6 +31,9 @@ export enum SkeletalPathDefine {
   /**凤凰 */
   _GENG_HUANG_GATE_S = "icon/phoenix/small/fenghuangrk",
   _GENG_HUANG_GATE_L = "icon/phoenix/large/rk_fenghuang_da",
+  /**多福多彩 */
+  _DFDC_S = "icon/dfdc/small/duocaiduofu_xiao",
+  _DFDC_L = "icon/dfdc/large/duocaiduofu_big",
   /**鱼虾蟹 */
   _YXXRK_GATE_S = "icon/yxx/small/yxxrk",
   _YXXRK_GATE_L = "icon/yxx/large/rk_yxx_da",
@@ -52,6 +55,12 @@ export enum SkeletalPathDefine {
   /**捕鱼 */
   _FISHING_S = "icon/fish/small/buyu_xiao",
   _FISHING_L = "icon/fish/large/buyu",
+  /**RUMMY */
+  _RUMMY_S = "icon/rummy/small/rummy_xiao",
+  _RUMMY_L = "icon/rummy/large/rummy_big",
+  /**招财虎 */
+  _FORTUNET_TIGER_S = "icon/fortuneTiger/small/rk_zch_xiao",
+  _FORTUNET_TIGER_L = "icon/fortuneTiger/large/rk_zch_da"
 }
 
 export default (bundlePkgName: string) => loopFiles(bundlePkgName, sp.SkeletonData, SkeletalPathDefine)

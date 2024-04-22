@@ -1,18 +1,17 @@
-import { _decorator, Button, Component, director, find, Game, game, instantiate, Label, Node, Sprite, sys, tween, UITransform, Vec3 } from 'cc';
+import { _decorator, assetManager, AssetManager, Button, Component, director, find, Game, game, instantiate, Label, Node, Prefab, sp, Sprite, sys, tween, UITransform, Vec3 } from 'cc';
 import { BaseComponent } from '../../base/BaseComponent';
-import { setLoadingAction, setSocketConnectStatus, setSubGameInfoAction, ToastPosition, ToastType } from '../store/actions/baseBoard';
+import { setLoadingAction, setSocketConnectStatus, setSubGameInfoAction, setSubGameRunState, ToastPosition, ToastType } from '../store/actions/baseBoard';
 import isEqual from "fast-deep-equal"
 import { HallGameGateType } from '../config';
-import { effect1 } from '../../utils/NodeIOEffect';
 import BundleSplit from '../../utils/BundleSplit';
-import MarqueeViewModel from '../viewModel/MarqueeViewModel';
-import { baseBoardView, hallAudio, lang, sourceManageSeletor } from '../index';
+import { baseBoardView, global, hallAudio, lang, sourceManageSeletor } from '../index';
 import { SoundPathDefine } from '../sourceDefine/soundDefine';
 import { getPackageName, sendNativeVibrate } from '../../common/bridge';
 import WebSocketStarter from '../../common/WebSocketStarter';
-import { DEV } from 'cc/env';
 import { LanguageItemType } from '../../language/languagePkg';
-import { getIsDev } from '../../config/GameConfig';
+import { getEnvKey, getIsTest, isH5 } from '../../config/GameConfig';
+import { SubGameRunState } from '../../hallType';
+import ModalBox from '../../common/ModalBox';
 
 const { ccclass, property } = _decorator;
 
@@ -21,7 +20,7 @@ export interface IState {
 }
 
 export interface IProps {
-	toastData?: { content: string, type: ToastType },
+	toastData?: { content: string, type: ToastType, position: ToastPosition, forceLandscape: boolean },
 	// isLoading?: boolean,
 	// loadingFlagId: string,
 	// isAllowCloseLoading?: boolean
@@ -75,6 +74,7 @@ export class Hall_Baseboard extends BaseComponent<IState, IProps, IEvent> {
 		// props_subGameHeader: new Node(),
 		/**断链提示面板 */
 		props_disconnect_panel: new Node(),
+		props_main_bg_rec: new Node(),
 		/**跑马灯 */
 		props_marquee: new Node(),
 		/**中奖通告 */
@@ -92,12 +92,16 @@ export class Hall_Baseboard extends BaseComponent<IState, IProps, IEvent> {
 		props_sokt_retry: new Button(),
 		/**内部版本提示 */
 		props_insideVersion: new Node(),
+		/**拉帘 */
+		props_offloading: new Node(),
+		/**toast外围 */
+		props_toastWrap: new Node()
 	}
 	private loadingCommandMap: { [key: string]: 'enable' } = {}
 	private disableconnectCancle: number = 0
 	private lastHideAppTime: number = 0
 	public props: IProps = {
-		toastData: { content: "", type: ToastType.NORMAL },
+		toastData: { content: "", type: ToastType.NORMAL, position: ToastPosition.MIDDLE, forceLandscape: false },
 		// isLoading: false,
 		// loadingFlagId: '_',
 		// isAllowCloseLoading: false,
@@ -167,7 +171,7 @@ export class Hall_Baseboard extends BaseComponent<IState, IProps, IEvent> {
 				if (this.props.loadPayload.flagId) {
 					const isExistKey = Object.keys(this.loadingCommandMap).some(k => k === this.props.loadPayload.flagId)
 					this.loadingCommandMap['lf_' + this.props.loadPayload.flagId] = 'enable'
-					isExistKey && DEV && console.warn(`load flig '${this.props.loadPayload.flagId}' has exist`)
+					isExistKey && getIsTest() && console.warn(`load flig '${this.props.loadPayload.flagId}' has exist`)
 				} else {
 					console.warn(`no load flig`)
 				}
@@ -210,10 +214,9 @@ export class Hall_Baseboard extends BaseComponent<IState, IProps, IEvent> {
 				sendNativeVibrate(200)
 				baseBoardView.mainPanelViewModel.viewNode.active = false
 				// this.propertyNode.props_mainBoard.active = false
-
-
-
-				this.closeGameHandler = this.closeGameHandlerTempList.find(item => item.gameId === this.props.openGameInfo.gameId).closeFn
+				if (!this.props.openGameInfo.isDepend) {
+					this.closeGameHandler = this.closeGameHandlerTempList.find(item => item.gameId === this.props.openGameInfo.gameId).closeFn
+				}
 			}
 		}
 		if (key === "isConnect") {
@@ -224,6 +227,11 @@ export class Hall_Baseboard extends BaseComponent<IState, IProps, IEvent> {
 				this.disableconnectCancle = window.setTimeout(() => {
 					this.propertyNode.props_sokt_close.node.active = true
 				}, 3000)
+			}
+			if (!this.props.isConnect && this.props.openGameInfo && this.props.openGameInfo.isVertical) {
+				this.propertyNode.props_main_bg_rec.angle = 90
+			} else {
+				this.propertyNode.props_main_bg_rec.angle = 0
 			}
 		}
 		if (key === "remainRetryCount") {
@@ -240,10 +248,14 @@ export class Hall_Baseboard extends BaseComponent<IState, IProps, IEvent> {
 
 	protected bindUI(): void {
 		director.addPersistRootNode(this.node)
-		if (getIsDev()) {
+		const envKey = getEnvKey()
+		if (envKey === "development") {
+			this.propertyNode.props_insideVersion.active = true
+			this.propertyNode.props_insideVersion.getChildByName('verLabel').getComponent(Label).string = "内部开发版"
+		} else if (envKey === "test") {
 			this.propertyNode.props_insideVersion.active = true
 			this.propertyNode.props_insideVersion.getChildByName('verLabel').getComponent(Label).string = "内部测试版"
-		} else if (getPackageName() === "advance") {
+		} else if (envKey === "advance") {
 			this.propertyNode.props_insideVersion.active = true
 			this.propertyNode.props_insideVersion.getChildByName('verLabel').getComponent(Label).string = "内部预发版"
 		} else {
@@ -268,25 +280,66 @@ export class Hall_Baseboard extends BaseComponent<IState, IProps, IEvent> {
 	/**开始初始化子游戏 */
 	public beginInitSubGame(gameInfo: HallGameGateType) {
 		// if (this.openGameId) return
+		window.HALL_GLOBAL.currGameConfig = gameInfo;
 		// 打开游戏底板
 		this.propertyNode.props_subGameBoard.active = true
-
-		// this.propertyNode.props_subGameHeader.active = true
-		// this.propertyNode.props_subGameBoardHeader.active = true
-		// this.propertyNode.props_subGameBoardHeader.getChildByName("subGameName").getComponent(Label).string = gameInfo.gameName
 		this.openGameId = gameInfo.gameId
-		const closeFn = gameInfo.startUpHandler(this.propertyNode.props_subGameBoard)
-		if (this.closeGameHandlerTempList.some(i => i.gameId === gameInfo.gameId)) {
-			this.closeGameHandlerTempList.find(i => i.gameId === gameInfo.gameId).closeFn = closeFn
+		if (gameInfo.isDepend) {
+			this.showGameLoading(gameInfo)
 		} else {
-			this.closeGameHandlerTempList.push({ gameId: gameInfo.gameId, closeFn: closeFn })
+			const closeFn = gameInfo.startUpHandler(this.propertyNode.props_subGameBoard)
+			if (this.closeGameHandlerTempList.some(i => i.gameId === gameInfo.gameId)) {
+				this.closeGameHandlerTempList.find(i => i.gameId === gameInfo.gameId).closeFn = closeFn
+			} else {
+				this.closeGameHandlerTempList.push({ gameId: gameInfo.gameId, closeFn: closeFn })
+			}
 		}
 
 		// effect1(this.propertyNode.props_subGameBoard).enter().then(() => { })
 		// director.loadScene("fruit777")
 	}
+	/**加载游戏加载界面 */
+	showGameLoading(gameInfo: HallGameGateType) {
+		console.error("加载游戏加载界面", gameInfo.bundleName, assetManager.bundles)
+		let bundle: AssetManager.Bundle = assetManager.getBundle(gameInfo.bundleName);
+		console.error(bundle)
+		let url = `prefabs/prefab_${gameInfo.bundleName}_loading`;
+		bundle.load(url, Prefab, (progress, total) => {
+			global.hallDispatch(setSubGameRunState(SubGameRunState.LOADING))
+			global.setSubGameGate(gameInfo.gameId, (progress / total))
+		}, (err, pre: Prefab) => {
+			if (pre) {
+				global.hallDispatch(setSubGameRunState(SubGameRunState.READY))
+				this.dispatch(setSubGameInfoAction(gameInfo))
+				baseBoardView.mainPanelViewModel.viewNode.active = false
+				// this.propertyNode.props_mainBoard.children[0].active = false;
+				let nd = instantiate(pre);
+				nd.parent = this.propertyNode.props_subGameBoard;
+				console.error("加载预制体成功 ", url)
+			} else {
+				console.error("加载预制体失败 ", url)
+			}
+		})
+	}
+	/**设置大厅旋转 */
+	// setShowAngle(inGame: boolean) {
+	// 	return
+	// 	if (inGame) {
 
-	public closeSubGame(isPre: boolean = false) {
+	// 	} else {
+	// 		window.HALL_GLOBAL.currGameConfig = null;
+	// 	}
+	// 	let nd = baseBoardView.mainPanelViewModel.viewNode.parent;
+	// 	let nd1 = nd.parent.getChildByName("props_disconnect_panel");
+	// 	if (window.HALL_GLOBAL.currGameConfig && window.HALL_GLOBAL.currGameConfig.isVertical) {
+	// 		nd.angle = 90;
+	// 		nd1.angle = 90;
+	// 	} else {
+	// 		nd.angle = 0;
+	// 		nd1.angle = 0;
+	// 	}
+	// }
+	public closeSubGame() {
 		if (!this.props.openGameInfo) return
 		this.openGameId = 0
 		const gameId = this.props.openGameInfo.gameId
@@ -301,29 +354,34 @@ export class Hall_Baseboard extends BaseComponent<IState, IProps, IEvent> {
 		}
 		// }
 		baseBoardView.mainPanelViewModel.viewNode.active = true
-		// this.propertyNode.props_mainBoard.active = true
-
-
 		this.dispatch(setLoadingAction({ isShow: true, flagId: 'closeGame' }))
+		// this.propertyNode.props_offloading.active = true
+		// this.propertyNode.props_offloading.getComponent(sp.Skeleton).animation = 'animation'
 		baseBoardView.mainPanelViewModel.openReliefPanel()
 		this.scheduleOnce(() => {
+			this.propertyNode.props_subGameBoard.destroyAllChildren()
 			BundleSplit.releaseBundle(gameId)
 		}, 0.2)
 		this.scheduleOnce(() => {
 			this.propertyNode.props_subGameBoard.destroyAllChildren()
 			this.events.onGameClose()
-			// this.dispatch(setSubGameInfoAction(null))
 			// this.propertyNode.props_subGameBoard.active = false
 			// hallAudio.resume()
 			hallAudio.resume()//.play(SoundPathDefine.MAIN_BGM, true)
 			this.closeGameHandler = undefined
 			this.dispatch(setSubGameInfoAction(null))
 			this.dispatch(setLoadingAction({ isShow: false, flagId: 'closeGame' }))
+			// this.propertyNode.props_offloading.getComponent(sp.Skeleton).animation = ''
+			// this.propertyNode.props_offloading.active = false
 		}, 1.2)
 		// this.propertyNode.props_subGameHeader.active = false
 	}
 
-	private addToast(toastObj: { content: string, type: ToastType, position: ToastPosition }) {
+	/**
+	 * 添加toast提示
+	 * @param toastObj (forceLandscape:强制横向)
+	 */
+	private addToast(toastObj: { content: string, type: ToastType, position: ToastPosition, forceLandscape: boolean }) {
 		let toastWrap: Node
 		switch (toastObj.position) {
 			case ToastPosition.BOTTOM: toastWrap = this.propertyNode.props_toastWrap_bottom; break;
@@ -337,10 +395,18 @@ export class Hall_Baseboard extends BaseComponent<IState, IProps, IEvent> {
 
 		(toastWrap as Node).setSiblingIndex(1000)
 		const props_toast: Node = instantiate(toastObj.type === ToastType.ERROR ? this.propertyNode.props_toast_template_error : this.propertyNode.props_toast_template_normal)
+		props_toast.setPosition(new Vec3(0, 0, 0))
 		props_toast.getChildByName("toastLabel").getComponent(Label).string = toastObj.content
 		props_toast.active = true
 		toastWrap.addChild(props_toast)
 		props_toast.setScale(new Vec3(1, 0, 1))
+		if (this.props.openGameInfo && this.props.openGameInfo.isVertical && !toastObj.forceLandscape) {
+			// toastWrap.setRotationFromEuler(0, 90, 0)
+			this.propertyNode.props_toastWrap.angle = 90
+		} else {
+			// toastWrap.setRotationFromEuler(0, 0, 0)
+			this.propertyNode.props_toastWrap.angle = 0
+		}
 		tween(props_toast).to(0.1, { scale: new Vec3(1, 1, 1) }).delay(3).to(0.1, { scale: new Vec3(1, 0, 1) }).call(() => {
 			props_toast.destroy()
 			this.events.toastDone()

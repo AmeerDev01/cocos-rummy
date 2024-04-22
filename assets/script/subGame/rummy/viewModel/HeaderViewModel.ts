@@ -4,7 +4,7 @@ import { SKT_MAG_TYPE, rummyWebSocketDriver } from "../socketConnect"
 import { bundlePkgName } from "../sourceDefine"
 import { getStore } from "../store"
 import { StateType } from "../store/reducer"
-import { EnterGameVo } from "../type"
+import { JoinRoomVo } from "../type"
 
 @StoreInject(getStore())
 class HeaderViewModel extends ViewModel<Rummy_Header, IProps, IEvent> {
@@ -18,7 +18,7 @@ class HeaderViewModel extends ViewModel<Rummy_Header, IProps, IEvent> {
   public connect() {
     this.inject({}, (state: StateType) => {
       return {
-        gold: state.deskData.gold
+        isShowSwitchBtn: state.deskData.isShowSwitchBtn
       }
     })
     return this

@@ -109,7 +109,7 @@ export class Hall_WithdrawBank extends BaseComponent<IState, IProps, IEvent> {
 				toggleWrap.addChild(childNode)
 				childNode.getChildByName("btn_ikat1").on(Node.EventType.TOUCH_END, () => {
 					if (item.bind) {
-						this.dispatch(addToastAction({ content: lang.write(k => k.withdrawal.GotoServiceModify, {}, { placeStr: "请联系客服修改" }) }))
+						// this.dispatch(addToastAction({ content: lang.write(k => k.withdrawal.GotoServiceModify, {}, { placeStr: "请联系客服修改" }) }))
 					} else {
 						//打开详情
 						const grayscale = childNode.getChildByName("btn_ikat1").getComponent(Sprite).grayscale

@@ -327,7 +327,7 @@ export class StarlightV2Icon {
   }
 
   public isOddsIcon() {
-    return this.iconConfig.id >= IconId.ODDS_ICON_GREEN && this.iconConfig.id <= IconId.ODDS_ICON_RED;
+    return this.iconConfig.id >= IconId.ODDS_ICON_GREEN && this.iconConfig.id <= IconId.ODDS_ICON_YELLOW;
   }
 
   public isScatterIcon() {

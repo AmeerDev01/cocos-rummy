@@ -9,7 +9,6 @@ import { PrefabPathDefine } from '../../sourceDefine/prefabDefine';
 import CaptchaGenerator from '../../../utils/CaptchaGenerator';
 import { addToastAction } from '../../store/actions/baseBoard';
 import { EffectType } from '../../../utils/NodeIOEffect';
-import ModalBox from '../../../common/ModalBox';
 const { ccclass, property } = _decorator;
 
 export enum LoginType {

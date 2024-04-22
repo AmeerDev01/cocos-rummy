@@ -1,8 +1,8 @@
-import { _decorator, Button, Color, Component, EventMouse, Label, Node, Sprite, sys, Toggle } from 'cc';
+import { _decorator, Button, Color, Component, EventMouse, Label, Node, Sprite, SpriteFrame, sys, Toggle } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import config from '../config';
 import { SKT_MAG_TYPE, fruit777WebSocketDriver } from '../socketConnect';
-import { fruit777_Audio, gameBoardViewModel, headerViewModel, msgListener, NORMAL_MAG_TYPE } from '../index';
+import { bundleFruit777, fruit777_Audio, gameBoardViewModel, headerViewModel, msgListener, NORMAL_MAG_TYPE } from '../index';
 import { AutoLauncherType, GameType } from '../type';
 import TaskScheduler, { Task } from '../../../utils/TaskScheduler';
 import StepNumber from '../../../utils/StepNumber';
@@ -12,6 +12,15 @@ import UseSetOption from '../../../utils/UseSetOption';
 import { setRollSpeed } from '../store/actions/roller';
 const { ccclass, property } = _decorator;
 
+
+enum LAUNCHER_STATE {
+	/**正常状态 */
+	ENABLE,
+	/**转动可停止状态 */
+	STOP,
+	/**转动不可停止状态 */
+	DISABLE
+}
 export interface IState {
 	/**是否显示自动下注面板 */
 	// isShowAutoLancherPanel: boolean,
@@ -51,7 +60,8 @@ export interface IProps {
 	/**停止模式 */
 	isJumpStop: boolean,
 	/**是否序停 */
-	isSortStop: boolean
+	isSortStop: boolean,
+	isBeginStop: boolean
 }
 export interface IEvent {
 	/**打开自动下注,isToggle：是否反向(如果开启窗台再调用则关闭)*/
@@ -80,6 +90,8 @@ export class Fruit777_Footer extends BaseComponent<IState, IProps, IEvent> {
 	private taskScheduler: TaskScheduler = new TaskScheduler()
 	private stepNumber: StepNumber
 	private totalTimes: any
+	/**是否已经激活提前状态 */
+	public enableAheadStop: boolean = false
 	protected propertyNode = {
 		/**主启动按钮 */
 		props_btn_down_putar: new Node(),
@@ -117,7 +129,9 @@ export class Fruit777_Footer extends BaseComponent<IState, IProps, IEvent> {
 		/**小游戏次数外框 */
 		props_spr_sg: new Node(),
 		/**调起自动运行框 */
-		props_btn_down_auto: new Button()
+		props_btn_down_auto: new Button(),
+		/**win标识 */
+		props_word_down_menang: new Node()
 	}
 
 	public props: IProps = {
@@ -132,7 +146,8 @@ export class Fruit777_Footer extends BaseComponent<IState, IProps, IEvent> {
 		autoLaunchedTimes: 0,
 		balance: 0,
 		isJumpStop: true,
-		isSortStop: false
+		isSortStop: false,
+		isBeginStop: false
 	}
 
 	public events: IEvent = {
@@ -191,7 +206,12 @@ export class Fruit777_Footer extends BaseComponent<IState, IProps, IEvent> {
 				//滑槽不管是否是停止状态，都要停止自动
 				this.dispatch(setRollSpeed(1))
 				this.events.closeAutoLauncher(true)
-				if (!this.props.isRollEnd) return
+				if (!this.props.isRollEnd) {
+					//提前停止
+					this.enableAheadStop = true
+					this.setLaunchBtuFace(LAUNCHER_STATE.DISABLE)
+					return
+				}
 				if (!gameBoardViewModel.isAuthPass) return
 				this.events.manualBetHandler()
 			}
@@ -241,13 +261,22 @@ export class Fruit777_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
 		if (key === "isRollEnd") {
-			this.propertyNode.props_btn_down_putar.getComponent(Sprite).grayscale = !value.cur
-			// this.setState({ disableBetSwitch: !value.cur })
+			// this.propertyNode.props_btn_down_putar.getComponent(Sprite).grayscale = !value.cur
+			this.setLaunchBtuFace(value.cur ? LAUNCHER_STATE.ENABLE : LAUNCHER_STATE.STOP)
 			this.propertyNode.props_spine_guangquan.active = value.cur
+			this.propertyNode.props_btn_down_auto.node.getComponent(Sprite).grayscale = !value.cur
+			this.setState({ disableBetSwitch: !value.cur })
+			this.enableAheadStop = false
+		}
+		if (key === "isBeginStop") {
+			if (this.props.isBeginStop === true) {
+				this.setLaunchBtuFace(LAUNCHER_STATE.DISABLE)
+			}
 		}
 		if (key === "profit") {
 			this.propertyNode.props_word_down_goodluck.active = this.props.profit === 0
 			this.propertyNode.props_word_down_winNum.active = this.props.profit !== 0
+			this.propertyNode.props_word_down_menang.active = this.props.profit !== 0
 			// console.log(value.pre, value.cur)
 			if (value.cur < value.pre) {
 				//如果数值减小，应该是恢复，直接变成目标值
@@ -276,7 +305,7 @@ export class Fruit777_Footer extends BaseComponent<IState, IProps, IEvent> {
 		}
 		if (key === "viewGameType") {
 			// console.log('viewGameType', this.props.viewGameType)
-			this.updateBtuFace()
+			this.updateRemainCountFace()
 			this.setState({ disableBetSwitch: value.cur !== GameType.MAIN })
 			// this.propertyNode.props_word_down_pular.active = (this.props.viewGameType !== GameType.SUBGAME2 && this.props.autoLauncherType === AutoLauncherType.NONE)
 			// this.propertyNode.props_times.active = this.props.viewGameType === GameType.SUBGAME2
@@ -303,7 +332,7 @@ export class Fruit777_Footer extends BaseComponent<IState, IProps, IEvent> {
 			} else {
 				this.propertyNode.props_autoLaunch_label.getComponent(Label).string = `1 / ${this.totalTimes}`
 			}
-			this.updateBtuFace()
+			this.updateRemainCountFace()
 		}
 		if (key === "isJumpStop") {
 			this.propertyNode.props_toggle_fast.isChecked = this.props.isSortStop
@@ -319,26 +348,37 @@ export class Fruit777_Footer extends BaseComponent<IState, IProps, IEvent> {
 
 		}
 	}
-	private updateBtuFace() {
-
+	private updateRemainCountFace() {
 		if (this.props.currGameType === GameType.MAIN || this.props.currGameType === GameType.SUBGAME1) {
 			this.propertyNode.props_spr_sg.active = false
-			if (this.props.autoLauncherType !== AutoLauncherType.NONE) {
-				// this.propertyNode.props_autoLaunch_label.active = true
-				// this.propertyNode.props_word_down_pular.active = false
-			} else {
-				// this.propertyNode.props_autoLaunch_label.active = false
-				// this.propertyNode.props_word_down_pular.active = true
-			}
-			// this.propertyNode.props_autoLaunch_label.active = this.props.autoLauncherType !== AutoLauncherType.NONE
-			// this.propertyNode.props_word_down_pular.active = this.props.autoLauncherType === AutoLauncherType.NONE
-			// this.propertyNode.props_times.active = this.props.autoLauncherType !== AutoLauncherType.NONE
 		} else if (this.props.currGameType === GameType.SUBGAME2) {
 			this.propertyNode.props_spr_sg.active = true
-			// this.propertyNode.props_autoLaunch_label.active = false
-			// this.propertyNode.props_word_down_pular.active = false
 		}
-		// this.setState({ disableBetSwitch: this.props.currGameType !== GameType.MAIN })
+	}
+
+	/**下注按钮的状态 */
+	private setLaunchBtuFace(lanucherState: LAUNCHER_STATE) {
+		const isShowSPIN = (lanucherState === LAUNCHER_STATE.ENABLE);
+		this.propertyNode.props_word_down_pular.active = isShowSPIN
+		this.propertyNode.props_btn_down_putar.getChildByName("props_scrollingThePicture").active = !isShowSPIN
+
+		if (lanucherState === LAUNCHER_STATE.ENABLE || lanucherState === LAUNCHER_STATE.STOP) {
+			bundleFruit777.load("img/actionBar/dl_sg_spinanniu/spriteFrame", SpriteFrame, (err, sp) => {
+				!err && (this.propertyNode.props_btn_down_putar.getComponent(Sprite).spriteFrame = sp)
+			})
+			bundleFruit777.load("img/actionBar/dl_sg_spinicon/spriteFrame", SpriteFrame, (err, sp) => {
+				!err && (this.propertyNode.props_btn_down_putar.getChildByName("spr__sg_spinicon").getComponent(Sprite).spriteFrame = sp)
+			})
+			this.propertyNode.props_btn_down_putar.getChildByName("disable").active = false
+		} else {
+			this.propertyNode.props_btn_down_putar.getChildByName("disable").active = true
+			// bundleFruit777.load("img/actionBar/dl_sg_spinanniu1/spriteFrame", SpriteFrame, (err, sp) => {
+			// 	!err && (this.propertyNode.props_btn_down_putar.getComponent(Sprite).spriteFrame = sp)
+			// })
+			// bundleFruit777.load("img/actionBar/dl_sg_spinicon1/spriteFrame", SpriteFrame, (err, sp) => {
+			// 	!err && (this.propertyNode.props_btn_down_putar.getChildByName("spr__sg_spinicon").getComponent(Sprite).spriteFrame = sp)
+			// })
+		}
 	}
 	/**获取自动运行底板 */
 	public getAutoLauncherBaseNBoard() {

@@ -92,6 +92,12 @@ export default reduxAct.createReducer<InitStateType>({
       isSortStop: payload.isSortStop
     }
   },
+  [ActionTypes.FRUIT777_SET_IS_BEGIN_STOP]: (state, payload: ActionPayLoad<ActionTypes.FRUIT777_SET_IS_BEGIN_STOP>): InitStateType => {
+    return {
+      ...state,
+      isBeginStop: payload.isBeginStop
+    }
+  },
   [ActionTypes.FRUIT777_RESET_STORE]: (state, payload: ActionPayLoad<ActionTypes.FRUIT777_RESET_STORE>): InitStateType => {
     return instantiate(initState)
   }

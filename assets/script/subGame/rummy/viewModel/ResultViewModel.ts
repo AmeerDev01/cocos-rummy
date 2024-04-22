@@ -5,7 +5,7 @@ import { SKT_MAG_TYPE, rummyWebSocketDriver } from "../socketConnect"
 import { bundlePkgName } from "../sourceDefine"
 import { getStore } from "../store"
 import { StateType } from "../store/reducer"
-import { EnterGameVo } from "../type"
+import { JoinRoomVo } from "../type"
 
 @StoreInject(getStore())
 class ResultViewModel extends ViewModel<Rummy_ResultPanel, IProps, IEvent> {
@@ -24,6 +24,7 @@ class ResultViewModel extends ViewModel<Rummy_ResultPanel, IProps, IEvent> {
   public connect() {
     this.inject({}, (state: StateType) => {
       return {
+        balanceCountdown: state.deskData.balanceCountdown
       }
     })
     return this

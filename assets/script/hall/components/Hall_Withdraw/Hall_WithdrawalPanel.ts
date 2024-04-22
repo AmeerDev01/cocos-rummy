@@ -1,7 +1,6 @@
 import { _decorator, assetManager, Button, Component, EditBox, ImageAsset, instantiate, Label, Node, ScrollView, Sprite, SpriteFrame, tween, UITransform } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import { WithdrawBankChannelType } from '../../store/actions/withdraw';
-import { bundleHall } from '../../index';
 import { maskBankCardNumber } from '../../../utils/tool';
 import InputValidator from '../../../utils/InputValidator';
 import { addToastAction } from '../../store/actions/baseBoard';
@@ -141,7 +140,7 @@ export class Hall_WithdrawalPanel extends BaseComponent<IState, IProps, IEvent> 
 				const amount2 = this.propertyNode.props_EditBox_jumlah.getComponent(EditBox).string;
 				new InputValidator().begin().isDecimal(amount2, false).done(() => {
 					if (+amount2 > this.props.memberAssetGoldPieces) {
-						this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.HallWithdrawalNoEnough, {}, { placeStr: "对不起，您的可提现金额不足~" }) }))
+						this.dispatch(addToastAction({ content: lang.write(k => k.HallModule.HallWithdrawalNoEnough, {}, { placeStr: "对不起，您的可提现金额不足~" }), forceLandscape: true }))
 						return
 					}
 					if (+amount2 < this.props.withdrawBankChannelChoose.limitDown || +amount2 > this.props.withdrawBankChannelChoose.limitUp) {
@@ -149,7 +148,8 @@ export class Hall_WithdrawalPanel extends BaseComponent<IState, IProps, IEvent> 
 							content: lang.write(k => k.HallModule.HallWithdrawalglod, {
 								down: this.props.withdrawBankChannelChoose.limitDown.formatAmountWithCommas(),
 								up: this.props.withdrawBankChannelChoose.limitUp.formatAmountWithCommas()
-							}, { placeStr: "对不起，提现金额应在{down}~{up}之间" })
+							}, { placeStr: "对不起，提现金额应在{down}~{up}之间" }),
+							forceLandscape: true
 						}))
 						return
 					}

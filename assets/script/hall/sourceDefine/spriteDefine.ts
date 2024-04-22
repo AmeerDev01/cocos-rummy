@@ -47,7 +47,9 @@ export enum SpriteFramePathDefine {
   /**雷神 */
   _THOR_SMALL = "icon/olympus/title/large/spriteFrame",
   _THOR_LARGE = "icon/olympus/title/small/spriteFrame",
-  
+  /**多福多财 */
+  _DFDC_SMALL = "icon/dfdc/title/large/spriteFrame",
+  _DFDC_LARGE = "icon/dfdc/title/small/spriteFrame",
   /**星光公主 */
   _STAR_SMALL = "icon/starlight/title/large/spriteFrame",
   _STAR_LARGE = "icon/starlight/title/small/spriteFrame",
@@ -55,8 +57,19 @@ export enum SpriteFramePathDefine {
   /**捕鱼 */
   _FISH_SMALL = "icon/fish/title/large/spriteFrame",
   _FISH_LARGE = "icon/fish/title/small/spriteFrame",
+  /**RUMMY */
+  _RUMMY_SMALL = "icon/rummy/title/large/spriteFrame",
+  _RUMMY_LARGE = "icon/rummy/title/small/spriteFrame",
+  /**招财虎 */
+  _FORTUNET_TIGER_SMALL = "icon/fortuneTiger/title/large/spriteFrame",
+  _FORTUNET_TIGER_LARGE = "icon/fortuneTiger/title/small/spriteFrame",
   /**二维码LOGO */
   _SHARE_LOGO = "personalCenter/resource/logo/spriteFrame",
+
+
+  /**站内信附件礼物图 */
+  /**金币 */
+  _GOLD = "mail/resource/icon_dating_jinbi/spriteFrame",
 }
 
 export default (bundlePkgName: string) => loopFiles(bundlePkgName, SpriteFrame, SpriteFramePathDefine)

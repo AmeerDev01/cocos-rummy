@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "935641318187",
-    "project_id": "hugewin-e7926",
-    "storage_bucket": "hugewin-e7926.appspot.com"
+    "project_number": "1042836709434",
+    "project_id": "hugewin777india",
+    "storage_bucket": "hugewin777india.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:935641318187:android:7c0d4751670d5773813b6e",
+        "mobilesdk_app_id": "1:1042836709434:android:1ba5810fe9df11995e5503",
         "android_client_info": {
-          "package_name": "cocos.com.hugeWin777"
+          "package_name": "com.HG.IN001"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBcY3WLfWeKrVPuw9zPwAKYWUUd-9EPB-0"
+          "current_key": "AIzaSyD6WJUX5A6iQZFJskgtQyRfiDnddWVqLU8"
         }
       ],
       "services": {

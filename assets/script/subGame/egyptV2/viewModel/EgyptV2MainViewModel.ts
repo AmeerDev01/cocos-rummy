@@ -38,6 +38,7 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
   private rollerPanelViewModel: EgyptV2RollerPanelViewModel;
   private isAuthDone: boolean = false
   private isBetResult = true;
+  private betCallbackFun;
 
   /**奖励的坐标 */
   private goodLuckPos: Vec3;
@@ -117,6 +118,8 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
     egyptGameLogin();
 
     egyptWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
+      this.betCallbackFun && this.comp.unschedule(this.betCallbackFun);
+      this.betCallbackFun = undefined;
       this.isBetResult = true;
       const result = verifyBetResultData(data)
       if (!error && result > 0) {
@@ -142,7 +145,7 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
       for (let i = 0; i < rollerId.length; i++) {
         rollerId[i]--;
       }
-      console.log("rollerId ", si.rollerId)
+      // console.log("rollerId ", si.rollerId)
 
       const localLeftCount = this.comp.props.gameTypeInfo.leftCount;
       let leftCount = si.freeCount;
@@ -229,12 +232,21 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
     }
 
     cacheData.sendBetTime = Date.now();
-    console.log("sendBet time " + cacheData.sendBetTime)
+    // console.log("sendBet time " + cacheData.sendBetTime)
 
     cacheData.rollerLaunchResult = null;
     cacheData.fixedChessboardIcon = null;
     this.dispatch(updateRollerStatus(RollerStatus.RUNNING));
     this.isBetResult = false;
+
+    this.betCallbackFun = () => {
+      if (!this.isBetResult) {
+        this.isBetResult = true;
+        const content = lang.write(k => k.WebSocketModule.WebSocketError) + '-' + SKT_MAG_TYPE.LAUNCH;
+        global.closeSubGame({ confirmContent: content })
+      }
+    }
+    this.comp.schedule(this.betCallbackFun, 10, 0);
 
     const msgObj = egyptWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
       "positionId": this.comp.props.positionId,
@@ -253,10 +265,10 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
       }
     })
     //超时
-    msgObj.bindTimeoutHandler(() => {
-      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
-      return false
-    })
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
   }
 
   protected unMountCallBack(): void {

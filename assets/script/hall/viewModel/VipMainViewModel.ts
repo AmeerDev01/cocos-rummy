@@ -5,6 +5,7 @@ import { Hall_VipMain, IEvent, IProps } from "../components/Hall_VipMain"
 import { getStore } from "../store"
 import { StateType } from "../store/reducer"
 import { ApiUrl } from "../apiUrl"
+import { updateVipBonusInfo } from "../store/actions/baseBoard"
 
 class VipMainViewModel extends ViewModel<Hall_VipMain, IProps, IEvent> {
   private vipLevel:number
@@ -20,6 +21,9 @@ class VipMainViewModel extends ViewModel<Hall_VipMain, IProps, IEvent> {
     })
   }
 
+  protected unMountCallBack(): void {
+    this.dispatch(updateVipBonusInfo(null))
+	}
 
 
   public connect() {
@@ -27,6 +31,7 @@ class VipMainViewModel extends ViewModel<Hall_VipMain, IProps, IEvent> {
       this.vipLevel = state.memberInfo.vipLevel;
       return {
         memberInfo: state.memberInfo,
+        vipBonusInfo: state.baseBoard.vipBonusInfo,
       }
     })
     return this

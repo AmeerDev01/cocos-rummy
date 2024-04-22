@@ -96,6 +96,8 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 	private isFlyStar: boolean = false;
   private taskScheduler = new TaskScheduler();
   private clearTime;
+  private isMe: boolean //是否当前用户下注
+  public isInit:boolean //是否初始进入
 
   /**牌节点 */
   private leftNode: Node;
@@ -204,8 +206,8 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       if(this.node && this.node.isValid){
         dragonTigerWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.GAME_SHOW, {data: gameCacheData.roomId });
       }
-      dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_SHOW,bundlePkgName,(data)=>{//810
-        if (data.seconds>0) {
+      dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_SHOW,bundlePkgName,(data)=>{//34
+        if (data.seconds>0 && data.gameType === 1) {
           if(this.node){
             const dragonTiger_VS=this.node.getChildByName("prefabs_dragonTiger_card").getChildByName("dragonTiger_VS")
             dragonTiger_VS.active=false;
@@ -265,6 +267,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
           this.rightNode && this.rightNode.destroy();
           return
         }
+        this.init(); //初始化
         this.leftNode && this.leftNode.destroy();
         this.rightNode && this.rightNode.destroy();
         window.clearTimeout(this.clearTime)
@@ -272,7 +275,6 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
         this.areaInfo=[1,2,3]
       
         this.node.getChildByName("prefabs_dragonTiger_card").getChildByName("dragonTiger_VS").active = false;
-        this.init(); //初始化
         this.dispatch(setMemberBetAction({})); //清空当前用户下注memberBet的数据
         // this.openCountDown(); // 播放倒计时
         this.sendCardAction() //发牌行为
@@ -349,15 +351,16 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
     if (key === "newBetData") {
       if (!value.cur) { return }
       if (value.cur.memberId === gameCacheData.memberId) { return };
+      this.isMe = false;
       this.flyChip(value.cur)
     }
     if (key === "allWinUsers") {
-      if(!value.cur){ return }
+      if (!value.cur) { return }
       this.taskScheduler.joinQueue(new Task((done)=>{
           if(mainGameViewModel.isUnMount){ return }
           if (value.cur) {
             // value.cur.forEach(item=>{		 
-              this.flyWinAreaToUser()
+              this.flyWinAreaToUser(value.cur)
             // })
           }
 
@@ -517,11 +520,11 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       },4000)
     }
     if (key === "winType") {
-      window.setTimeout(()=>{  
+      // window.setTimeout(()=>{  
         if(this.node && this.node.isValid){
           this.settleAccount()
         }
-      },2000)
+      // },1000)
         
     }
     if(key==="winGold"){
@@ -598,7 +601,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 	}
   /** 创造对应选取的金币  */
 	private createChip(chipValue: number, parent: Node): ChipViewModel {
-		return new ChipViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.MAIN_CHIP).source).appendTo(parent).connect().setProps({ value: chipValue });
+		return new ChipViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.MAIN_CHIP).source).appendTo(parent).connect().setProps({ value: chipValue, isMe:this.isMe});
 	}
   protected betArea(betType: BetType) { 
     if(this.props.gameType >= 2){ return }
@@ -622,7 +625,8 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 			return;
     }
     const betData = initBetData(this.props.myInfo.index, this.props.myInfo.memberId, betType, this.props.selectChip);
-		betData.isMyBet = true;//当前用户是否下注
+    betData.isMyBet = true;//当前用户是否下注
+    this.isMe = true ;
     const sendBet:SendBet = {
 			roomId: gameCacheData.roomId,
       gold: betData.betAmount,
@@ -646,7 +650,8 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 			return;
 		}
 		isFly = betData.isFly;
-		isFly = this.isShowGame;
+    isFly = this.isShowGame;
+    
 		const betArea = this.getNodeByBetType(betData.betType).getChildByName("Layout_bet");
 		const viewModel = this.createChip(betData.betAmount, this.propertyNode.props_add_chips);
 		let radom = Math.random()*90-90;//旋转角度
@@ -658,8 +663,12 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 			playChip()
 			const uiTransform = this.node.getComponent(UITransform);
 			const startPosition = this.getBetStartPosition(betData);
-			chipNode.setWorldPosition(uiTransform.convertToWorldSpaceAR(startPosition));
-			tween(chipNode).to(1, { position: endPosition , angle:-radom,},{easing: 'quintOut'}).start();
+      chipNode.setWorldPosition(uiTransform.convertToWorldSpaceAR(startPosition));
+      
+      tween(chipNode).to(1, { position: endPosition, angle: -radom, }, { easing: 'quintOut' }).call(() => {
+        // console.log("chipNode",viewModel,(viewModel.comp.getPropertyNode().props_ChipTail as Node));
+        viewModel && ((viewModel.comp.getPropertyNode().props_ChipTail as Node).active = false);
+      }).start();
       // if (!isWinRateBet && betData.index === config.gameOption.winRateMaxIndex) {
       if (betData.memberId !== gameCacheData.memberId) {
         if (betData.index > config.gameOption.seatNumber) {
@@ -688,12 +697,16 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 		}
   }
   	/** 赢的区域飞金币到用户头像 */
-	private flyWinAreaToUser(): void{
+	private flyWinAreaToUser(winUsers:WinUser[]): void{
 		if(!this.props.win ){ return}
     const betInfos = this.betAreaInfo.get(this.props.win);
     if (betInfos) {
       playGetCoin()
       betInfos.forEach(betInfo => {
+        const isExist = winUsers.some(item => item.memberId === betInfo.userId);
+        if (!isExist) {
+          betInfo.index = config.gameOption.lookOnIndex;
+        }
         betInfo.chips.forEach(chips => {
           const chipNode = chips.chip.comp.node;
           const endPositon = this.getFlyToHeadEndPosition(betInfo);
@@ -706,7 +719,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
           })
       });
 		}
-		// })
+
   }
     /**清除所有下注区域的金币 */
   public clearAllBetAreaGold() {
@@ -888,7 +901,7 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 	 * @param betData 
 	 * @param viewModel 
 	 */
-	private addBetInfo(betData: BetData, viewModel: ChipViewModel) {
+  private addBetInfo(betData: BetData, viewModel: ChipViewModel) {
 		let betInfos = this.betAreaInfo.get(betData.betType);
 		if (!betInfos) {
 			betInfos = [];
@@ -996,19 +1009,18 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
     //五秒后自动关闭结算弹框
     if (mainGameViewModel.isUnMount) { return }
     
-    let time:number=this.initSeconds*1000
+    let time: number = (this.initSeconds - 1) * 1000;
     window.setTimeout(() => {
       if (this.node && this.node.isValid) {   
-        this.removeChip()
         if(winViewModel!=undefined){
           if(!winViewModel.isUnMount){
-            // this.removeChip()
+            this.removeChip()
             winViewModel.unMount()
           }
         }
         if (loseViewModel != undefined) {
           if(!loseViewModel.isUnMount){
-            // this.removeChip()
+            this.removeChip()
             loseViewModel.unMount()
           }
         }
@@ -1049,7 +1061,8 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
 			.start()
       return
     };
-    if (this.props.tips && this.props.tips.length > 0) {
+    let isLock = this.props.gold < config.gameOption.unlockBetMinGold;//自己判断一下用户金币是否满足
+    if (isLock && this.props.tips && this.props.tips.length > 0) {
 			return;
 		}
     let toggleArr: Node[] = this.propertyNode.props_ToggleGroup.children;
@@ -1077,19 +1090,21 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
       let type2Total: number = 0;
       let type3Total: number = 0;
       for (var i = 0; i < this.repeatArr.length; i++) { 
-        total += this.repeatArr[i].gold;
+        total += this.repeatArr[i].betAmount;
         if (this.repeatArr[i].betType === 1) {
-          type1Total += this.repeatArr[i].gold;
+          type1Total += this.repeatArr[i].betAmount;
         }else if (this.repeatArr[i].betType === 2) {
-          type2Total += this.repeatArr[i].gold;
+          type2Total += this.repeatArr[i].betAmount;
         }else if (this.repeatArr[i].betType === 3) {
-          type3Total += this.repeatArr[i].gold;
+          type3Total += this.repeatArr[i].betAmount;
         }
       }
+      
       let betData1 = { typeTotal: type1Total, type: 1, betId:"" };
       let betData2 = { typeTotal: type2Total, type: 2, betId:"" };
       let betData3 = { typeTotal: type3Total, type: 3, betId:"" };
-      let lastBetArr = [betData1,betData2,betData3];
+      let lastBetArr = [betData1, betData2, betData3];
+            
       if (this.props.gold >= total) {//只有用户总金额大于所有重复下注的金币额之和 才可以下注
         for (let i = 0; i < lastBetArr.length; i++){
           if (lastBetArr[i].typeTotal <= 0) { continue };
@@ -1103,17 +1118,18 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
           usersViewModel.comp.splitChip(lastBetArr[i].typeTotal, chips)
 
           chips.forEach(chip => {
+            const betData = initBetData(this.props.myInfo.index, this.props.myInfo.memberId, lastBetArr[i].type, chip);
             const sendBet: SendBet = {
               roomId: gameCacheData.roomId,
               gold: chip,
               betType: lastBetArr[i].type,
-              betId: lastBetArr[i].betId,
+              betId: betData.betId,
               // isMe: true,
             }
-            const betData = initBetData(this.props.myInfo.index, this.props.myInfo.memberId, lastBetArr[i].type, chip);
             betData.isMyBet = true;
-            dragonTigerWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.BET_RESPONSE, sendBet);
+            this.isMe = true;
             this.flyChip(betData);
+            dragonTigerWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.BET_RESPONSE, sendBet);
             // this.amountArr.push(sendBet);
           })
        
@@ -1395,9 +1411,9 @@ export class DragonTiger_MainPanel extends BaseComponent<IState,IProps,IEvent> {
     if (this.node && this.node.isValid) {
       
       // this.dispatch(setUserInfoAction({ ...data }))
-      this.lastArr=this.amountArr //留存上一把的下注情况
+      this.lastArr = this.amountArr; //留存上一把的下注情况
       this.amountArr = [];
-      this.removeChip()
+      !this.isInit && this.removeChip()
       // vsIcon隐藏
       this.node.getChildByName("prefabs_dragonTiger_card").getChildByName("dragonTiger_VS").active=false;
       // 倒计时12-6节点

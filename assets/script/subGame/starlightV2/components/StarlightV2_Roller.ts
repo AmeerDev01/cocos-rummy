@@ -159,7 +159,7 @@ export class StarlightV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 		const iconConfig = config.icon.find(v => v.id === iconId);
 
 		// 初始化时不加入倍率图标
-		if ((iconConfig.id >= IconId.ODDS_ICON_GREEN && iconConfig.id <= IconId.ODDS_ICON_RED) || iconConfig.id === IconId.SCATTER) {
+		if ((iconConfig.id >= IconId.ODDS_ICON_GREEN && iconConfig.id <= IconId.ODDS_ICON_YELLOW) || iconConfig.id === IconId.SCATTER) {
 			return this.joinIcon();
 		}
 
@@ -862,19 +862,15 @@ export class StarlightV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 			an = 'sd_blue';
 		} else if (icon.getId() === IconId.ODDS_ICON_GREEN) {
 			an = 'sd_green';
-		} else if (icon.getId() === IconId.ODDS_ICON_PURPLE) {
-			an = 'sd_purple';
 		} else if (icon.getId() === IconId.ODDS_ICON_RED) {
 			an = 'sd_red';
+		} else if (icon.getId() === IconId.ODDS_ICON_YELLOW) {
+			an = 'sd_yellow';
 		}
 		time += config.normalRollOption.lightningDetryShowTime;
 
 		icon.setPlayLightning(true)
 		this.scheduleOnce(() => {
-			// this.props_shandian_iconSk.node.active = true;
-			// this.props_shandian_iconSk.node.setPosition(endPos);
-			// this.props_shandian_iconSk.setAnimation(0, an, false);
-
 			this.playLightningAnimation(an, endPos);
 		}, time)
 	}

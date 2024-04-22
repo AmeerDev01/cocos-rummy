@@ -28929,6 +28929,8 @@
       "__id__": 0
     },
     "fileId": "c6GlbboxpP25HbJbhNuptw",
+    "instance": null,
+    "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
   },
   {
@@ -29482,6 +29484,8 @@
       "__id__": 0
     },
     "fileId": "5f2UEKubZC6KhIzvIXAu84",
+    "instance": null,
+    "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
   },
   {
@@ -30086,7 +30090,7 @@
     "_fontSize": 18,
     "_fontFamily": "Arial",
     "_lineHeight": 30,
-    "_overflow": 0,
+    "_overflow": 2,
     "_enableWrapText": true,
     "_font": null,
     "_isSystemFontUsed": true,

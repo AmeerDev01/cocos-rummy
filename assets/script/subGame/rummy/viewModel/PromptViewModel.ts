@@ -5,7 +5,7 @@ import { SKT_MAG_TYPE, rummyWebSocketDriver } from "../socketConnect"
 import { bundlePkgName } from "../sourceDefine"
 import { getStore } from "../store"
 import { StateType } from "../store/reducer"
-import { EnterGameVo } from "../type"
+import { JoinRoomVo } from "../type"
 
 @StoreInject(getStore())
 class PromptViewModel extends ViewModel<Rummy_PromptPanel, IProps, IEvent> {

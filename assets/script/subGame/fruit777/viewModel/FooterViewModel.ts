@@ -1,4 +1,4 @@
-import { Node, UIOpacity, sys, Animation } from "cc"
+import { Node, UIOpacity, sys, Animation, Prefab } from "cc"
 import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { Fruit777_Footer, IProps, IEvent } from "../components/Fruit777_Footer"
 import { StateType } from "../store/reducer"
@@ -13,7 +13,7 @@ import { SKT_MAG_TYPE, fruit777WebSocketDriver } from "../socketConnect"
 import { beginRollAction, setRollSpeed, setStopRollAction } from "../store/actions/roller"
 import dataTransfer, { DataKeyType } from "../dataTransfer"
 import { AutoLauncherType, GameType } from "../type"
-import { changeAutoLauncherType, changeProfit, setAutoLaunchedTimes, setShowAuthLaunch, setSortStop, setStopMode, setWaiting } from "../store/actions/game"
+import { changeAutoLauncherType, changeProfit, setAutoLaunchedTimes, setIsBeginStop, setShowAuthLaunch, setSortStop, setStopMode, setWaiting } from "../store/actions/game"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
 import { global, lang } from "../../../hall"
 import config from "../config"
@@ -30,8 +30,9 @@ class FooterViewModel extends ViewModel<Fruit777_Footer, IProps, IEvent> {
   private positionId: number = 0
   private betAmount: number = 0
 
-  protected begin() {
-    this.autoLauncherPanel = new AutoLauncherViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.AUTO_LAUNCHER).source).appendTo(this.comp.getAutoLauncherBaseNBoard()).connect()
+  protected async begin() {
+    this.autoLauncherPanel = new AutoLauncherViewModel().mountView((await sourceManageSeletor()
+      .getFileAsync(PrefabPathDefine._AUTO_LAUNCHER, Prefab)).source).appendTo(this.comp.getAutoLauncherBaseNBoard()).connect()
     this.autoLauncherPanel.viewNode.getComponent(UIOpacity).opacity = 0
     this.setEvent({
       openAutoLauncher: () => {
@@ -45,8 +46,9 @@ class FooterViewModel extends ViewModel<Fruit777_Footer, IProps, IEvent> {
         (this.comp.getPropertyNode().props_down_chooseBg as Node).getComponent(Animation).play('animation_autoLauncher_down')
         // isClear && this.dispatch(setRollSpeed(1))
       },
-      openHelpPanel: () => {
-        this.helpPanelPanel = new BaseViewModel<Fruit777_HelpPanel, FIState, FIProps, FIEvent>("Fruit777_HelpPanel").mountView(sourceManageSeletor().getFile(PrefabPathDefine.INTRODUCE).source)
+      openHelpPanel: async () => {
+        this.helpPanelPanel = new BaseViewModel<Fruit777_HelpPanel, FIState, FIProps, FIEvent>("Fruit777_HelpPanel")
+          .mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._INTRODUCE, Prefab)).source)
           .appendTo(this.viewNode.parent, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({
             closeHandler: () => {
               this.helpPanelPanel.unMount(EffectType.EFFECT1)
@@ -120,7 +122,7 @@ class FooterViewModel extends ViewModel<Fruit777_Footer, IProps, IEvent> {
     }, { data: {}, success: true })
     this.dispatch(setWaiting(false))
     fruit777_Audio.playOneShot(SoundPathDefine.ROLLER_BEGIN2)
-
+    this.dispatch(setIsBeginStop(false))
   }
 
   public connect() {
@@ -139,7 +141,8 @@ class FooterViewModel extends ViewModel<Fruit777_Footer, IProps, IEvent> {
         autoLaunchedTimes: state.game.autoLaunchedTimes,
         balance: state.game.balance,
         isJumpStop: state.game.stopMode === "jump" ? true : false,
-        isSortStop: state.game.isSortStop
+        isSortStop: state.game.isSortStop,
+        isBeginStop: state.game.isBeginStop
       }
     })
     return this

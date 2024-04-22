@@ -120,14 +120,14 @@ export class Fruit777_AwardBox extends BaseComponent<IState, IProps, IEvent> {
 			this.scheduleOnce(() => {
 				try {
 					//加定时器是确保distance肯定有数据
-					this.taskScheduler && this.taskScheduler.joinQueue(new Task((done) => {
+					this.taskScheduler && this.taskScheduler.joinQueue(new Task(async (done) => {
 						if (!this.propertyNode) {
 							done()
 							return
 						}
 						this.propertyNode.props_spr_result_item.active = true
 						const skeleton = this.propertyNode.props_spr_result_item.getComponent(sp.Skeleton)
-						skeleton.skeletonData = sourceManageSeletor().getFile(value.cur).source
+						skeleton.skeletonData = ((await sourceManageSeletor().getFileAsync(value.cur, sp.SkeletonData))).source
 						skeleton.animation = "animation"
 						const { x, y, z } = this.propertyNode.props_spr_result_item.position
 						this.propertyNode.props_spr_result_item.setPosition(new Vec3(x + this.props.distance[0], y + this.props.distance[1], z))

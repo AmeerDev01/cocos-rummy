@@ -1,4 +1,4 @@
-import { _decorator, loader, EditBox, Label, Node, ProgressBar, native, Sprite, SpriteFrame, Toggle, ToggleContainer, tween, UITransform, sys, WebView, Button, log, Prefab } from 'cc';
+import { _decorator, loader, EditBox, Label, Node, ProgressBar, native, Sprite, SpriteFrame, Toggle, ToggleContainer, tween, UITransform, sys, WebView, Button, log, Prefab, director } from 'cc';
 import { NATIVE } from 'cc/env'
 import { BaseComponent } from '../../base/BaseComponent';
 import { initToggle, omitStr } from '../../utils/tool';
@@ -18,7 +18,7 @@ import { config, deviceInfo, levelMap, vipMap } from '../config';
 import { BridgeCode, EventType, sendNativeVibrate } from '../../common/bridge';
 import { ApiUrl } from '../apiUrl';
 import { lang } from '../index';
-import { GameConfig } from '../../config/GameConfig';
+import { GameConfig, getIsTest } from '../../config/GameConfig';
 import InputValidator from '../../utils/InputValidator';
 
 import { Hall_PC_BackWater, IState as PBIState, IProps as PBIprops, IEvent as PBIEvent } from './Hall_PC_SubComp/Hall_PC_BackWater';
@@ -218,6 +218,8 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		//打开商城
 		this.propertyNode.props_btn_add_shop.on(Node.EventType.TOUCH_END, () => {
 			this.events.goToShop()
+			this.propertyNode.props_img_level_hlep.active = false;
+			this.propertyNode.props_img_vip_hlep.active = false;
 		})
 		//确认头像
 		this.propertyNode.props_btn_change_tentu.on(Node.EventType.TOUCH_END, () => {
@@ -251,6 +253,8 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_btn_change.on(Node.EventType.TOUCH_END, () => {
 			// this.propertyNode.props_EditBox_name.active = !this.propertyNode.props_EditBox_name.active
 			// this.propertyNode.props_nick_name.active = !this.propertyNode.props_nick_name.active
+			this.propertyNode.props_img_level_hlep.active = false;
+			this.propertyNode.props_img_vip_hlep.active = false;
 			this.openEditNickName()
 		})
 		this.propertyNode.props_nick_name.on(Node.EventType.TOUCH_END, () => {
@@ -286,6 +290,8 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		})
 		/**兑换按钮 */
 		this.propertyNode.props_btn_sure.node.on(Node.EventType.TOUCH_END, () => {
+			this.propertyNode.props_img_level_hlep.active = false;
+			this.propertyNode.props_img_vip_hlep.active = false;
 			new InputValidator().begin(this.propertyNode.props_EditBox_conver.string).isNotEmpty().done(() => {
 				fetcher.send(ApiUrl.CODE_CONVER, { data: this.propertyNode.props_EditBox_conver.string }).then(() => {
 					this.dispatch(addToastAction({ content: lang.write(k => k.BaseBoardModule.operateDone, {}, { placeStr: "操作成功" }), position: ToastPosition.TOP, type: ToastType.SUCCESS }))
@@ -293,8 +299,26 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 			})
 		})
 
-		this.propertyNode.props_Toggle_set_music.on('toggle', (toggle) => { UseSetOption.Instance().setOption("music", toggle.target.getComponent(Toggle).isChecked) }, this)
-		this.propertyNode.props_Toggle_set_sound.on('toggle', (toggle) => { UseSetOption.Instance().setOption("sound", toggle.target.getComponent(Toggle).isChecked) }, this)
+		this.propertyNode.props_Toggle_set_music.on('toggle', (toggle) => {
+			let can = director.getScene();
+			if (!can.getChildByName("Canvas") || !can.getChildByName("Canvas").getChildByName("baseBoard") || !can.getChildByName("Canvas").getChildByName("baseBoard").getChildByName("props_mainBoard")) {
+
+			} else {
+				let nd = can.getChildByName("Canvas").getChildByName("baseBoard").getChildByName("props_mainBoard");
+				nd.emit("settingMusic", { open: toggle.target.getComponent(Toggle).isChecked })
+			}
+			UseSetOption.Instance().setOption("music", toggle.target.getComponent(Toggle).isChecked)
+		}, this)
+		this.propertyNode.props_Toggle_set_sound.on('toggle', (toggle) => {
+			let can = director.getScene();
+			if (!can.getChildByName("Canvas") || !can.getChildByName("Canvas").getChildByName("baseBoard") || !can.getChildByName("Canvas").getChildByName("baseBoard").getChildByName("props_mainBoard")) {
+
+			} else {
+				let nd = can.getChildByName("Canvas").getChildByName("baseBoard").getChildByName("props_mainBoard");
+				nd.emit("settingSound", { open: toggle.target.getComponent(Toggle).isChecked })
+			}
+			UseSetOption.Instance().setOption("sound", toggle.target.getComponent(Toggle).isChecked)
+		}, this)
 		this.propertyNode.props_Toggle_set_vibration.on('toggle', (toggle) => { UseSetOption.Instance().setOption("vibration", toggle.target.getComponent(Toggle).isChecked) }, this)
 
 		initToggle(this.propertyNode.props_ToggleGroup_perfabs, this.node, new Hall_PcMainPanel.EventHandler(), "Hall_PcMainPanel", "containerEventHandler")
@@ -319,6 +343,16 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_btn_vip_help.node.on(Node.EventType.TOUCH_END, () => {
 			this.propertyNode.props_img_vip_hlep.active = !this.propertyNode.props_img_vip_hlep.active
 			// bindCancleHelp()
+		})
+
+		this.propertyNode.props_EditBox_conver.node.on(Node.EventType.TOUCH_END, () => {
+			this.propertyNode.props_img_level_hlep.active = false;
+			this.propertyNode.props_img_vip_hlep.active = false;
+		})
+
+		this.node.on(Node.EventType.TOUCH_END, () => {
+			this.propertyNode.props_img_level_hlep.active = false;
+			this.propertyNode.props_img_vip_hlep.active = false;
 		})
 	}
 
@@ -431,7 +465,7 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 			}
 			// this.propertyNode.props_layout_water.active = value.cur === 6
 		}, ["profileShowIndex"])
-		GameConfig.isDev && (this.propertyNode.props_pc_uniqueId.node.active = true)
+		getIsTest() && (this.propertyNode.props_pc_uniqueId.node.active = true)
 		const hotUpdateVersion = UseSetOption.Instance().option.gameSet.hall ? UseSetOption.Instance().option.gameSet.hall.hotUpdateVersion : ''
 		this.propertyNode.props_pc_version.string = GameConfig.appLocalVersion + (hotUpdateVersion && '.') + hotUpdateVersion.replace('v', '').replace(/\./g, '')
 		this.propertyNode.props_pc_uniqueId.string = deviceInfo.getUniqueId()
@@ -448,6 +482,8 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 
 	private containerEventHandler(event: Event, customEventData: string) {
 		hallAudio.playOneShot(SoundPathDefine.BTU_CLICK)
+		this.propertyNode.props_img_level_hlep.active = false;
+		this.propertyNode.props_img_vip_hlep.active = false;
 		//隐藏分佣面板
 		switch (event.target["name"]) {
 			case "Toggle_left_profil":
@@ -514,6 +550,8 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 
 	private containerEventHandler1(event: Event, customEventData: string) {
 		hallAudio.playOneShot(SoundPathDefine.BTU_CLICK)
+		this.propertyNode.props_img_level_hlep.active = false;
+		this.propertyNode.props_img_vip_hlep.active = false;
 		switch (event.target["name"]) {
 			case "Toggle_left_informasi":
 				this.setState({ profileShowIndex: 1 })

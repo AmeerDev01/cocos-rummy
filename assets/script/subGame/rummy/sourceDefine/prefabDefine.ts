@@ -3,7 +3,7 @@ import { loopFiles } from "../../../base/SourceManage"
 
 export enum PrefabPathDefine {
   LOAING_PANEL = "prefabs/prefabs_rummy_loading",
-  ROOM_CHOOSE = "prefabs/prefabs_rummy_chooseRoom",
+  ROOM_CHOOSE = "prefabs/prefabs_rummy_chooseRoom1",
   GAME_MAIN = "prefabs/prefabs_rummy_main",
   HEADER = "prefabs/prefabs_rummy_header",
   FOOTER = "prefabs/prefabs_rummy_footer",

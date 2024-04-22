@@ -305,6 +305,11 @@ export const equalValue = (target1: any, target2: any, isDeep: boolean = false) 
   }
 }
 
+/**复制一个Node并给一些函数 */
+// export const nodeCopier = (nodeTemplate: Node) => {
+//   const node = instantiate(nodeTemplate)
+// }
+
 /**添加聊天限制用户 */
 export const putChatShieldingUser = (memberId: string) => {
   const json = localStorage.getItem("chat_shielding_user");

@@ -3,7 +3,7 @@ import SourceManage from "../../base/SourceManage";
 import { listenerFactoy } from "../../common/listenerFactoy";
 import LoaderPanelViewModel from "../../common/viewModel/LoaderPanelViewModel";
 import { global, lang } from "../../hall";
-import { SubGameRunState, subGameList } from "../../hall/config";
+import { subGameList } from "../../hall/config";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
 import { AudioMgr } from "../../utils/AudioMgr";
 import { setActiveAudio } from "../../utils/UseSetOption";
@@ -16,6 +16,7 @@ import fruitStore, { getStore } from './store';
 import EgyptV2MainViewModel from "./viewModel/EgyptV2MainViewModel";
 import { initGameStore } from "./store/actions/game";
 import { initRoller } from "./store/actions/roller";
+import { SubGameRunState } from "../../hallType";
 
 
 let sourceManageMap: Array<SourceManage> = []

@@ -31,7 +31,9 @@ export type InitStateType = {
   /**停止模式：正常序列号停止，跳跃序列号停止 */
   stopMode: 'index' | 'jump',
   /**是否步停（顺序停止，原则上只支持stopModel=jump；不然stopModel=index会很慢） */
-  isSortStop: boolean
+  isSortStop: boolean,
+  /**滑槽是否已经接收到数据开始进行停止过程 */
+  isBeginStop: boolean
 }
 export const initState: InitStateType = {
   lastGameType: GameType.NONE,
@@ -48,7 +50,8 @@ export const initState: InitStateType = {
   isWaiting: true,
   autoLaunchedTimes: 0,
   stopMode: 'jump',
-  isSortStop: true
+  isSortStop: true,
+  isBeginStop: false
 }
 /**必须大写，不然redux-act这货要自动加序列号 */
 export enum ActionTypes {
@@ -66,6 +69,7 @@ export enum ActionTypes {
   FRUIT777_SET_AUTO_LAUNCHED_TIMES = 'FRUIT777_SET_AUTO_LAUNCHED_TIMES',
   FRUIT777_SET_STOP_MODE = 'FRUIT777_SET_STOP_MODE',
   FRUIT777_SET_SORT = 'FRUIT777_SET_SORT',
+  FRUIT777_SET_IS_BEGIN_STOP = 'FRUIT777_SET_IS_BEGIN_STOP',
   FRUIT777_RESET_STORE = 'FRUIT777_RESET_STORE'
 }
 
@@ -85,7 +89,8 @@ export type ActionPayLoad<A extends ActionTypes> =
   A extends ActionTypes.FRUIT777_SET_AUTO_LAUNCHED_TIMES ? { autoLaunchedTimes?: number } :
   A extends ActionTypes.FRUIT777_SET_STOP_MODE ? { stopMode: 'index' | 'jump' } :
   A extends ActionTypes.FRUIT777_SET_SORT ? { isSortStop: boolean } :
-  A extends ActionTypes.FRUIT777_RESET_STORE ? { } :
+  A extends ActionTypes.FRUIT777_SET_IS_BEGIN_STOP ? { isBeginStop: boolean } :
+  A extends ActionTypes.FRUIT777_RESET_STORE ? {} :
 
   never;
 
@@ -155,6 +160,11 @@ export const setStopMode = reduxAct.createAction(ActionTypes.FRUIT777_SET_STOP_M
 export const setSortStop = reduxAct.createAction(ActionTypes.FRUIT777_SET_SORT,
   (isSortStop: boolean): ActionPayLoad<ActionTypes.FRUIT777_SET_SORT> => {
     return { isSortStop }
+  })
+
+export const setIsBeginStop = reduxAct.createAction(ActionTypes.FRUIT777_SET_IS_BEGIN_STOP,
+  (isBeginStop: boolean): ActionPayLoad<ActionTypes.FRUIT777_SET_IS_BEGIN_STOP> => {
+    return { isBeginStop }
   })
 
 export const resetStore = reduxAct.createAction(ActionTypes.FRUIT777_RESET_STORE,

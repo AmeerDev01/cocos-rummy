@@ -86,7 +86,7 @@ export type RepeatBet = {
     index?: number,
     userId?: string,
     roomId?:string,
-    gold?:number,
+    betAmount?:number,
     betType?: number,
     betId?: string,
     isMe?: boolean,

@@ -5,6 +5,8 @@ import { baseBoardView, global, lang } from "../hall";
 import { ToastType, addToastAction, setLoadingAction, setSocketConnectStatus } from "../hall/store/actions/baseBoard";
 import { HallGameGateType, config, subGameList } from "../hall/config";
 import { log, sys } from "cc";
+import { getIsTest } from "../config/GameConfig";
+import { DEV } from "cc/env";
 
 export enum SKT_OPERATION {
   GENERAL = "GENERAL", //非加密操作
@@ -23,7 +25,8 @@ export enum SKT_OPERATION {
 export enum SKT_HOST {
   HALL = "HALL",
   SLOTS = "SLOTS",
-  MULTI = "MULTI"
+  MULTI = "MULTI",
+  BATTLE = "BATTLE"
 }
 export type MessageBody = {
   messageId: string,
@@ -160,7 +163,10 @@ export default class WebSocketStarter extends Singleton {
             try {
               this.eventListener.dispath(EVEVT_TYPE.MESSAGE, { messageId, operation, host, sktCode, gameId: +gameId, length: +length, data })
             } catch (e) {
-              global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.ErrorGeneral, {}, { placeStr: "服务数据错误" }) + `[${sktCode}]:${e}`, type: ToastType.ERROR }))
+              global.hallDispatch(addToastAction({
+                content: lang.write(k => k.WebSocketModule.ErrorGeneral, {}, { placeStr: "服务数据错误" }) + `[${sktCode}]:${e}`,
+                type: ToastType.ERROR, forceLandscape: false
+              }))
               console.error(e)
             }
           }
@@ -241,7 +247,7 @@ export class WebSocketDriver<SKT_TYPE> {
       } else {
         if (messageBody.host === this.host && messageBody.gameId === this.gameId) {
           const { data, error } = this.filterData(messageBody.data, messageBody)
-          // this.gameId > 0 && console.log(`收到${this.gameId}--${messageBody.sktCode}消息`, data)
+          DEV && this.gameId > 0 && console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 收到${this.gameId}--${messageBody.sktCode}消息`, data)
           this.sktMsgListener.dispath(messageBody.sktCode as SKT_TYPE, data, error)
         }
       }
@@ -264,7 +270,7 @@ export class WebSocketDriver<SKT_TYPE> {
       timeOut?: number,
     }) {
     const _option = Object.assign({ isLoading: false, operation: SKT_OPERATION.GENERAL, timeOut: 3000 }, option || {})
-    // this.gameId > 0 && console.log(`发送${this.gameId}--${sktCode}消息`, payLoad)
+    DEV && this.gameId > 0 && console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 发送${this.gameId}--${sktCode}消息`, payLoad)
     const sktMessager = new SktMessager(WebSocketStarter.Instance().ws, _option.operation, payLoad, this.gameId, sktCode, this.host)
     // this.messagerMap[sktMessager.messageId] = sktMessager
     _option.isLoading && global.hallDispatch(setLoadingAction({ isShow: true, isAllowCloseLoading: false, flagId: sktMessager.messageId }))
@@ -343,7 +349,7 @@ export class SktMessager<SKT_TYPE> {
     this.verifySampleData = sampleData
     this.receiveHandler = handler
   }
-  public send(timeOut: number = 3000) {
+  public send(timeOut: number = 0) {
     if (!this.ws || (this.ws && this.ws.readyState !== 1)) {
       console.warn('websocket unconnected, send cancel!')
       return false
@@ -356,7 +362,7 @@ export class SktMessager<SKT_TYPE> {
       const data = JSON.stringify(this.payLoad || '')
       this.ws.send(`${this.messageId}|${this.operation}|${this.host}|${this.sktCode}|${this.gameId}|${data.length}|${data}`)
       this.sendTime = Date.now()
-      window.setTimeout(() => {
+      timeOut && window.setTimeout(() => {
         if (this && !this.receiveData && this.timeoutHandler) {
           console.warn('The corresponding message was not received：' + this.messageId)
           if (!this.timeoutHandler()) {
@@ -391,11 +397,12 @@ export class SktMessager<SKT_TYPE> {
    * 用于验证数据是否非法
    * @param sampleData 样本数据
    * @param data 被验证的数据
+   * @param isCheckUnexpected 是否检查多余的字段
    * @returns 
    */
-const validateJson = (sampleData: Object, data: Object) => {
+export const validateJson = (sampleData: Object, data: Object, isCheckUnexpected: boolean = true) => {
   // 检查是否为对象
-  if (typeof data !== 'object' || data === null) {
+  if (typeof data !== 'object' || data === null || data === undefined) {
     return false
   }
   // 遍历样本数据的字段
@@ -415,11 +422,13 @@ const validateJson = (sampleData: Object, data: Object) => {
       }
     }
   }
-  // 遍历传入数据的字段，检查是否多余
-  for (const key in data) {
-    if (data.hasOwnProperty(key) && !(key in sampleData)) {
-      console.warn(`Unexpected field: ${key}`)
-      // 如果需要禁止多余的字段，可以返回false
+  if (isCheckUnexpected) {
+    // 遍历传入数据的字段，检查是否多余
+    for (const key in data) {
+      if (data.hasOwnProperty(key) && !(key in sampleData)) {
+        console.warn(`Unexpected field: ${key}`)
+        // 如果需要禁止多余的字段，可以返回false
+      }
     }
   }
   return true

@@ -360,6 +360,7 @@ export class Bandar_footer extends BaseComponent<IState, IProps, IEvent> {
 					bandarWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.BET_ALL, sendBet)
 					const betData = initBetData(this.props.myInfo.index, this.props.myInfo.memberId, lastBetArr[i].type, chip);
 					betData.isMyBet = true;
+					betAreaViewModel.comp.isMe = true;
 					betAreaViewModel.comp.flyChip(betData);
 				})
 				

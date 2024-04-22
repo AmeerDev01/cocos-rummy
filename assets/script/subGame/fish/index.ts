@@ -2,7 +2,6 @@ import { AssetManager, Node, Prefab, assetManager } from "cc";
 import SourceManage from "../../base/SourceManage";
 import LoaderPanelViewModel from "../../common/viewModel/LoaderPanelViewModel";
 import { global, lang } from "../../hall";
-import { SubGameRunState } from "../../hall/config";
 import { getStore } from "../../hall/store";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
 import fishFileMap, { fishBundlePkgName } from "./sourceDefine";
@@ -12,6 +11,7 @@ import config from "./config";
 import MainViewModel from "./viewModel/MainViewModel";
 import TestViewModel from "./viewModel/TestViewModel";
 import socketConnect, { removeInstance } from "./socketConnect";
+import { SubGameRunState } from "../../hallType";
 
 let sourceManageMap: Array<SourceManage> = []
 export let bundleFish: AssetManager.Bundle = null
@@ -30,7 +30,7 @@ export const startUp = (rootNode: Node) => {
     bundleFish.load(PrefabPathDefine.LOAING_PANEL, Prefab, (progress, total) => {
       global.hallDispatch(setSubGameRunState(SubGameRunState.LOADING))
       global.setSubGameGate(config.gameId, (progress / total))
-    }, (err, prefab) => {
+    }, (err, prefab) => {8080
       if (!global.isAllowOpenSubGame(config.gameId)) return
       global.hallDispatch(setSubGameRunState(SubGameRunState.READY))
       const loaderviweModel = new LoaderPanelViewModel().mountView(prefab).appendTo(rootNode).setProps({

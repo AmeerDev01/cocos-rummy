@@ -93,24 +93,38 @@ export class Fruit777_RollerIcon extends BaseComponent<IState, IProps, IEvent> {
 			this.propertyNode.props_focusBorder.active = isActive
 
 			if (!this.props.iconData.LargeIcon) {
-				iconNodeSprite.active = !isActive
+				
 				// iconNodeSkeleton.active = isActive
 
 				if (this.props.iconEffect === IconEffectType.NONE) {
+					iconNodeSprite.active = !isActive
 					if (this.iconNodeSkeleton_copy) {
 						this.iconNodeSkeleton_copy.destroy()
 					} else {
 						this.iconNodeSkeleton_copy = this.propertyNode.props_iconWrap.getChildByName("iconNode_skeleton_copy")
 					}
 				} else {
-					this.iconNodeSkeleton_copy = instantiate(iconNodeSkeleton)
-					this.iconNodeSkeleton_copy.parent = this.node
-					this.iconNodeSkeleton_copy.active = true
-					this.iconNodeSkeleton_copy.name = "iconNode_skeleton_copy"
-					this.iconNodeSkeleton_copy.getComponent(sp.Skeleton).skeletonData = sourceManageSeletor().getFile(this.props.iconData.uiData.skeleton).source
-					this.iconNodeSkeleton_copy.getComponent(sp.Skeleton).animation = this.props.iconData.uiData.animationArr[1]
-					const { x, y, z } = this.iconNodeSkeleton_copy.getPosition()
-					this.iconNodeSkeleton_copy.setPosition(new Vec3(x + this.props.iconData.uiData.distance[0], y + this.props.iconData.uiData.distance[1], x))
+					sourceManageSeletor().getFileAsync(this.props.iconData.uiData.skeleton, sp.SkeletonData).then(file => {
+						iconNodeSprite.active = !isActive
+						this.iconNodeSkeleton_copy = instantiate(iconNodeSkeleton)
+						this.iconNodeSkeleton_copy.parent = this.node
+						this.iconNodeSkeleton_copy.active = true
+						this.iconNodeSkeleton_copy.name = "iconNode_skeleton_copy"
+						this.iconNodeSkeleton_copy.getComponent(sp.Skeleton).skeletonData = file.source
+						// this.iconNodeSkeleton_copy.getComponent(sp.Skeleton).skeletonData = (await sourceManageSeletor().getFileAsync(this.props.iconData.uiData.skeleton, sp.SkeletonData)).source
+						this.iconNodeSkeleton_copy.getComponent(sp.Skeleton).animation = this.props.iconData.uiData.animationArr[1]
+						const { x, y, z } = this.iconNodeSkeleton_copy.getPosition()
+						this.iconNodeSkeleton_copy.setPosition(new Vec3(x + this.props.iconData.uiData.distance[0], y + this.props.iconData.uiData.distance[1], x))
+					})
+					// this.iconNodeSkeleton_copy = instantiate(iconNodeSkeleton)
+					// this.iconNodeSkeleton_copy.parent = this.node
+					// this.iconNodeSkeleton_copy.active = true
+					// this.iconNodeSkeleton_copy.name = "iconNode_skeleton_copy"
+					// this.iconNodeSkeleton_copy.getComponent(sp.Skeleton).skeletonData = (sourceManageSeletor().getFile(this.props.iconData.uiData.skeleton)).source
+					// // this.iconNodeSkeleton_copy.getComponent(sp.Skeleton).skeletonData = (await sourceManageSeletor().getFileAsync(this.props.iconData.uiData.skeleton, sp.SkeletonData)).source
+					// this.iconNodeSkeleton_copy.getComponent(sp.Skeleton).animation = this.props.iconData.uiData.animationArr[1]
+					// const { x, y, z } = this.iconNodeSkeleton_copy.getPosition()
+					// this.iconNodeSkeleton_copy.setPosition(new Vec3(x + this.props.iconData.uiData.distance[0], y + this.props.iconData.uiData.distance[1], x))
 				}
 			}
 

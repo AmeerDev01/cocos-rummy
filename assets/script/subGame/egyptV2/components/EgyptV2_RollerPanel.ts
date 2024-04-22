@@ -101,7 +101,7 @@ export class EgyptV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 		let sendBetTime = cacheData.sendBetTime;
 		this.sendBetTime = sendBetTime;
 		this.isManualStop = false;
-		console.log("start roll time " + sendBetTime)
+		// console.log("start roll time " + sendBetTime)
 		const isMainGame = this.props.gameTypeInfo.viewGameType === GameType.MAIN;
 		if (isMainGame) {
 			this.dispatch(updateWinloss(0))
@@ -140,7 +140,7 @@ export class EgyptV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 			this.dispatch(updateRollerStatus(RollerStatus.ENDING))
 		}
 
-		console.log("rollerpanel stop roll time " + sendBetTime);
+		// console.log("rollerpanel stop roll time " + sendBetTime);
 		this.stopRoll(0, this.rollEndHandle.bind(this, rollerLaunchResult), rollerLaunchResult);
 	}
 

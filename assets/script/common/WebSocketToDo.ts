@@ -1,4 +1,4 @@
-import { error, log, sys } from "cc";
+
 import { InitStateType, ToastType, addToastAction, setLoadingAction } from "../hall/store/actions/baseBoard";
 import Singleton from "../utils/Singleton";
 import { default as redux } from "redux"

@@ -81,7 +81,8 @@ export class Fruit777_BoxPanel extends BaseComponent<IState, IProps, IEvent> {
 
 	protected bindUI(): void {
 		for (let i = 0; i < 20; i++) {
-			const awardBox = new BaseViewModel<Fruit777_AwardBox, AIIState, AIIProps, AIEvent>("Fruit777_AwardBox").mountView(sourceManageSeletor().getFile(PrefabPathDefine.AWARD_BOX).source)
+			const awardBox = new BaseViewModel<Fruit777_AwardBox, AIIState, AIIProps, AIEvent>("Fruit777_AwardBox")
+				.mountView(sourceManageSeletor().getFile(PrefabPathDefine.AWARD_BOX).source)
 				.appendTo(this.propertyNode.props_Layout_box_wrap).setProps({ boxId: i }).setEvent({
 					onOpenHandler: (boxId) => {
 						this.events.onOpenHandler(boxId)

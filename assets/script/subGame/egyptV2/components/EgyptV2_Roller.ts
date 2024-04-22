@@ -298,7 +298,7 @@ export class EgyptV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 		this.rollOverCallback = rollOverCallback;
 		this.rollerLaunchResult = rollerLaunchResult;
 		this.sendBetTime = cacheData.sendBetTime;
-		console.log("roller stop time " + this.sendBetTime);
+		// console.log("roller stop time " + this.sendBetTime);
 		// let value = isSpeedBorder ? 15 : this.columnIndex + 1
 
 		this.rollerCount = 0;
@@ -538,7 +538,7 @@ export class EgyptV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	private rollOverHandle(rollerLaunchResult: RollerLaunchResult) {
-		console.log("roller over handle stop time " + this.sendBetTime);
+		// console.log("roller over handle stop time " + this.sendBetTime);
 		this.isRoll = false;
 		this.stopIconIndex = -1;
 
@@ -657,11 +657,11 @@ export class EgyptV2_Roller extends BaseComponent<IState, IProps, IEvent> {
 
 
 		if (this.isMergeIcon) {
-			console.log(`bigNode11 setWorldPosition begin`, this.bigNode.getWorldPosition().x, this.bigNode.getWorldPosition().y);
+			// console.log(`bigNode11 setWorldPosition begin`, this.bigNode.getWorldPosition().x, this.bigNode.getWorldPosition().y);
 			const pos = this.getMergeIconPos(this.rollerLaunchResult, gameType);
 			// 重新设置合并图标位置
 			// this.bigNode.setWorldPosition(pos);
-			console.log(`bigNode11 setWorldPosition end`, pos.x, pos.y);
+			// console.log(`bigNode11 setWorldPosition end`, pos.x, pos.y);
 		}
 	}
 

@@ -138,6 +138,10 @@ export class AudioMgr<M> {
     }
   }
 
+  setMusicVolume(volume: number) {
+    this.audioSource.volume = volume;
+  }
+
   /**
    * stop the audio play
    */

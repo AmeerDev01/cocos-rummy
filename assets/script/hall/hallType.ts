@@ -16,3 +16,11 @@ export type RechangeCallbackVo = {
   /**充值金额 */
   rechargeAmount: string
 }
+
+/**邮件分页信息配置 */
+export const PageInfo = {
+  /**页数 */
+  pageNum: 1,
+  /**条数 */
+  pageSize: 10,
+}

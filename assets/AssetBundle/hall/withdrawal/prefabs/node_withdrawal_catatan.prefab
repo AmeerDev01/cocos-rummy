@@ -734,7 +734,7 @@
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 30,
-    "_overflow": 0,
+    "_overflow": 2,
     "_enableWrapText": true,
     "_font": null,
     "_isSystemFontUsed": true,
@@ -2393,8 +2393,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 348.7,
-      "y": 164.699,
+      "x": 353,
+      "y": 233,
       "z": 0
     },
     "_lrot": {
@@ -2439,7 +2439,7 @@
     "_anchorPoint": {
       "__type__": "cc.Vec2",
       "x": 0.5,
-      "y": 0.5
+      "y": 1
     },
     "_id": ""
   },

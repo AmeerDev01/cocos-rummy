@@ -8,7 +8,6 @@ import { ToastType, addToastAction, setLoadingAction } from "../store/actions/ba
 import { getStore } from "../store"
 import { baseBoardView, fetcher, lang, sourceManageSeletor } from "../index"
 import ModalBox from "../../common/ModalBox"
-import { getPackageName, purchaseAppsflyerEvents } from "../../common/bridge"
 import ShopHistoryViewModel from "./ShopHistoryViewModel"
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { EffectType } from "../../utils/NodeIOEffect"
@@ -107,7 +106,8 @@ class ShopViewModel extends ViewModel<Hall_ShopPanel, IProps, IEvent> {
   public connect() {
     this.inject({ memberInfo: getStore().getState().memberInfo }, (state: StateType) => {
       return {
-        memberInfo: state.memberInfo
+        memberInfo: state.memberInfo,
+        chooseAmount: state.baseBoard.chooseAmount,
       }
     })
     return this

@@ -70,17 +70,19 @@ export class Fruit777_Header extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_btn_info.node.on(Button.EventType.CLICK, () => {
 			fruit777_Audio.playOneShot(SoundPathDefine.CLICK)
 			this.events.openHelpPanel()
+			this.propertyNode.props_menu_panel.active = false
 		}, this)
 
 		this.propertyNode.props_btn_vip.node.on(Button.EventType.CLICK, () => {
 			fruit777_Audio.playOneShot(SoundPathDefine.CLICK)
 			this.events.openVipMain()
+			this.propertyNode.props_menu_panel.active = false
 		}, this)
 
 		this.propertyNode.props_btn_up_home.on(Node.EventType.TOUCH_END, () => {
 			if (!gameBoardViewModel.isAuthPass) return
 			fruit777_Audio.playOneShot(SoundPathDefine.CLICK)
-			global.closeSubGame()
+			window.HALL_GLOBAL.closeSubGame()
 			// if (this.props.roundAllEnd || !sktInstance.isConnect || dataTransfer(DataKeyType.GAME_TYPE) === GameType.SUBGAME1) {
 			// 	/**只要转动完成、连接断开、开宝箱子游戏，都可以直接退出 */
 			// 	global.closeSubGame()
@@ -91,6 +93,7 @@ export class Fruit777_Header extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_btn_up_set.on(Node.EventType.TOUCH_END, () => {
 			fruit777_Audio.playOneShot(SoundPathDefine.CLICK)
 			global.openPersonCenter(2)
+			this.propertyNode.props_menu_panel.active = false
 		})
 		this.propertyNode.props_layout_gold.on(Node.EventType.TOUCH_END, () => {
 			fruit777_Audio.playOneShot(SoundPathDefine.CLICK)

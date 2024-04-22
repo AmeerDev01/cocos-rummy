@@ -24,8 +24,7 @@
  ****************************************************************************/
 package com.cocos.game;
 
-import android.Manifest;
-import android.app.NotificationChannel;
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -51,6 +50,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.FileProvider;
 
 import com.adjust.sdk.Adjust;
@@ -69,7 +69,7 @@ import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.appsflyer.attribution.AppsFlyerRequestListener;
 import com.cocos.game.bridge.EventData;
-import com.cocos.game.service.AmazonRegister;
+import com.cocos.game.firebase.FirebaseUtil;
 import com.cocos.game.tool.DeviceUtils;
 import com.cocos.game.tool.HttpTool;
 import com.cocos.game.tool.JSONTool;
@@ -77,6 +77,7 @@ import com.cocos.game.tool.NotificationUtil;
 import com.cocos.game.tool.PackageCode;
 import com.cocos.game.tool.StringUtils;
 import com.cocos.game.tool.ThirdpartyCode;
+import com.cocos.game.tool.ThreadUtil;
 import com.cocos.game.tool.VibrateTool;
 import com.cocos.game.vo.ChannelPackageVo;
 import com.cocos.game.vo.Res;
@@ -85,8 +86,6 @@ import com.cocos.lib.CocosActivity;
 import com.cocos.lib.JsbBridge;
 import com.cocos.service.SDKWrapper;
 import com.facebook.appevents.AppEventsLogger;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -101,7 +100,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import cocos.com.hugeWin777.R;
+import com.HG.IN001.R;
 
 public class AppActivity extends CocosActivity {
     private static final String LOG_TAG = "AppsFlyerOneLinkSimApp";
@@ -111,17 +110,13 @@ public class AppActivity extends CocosActivity {
      * 测试环境地址
      */
     private static final String[] CONFIG_URL_DEVS = {
-            "https://jsconfig.nuih.top/resource-jsonConfig-dev.json",
-            "https://jsconfig.mkom.top/resource-jsonConfig-dev.json"
+            "https://jsconfig.rummyapp.cc/jsonConfig-test.json"
     };
     /**
      * 生产环境地址
      */
     private static final String[] CONFIG_URL_PROS = {
-            "https://jsconfig.nuih.top/resource-jsonConfig-prod.json",
-            "https://jsconfig.mkom.top/resource-jsonConfig-prod.json",
-            "https://jsconfig.vfen.xyz/resource-jsonConfig-prod.json",
-            "https://jsconfig.hugewin777dl.com/resource-jsonConfig-prod.json"
+            "https://jsconfig.rummyapp.cc/jsonConfig-prod.json"
     };
     private Map<String, Object> conversionData = null;
     private AppEventsLogger facebookLogger;
@@ -130,6 +125,14 @@ public class AppActivity extends CocosActivity {
     private static String packageCode;
     private static AppActivity instance = null;
     private ChannelPackageVo channelPackageVo;
+
+    public AppActivity() {
+        synchronized (LOG_TAG) {
+            if (instance == null) {
+                instance = this;
+            }
+        }
+    }
 
     /**
      * 第三方初始化状态
@@ -148,13 +151,13 @@ public class AppActivity extends CocosActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        synchronized (LOG_TAG) {
-            if (instance == null) {
-                instance = this;
-            }
-        }
-        showSplash();
+        super.onCreate(savedInstanceState);
+        // DO OTHER INITIALIZATION BELOW
+        SDKWrapper.shared().init(this);
 
+        // 显示启动页
+        showSplash();
+        // 本地热更文件处理
         cacheHandle();
         Log.i("LoadCreate", "onCreate ----------------------------");
         Log.i("LoadCreate", "installTime: " + getPackageFirstInstallTime(this.getApplicationContext()));
@@ -163,13 +166,14 @@ public class AppActivity extends CocosActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.i("LoadCreate", "getFilesDir " + this.getApplicationContext().getFilesDir().toPath());
         }
-        super.onCreate(savedInstanceState);
-        // DO OTHER INITIALIZATION BELOW
-        SDKWrapper.shared().init(this);
 
         // 禁止息屏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        this.gameInit();
+    }
+
+    private void gameInit() {
         //极光推送初始化
 //        JPushInterface.setDebugMode(false);
 //        JPushInterface.init(this);
@@ -184,39 +188,18 @@ public class AppActivity extends CocosActivity {
         initFacebookLogger();
 
         // 获得packageCode配置
-//        packageCode = getResources().getString(R.string.package_code);
         packageCode = getMetaDataValue(this.getApplicationContext(), "android.app.package_code", "master");
-//        Log.i("getPackageCode", packageCode);
-//        if (PackageCode.miMarket.equals(packageCode)) {
-//            listenerAppsFlyer();
-//        }
-//        // 初始化adjust
-//        initAdjust();
         initDataStatistics();
 
-        FirebaseApp.initializeApp(this);
-        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+        FirebaseUtil.init(this);
 
-        this.initNo();
-
-//        if(Build.VERSION.SDK_INT >= 33){
-//            ActivityCompat.checkSelfPermission(this, Manifest.permission.pu)
-//        }
+        // 初始化通知
+        NotificationUtil.initNotification(this);
+//        requestNotificationPermission(this);
     }
 
     public static String getPackageCode() {
         return packageCode;
-    }
-
-    public void initNo(){
-        String CHANNEL_ID = "my_channel_01";
-        String name = "my_channel";
-        NotificationChannel channel = null;
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
     /**
@@ -470,11 +453,13 @@ public class AppActivity extends CocosActivity {
             channelPackageVo = res.getContent();
             Log.i(HttpTool.TAG, "http request time channelPackageVo : " + channelPackageVo);
             Log.i(HttpTool.TAG, "http request time : " + (System.currentTimeMillis() - startTime));
-            if (channelPackageVo.adjust) {
-                this.initAdjust();
-            }
-            if (channelPackageVo.appsFlyer) {
-                this.listenerAppsFlyer();
+            if (channelPackageVo != null) {
+                if (channelPackageVo.adjust) {
+                    this.initAdjust();
+                }
+                if (channelPackageVo.appsFlyer) {
+                    this.listenerAppsFlyer();
+                }
             }
         }).start();
     }
@@ -540,7 +525,7 @@ public class AppActivity extends CocosActivity {
     private void initAdjust() {
         thirdpartyInitStatus.put(ThirdpartyCode.ADJUST, true);
         String appToken = getMetaDataValue(this.getApplicationContext(), "adjust.app.token", "test");
-        if(channelPackageVo != null && StringUtils.isNotEmpty(channelPackageVo.appToken) && !"0".equals("channelPackageVo")){
+        if (channelPackageVo != null && StringUtils.isNotEmpty(channelPackageVo.appToken) && !"0".equals("channelPackageVo")) {
             appToken = channelPackageVo.appToken;
         }
 //        String environment = packageCode.indexOf(PackageCode.development) != -1 ? AdjustConfig.ENVIRONMENT_SANDBOX : AdjustConfig.ENVIRONMENT_PRODUCTION;
@@ -671,7 +656,7 @@ public class AppActivity extends CocosActivity {
             }
         }
         Adjust.trackEvent(adjustEvent);
-        Log.i(Adjust_LOG_TAG, String.format("adjust log event param: %s, event token: %s ", eventData.getName(), eventData.getValue()));
+        Log.i(Adjust_LOG_TAG, String.format("adjust log event param: %s, event token: %s ", eventData.getName(), eventValue));
     }
 
     public String getIMEI() {
@@ -900,6 +885,9 @@ public class AppActivity extends CocosActivity {
 
     private static ImageView sSplashBgImageView = null;
 
+    /**
+     * 显示启动页
+     */
     private static void showSplash() {
         sSplashBgImageView = new ImageView(instance);
 //        sSplashBgImageView.setBackgroundColor(
@@ -915,6 +903,17 @@ public class AppActivity extends CocosActivity {
         );
     }
 
+    public static void showSpl() {
+        instance.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (sSplashBgImageView != null) {
+                    sSplashBgImageView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
     /**
      * 这是给 CC JS 调用的隐藏原生开屏背景的方法
      */
@@ -923,21 +922,61 @@ public class AppActivity extends CocosActivity {
             @Override
             public void run() {
                 if (sSplashBgImageView != null) {
-                    sSplashBgImageView.setVisibility(View.GONE);
+                    sSplashBgImageView.setVisibility(View.INVISIBLE);
                 }
             }
         });
     }
 
-    public static void initAm(String token){
-        Log.i("fcm", "init: " +  token);
+    /**
+     * 获得firebaseToken
+     *
+     * @return
+     */
+    public static String getFirebaseToken() {
+        return FirebaseUtil.getToken();
+    }
+
+    public static final String POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS";
+    public static void requestNotificationPermission(Activity activity) {
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (ActivityCompat.checkSelfPermission(activity, POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, POST_NOTIFICATIONS)) {
+                    NotificationUtil.createAlert(activity, new Runnable() {
+                        @Override
+                        public void run() {
+                            enableNotification(activity);
+                        }
+                    });
+                } else {
+                    ActivityCompat.requestPermissions(activity, new String[]{POST_NOTIFICATIONS}, 100);
+                }
+            }
+        } else {
+            boolean enabled = NotificationManagerCompat.from(activity).areNotificationsEnabled();
+            if (!enabled) {
+                enableNotification(activity);
+            }
+        }
+    }
+
+    public static void enableNotification(Context context) {
         try {
-            AmazonRegister amazonRegister = new AmazonRegister(token);
-            amazonRegister.registerWithSNS();
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+            intent.putExtra(Settings.EXTRA_CHANNEL_ID, context.getApplicationInfo().uid);
+            intent.putExtra("app_package", context.getPackageName());
+            intent.putExtra("app_uid", context.getApplicationInfo().uid);
+            context.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e("fcm", e.toString());
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+            intent.setData(uri);
+            context.startActivity(intent);
         }
-        Log.i("fcm", "init end: " +  token);
     }
+
 }

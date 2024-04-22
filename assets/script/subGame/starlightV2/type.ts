@@ -186,8 +186,8 @@ export enum IconId {
   /**倍率图标 */
   ODDS_ICON_GREEN = 11,
   ODDS_ICON_BLUE = 12,
-  ODDS_ICON_PURPLE = 13,
-  ODDS_ICON_RED = 14,
+  ODDS_ICON_RED = 13,
+  ODDS_ICON_YELLOW = 14,
 }
 
 /**锁定图标信息 */

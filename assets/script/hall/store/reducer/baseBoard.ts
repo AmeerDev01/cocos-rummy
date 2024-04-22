@@ -67,4 +67,16 @@ export default reduxAct.createReducer<InitStateType>({
       UnreadMailNum: payload.UnreadMailNum
     }
   },
+  [ActionTypes.UPDATE_VIP_BONUSINFO]: (state, payload: ActionPayLoad<ActionTypes.UPDATE_VIP_BONUSINFO>): InitStateType => {
+    return {
+      ...state,
+      vipBonusInfo: payload.vipBonusInfo
+    }
+  },
+  [ActionTypes.TOP_UP_CHOOSE_AMOUNT]: (state, payload: ActionPayLoad<ActionTypes.TOP_UP_CHOOSE_AMOUNT>): InitStateType => {
+    return {
+      ...state,
+      chooseAmount: payload.chooseAmount
+    }
+  },
 }, initState);

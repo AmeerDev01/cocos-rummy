@@ -1,4 +1,4 @@
-import { _decorator, Button, Component, EventMouse, Label, Node, Sprite, sys, Toggle, ToggleComponent } from 'cc';
+import { _decorator, Button, Component, EventMouse, Label, Node, Sprite, sys, Toggle } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import config from '../config';
 import { SKT_MAG_TYPE, sktMsgListener } from '../socketConnect';
@@ -335,7 +335,7 @@ export class BlessedWealthy_footer extends BaseComponent<IState, IProps, IEvent>
 		sktMsgListener.add(SKT_MAG_TYPE.LAUNCHER_BET, "footer", (data, error) => {
 			this.stepNumber && this.stepNumber.stop()
 		}, 10)
-		this.propertyNode.props_toggle_fast.node.on('toggle', (toggle: ToggleComponent) => {
+		this.propertyNode.props_toggle_fast.node.on('toggle', (toggle: Toggle) => {
 			playBtnClick()
 			this.events.changeSpeedUpSwitch(toggle.isChecked)
 		}, this);

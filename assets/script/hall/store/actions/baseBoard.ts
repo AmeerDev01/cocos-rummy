@@ -1,5 +1,6 @@
 import { default as reduxAct } from 'redux-act'
-import { HallGameGateType, SubGameRunState } from '../../config'
+import { HallGameGateType } from '../../config'
+import { SubGameRunState } from '../../../hallType'
 
 export enum ToastType {
   NORMAL,
@@ -12,8 +13,28 @@ export enum ToastPosition {
   MIDDLE = 'middle',
   BOTTOM = 'bottom'
 }
+export type VipBonus = {
+  myVipLevel: number,
+  myUpgradeBonus: number,
+  myDayBonus: number,
+  myWeeklyBonus: number,
+  myMonthlyBonus: number,
+  clickVipLevel: number,
+  clickUpgradeBonus: number,
+  clickDayBonus: number,
+  clickWeeklyBonus: number,
+  clickMonthlyBonus: number
+}
+
+export type ChooseAmount = {
+  /**充值选择的金额 */
+  chooseAmount: number,
+  /**充值获得的总金额 */
+  totalGet: number,
+}
+
 export type InitStateType = {
-  toastData: { content: string, type: ToastType },
+  toastData: { content: string, type: ToastType, position: ToastPosition, forceLandscape: boolean },
   loadPayload: { isShow: boolean, isAllowCloseLoading: boolean, flagId: string },
   subGameInfo: HallGameGateType,
   isShowWebView: boolean,
@@ -24,10 +45,13 @@ export type InitStateType = {
   remainRetryCount: number,
   appDownLoadGuide: boolean,
   /**是否有未读邮箱 */
-  UnreadMailNum:number,
+  UnreadMailNum: number,
+  vipBonusInfo: VipBonus,
+  /**选择充值的金额 */
+  chooseAmount: ChooseAmount,
 }
 export const initState: InitStateType = {
-  toastData: { content: "", type: ToastType.NORMAL },
+  toastData: { content: "", type: ToastType.NORMAL, position: ToastPosition.MIDDLE, forceLandscape: false },
   loadPayload: { isShow: false, isAllowCloseLoading: false, flagId: '_' },
   subGameInfo: null,
   isShowWebView: true,
@@ -35,7 +59,9 @@ export const initState: InitStateType = {
   isConnect: true,
   remainRetryCount: 0,
   appDownLoadGuide: true,
-  UnreadMailNum:-1,
+  UnreadMailNum: -1,
+  vipBonusInfo: null,
+  chooseAmount: null,
 }
 
 /**必须大写，不然redux-act这狗日的要自动加序列号 */
@@ -50,12 +76,13 @@ export enum ActionTypes {
   SOCKET_CONNECT = "SOCKET_CONNECT",
   APP_DOWNLOAD_GUIDE = "APP_DOWNLOAD_GUIDE",
   UPDATE_MAIL_STATUS = 'UPDATE_MAIL_STATUS',
-
+  UPDATE_VIP_BONUSINFO = 'UPDATE_VIP_BONUSINFO',
+  TOP_UP_CHOOSE_AMOUNT = 'TOP_UP_CHOOSE_AMOUNT',
 }
 
 /**定义action的payLoad类型 */
 export type ActionPayLoad<A extends ActionTypes> =
-  A extends ActionTypes.ADD_TOAST ? { toastData: { content: string, type: ToastType, position: ToastPosition } } :
+  A extends ActionTypes.ADD_TOAST ? { toastData: { content: string, type: ToastType, position: ToastPosition, forceLandscape: boolean } } :
   A extends ActionTypes.SET_LOADING ? { isLoadPayload: { isShow: boolean, flagId: string, isAllowCloseLoading?: boolean } } :
   A extends ActionTypes.SET_ACTIVE_SUBGAME ? { subGameInfo: HallGameGateType } :
   A extends ActionTypes.SET_SUBGAME_STATE ? { subGameRunState: SubGameRunState } :
@@ -64,14 +91,26 @@ export type ActionPayLoad<A extends ActionTypes> =
   A extends ActionTypes.SOCKET_CONNECT ? { connectData: { isConnect: boolean, remainRetryCount?: number } } :
   A extends ActionTypes.APP_DOWNLOAD_GUIDE ? { appDownLoadGuide: boolean } :
   A extends ActionTypes.UPDATE_MAIL_STATUS ? { UnreadMailNum: number } :
+  A extends ActionTypes.UPDATE_VIP_BONUSINFO ? { vipBonusInfo: VipBonus, } :
+  A extends ActionTypes.TOP_UP_CHOOSE_AMOUNT ? { chooseAmount: ChooseAmount, } :
 
   never;
 
-
+/**
+ * 添加toast消息，forceLandscape：是否强制横向，默认强制，若设为false，则根据游戏的方向自动适应展示
+ */
 export const addToastAction = reduxAct.createAction(ActionTypes.ADD_TOAST,
-  (toastData: { content: string, type?: ToastType, position?: ToastPosition }): ActionPayLoad<ActionTypes.ADD_TOAST> => {
+  (toastData: { content: string, type?: ToastType, position?: ToastPosition, forceLandscape?: boolean }): ActionPayLoad<ActionTypes.ADD_TOAST> => {
     console.log(toastData.content)
-    return { toastData: { ...toastData, type: toastData.type || ToastType.NORMAL, position: toastData.position || ToastPosition.BOTTOM } }
+    return {
+      toastData:
+      {
+        ...toastData,
+        type: toastData.type || ToastType.NORMAL,
+        position: toastData.position || ToastPosition.BOTTOM,
+        forceLandscape: toastData.forceLandscape === undefined ? true : toastData.forceLandscape
+      }
+    }
   })
 
 export const setLoadingAction = reduxAct.createAction(ActionTypes.SET_LOADING,
@@ -110,4 +149,13 @@ export const resetDataBaseBoard = reduxAct.createAction(ActionTypes.RESET_DATA_B
 export const updateMailStatus = reduxAct.createAction(ActionTypes.UPDATE_MAIL_STATUS,
   (UnreadMailNum: number): ActionPayLoad<ActionTypes.UPDATE_MAIL_STATUS> => {
     return { UnreadMailNum }
-  }) 
+  })
+
+export const updateVipBonusInfo = reduxAct.createAction(ActionTypes.UPDATE_VIP_BONUSINFO,
+  (vipBonusInfo: VipBonus,): ActionPayLoad<ActionTypes.UPDATE_VIP_BONUSINFO> => {
+    return { vipBonusInfo }
+  })
+export const changeChooseAmount = reduxAct.createAction(ActionTypes.TOP_UP_CHOOSE_AMOUNT,
+  (chooseAmount: ChooseAmount): ActionPayLoad<ActionTypes.TOP_UP_CHOOSE_AMOUNT> => {
+    return { chooseAmount }
+  })

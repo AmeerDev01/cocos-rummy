@@ -118,7 +118,7 @@ export const bandarGameLogin = () => {
 }
 
 export const removeInstance = () => {
-  bandarWebSocketDriver.logoutGame(SKT_MAG_TYPE.LOGOUT)
+  bandarWebSocketDriver && bandarWebSocketDriver.logoutGame(SKT_MAG_TYPE.LOGOUT)
 
   // sktMsgListener && sktMsgListener.removeAll()
   // sktInstance && sktInstance.close()

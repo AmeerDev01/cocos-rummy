@@ -1,4 +1,4 @@
-import { Node } from "cc"
+import { Node, Prefab } from "cc"
 import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { Fruit777_RollerPanel, IProps, IEvent } from "../components/Fruit777_RollerPanel"
 import { StateType } from "../store/reducer"
@@ -12,7 +12,7 @@ import TaskScheduler, { Task, TaskSchedulerDefault } from "../../../utils/TaskSc
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
 import { footerViewModel, fruit777_Audio, gameBoardViewModel, sourceManageSeletor } from "../index"
 import { EffectType } from "../../../utils/NodeIOEffect"
-import { changeProfit, setSubGameTimes, setWaiting, updateBalance, updateJackpotAmount, updateSubGameTimes } from "../store/actions/game"
+import { changeProfit, setIsBeginStop, setSubGameTimes, setWaiting, updateBalance, updateJackpotAmount, updateSubGameTimes } from "../store/actions/game"
 import BaseViewModel from "../../../common/viewModel/BaseViewModel"
 import { Fruit777_BigPrize, IState as BPIState, IProps as BPIProps, IEvent as BPIEvent } from "../components/Fruit777_BigPrize"
 import { SoundPathDefine } from "../sourceDefine/soundDefine"
@@ -87,7 +87,7 @@ class RollerPanelViewModel extends ViewModel<Fruit777_RollerPanel, IProps, IEven
       },
       allRollStop: () => {
         // console.log("allRollStop")
-        
+
         this.dispatch(setRollRoundEnd(true))
         if (this.viewGameType === GameType.MAIN) {
           this.dispatch(changeProfit(dataTransfer(DataKeyType.PROFIT_AMOUNT)))
@@ -146,13 +146,13 @@ class RollerPanelViewModel extends ViewModel<Fruit777_RollerPanel, IProps, IEven
           //切换游戏
           if (this.viewGameType === GameType.SUBGAME2 && dataTransfer(DataKeyType.FREE_GAME_AMOUNT) !== 0) {
             // 大滑槽小游戏结束之后要开西瓜
-            this.taskScheduler && this.taskScheduler.joinQueue(new Task((done) => {
+            this.taskScheduler && this.taskScheduler.joinQueue(new Task(async (done) => {
               //大滑槽小游戏，要开西瓜
               // fruit777_Audio.playOneShot(SoundPathDefine.OPEN_WIN_END)
               fruit777_Audio.playOneShot(SoundPathDefine.FRUIT_SHELL)
               const winning = config.winning[config.winning.length - 1]
-              this.winnerDialog = new BaseViewModel<Fruit777_BigPrize, BPIState, BPIProps, BPIEvent>('Fruit777_BigPrize').mountView(sourceManageSeletor()
-                .getFile(PrefabPathDefine.BIG_PRIZE).source).appendTo(this.parentNode, { effectType: EffectType.EFFECT1, isModal: true })
+              this.winnerDialog = new BaseViewModel<Fruit777_BigPrize, BPIState, BPIProps, BPIEvent>('Fruit777_BigPrize').mountView(
+                (await sourceManageSeletor().getFileAsync(PrefabPathDefine._BIG_PRIZE, Prefab)).source).appendTo(this.parentNode, { effectType: EffectType.EFFECT1, isModal: true })
                 .setProps({ winning, glodAmount: dataTransfer(DataKeyType.FREE_GAME_AMOUNT) })
                 .setEvent({
                   killSelfHandler: () => {
@@ -189,10 +189,6 @@ class RollerPanelViewModel extends ViewModel<Fruit777_RollerPanel, IProps, IEven
     const _taskScheduler = new TaskScheduler()
     fruit777WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCHER_BET, "roller", (data, error) => {
       if (error) {
-        // this.dispatch(addToastAction({ content: error }))
-        // this.rollerMap.forEach((rollerItem, index) => {
-        //   this.dispatch(setStopRollAction(index, 1))
-        // })
         global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild) + ':' + error })
       } else {
         try {
@@ -201,29 +197,26 @@ class RollerPanelViewModel extends ViewModel<Fruit777_RollerPanel, IProps, IEven
           this.dispatch(setIconEffect(IconEffectType.NONE, []))
           const stopIndex: number[] = dataTransfer(DataKeyType.ROLLER_STOP_INDEX_ID)
           this.stopRollerIndex = -1
-          this.rollerMap.forEach((rollerItem, index) => {
-            //顺序停止，stopMode=index的时候不使用这种方案，因为一轮可能就会花不少时间，所以最好不用这种
-            if (this.comp.props.stopMode === 'jump' && this.comp.props.isSortStop) {
-              _taskScheduler.joinQueue(new Task((done) => {
-                this.dispatch(setStopRollAction(index, stopIndex ? stopIndex[index] : 0))
-                if (index < 5) {
-                  // const t = window.setInterval(() => {
-                  //   if (this.stopRollerIndex === index) {
-                  //     window.clearInterval(t)
-                  //     done()
-                  //   }
-                  // }, 1000)
-                  window.setTimeout(() => {
+          this.comp.scheduleOnce(() => {
+            this.dispatch(setIsBeginStop(true))
+            this.rollerMap.forEach((rollerItem, index) => {
+              //顺序停止，stopMode=index的时候不使用这种方案，因为一轮可能就会花不少时间，所以最好不用这种
+              if (this.comp.props.stopMode === 'jump' && this.comp.props.isSortStop && !footerViewModel.comp.enableAheadStop) {
+                _taskScheduler.joinQueue(new Task((done) => {
+                  this.dispatch(setStopRollAction(index, stopIndex ? stopIndex[index] : 0))
+                  if (index < 5) {
+                    window.setTimeout(() => {
+                      done()
+                    }, 200)
+                  } else {
                     done()
-                  }, 200)
-                } else {
-                  done()
-                }
-              }))
-            } else {
-              this.dispatch(setStopRollAction(index, stopIndex ? stopIndex[index] : 0))
-            }
-          })
+                  }
+                }))
+              } else {
+                this.dispatch(setStopRollAction(index, stopIndex ? stopIndex[index] : 0))
+              }
+            })
+          }, this.comp.props.isSortStop ? 0.5 : 0.05)
         } catch (e) {
           this.dispatch(addToastAction({ content: e }))
           this.rollerMap.forEach((rollerItem, index) => {
@@ -241,13 +234,13 @@ class RollerPanelViewModel extends ViewModel<Fruit777_RollerPanel, IProps, IEven
     })
   }
   /**检查是否要爆奖，爆什么奖 */
-  private checkAward(done: Function) {
+  private async checkAward(done: Function) {
     const profitMultiple = dataTransfer(DataKeyType.PROFIT_MULTIPLE)
     const winning = config.winning.find(item => item.minRate <= profitMultiple && profitMultiple < item.maxRate)
     if (winning) {
       sendNativeVibrate(200)
-      const winnerDialog = new BaseViewModel<Fruit777_BigPrize, BPIState, BPIProps, BPIEvent>('Fruit777_BigPrize').mountView(sourceManageSeletor()
-        .getFile(PrefabPathDefine.BIG_PRIZE).source).appendTo(this.parentNode, { effectType: EffectType.EFFECT1, isModal: true })
+      const winnerDialog = new BaseViewModel<Fruit777_BigPrize, BPIState, BPIProps, BPIEvent>('Fruit777_BigPrize').mountView(
+        (await sourceManageSeletor().getFileAsync(PrefabPathDefine._BIG_PRIZE, Prefab)).source).appendTo(this.parentNode, { effectType: EffectType.EFFECT1, isModal: true })
         .setProps({ winning, glodAmount: dataTransfer(this.viewGameType === GameType.MAIN ? DataKeyType.PROFIT_AMOUNT : DataKeyType.FREE_GAME_AMOUNT) })
         .setEvent({
           killSelfHandler: () => {

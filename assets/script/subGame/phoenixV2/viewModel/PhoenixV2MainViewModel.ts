@@ -297,8 +297,8 @@ class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
     cacheData.fixedChessboardIcon = null;
     this.dispatch(updateRollerStatus(RollerStatus.RUNNING));
     this.isBetResult = false;
-    // this.betCallbackFun = this.betListenerTimeHandle.bind(this);
-    // this.comp.schedule(this.betCallbackFun, 10);
+    this.betCallbackFun = this.betListenerTimeHandle.bind(this);
+    this.comp.schedule(this.betCallbackFun, 10);
 
     // sktInstance.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
     //   "positionId": this.comp.props.positionId,
@@ -314,8 +314,8 @@ class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
       }, {
         timeOut: 5000
       });
-  
-      this.sendBetTimeOutHandle(msgObj);
+
+      // this.sendBetTimeOutHandle(msgObj);
     } else if (this.gameType === GameType.SUBGAME1) {//小游戏
       const msgObj = phoenixWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
         positionId: this.comp.props.positionId,
@@ -325,7 +325,7 @@ class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
       }, {
         timeOut: 10000
       });
-  
+
       this.sendBetTimeOutHandle(msgObj);
     }
   }
@@ -337,10 +337,10 @@ class PhoenixV2MainViewModel extends ViewModel<PhoenixV2_Main, IProps, IEvent> {
       }
     })
     //超时
-    msgObj.bindTimeoutHandler(() => {
-      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
-      return false
-    })
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
   }
 
   private betListenerTimeHandle() {

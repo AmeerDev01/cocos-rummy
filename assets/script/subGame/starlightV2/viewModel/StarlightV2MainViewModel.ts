@@ -41,6 +41,7 @@ class StarlightV2MainViewModel extends ViewModel<StarlightV2_Main, IProps, IEven
   private rollerPanelViewModel: StarlightV2RollerPanelViewModel;
   public isAuthDone: boolean = false
   private isBetResult = true;
+  private betCallbackFun;
 
   /**奖励的坐标 */
   private goodLuckPos: Vec3;
@@ -133,6 +134,8 @@ class StarlightV2MainViewModel extends ViewModel<StarlightV2_Main, IProps, IEven
     starlightGameLogin();
 
     starlightV2WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCH, bundlePkgName, (data: RollerLaunchResult, error) => {
+      this.betCallbackFun && this.comp.unschedule(this.betCallbackFun);
+      this.betCallbackFun = undefined;
       this.isBetResult = true;
       const result = verifyBetResultData(data)
       if (!error && result > 0) {
@@ -242,6 +245,15 @@ class StarlightV2MainViewModel extends ViewModel<StarlightV2_Main, IProps, IEven
     this.dispatch(updateRollerStatus(RollerStatus.RUNNING));
     this.isBetResult = false;
 
+    this.betCallbackFun = () => {
+      if (!this.isBetResult) {
+        this.isBetResult = true;
+        const content = lang.write(k => k.WebSocketModule.WebSocketError) + '-' + SKT_MAG_TYPE.LAUNCH;
+        global.closeSubGame({ confirmContent: content })
+      }
+    }
+    this.comp.schedule(this.betCallbackFun, 10, 0);
+
     const msgObj = starlightV2WebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
       positionId: this.comp.props.positionId,
       tableId: cacheData.authData.tableId,
@@ -260,10 +272,10 @@ class StarlightV2MainViewModel extends ViewModel<StarlightV2_Main, IProps, IEven
       }
     })
     //超时
-    msgObj.bindTimeoutHandler(() => {
-      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
-      return false
-    })
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
   }
 
   protected unMountCallBack(): void {

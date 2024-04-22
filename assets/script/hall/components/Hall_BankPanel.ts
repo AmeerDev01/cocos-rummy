@@ -8,7 +8,7 @@ import { SoundPathDefine } from '../sourceDefine/soundDefine';
 import ModalBox from '../../common/ModalBox';
 import { config } from '../config';
 import { getStore } from '../store';
-import { DEV } from 'cc/env';
+import { getIsTest } from '../../config/GameConfig';
 const { ccclass, property } = _decorator;
 
 enum ShowModelType {
@@ -152,8 +152,7 @@ export class Hall_BankPanel extends BaseComponent<IState, IProps, IEvent> {
 		})
 		this.propertyNode.props_btn_history.node.on(Node.EventType.TOUCH_END, () => {
 			//打开记录
-			sys.openURL(config.goldRecordUrl + `?token=${sys.localStorage.getItem('token')}&memberId=${getStore().getState().memberInfo.memberId}&env=${DEV ? 'dev' : 'pro'}`)
-			// ModalBox.Instance().show({ url: config.goldRecordUrl + `?token=${sys.localStorage.getItem('token')}&memberId=${getStore().getState().memberInfo.memberId}&env=${DEV ? 'dev' : 'pro'}`, type: "Prompt" })
+			sys.openURL(config.goldRecordUrl + `?token=${sys.localStorage.getItem('token')}&memberId=${getStore().getState().memberInfo.memberId}&env=${getIsTest() ? 'test' : 'pro'}`)
 		})
 	}
 	private trasfer(amount: string, direction: TrasferDirectionType) {

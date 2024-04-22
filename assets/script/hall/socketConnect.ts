@@ -8,6 +8,7 @@ import { lang } from "./index"
 import { sys } from "cc"
 import WebSocketStarter, { EVEVT_TYPE, SKT_OPERATION, WebSocketDriver } from "../common/WebSocketStarter"
 import ModalBox from "../common/ModalBox"
+import { Task, TaskSchedulerDefault } from "../utils/TaskScheduler"
 
 export enum SKT_MAG_TYPE {
   /**强制退出 */
@@ -64,21 +65,34 @@ hallWebSocketDriver.filterData = (data, source) => {
     if (!baseBoardView.comp.props.openGameInfo) {
       const hallGameGate: HallGameGateType = subGameList.find(i => i.gameId === source.gameId)
       if (hallGameGate) {
-        window.setTimeout(() => {
-          ModalBox.Instance().show({ content: lang.write(k => k.HallModule.UnfinishedGames, { game: hallGameGate.gameName }, { placeStr: "您还有未完成的游戏，请继续" }), type: "Prompt" }, () => {
-            try {
-              const gateViewModel = baseBoardView.mainPanelViewModel.comp.gateViewModelList.find(vm => vm.comp.props.gamesIds.indexOf(hallGameGate.gameId) !== -1)
-              if (gateViewModel && gateViewModel.comp) {
-                gateViewModel.comp.openGateGame(hallGameGate.gameId)
-              } else {
-                global.hallDispatch(addToastAction({ content: `gameId error:${source.gameId}`, type: ToastType.ERROR }))
+        const openResetConfirm = (callback?: Function) => {
+          window.setTimeout(() => {
+            ModalBox.Instance().show({ content: lang.write(k => k.HallModule.UnfinishedGames, { game: hallGameGate.gameName }, { placeStr: "您还有未完成的游戏，请继续" }), type: "Prompt" }, () => {
+              try {
+                const gateViewModel = baseBoardView.mainPanelViewModel.comp.gateViewModelList.find(vm => vm.comp.props.gamesIds.indexOf(hallGameGate.gameId) !== -1)
+                if (gateViewModel && gateViewModel.comp) {
+                  gateViewModel.comp.openGateGame(hallGameGate.gameId)
+                } else {
+                  global.hallDispatch(addToastAction({ content: `gameId error:${source.gameId}`, type: ToastType.ERROR, forceLandscape: false }))
+                }
+              } catch (e) {
+                global.hallDispatch(addToastAction({ content: e, type: ToastType.ERROR, forceLandscape: false }))
               }
-            } catch (e) {
-              global.hallDispatch(addToastAction({ content: e, type: ToastType.ERROR }))
-            }
-            return true
-          })
-        }, 1000)
+              callback && callback()
+              return true
+            })
+          }, 1000)
+        }
+        if (baseBoardView.mainPanelViewModel && baseBoardView.mainPanelViewModel.isBeginPop) {
+          //已经开始弹窗了
+          TaskSchedulerDefault().joinQueue(new Task((done) => {
+            openResetConfirm(done)
+          }))
+        } else {
+          //还没开始弹窗，那弹个der，直接弹恢复游戏的弹窗
+          baseBoardView.mainPanelViewModel && (baseBoardView.mainPanelViewModel.isBeginPop = true)
+          openResetConfirm()
+        }
       }
     } else {
       //游戏中，需要游戏自行LOGIN
@@ -92,7 +106,7 @@ hallWebSocketDriver.filterData = (data, source) => {
     }
   } else {
     console.error(data, source)
-    global.hallDispatch(addToastAction({ content: `${data.message}[${data.code}]`, type: ToastType.ERROR }))
+    global.hallDispatch(addToastAction({ content: `${data.message}[${data.code}]`, type: ToastType.ERROR, forceLandscape: false }))
     return {
       data: '', error: data.message
     }
@@ -115,7 +129,7 @@ export default () => {
           global.hallDispatch(setSocketConnectStatus({ isConnect: true, remainRetryCount: wss.maxReconnectTime }))
         })
         wss.eventListener.add(EVEVT_TYPE.WARN, '', () => {
-          global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.NetworkInstability, {}, { placeStr: "网络不稳定" }), type: ToastType.ERROR }))
+          global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.NetworkInstability, {}, { placeStr: "网络不稳定" }), type: ToastType.ERROR, forceLandscape: false }))
         })
         wss.eventListener.add(EVEVT_TYPE.RECONNECT, '', (remainRetryCount) => {
           global.hallDispatch(setSocketConnectStatus({ isConnect: false, remainRetryCount }))
@@ -128,7 +142,3 @@ export default () => {
   })
 }
 
-// export const removeInstance = () => {
-//   sktInstance = null
-//   hallWebSocketDriver && hallWebSocketDriver.remove()
-// }

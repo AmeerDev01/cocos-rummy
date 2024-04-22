@@ -20,7 +20,7 @@ import HistoryMinViewModel from "./HistoryMinViewModel"
 import LosePanelViewModel from "./LosePanelViewModel"
 import SettingViewModel from "./SettingViewModel"
 import WinPanelViewModel from "./WinPanelViewModel"
-import { cancelBet, clearBet, seatBet } from "../store/actions/bet"
+import { cancelBet, clearBet, seatBet, selectChip } from "../store/actions/bet"
 import { global, lang } from "../../../hall"
 import { bundlePkgName } from "../sourceDefine"
 import TaskScheduler, { Task, TaskSchedulerDefault } from "../../../utils/TaskScheduler"
@@ -192,6 +192,8 @@ class GameBoardViewModel extends ViewModel<Yxx_GameBoard, IProps, IEvent> {
           value.valueStr = v >= 10000 ? v.formatAmountWithLetter() : v + '';
         }
       })
+
+      this.dispatch(selectChip(config.chipTypes[0].value));
     }
   }
 

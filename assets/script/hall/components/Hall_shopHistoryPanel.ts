@@ -123,7 +123,7 @@ export class Hall_shopHistoryPanel extends BaseComponent<IState, IProps, IEvent>
         this.propertyNode.props_content.removeAllChildren();
     
         // 加载初始数据
-        item.reverse().slice(0, 5).forEach((v, i) => {
+        item.slice(0, 5).forEach((v, i) => {
             this.createItem(v)
         })
     

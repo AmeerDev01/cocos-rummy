@@ -79,7 +79,7 @@ export class Hall_WithdrawBankBind extends BaseComponent<IState, IProps, IEvent>
 					})
 			} else if (this.props.hadChooseBankChannl.channelType === 0) {
 				//电子钱包
-				new InputValidator().begin().isCharLength([9, 15], accountNumber)
+				new InputValidator().begin().isLocalBankCard(accountNumber)
 					.isNotEmpty(realName, lang.write(k => k.InputModule.isNotEmpty) + ':Name')
 					.isAllNumber(accountNumber).done(() => {
 						this.events.onBindDone(this.props.hadChooseBankChannl, accountNumber, realName)

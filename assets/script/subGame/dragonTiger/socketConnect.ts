@@ -11,6 +11,8 @@ export enum SKT_MAG_TYPE {
   LOGOUT = "36",
   /**充值返回 */
   TOP_UP = "10",
+   /**游戏权限提示语 */
+   GAME_TIP = "11",
   /** 倒计时 */
   CRASH = "801",
   /** 下注总金币数 */
@@ -100,7 +102,7 @@ export const dragonTigerGameLogin = () => {
 }
 
 export const removeInstance = () => {
-  dragonTigerWebSocketDriver.logoutGame(SKT_MAG_TYPE.LOGOUT)
+  dragonTigerWebSocketDriver && dragonTigerWebSocketDriver.logoutGame(SKT_MAG_TYPE.LOGOUT)
 
   // sktMsgListener && sktMsgListener.removeAll()
   // sktInstance && sktInstance.close()

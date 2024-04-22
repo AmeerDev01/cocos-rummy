@@ -14,6 +14,7 @@ export enum SpriteFramePathDefine {
   img_icon_rose = "gift/img/img_icon_rose/spriteFrame",
   img_icon_shoe = "gift/img/img_icon_shoe/spriteFrame",
   img_icon_tomato = "gift/img/img_icon_tomato/spriteFrame",
+
 }
 
 export default (bundlePkgName: string) => loopFiles(bundlePkgName, SpriteFrame, SpriteFramePathDefine)

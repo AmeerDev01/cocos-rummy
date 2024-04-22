@@ -69,7 +69,9 @@ export enum PrefabPathDefine {
   /**中奖广播框 */
   _WINNING_BOX = "prefabs/winningCar",
   /**引导帮助的底框层 */
-  _GUIDE_PANEL = "prefabs/guidePanel"
+  _GUIDE_PANEL = "prefabs/guidePanel",
+  /**每日任务 */
+  _DAILY_TASK = "task/prefabs/prafabs_task"
 }
 
 export default (bundlePkgName: string) => loopFiles(bundlePkgName, Prefab, PrefabPathDefine)

@@ -1,4 +1,4 @@
-import { Game, Node, instantiate, sys } from "cc"
+import { Game, Node, Prefab, instantiate, sys } from "cc"
 import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { Fruit777_GameBoard, IProps, IEvent } from "../components/Fruit777_GameBoard"
 import { StateType } from "../store/reducer"
@@ -94,11 +94,11 @@ class GameBoardViewModel extends ViewModel<Fruit777_GameBoard, IProps, IEvent> {
     this.setEvent({
       changeGameHandler: (lastGameType, currGameType) => {
         console.log(lastGameType, currGameType)
-        this.changeGameTypeTask = new Task((done) => {
+        this.changeGameTypeTask = new Task(async (done) => {
           try {
             if (this.currentGameViewModel) {
               fruit777_Audio.playOneShot(SoundPathDefine.TRANSFER)
-              this.flyFruitNode = instantiate(sourceManageSeletor().getFile(PrefabPathDefine.FLY_FRUITS).source)
+              this.flyFruitNode = instantiate((await sourceManageSeletor().getFileAsync(PrefabPathDefine._FLY_FRUITS, Prefab)).source)
               this.viewNode.addChild(this.flyFruitNode)
               this.comp.scheduleOnce(() => {
                 //卸载当前
@@ -113,7 +113,7 @@ class GameBoardViewModel extends ViewModel<Fruit777_GameBoard, IProps, IEvent> {
             done()
             console.log('err', e)
           }
-        }).subscribeDone('change', () => {
+        }).subscribeDone('change', async () => {
           if (!this.comp.getPropertyNode()) return
           this.dispatch(changeViewGame(currGameType))
           if (currGameType === GameType.MAIN) {
@@ -123,7 +123,7 @@ class GameBoardViewModel extends ViewModel<Fruit777_GameBoard, IProps, IEvent> {
               }
             }).connect()
           } else if (currGameType === GameType.SUBGAME1) {
-            this.currentGameViewModel = new BoxPanelViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.BOX_GAME).source).appendTo(this.comp.getGameNode(), {
+            this.currentGameViewModel = new BoxPanelViewModel().mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._BOX_GAME, Prefab)).source).appendTo(this.comp.getGameNode(), {
               effectType: EffectType.EFFECT_FADE, effectDone: () => {
                 this.dispatch(setRollRoundEnd(true))
               }

@@ -4,7 +4,7 @@ import { SKT_MAG_TYPE, rummyWebSocketDriver } from "../socketConnect"
 import { bundlePkgName } from "../sourceDefine"
 import { getStore } from "../store"
 import { StateType } from "../store/reducer"
-import { EnterGameVo } from "../type"
+import { JoinRoomVo } from "../type"
 
 @StoreInject(getStore())
 class OperationCardViewModel extends ViewModel<Rummy_OperationCard, IProps, IEvent> {

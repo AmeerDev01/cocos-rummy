@@ -27,6 +27,7 @@ import { addToastAction } from "../../../hall/store/actions/baseBoard";
 import config from "../config";
 import { changeAllWinUsersAction, changeCancelBetDataAction, changeGoldDataAction, resetStore, setCountDownAction, setMyInfoAction, setNewBetDataAction, setUsersInfoAction } from "../store/actions/game";
 import { BetInfo, BetType, Chips, MemberInfoVo, ResGiftVo, WinUser, gameCacheData } from "../type";
+import WebSocketStarter, { EVEVT_TYPE } from "../../../common/WebSocketStarter";
 
 export let winViewModel: WinViewModel
 export let loseViewModel: LoseViewModel
@@ -46,17 +47,9 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
   protected begin() {
     // sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, window.location.search.substring(6))
 
-    //  sys.localStorage.setItem("token",config.testConfig.token)
-    // dragonTigerWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.AUTH, {
-    //   token: sys.localStorage.getItem("token"),
-    //   gameId: config.gameId
-    // })
-    // const msgObj = dragonTigerWebSocketDriver.loginGame(SKT_MAG_TYPE.LOGIN)
-    // msgObj.bindTimeoutHandler(() => {
-    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
-    //   return false
-    // })
-    // dragonTigerGameLogin()
+    WebSocketStarter.Instance().eventListener.add(EVEVT_TYPE.DISCONNECT, bundlePkgName, () => {
+      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.ConfigGameFaild, {}, { placeStr: "对不起，连接游戏失败" }) })
+    })
 
     dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LOGIN, bundlePkgName, (data) => {//31
       if (!data || !data.myInfo) {
@@ -64,7 +57,7 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
         global.closeSubGame({ confirmContent: lang.write(k => k.InitGameModule.GameBoardInit) });
         return;
       }
-      
+      this.comp.isInit = true;
       this.setChipTypesDynamic(data.betList);//动态设置下注列表
 
       gameCacheData.leftUsers = data.roomLeftInfoVos;
@@ -146,19 +139,20 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
       this.dispatch(changeGoldAction(data));
     })
 
-    // dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_TIP, bundlePkgName, (data) => {//11
-    //   if (data) {
-    //     const value = data.find(v => v.name.toLowerCase() === 'gold')
-    //     if (value) {
-    //       config.gameOption.unlockBetMinGold = parseInt(value.num);
-    //     }
-    //   }
-    //   this.dispatch(setTipsAction(data))
-    // })
+    dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_TIP, bundlePkgName, (data) => {//11
+      if (data) {
+        const value = data.find(v => v.name.toLowerCase() === 'gold')
+        if (value) {
+          config.gameOption.unlockBetMinGold = parseInt(value.num);
+        }
+      }
+      this.dispatch(setTipsAction(data))
+    })
 
     dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.CRASH, bundlePkgName, (data) => {//801
       this.dispatch(changeGameTypeAction(data.gameType));
       if (data.gameType === 1) {
+        this.comp.isInit = false;
         let myInfo = {
           gold: this.comp.props.gold,
           goldStr: this.comp.props.gold + "",
@@ -168,7 +162,7 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
           index: config.gameOption.lookOnIndex,
           memberBet: this.comp.props.memberBet,
           winType: 0,
-          winGold: 0,
+          winGold: this.comp.props.winGold,
         }
         this.dispatch(setCountDownAction(data.seconds));
         this.countDown = data.seconds;
@@ -198,7 +192,7 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
       }
     })
 
-    dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.HISTORY, bundlePkgName, (data) => {//806
+    dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.HISTORY, bundlePkgName, (data) => {//33
       this.dispatch(setHistoryListAction({ ...data }))
     })
     dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.BET_ALL, bundlePkgName, (data) => {//802
@@ -210,7 +204,7 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
       gameCacheData.goldData = goldData;
       const memberId = data.memberId;
       const index = this.getSeatIndex(memberId);
-      const isMyBet = this.comp.props.myInfo.memberId === memberId;
+      const isMyBet = this.comp.props.myInfo && this.comp.props.myInfo.memberId === memberId;
       const betData = initBetData(index, memberId, data.type, data.gold);
       betData.isMyBet = isMyBet;
       this.dispatch(setNewBetDataAction(betData));
@@ -224,13 +218,7 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
       }
       if (!config.preBet) {
         if (data) {
-          // const memberBet = {
-          //   totalBetDragon: data.memberBet.totalBetDragon,
-          //   totalBetTiger:data.memberBet.totalBetTiger,
-          //   totalBetPeace:data.memberBet.totalBetPeace,
-          // }
           this.dispatch(setMemberBetAction(memberBet))
-          // this.dispatch(setUserInfoAction({ ...data }))
           this.dispatch(changeGoldAction(data.gold))
         } else {
           global.hallDispatch(addToastAction({ content: lang.write(k => k.palyingModule.RechangeGlod, {}, { placeStr: "对不起，您的金币不足，请充值!" }) }))
@@ -239,20 +227,18 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
       if (data.result) {
 
         this.dispatch(setMemberBetAction(memberBet))
-        // const sendBet = this.comp.betAreaInfo.get(data.betId);
         const betData = this.getChipsByBetId(this.comp.betAreaInfo, data.betId);
-        // console.log("betData",betData);
-
         this.comp.amountArr.push(betData);
         this.dispatch(changeGoldAction(data.gold))
 
       } else {
         const betInfo = this.getChipsByBetId(this.comp.betAreaInfo, data.betId);
-        // console.log("betInfo1111111",betInfo);
-        const betData = initBetData(this.comp.props.myInfo.index, this.comp.props.myInfo.memberId, betInfo.betType, betInfo.betAmount);
-        betData.isMyBet = true;//当前用户是否下注
-        betData.betId = data.betId;
-        this.dispatch(changeCancelBetDataAction(betData))
+        if (betInfo) {
+          const betData = initBetData(this.comp.props.myInfo.index, this.comp.props.myInfo.memberId, betInfo.betType, betInfo.betAmount);
+          betData.isMyBet = true;//当前用户是否下注
+          betData.betId = data.betId;
+          this.dispatch(changeCancelBetDataAction(betData))
+        }
 
       }
     })
@@ -261,8 +247,8 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
       this.dispatch(setRoomInfoSizeAction(data))
     })
 
-    dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_SHOW, bundlePkgName, (data) => {//810
-      if (1 === this.comp.props.gameType) {
+    dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GAME_SHOW, bundlePkgName, (data) => {//34
+      if (1 === data.gameType) {
         // 拿到最新的倒计时后，就减掉1秒
         this.countDown = data.seconds;
         this.startCountdown();
@@ -271,7 +257,7 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
 
     dragonTigerWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GIVE_GIFT, bundlePkgName, (data: ResGiftVo) => {//35
       const seats = this.comp.props.usersInfo.filter(v => v.memberId === data.receiveMemberId);
-      this.dispatch(changeGoldAction(data.residueGold))//用户剩余金币
+      data.residueGold && this.dispatch(changeGoldAction(data.residueGold))//用户剩余金币
       // 如果展示座位上有两个相同人，就同时送两次
       if (seats && seats.length > 1) {
         seats.forEach(seat => {
@@ -317,18 +303,19 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
           memberId: data.memberId,
           index: config.gameOption.lookOnIndex,
           memberBet: this.comp.props.memberBet,
-          winType: data.winGold > 0 ? 1 : data.winGold < 0 ? 2 : 0,
+          winType: 0,
+        }
+        if (this.comp.props.memberBet && Object.keys(this.comp.props.memberBet).length) {
+          myInfo.winType = data.winGold >= 0 ? 1 : 2;
+        } else {
+          myInfo.winType = 0;
         }
         /**弹窗前四位赢的玩家 */
         gameCacheData.winList = data.winListedMembers;
-        // const myHead = convertHeadType(data.myInfo);
-        // this.dispatch(setMyInfoAction(myInfo));
+
         this.dispatch(setUserInfoAction({ ...myInfo }));
-        this.dispatch(changeGoldAction(data.gold))//金币值
-        // this.dispatch(setMemberBetAction(data.myInfo.memberBet))//每个区域当前用户下注信息
         this.dispatch(setRoomWinInfosAction(data.winListedMembers))
-        // this.dispatch(setRoomLeftInfosAction(data.roomLeftInfoVos));
-        // this.dispatch(setRoomRightInfosAction(data.roomRightInfoVos));
+
       },5)
     }
 
@@ -351,12 +338,8 @@ class DragonTigerPanelViewModel extends ViewModel<DragonTiger_MainPanel, IProps,
   private updateWinUserInfo(data) {
     this.comp.scheduleOnce(() => {
         this.updateWinloss(data.winMembers)//赢的用户
-        gameCacheData.leftUsers = data.roomLeftInfoVos;
-        gameCacheData.rightUsers = data.roomRightInfoVos;
-        //榜上所有用户信息
-        this.setUsersInfo();
-        this.dispatch(changeAllWinUsersAction(data.winMembers))
-      // this.dispatch(setUsersInfoAction(gameCacheData.leftUsers.concat(gameCacheData.rightUsers)))
+        this.dispatch(changeGoldAction(data.gold))//金币值
+      
     },5)
   }
 

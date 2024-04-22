@@ -10,10 +10,10 @@ import { SoundPathDefine } from "./sourceDefine/soundDefine";
 import dominoStore from './store';
 import { global, lang } from "../../hall";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
-import { SubGameRunState } from "../../hall/config";
 import { getStore } from "../../hall/store";
 import RoomChooseViewModel from "./viewModel/RoomChooseViewModel";
 import TestViewModel from "./viewModel/TestViewModel";
+import { SubGameRunState } from "../../hallType";
 
 let sourceManageMap: Array<SourceManage> = []
 export let bundleDomino: AssetManager.Bundle = null

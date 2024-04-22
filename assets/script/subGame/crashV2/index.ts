@@ -3,7 +3,7 @@ import SourceManage from "../../base/SourceManage";
 import { listenerFactoy } from "../../common/listenerFactoy";
 import LoaderPanelViewModel from "../../common/viewModel/LoaderPanelViewModel";
 import { global, lang } from "../../hall";
-import { SubGameRunState, subGameList } from "../../hall/config";
+import { subGameList } from "../../hall/config";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
 import { AudioMgr } from "../../utils/AudioMgr";
 import { setActiveAudio } from "../../utils/UseSetOption";
@@ -13,11 +13,12 @@ import DragonV2FileMap, { bundlePkgName } from './sourceDefine';
 import { PrefabPathDefine } from "./sourceDefine/prefabDefine";
 import { SoundPathDefine } from "./sourceDefine/soundDefine";
 import fruitStore, { getStore } from './store';
-import CrashV2MainViewModel from "./viewModel/CrashV2MainViewModel";
 import { resetStore } from "./store/actions/game";
-import CrashV2HeaderViewModel from "./viewModel/CrashV2HeaderViewModel";
-import CrashV2rightPanelViewModel from "./viewModel/CrashV2rightPanelViewModel";
-import CrashV2_bottom_actionBarViewModel from "./viewModel/CrashV2_bottom_actionBarViewModel";
+import { SubGameRunState } from "../../hallType";
+import CrashV2MainViewModel from "./viewModel/crashV2MainViewModel";
+import CrashV2HeaderViewModel from "./viewModel/crashV2HeaderViewModel";
+import CrashV2rightPanelViewModel from "./viewModel/crashV2rightPanelViewModel";
+import CrashV2_bottom_actionBarViewModel from "./viewModel/crashV2_bottom_actionBarViewModel";
 let sourceManageMap: Array<SourceManage> = []
 export let bundleDragonv2: AssetManager.Bundle = null
 export let mainViewModel: CrashV2MainViewModel;

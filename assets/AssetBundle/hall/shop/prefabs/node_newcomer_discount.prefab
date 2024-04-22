@@ -18357,8 +18357,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 335,
-      "height": 29
+      "width": 345,
+      "height": 36
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -18393,7 +18393,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "fbd6340a-9342-46fa-9d4d-7e9dd3e783b2@f9941",
+      "__uuid__": "05d8ccd5-fded-43ab-acd2-4d1e397a0940@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -18408,7 +18408,10 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_useGrayscale": false,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "43fb82de-b5e2-4461-9174-9206f48abd40",
+      "__expectedType__": "cc.SpriteAtlas"
+    },
     "_id": ""
   },
   {
@@ -18490,7 +18493,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 389.42,
+      "width": 394.31,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -18525,7 +18528,7 @@
       "b": 165,
       "a": 255
     },
-    "_string": "For newcomer recharge, 1 time only~",
+    "_string": "For new player recharge, 1 time only~",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 22,

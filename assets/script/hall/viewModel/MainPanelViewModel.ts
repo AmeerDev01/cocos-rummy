@@ -6,7 +6,7 @@ import { ApiUrl } from "../apiUrl";
 import { Hall_MainPanel, IEvent, IProps } from "../components/Hall_MainPanel";
 import { baseBoardView, fetcher, global, lang, sourceManageSeletor } from "../index";
 import { SKT_MAG_TYPE, hallWebSocketDriver } from "../socketConnect";
-import { ToastType, addToastAction, changeWebView, setAppDownLoadGuide, setLoadingAction, updateMailStatus } from "../store/actions/baseBoard";
+import { ToastType, addToastAction, changeWebView, setAppDownLoadGuide, setLoadingAction, updateMailStatus, updateVipBonusInfo } from "../store/actions/baseBoard";
 import { setMemberInfo, setVip } from "../store/actions/memberInfo";
 import { StateType } from "../store/reducer";
 import ActivityViewModel from "./ActivityViewModel";
@@ -27,7 +27,7 @@ import { Hall_GiftBag, IState as GBState, IProps as GBProps, IEvent as GBEvent, 
 import { config } from "../config";
 import { Hall_Upgrade, IState as UGIState, IProps as UGIProps, IEvent as UGIEvent } from "../components/Hall_Upgrade";
 import { Hall_ChangePassword, IState as CPIState, IProps as CPIProps, IEvent as CPIEvent } from "../components/Hall_ChangePassword";
-import { Hall_ReliefPanel, IState as RPIState, IProps as RPIProps, IEvent as RPIEvent } from "../components/Hall_reliefPanel";
+import { Hall_ReliefPanel, IState as RPIState, IProps as RPIProps, IEvent as RPIEvent } from "../components/Hall_ReliefPanel";
 import { BuyType } from "../components/Hall_ShopPanel";
 import { Hall_WinningBox, IState as WBState, IProps as WBProps, IEvent as WBEvent, WinningType } from "../components/Hall_WinningBox";
 import { Hall_AppDownLoadGuide, IState as ALState, IProps as ALProps, IEvent as ALEvent } from "../components/Hall_AppDownLoadGuide";
@@ -36,6 +36,7 @@ import { Task, TaskSchedulerDefault } from "../../utils/TaskScheduler";
 import { RechangeCallbackVo } from "../hallType";
 import md5 from "md5";
 import { NATIVE } from "cc/env";
+import DailyTaskViewModel from "./DailyTaskViewModel";
 
 type PopType = {
 	popUps: boolean,
@@ -58,6 +59,8 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 	private isOpenShop: boolean = false
 	/**用于只检查一次的值 */
 	private isCheckPop: boolean = false
+	/**是否已经开始弹窗 */
+	public isBeginPop: boolean = false
 	protected begin() {
 		hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, '', { isLoading: true })
 		!this.isCheckPop && hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.POP_UPS, '', {})
@@ -78,12 +81,15 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 		})
 		hallWebSocketDriver.sktMsgListener.addOnce(SKT_MAG_TYPE.POP_UPS, "main", (data, error) => {
 			if (error) return
+			/**为恢复游戏弹窗设计，那边可能把这个值设为true，那么就不弹窗 */
+			if (this.isBeginPop) return
+			this.isBeginPop = true
 			try {
 				const { activityVo, mallVo, signInVo, upgradesVo } = data
 				const queue = [{ key: 'activityVo', ...activityVo }, { key: 'signInVo', ...signInVo }, { key: 'upgradesVo', ...upgradesVo }].sort((a, b) => a.sort - b.sort)
 				queue.forEach(item => {
 					if (item.popUps && item.key === 'activityVo') {
-						TaskSchedulerDefault().joinQueue(new Task((done) => this.openAwardPanel(() => {
+						TaskSchedulerDefault().joinQueue(new Task((done) => this.openAwardPanel(false, () => {
 							done()
 						})))
 					} else if (item.popUps && item.key === 'signInVo') {
@@ -123,7 +129,7 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 		})
 		hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.WINNING_BOX, "main", (data: WinningType, error) => {
 			if (error) return
-			this.winningBoxVM && this.winningBoxVM.comp.pushWinningData(data)
+			this.winningBoxVM && this.winningBoxVM.comp.pushWinningData(data, (this.comp.props.subGameInfo && this.comp.props.subGameInfo.isVertical))
 		})
 
 		hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.VIP_CHANGE, "log", (data, error) => {
@@ -160,6 +166,7 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 				this.openBank()
 			},
 			onOpenMailPanel: async () => {
+				this.dispatch(setLoadingAction({ isShow: true, flagId: 'mail' }))
 				const mailBoxViewModel = new MailBoxViewModel().mountView(
 					(await sourceManageSeletor().getFileAsync(PrefabPathDefine._HELL_MAIL, Prefab)).source)
 					.appendTo(this.viewNode, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({
@@ -185,18 +192,22 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 			onOpenUpgradePanel: () => {
 				this.openUpgradePanel()
 			},
-			onOpenAwardPanel: () => {
-				this.openAwardPanel()
+			onOpenAwardPanel: (isTurntable: boolean) => {
+				this.openAwardPanel(isTurntable)
 			},
 			onOpenGiftBoxanel: () => this.openGiftBoxPanel(false),
 			onOpenSignInPanel: () => this.openSign(),
-			onOpenVipMainPanel: (vipLevel: Number) => {
+			onOpenDailyTaskPanel: () => this.openDailyTaskPanel(),
+			onOpenVipMainPanel: () => {
 				this.openVipMain();
-				this.getVipBonus(vipLevel)
 			},
 			onOpenService: async () => {
+				this.dispatch(setLoadingAction({ isShow: true, flagId: 'service' }))
 				this.serviceVm = new BaseViewModel<Hall_Service, SIState, SIProps, SIEvent>('Hall_Service').mountView(
 					(await sourceManageSeletor().getFileAsync(PrefabPathDefine._HELL_SERVICE_WEBVIEW, Prefab)).source)
+					.bindDoneHandler(() => {
+						this.dispatch(setLoadingAction({ isShow: false, flagId: 'service' }))
+					})
 					.appendTo(this.viewNode, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({
 						onClosePanel: () => {
 							this.serviceVm.unMount(EffectType.EFFECT2)
@@ -227,16 +238,14 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 	}
 
 	/**获取vip等级福利金币值 */
-	private getVipBonus(vipLevel) {
-		fetcher.send(ApiUrl.GET_VIP_BONUS, { vipLevel: vipLevel }).then(async (rsp) => {
-		  this.vipMainVm.setProps({
-			vipBonusInfo: rsp
-	
-		  })
+	private getVipBonus() {
+		fetcher.send(ApiUrl.GET_VIP_BONUS, { vipLevel: this.comp.props.vipLevel }).then(async (rsp) => {
+			this.dispatch(setLoadingAction({ isShow: false, flagId: 'vip' }))
+			this.dispatch(updateVipBonusInfo(rsp))
 		}).catch((e) => {
-		  console.log(e)
+			console.log(e)
 		})
-	  }
+	}
 
 	public logOut(isForce: boolean, message: string = "") { }
 
@@ -285,9 +294,11 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 			})
 	}
 	/**打开活动面板 */
-	public async openAwardPanel(closeHandler?: () => void) {
+	public async openAwardPanel(isTurntable: boolean = false, closeHandler?: () => void) {
 		const activityViewModel = new ActivityViewModel().mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._HELL_ACTIVITY, Prefab)).source)
-			.appendTo(this.viewNode, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({
+			.appendTo(this.viewNode, { effectType: EffectType.EFFECT1, isModal: true })
+			.setProps({ isTurntable })
+			.setEvent({
 				onClosePanel: () => {
 					activityViewModel.unMount(EffectType.EFFECT2).then(() => {
 						closeHandler && closeHandler()
@@ -334,7 +345,7 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 					if (!this.comp.props.subGameInfo) {
 						this.logOut(false)
 					} else {
-						this.dispatch(addToastAction({ content: lang.write(k => k.palyingModule.GameExit, {}, { placeStr: "子游戏中不可以退出" }) }))
+						this.dispatch(addToastAction({ content: lang.write(k => k.palyingModule.GameExit, {}, { placeStr: "子游戏中不可以退出" }), forceLandscape: false }))
 					}
 				},
 				openShareHelp: () => {
@@ -351,6 +362,8 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 
 	public async openBank(nodeWrap?: Node) {
 		if (!this.isTouristPass()) return
+		this.dispatch(setLoadingAction({ isShow: true, flagId: 'bank' }))
+
 		const bankViewModel = new BankViewModel().mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._HELL_BANK, Prefab)).source)
 			.setEvent({
 				onClosePanel: () => {
@@ -367,7 +380,9 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 				}
 			})
 			// .appendTo(this.viewNode, { effectType: EffectType.EFFECT1, isModal: true }).connect()
-			.appendTo(nodeWrap || this.parentNode, { effectType: EffectType.EFFECT1, isModal: true }).connect()
+			.bindDoneHandler(() => {
+				this.dispatch(setLoadingAction({ isShow: false, flagId: 'bank' }))
+			}).appendTo(nodeWrap || this.parentNode, { effectType: EffectType.EFFECT1, isModal: true }).connect()
 	}
 
 	/**
@@ -420,14 +435,28 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 			}).connect()
 	}
 
+	/**打开每日任务 */
+	public async openDailyTaskPanel(nodeWrap?: Node, closeHandler?: () => void) {
+		const dailyTaskViewModel = new DailyTaskViewModel().mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._DAILY_TASK, Prefab)).source)
+			.appendTo(nodeWrap || this.parentNode, { effectType: EffectType.EFFECT1, isModal: true })
+			.setEvent({
+				onCloseHandler: () => {
+					dailyTaskViewModel.unMount(EffectType.EFFECT2);
+					closeHandler && closeHandler()
+				}
+			}).connect()
+	}
+
 	private async openVipUp(nodeWrap?: Node) {
 		new VipUpViewModel().mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._HELL_VIP_UP, Prefab)).source)
 			.appendTo(nodeWrap || this.parentNode, { isModal: true }).connect()
 	}
 
-	public async openVipMain(nodeWrap?: Node) {
+	public async openVipMain(nodeWrap?: Node,) {
+		this.dispatch(setLoadingAction({ isShow: true, flagId: 'vip' }))
 		this.vipMainVm = new VipMainViewModel().mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._HELL_VIP_MAIN, Prefab)).source)
 			.appendTo(nodeWrap || this.parentNode, { effectType: EffectType.EFFECT1, isModal: true }).connect()
+		this.getVipBonus()
 	}
 
 	private onOpenShareHelp(nodeWrap?: Node) {
@@ -495,21 +524,23 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 		})
 	}
 
+
 	/**充值回调处理 */
 	private rechangeCallbackHandle(data: RechangeCallbackVo) {
 		if (data.orderOperations === 2) {
-			purchaseAppsflyerEvents(data.rechargeAmount, data.currency, data.isFirstRecharge)
-
-			fetcher.send(ApiUrl.ADJUST_ACCEPT, { id: data.id }, "post").then((rsp) => {
-				
-				this.shopViewModel && this.shopViewModel.getRechargeList();
-				this.vipMainVm && this.getVipBonus(this.comp.props.vipLevel);
-			}).catch((e) => {
-				console.log("adjust rechange callback failed!!", e);
-			})
+			purchaseAppsflyerEvents(data.rechargeAmount, data.currency, data.isFirstRecharge, data.id)
 		} else if (data.orderOperations === 1) {
-			pullPurchaseEvents(data.rechargeAmount, data.currency, data.isFirstRecharge)
+			pullPurchaseEvents(data.rechargeAmount, data.currency, data.isFirstRecharge, data.id)
 		}
+
+		fetcher.send(ApiUrl.ADJUST_ACCEPT, { id: data.id }, "post", undefined, { isThrottler: false }).then((rsp) => {
+			// this.dispatch(setLoadingAction({ isShow: false, flagId: '' }))
+			this.vipMainVm && this.getVipBonus();
+			this.shopViewModel && this.shopViewModel.getRechargeList()
+			// console.log("adjust rechange callback success");
+		}).catch((e) => {
+			// console.log("adjust rechange callback failed!!", e);
+		})
 	}
 
 	private retryCount = 0;

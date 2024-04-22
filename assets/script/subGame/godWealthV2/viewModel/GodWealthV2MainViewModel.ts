@@ -237,7 +237,7 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
   }
   private sendBet() {
     // console.log("this.isAuthDone",this.isAuthDone);
-    
+
     if (!this.isAuthDone) return
     if (!this.isBetResult) {
       console.log("已经发送过了下注，不能重复发送，等待服务器返回")
@@ -275,8 +275,8 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
     cacheData.fixedChessboardIcon = null;
     this.dispatch(updateRollerStatus(RollerStatus.RUNNING));
     this.isBetResult = false;
-     // this.betCallbackFun = this.betListenerTimeHandle.bind(this);
-    // this.comp.schedule(this.betCallbackFun, 10);
+    this.betCallbackFun = this.betListenerTimeHandle.bind(this);
+    this.comp.schedule(this.betCallbackFun, 10);
 
     const msgObj = godWealthWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LAUNCH, {
       positionId: this.comp.props.positionId,
@@ -311,10 +311,10 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
       }
     })
     //超时
-    msgObj.bindTimeoutHandler(() => {
-      global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
-      return false
-    })
+    // msgObj.bindTimeoutHandler(() => {
+    //   global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.WebSocketError, {}, { placeStr: "网络连接失败" }) })
+    //   return false
+    // })
   }
 
   protected unMountCallBack(): void {

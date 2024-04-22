@@ -13,6 +13,7 @@ abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
     this.id = parseInt(Math.random() * 10000000 + '')
     this.componentStr = componentStr
     this.store = getStore()
+    this.init()
   }
   protected componentStr: string
   protected store
@@ -42,6 +43,8 @@ abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
 
   /**视图初始化并挂载到节点上后要执行的动作（appendTo之后要执行的动作） */
   protected abstract begin(): void
+  /**初始化便要执行的函数 */
+  protected init() { }
   /**begin函数执行完之后要执行的函数 */
   private initDone() { }
   /**卸载时的回调函数 */

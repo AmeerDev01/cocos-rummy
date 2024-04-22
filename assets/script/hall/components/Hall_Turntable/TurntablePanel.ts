@@ -1,4 +1,4 @@
-import { _decorator, assetManager, Button, Component, find, ImageAsset, instantiate, Label, log, native, Node, ScrollView, Sprite, SpriteFrame, sys, systemEvent, Texture2D, Toggle, ToggleContainer, tween, UIOpacity, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, assetManager, Button, Component, find, ImageAsset, instantiate, Label, log, native, Node, ScrollView, Sprite, SpriteFrame, sys, Texture2D, Toggle, ToggleContainer, tween, UIOpacity, UITransform, Vec2, Vec3 } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import { global, lang } from '../../index';
 import { addToastAction, ToastType } from '../../store/actions/baseBoard';

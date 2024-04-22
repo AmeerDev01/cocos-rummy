@@ -1,6 +1,8 @@
 import { Label, Node, Sprite, _decorator } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
 import { global } from '../../../hall';
+import { rummyRoomChoseView } from '../index';
+import { SoundPathDefine } from '../sourceDefine/soundDefine';
 const { ccclass, property } = _decorator;
 
 export interface IState {
@@ -35,6 +37,7 @@ export class Rummy_RulePanel extends BaseComponent<IState, IProps, IEvent> {
 
 	protected bindEvent(): void {
 		this.propertyNode.props_btn_glue_off.on(Node.EventType.TOUCH_END, () => {
+			rummyRoomChoseView.playSound(SoundPathDefine.btn_click)
 			this.events.close();
 		})
 	}

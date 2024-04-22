@@ -1,11 +1,11 @@
 import { _decorator, assetManager, Button, Component, EditBox, EventHandler, ImageAsset, instantiate, Label, Node, Prefab, ProgressBar, ScrollView, Sprite, SpriteFrame, sys, Toggle, ToggleContainer, UITransform } from 'cc';
 import { BaseComponent } from '../../base/BaseComponent';
-import { config, rechargeChannel, vipMap } from '../config';
+import { config, vipMap } from '../config';
 import { getNodeByNameDeep, initToggle } from '../../utils/tool';
 import { baseBoardView, bundleCommon, global, hallAudio, sourceManageSeletor } from '../index';
 import { SoundPathDefine } from '../sourceDefine/soundDefine';
 import { InitStateType } from '../store/actions/memberInfo';
-import { addToastAction, setLoadingAction } from '../store/actions/baseBoard';
+import { addToastAction, changeChooseAmount, ChooseAmount, setLoadingAction } from '../store/actions/baseBoard';
 import { lang } from '../index';
 import { SKT_MAG_TYPE, hallWebSocketDriver } from '../socketConnect';
 import { GiftItemType } from './Hall_GiftBag';
@@ -14,7 +14,6 @@ import { Hall_ChooseBank, IState as CBState, IProps as CBProps, IEvent as CBEven
 import { EffectType } from '../../utils/NodeIOEffect';
 import { PrefabPathDefine } from '../sourceDefine/prefabDefine';
 import ModalBox from '../../common/ModalBox';
-import { purchaseAppsflyerEvents } from '../../common/bridge';
 const { ccclass, property } = _decorator;
 
 type PreinstallList = {
@@ -22,7 +21,7 @@ type PreinstallList = {
 	firstDepositBonusGold: number,
 	activityDailyFirstDepositProportion: number,
 	/**类型 0：无 1：新人首充 2：每日首充 */
-	type:number
+	type: number
 }
 
 export type ChannelItemType = {
@@ -70,6 +69,8 @@ export interface IProps {
 	defaultBuyType?: BuyType,
 	/**类型 0：无 1：新人首充 2：每日首充 */
 	rechargeType: number,
+	/**充值选择的金额 */
+	chooseAmount: ChooseAmount,
 }
 export interface IEvent {
 	onClosePanel?: () => void
@@ -92,13 +93,13 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 		// props_ToggleGroup: new Node(),
 		// props_ToggleGroup1: new Node(),
 		/**新人首充的 */
-		props_ToggleGroup2:new Node(),
+		props_ToggleGroup2: new Node(),
 		/**自定义输入 */
 		props_input_gold_num: new Node(),
 		/**每日充值平铺金额选择框 */
 		props_ToggleGroup_gold: new Node(),
 		/**新人首充平铺金额选择框 */
-		props_ToggleGroup_gold1:new Node(),
+		props_ToggleGroup_gold1: new Node(),
 		/**确认充值 */
 		props_sbtn_shop_pergi: new Node(),
 		/**置空 */
@@ -134,7 +135,19 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 		/**新人充值标题 */
 		props_spr_newcomer_title: new Node(),
 		/**新人充值金币选择框 */
-		props_newcomer_Layout_gold_choose:new Node(),
+		props_newcomer_Layout_gold_choose: new Node(),
+		/**新人充值的优惠面板 */
+		props_newcomer_get_gold: new Node(),
+		/**新人充值金币 */
+		props_cash: new Label(),
+		/**新人充值福利比例 */
+		props_jiaobiao_label: new Label(),
+		/**新人充值获得金额福利 */
+		props_bonus: new Label(),
+		/**新人充值获取到的总金额 */
+		props_total: new Label(),
+		/**新人充值支付金币 */
+		props_payment: new Label(),
 	}
 
 	public props: IProps = {
@@ -142,6 +155,7 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 		memberInfo: null,
 		defaultBuyType: BuyType.COIN,
 		rechargeType: -1,
+		chooseAmount: null,
 	}
 
 	public events: IEvent = {
@@ -215,7 +229,10 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 				// const toggleItem = rechargeType === 1 ? instantiate(this.propertyNode.props_Toggle_template1) : instantiate(this.propertyNode.props_Toggle_template2);
 				const toggleItem = instantiate(this.propertyNode.props_Toggle_template2);
 				toggleItem.active = true
-				assetManager.loadRemote(item.iconMin, (err, asset: ImageAsset) => {
+				item.iconMin && assetManager.loadRemote(item.iconMin, (err, asset: ImageAsset) => {
+					if (!this || !this.node) {
+						return;
+					}
 					if (this.propertyNode && !err) {
 						toggleItem.getChildByName('spr_icon').getComponent(Sprite).spriteFrame = SpriteFrame.createWithImage(asset)
 					}
@@ -224,7 +241,7 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 				item.type === 0 && (toggleItem.getChildByName('spr_tag-red').active = true)
 				item.type === 1 && (toggleItem.getChildByName('spr_tag-green').active = true)
 				// rechargeType === 1 ? this.propertyNode.props_ToggleGroup1.addChild(toggleItem) : this.propertyNode.props_ToggleGroup2.addChild(toggleItem);
-				 this.propertyNode.props_ToggleGroup2.addChild(toggleItem);
+				this.propertyNode.props_ToggleGroup2.addChild(toggleItem);
 				if (index === 0) {
 					this.state.buyType === BuyType.COIN && (toggleItem.getComponent(Toggle).isChecked = true)
 				}
@@ -233,9 +250,12 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 
 		if (key === "memberInfo") {
 			if (!this.props.memberInfo.memberId) return
+
 			let vipItem = vipMap.find(i => i[0] === this.props.memberInfo.vipLevel + 1)
+
 			if (!vipItem) vipItem = vipMap[vipMap.length - 1]
-			this.propertyNode.props_Label_vip.string = `Still need top up ${vipItem[1].formatAmountWithCommas()}`
+			const experience = vipItem[1] - this.props.memberInfo.vipLevelExperience;
+			this.propertyNode.props_Label_vip.string = `Still need top up ${experience.formatAmountWithCommas()}`
 			this.propertyNode.props_ProgressBar_vip.progress = this.props.memberInfo.vipLevelExperience / vipItem[1]
 			bundleCommon.load(`resource/vip/b_VIP${this.props.memberInfo.vipLevel}/spriteFrame`, SpriteFrame, (err, sp) => {
 				!err && (this.propertyNode.props_word_vip_left.getComponent(Sprite).spriteFrame = sp)
@@ -260,23 +280,29 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 			this.propertyNode.props_label_recharge.active = value.cur === 2;
 			this.propertyNode.props_btn_racharge.active = value.cur === 2;
 		}
+
+		if (key === "chooseAmount") {
+			const bonus = value.cur.totalGet - value.cur.chooseAmount;
+			const rate = value.cur.chooseAmount ? bonus / value.cur.chooseAmount * 100 : 0;
+			const amountString = value.cur.chooseAmount.formatAmountWithCommas();
+			this.propertyNode.props_cash.string = amountString;
+			this.propertyNode.props_bonus.string = bonus.formatAmountWithCommas();
+			this.propertyNode.props_total.string = value.cur.totalGet.formatAmountWithCommas();
+			this.propertyNode.props_payment.string = "₹ " + amountString;
+			this.propertyNode.props_jiaobiao_label.string = "+" + rate + "%";
+			this.propertyNode.props_newcomer_get_gold.active = true;
+
+		}
 	}
 
 	protected bindUI(): void {
 		this.propertyNode.props_spr_tas_template.active = false;
 		let lastQeqPicUrl: string = ''
 		this.useState((key, value) => {
-			console.log("value",value);
-			// if (value.cur > this.props.dataList.length) {
-			// 	const dataItem = this.props.dataList[0]
-			// } else {
-			// 	const dataItem = this.props.dataList[value.cur]
-			// }
 			const dataItem = this.props.dataList[value.cur]
-			console.log("dataItem",dataItem);
-			
+
 			const itemRechargeType = this.getItemTypeValue(dataItem);
-			
+
 			this.chooseChannelItem = dataItem
 			if (dataItem) {
 				if (itemRechargeType === 1) {//如果为新人首充
@@ -286,17 +312,24 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 						}
 					})
 					const itemTemplate = this.propertyNode.props_ToggleGroup_gold1.children[0]
-					dataItem.preinstallList.forEach((list: PreinstallList) => {
+					dataItem.preinstallList.forEach((list: PreinstallList, i) => {
 						const node = instantiate(itemTemplate)
 						node.getChildByName("amount").getComponent(Label).string = list.defaultGold.formatAmountWithCommas();
 						node.getChildByName("amount_show").getComponent(Label).string = list.defaultGold + "";
-	                    getNodeByNameDeep("Label_5000",node).getComponent(Label).string = list.defaultGold.formatAmountWithCommas();
-						getNodeByNameDeep("label_actual", node).getComponent(Label).string = "Get " + list.activityDailyFirstDepositProportion;
-						getNodeByNameDeep("label_actual_show", node).getComponent(Label).string = "Get " + list.activityDailyFirstDepositProportion;
+						getNodeByNameDeep("Label_5000", node).getComponent(Label).string = list.defaultGold.formatAmountWithCommas();
+						getNodeByNameDeep("label_actual", node).getComponent(Label).string = "Get " + list.firstDepositBonusGold.formatAmountWithCommas();
+						getNodeByNameDeep("label_actual_show", node).getComponent(Label).string = "Get " + list.firstDepositBonusGold.formatAmountWithCommas();
 						node.active = true
 						this.propertyNode.props_ToggleGroup_gold1.addChild(node)
+
+						if (i === 0) {
+							node.getComponent(Toggle).isChecked = true;
+							this.dispatch(changeChooseAmount({ chooseAmount: list.defaultGold, totalGet: list.firstDepositBonusGold }))
+
+						}
 					})
 				} else {//每日充值
+					this.propertyNode.props_newcomer_get_gold.active = false;
 					this.propertyNode.props_Label_choose_2.getComponent(Label).string = `=${dataItem.rateOfExchange} Cash`
 					this.propertyNode.props_label_amount_limit.getComponent(Label).string = `Limit ${dataItem.limitDown}~${dataItem.limitUp}`
 					this.propertyNode.props_ToggleGroup_gold.children.forEach((child, index) => {
@@ -305,28 +338,31 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 						}
 					})
 					const itemTemplate = this.propertyNode.props_ToggleGroup_gold.children[0]
-					dataItem.preinstallList.forEach((list:PreinstallList) => {
+					dataItem.preinstallList.forEach((list: PreinstallList) => {
 						const node = instantiate(itemTemplate)
 						node.getChildByName("amount").getComponent(Label).string = list.defaultGold.formatAmountWithCommas();
 						node.getChildByName("amount_show").getComponent(Label).string = list.defaultGold + "";
-	
-						console.log("list.type",list.type);
-						
 						getNodeByNameDeep("spr_daily_bg", node).active = list.type === 2;
 						getNodeByNameDeep("spr_label_rate", node).getComponent(Label).string = "+" + list.activityDailyFirstDepositProportion + "%";
 						node.active = true;
 						this.propertyNode.props_ToggleGroup_gold.addChild(node);
 					})
-				
-				lastQeqPicUrl = this.props.dataList[value.cur].iconUrl
-				assetManager.loadRemote(this.props.dataList[value.cur].iconUrl, (err, asset: ImageAsset) => {
-					if (this.propertyNode && !err && (asset.nativeUrl === lastQeqPicUrl)) {
-						this.propertyNode.props_spr_title.getComponent(Sprite).spriteFrame = SpriteFrame.createWithImage(asset)
-					}
-				})
-			}} else {
+
+					lastQeqPicUrl = this.props.dataList[value.cur].iconUrl
+
+					assetManager.loadRemote(this.props.dataList[value.cur].iconUrl, (err, asset: ImageAsset) => {
+						if (!this || !this.node) {
+							return;
+						}
+						if (this.propertyNode && !err && (asset.nativeUrl === lastQeqPicUrl)) {
+							this.propertyNode.props_spr_title.getComponent(Sprite).spriteFrame = SpriteFrame.createWithImage(asset)
+						}
+					})
+				}
+			} else {
 				// console.error("未找到相应的渠道类型。序号：" + value.cur)
 			}
+
 		}, ["chooseChannelIndex"])
 
 		this.useState((key, value) => {
@@ -385,7 +421,7 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 		hallAudio.playOneShot(SoundPathDefine.BTU_CLICK)
 		const chooseIndex = event.target['parent'].children.indexOf(event.target)
 		this.setState({
-			chooseChannelIndex: chooseIndex//chooseIndex % 2 === 0 ? chooseIndex / 2 : parseInt((chooseIndex / 2) + '') + 1
+			chooseChannelIndex: chooseIndex,//chooseIndex % 2 === 0 ? chooseIndex / 2 : parseInt((chooseIndex / 2) + '') + 1
 		})
 	}
 	buyTypeToggleCallback(event: Event, customEventData: string) {
@@ -398,8 +434,11 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 	/**新人首充选充值金额 */
 	channelAmountToggleCallback1(event: Event, customEventData: string) {
 		hallAudio.playOneShot(SoundPathDefine.BTU_CLICK)
-		const chooseAmount = +event.target['getChildByName']("amount_show").getComponent(Label).string
-		// console.log(chooseAmount)
+		const chooseAmount = +event.target['getChildByName']("amount_show").getComponent(Label).string;
+		const totalGet = event.target['getChildByName']("label_actual").getComponent(Label).string;
+		const total = +totalGet.substring(4).replace(/,/g, "");
+		this.dispatch(changeChooseAmount({ chooseAmount, totalGet: total }))
+
 		this.setState({ chooseAmount })
 	}
 	/**每日选充值金额 */
@@ -416,11 +455,11 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 			let preinstallList = item.preinstallList || [];
 			for (let preinstallItem of preinstallList) {
 				if (preinstallItem.type !== 1) {
-					return preinstallItem.type; 
+					return preinstallItem.type;
 				}
 			}
 		}
-		return 1; 
+		return 1;
 	}
 
 	/**获取选择银行后的充值界面类型  0为无 1为新人首充 2为每日首充*/
@@ -428,13 +467,14 @@ export class Hall_ShopPanel extends BaseComponent<IState, IProps, IEvent> {
 		let preinstallList = item.preinstallList || [];
 		for (let preinstallItem of preinstallList) {
 			if (preinstallItem.type !== 1) {
-				return preinstallItem.type; 
+				return preinstallItem.type;
 			}
 		}
 
-		return 1; 
+		return 1;
 	}
 	protected onDestroy() {
+		this.dispatch(changeChooseAmount(null))
 		hallWebSocketDriver.sktMsgListener.removeById("shop")
 	}
 	update(deltaTime: number) {

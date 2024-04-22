@@ -1,6 +1,5 @@
 import { _decorator, Button, Component, Node, sys } from 'cc';
 import { BaseComponent } from '../../../base/BaseComponent';
-import LoginViewModel from '../../viewModel/LoginViewDialogModel';
 import { config } from '../../config';
 const { ccclass, property } = _decorator;
 
@@ -29,7 +28,6 @@ export interface IEvent {
 @ccclass('Hall_LoginPageV2')
 export class Hall_LoginPageV2 extends BaseComponent<IState, IProps, IEvent> {
 	start() { }
-	private loginViewModel: LoginViewModel
 	protected propertyNode = {
 		// props_guestBtu: new Node(),
 		props_btn_loginAkun: new Node(),

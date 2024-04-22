@@ -232,7 +232,7 @@ export class Yxx_Footer extends BaseComponent<IState, IProps, IEvent> {
 	/**获得是否锁定下注 */
 	public getLockBet(gold: number) {
 		let isLockBet = gold < config.gameOption.unlockBetMinGold;
-		if (!isLockBet && this.props.powers && this.props.powers.length > 0) {
+		if (!isLockBet && this.props.powers && this.props.powers.length > 0 && this.isPower("vip")) {
 			isLockBet = true;
 		}
 		return isLockBet;

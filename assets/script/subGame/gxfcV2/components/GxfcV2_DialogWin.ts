@@ -226,7 +226,7 @@ export class GxfcV2_DialogWin extends BaseComponent<IState, IProps, IEvent> {
 	private startStepNumber(label: Label, start, end, done) {
 		new StepNumber(start, end, (num) => {
 			if (this.node && this.node.isValid) {
-				label.string = Number(num.toFixed(2)).formatAmountWithCommas();
+				label.string = Number(num).formatAmountWithCommas();
 			}
 		}, () => this.node && this.node.isValid && done()).set(config.normalRollOption.numberRollerTime).start();
 		// this.stepNumberV2.start(start, end, (num) => {

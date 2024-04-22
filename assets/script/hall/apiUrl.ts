@@ -36,7 +36,8 @@ export enum ApiUrl {
   /**用户订单列表 */
   USER_ORDER_LIST = `/hall/api/order/list`,
   /**邮件列表 */
-  EMAIL_LIST = `/hall/api/member/emailList`,
+  // EMAIL_LIST = `/hall/api/member/emailList`,
+  EMAIL_LIST = `/hall/api/member/emailPage`,
   /**查看邮件 */
   CHECK_EMAIL = `/hall/api/member/emailCheck`,
   /**删除邮件 */
@@ -81,4 +82,11 @@ export enum ApiUrl {
   GET_VIP_BONUS = '/hall/api/member/vipBonus',
   /**充值活动 */
   GET_RECHARGE_LIST = '/hall/api/channel/rechargeList',
+  /**领取站内信附件奖励 */
+  RECEIVE_EMAIL_ANNEX = '/hall/api/member/receiveEmailAnnex',
+  /**获取累计存款活动列表 */
+  GET_DAILY_TASK_LIST = '/api/dailyTask/accumulatedDeposits/getList',
+  /**领取领取每日累加充值活动任务 */
+  DAILY_TASK_RECEIVE = '/api/dailyTask/accumulatedDeposits/receive'
+
 }

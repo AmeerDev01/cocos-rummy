@@ -1,4 +1,4 @@
-import { Button, Label, Node, ProgressBar, ScrollView, Sprite, SpriteFrame, Toggle, UITransform, Vec3, _decorator, instantiate, log, sp, tween } from 'cc';
+import { Button, Label, Node, ProgressBar, ScrollView, Sprite, SpriteFrame, Toggle, UITransform, Vec3, _decorator, instantiate, log, logID, sp, tween } from 'cc';
 import { BaseComponent } from '../../base/BaseComponent';
 import { config, vipMap } from '../config';
 import { getNodeByNameDeep } from '../../utils/tool';
@@ -8,20 +8,9 @@ import { InitStateType } from '../store/actions/memberInfo';
 import { ISourceFile } from '../../base/SourceManage';
 import { ApiUrl } from '../apiUrl';
 import VipMainViewModel from '../viewModel/VipMainViewModel';
+import { VipBonus, setLoadingAction, updateVipBonusInfo } from '../store/actions/baseBoard';
 const { ccclass, property } = _decorator;
 
-type VipBonus = {
-	myVipLevel: number,
-    myUpgradeBonus: number,
-    myDayBonus: number,
-    myWeeklyBonus: number,
-    myMonthlyBonus: number,
-    clickVipLevel: number,
-    clickUpgradeBonus: number,
-    clickDayBonus: number,
-    clickWeeklyBonus: number,
-    clickMonthlyBonus: number
-}
 
 export interface IState {
 }
@@ -118,7 +107,7 @@ export class Hall_VipMain extends BaseComponent<IState, IProps, IEvent> {
 		this.locateInitPosition = new Vec3(this.propertyNode.props_node_locate.position.x, this.propertyNode.props_node_locate.position.y);
 	}
 
-	protected useProps(key: keyof IProps, value: { pre: any; cur: any; }): void {
+	protected useProps(key: keyof IProps | '_setDone', value: { pre: any; cur: any; }): void {
 		if (key === 'memberInfo') {
 			// test代码
 			// this.props.memberInfo.vipLevelExperience = 2500000;
@@ -132,15 +121,18 @@ export class Hall_VipMain extends BaseComponent<IState, IProps, IEvent> {
 		}
 
 		if (key === "vipBonusInfo") {
+			if(!value.cur) return
 			this.getUserVipGoldNd(this.propertyNode.props_spr_promotion).string = value.cur.myUpgradeBonus + '';
 			this.getUserVipGoldNd(this.propertyNode.props_spr_daily).string = value.cur.myDayBonus + '';
 			this.getUserVipGoldNd(this.propertyNode.props_spr_weekly).string = value.cur.myWeeklyBonus + '';
 			this.getUserVipGoldNd(this.propertyNode.props_spr_monthly).string = value.cur.myMonthlyBonus + '';
-
+			
 			this.getOtherVipGoldNd(this.propertyNode.props_spr_promotion).string = value.cur.clickUpgradeBonus + '';
 			this.getOtherVipGoldNd(this.propertyNode.props_spr_daily).string = value.cur.clickDayBonus + '';
 			this.getOtherVipGoldNd(this.propertyNode.props_spr_weekly).string = value.cur.clickWeeklyBonus + '';
 			this.getOtherVipGoldNd(this.propertyNode.props_spr_monthly).string = value.cur.clickMonthlyBonus + '';
+			// this.dispatch(setLoadingAction({ isShow: false, flagId: 'vip' }))
+
 		}
 	}
 
@@ -148,7 +140,7 @@ export class Hall_VipMain extends BaseComponent<IState, IProps, IEvent> {
 		const maxVipLevel = vipMap.length;
 		let userVipLevel = this.props.memberInfo.vipLevel;
 		if (this.props.memberInfo.vipLevel >= maxVipLevel) {
-			userVipLevel = 0;
+			userVipLevel = maxVipLevel;
 		}
 
 		this.propertyNode.props_togglegroup_vip.removeAllChildren();
@@ -379,12 +371,10 @@ export class Hall_VipMain extends BaseComponent<IState, IProps, IEvent> {
 	}
 	/**获取当前点击vip等级的金币福利 */
 	private getVipBonus(vipLevel) {
-		// new VipMainViewModel().getVipBonus()
-
-		fetcher.send(ApiUrl.GET_VIP_BONUS, {vipLevel: vipLevel} ).then(async (rsp) => {
-		  this.setProps({
-			  vipBonusInfo: rsp
-		  })
+		this.dispatch(updateVipBonusInfo(null))
+		fetcher.send(ApiUrl.GET_VIP_BONUS, { vipLevel: vipLevel }).then(async (rsp) => {
+			this.dispatch(setLoadingAction({ isShow: false, flagId: 'vip' }))
+			this.dispatch(updateVipBonusInfo(rsp))
 		}).catch((e) => {
 		  console.log(e)
 		})

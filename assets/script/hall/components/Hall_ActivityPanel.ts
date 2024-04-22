@@ -1,4 +1,4 @@
-import { _decorator, assetManager, Component, ImageAsset, instantiate, Label, Node, Sprite, SpriteFrame, sys } from 'cc';
+import { _decorator, assetManager, Component, ImageAsset, instantiate, Label, Node, Sprite, SpriteFrame, sys, Toggle } from 'cc';
 import { BaseComponent } from '../../base/BaseComponent';
 import { initToggle } from '../../utils/tool';
 import { baseBoardView, global, hallAudio, sourceManageSeletor } from '../index';
@@ -16,6 +16,8 @@ import { SKT_MAG_TYPE, hallWebSocketDriver } from '../socketConnect';
 export enum ActivityType {
 	/**转盘活动 */
 	TURNPLATE = 998,
+	/**飞机活动 */
+	TELEGRAM = 999,
 }
 
 export type ActivityItem = {
@@ -33,6 +35,8 @@ export interface IState {
 
 export interface IProps {
 	activityList?: ActivityItem[],
+	isTurntable: boolean,
+	
 }
 export interface IEvent {
 	onClosePanel?: () => void,
@@ -46,7 +50,8 @@ export interface IEvent {
 export class Hall_ActivityPanel extends BaseComponent<IState, IProps, IEvent> {
 	turntableViewModel
 	start() { }
-
+    
+	private turntableIndex: number;
 	protected propertyNode = {
 		props_btn_tips_close: new Node(),
 		props_ToggleGroup: new Node(),
@@ -58,10 +63,14 @@ export class Hall_ActivityPanel extends BaseComponent<IState, IProps, IEvent> {
 		props_empty: new Label(),
 		props_empty_content: new Label(),
 		props_Toggle_template: new Node(),
+		/**跳转飞机活动按钮 */
+		props_jumpTo_Telegram:new Node(),
 	}
 
 	public props: IProps = {
 		activityList: [],
+		isTurntable: null,
+		
 	}
 
 	public events: IEvent = {
@@ -81,9 +90,16 @@ export class Hall_ActivityPanel extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_btn_tips_close.on(Node.EventType.TOUCH_END, () => {
 			this.events.onClosePanel()
 		})
+
+		this.propertyNode.props_jumpTo_Telegram.on(Node.EventType.TOUCH_END, () => {
+			//跳转到飞机活动
+			sys.openURL("https://t.me/rummy520")
+		})
+		
 		let lastQeqPicUrl: string = ""
 		this.useState((key, value) => {
 			const item = this.props.activityList[value.cur]
+			this.propertyNode.props_jumpTo_Telegram.active = false;
 			if (item.gameId === ActivityType.TURNPLATE) { // 转盘逻辑
 				this.propertyNode.props_img_content.active = false
 				if (this.turntableViewModel) {
@@ -127,8 +143,9 @@ export class Hall_ActivityPanel extends BaseComponent<IState, IProps, IEvent> {
 						this.propertyNode.props_img_content.active = true
 						this.propertyNode.props_img_content.getComponent(Sprite).spriteFrame = SpriteFrame.createWithImage(asset)
 					}
+					this.propertyNode && (this.propertyNode.props_jumpTo_Telegram.active = item.gameId === ActivityType.TELEGRAM);
 					if (err) {
-						global.hallDispatch(addToastAction({ content: lang.write(k => k.HallModule.LoadFaild, {}, { placeStr: "加载资源失败" }), type: ToastType.ERROR }))
+						global.hallDispatch(addToastAction({ content: lang.write(k => k.HallModule.LoadFaild, {}, { placeStr: "加载资源失败" }), type: ToastType.ERROR, forceLandscape: false }))
 					}
 				})
 				this.setToggleItemReadStatus(item)
@@ -139,6 +156,7 @@ export class Hall_ActivityPanel extends BaseComponent<IState, IProps, IEvent> {
 			if (!this.props.activityList.length) return
 			const detailUrl = this.props.activityList[this.state.chooseActivityIndex].detailUrl
 			const gameId = this.props.activityList[this.state.chooseActivityIndex].gameId
+			if (gameId === ActivityType.TELEGRAM) return;
 			detailUrl && sys.openURL(detailUrl)
 			// detailUrl && ModalBox.Instance().show({ url: detailUrl })
 
@@ -213,18 +231,21 @@ export class Hall_ActivityPanel extends BaseComponent<IState, IProps, IEvent> {
 		if (key === "activityList") {
 			this.props.activityList.length && (this.propertyNode.props_empty.node.active = false)
 			this.propertyNode.props_ToggleGroup.removeAllChildren()
-			this.props.activityList.forEach(item => {
+			this.props.activityList.forEach((item,i) => {
 				const itemNode = instantiate(template)
 				itemNode.name = "act_" + item.id;
 				itemNode.getChildByName("Label_off").getComponent(Label).string = item.name
 				itemNode.getChildByName("Checkmark").getChildByName("Label_in").getComponent(Label).string = item.name
 				itemNode.getChildByName("unread").active = this.events.getItemUnreadStatus(item.id);
 				this.propertyNode.props_ToggleGroup.addChild(itemNode)
-				itemNode.active = true
-
+				itemNode.active = true;
+				if (item.gameId === ActivityType.TURNPLATE && this.props.isTurntable) {
+					this.turntableIndex = i;
+					itemNode.getComponent(Toggle).isChecked = true
+				}
 			})
 			if (this.props.activityList.length) {
-				this.setState({ chooseActivityIndex: 0 })
+				this.setState({ chooseActivityIndex: this.props.isTurntable ? this.turntableIndex : 0 });
 				this.propertyNode.props_empty_content.node.active = false
 				// this.propertyNode.props_content.active = true
 			}

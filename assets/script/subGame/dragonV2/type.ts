@@ -12,6 +12,35 @@ export enum RollerStatus {
   END
 }
 
+export type RollerType = {
+  /**滑槽序号 */
+  index: number,
+  /**图标列表 */
+  iconQueue: IconType[]
+  /**是否滚动中,注意，这个值false时不能完全表示滑槽已经停止转动，只是用于update函数是否还更新位置，此值为false之后，图标才开始刹车。若想准确获取滑槽的状态，请通过roller组件的roundEnd属性 */
+  rolling: boolean
+  /**滚动速度 */
+  speed: number,
+  /**备份的速度 */
+  speedBackUp: number,
+  /**宽度 */
+  width: number
+  // /**高度 */
+  // height: number
+  // /**步进距离，一般情况下应该和图标高度一致 */
+  // stepDistance: number,
+  /**是否是大滑槽 */
+  LargeRoller?: boolean,
+  /**横向间隔 */
+  intervalWidth: number
+  /**停止的iconID，至于取第几个图标序号，实现来决定 */
+  // stopIconId: number
+  /**停止的序号 */
+  stopIconIndex: number
+  /**滚动方向 */
+  direction: DirectionType
+}
+
 /**滚动信息 */
 export type RollerInfo = {
   /**滑槽序号 */

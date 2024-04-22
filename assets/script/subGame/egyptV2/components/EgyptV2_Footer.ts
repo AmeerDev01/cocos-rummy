@@ -447,13 +447,13 @@ export class EgyptV2_Footer extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	private updateScore(value: { pre: any, cur: any }) {
-		console.log(`updateScore: ${JSON.stringify(value)}`);
+		// console.log(`updateScore: ${JSON.stringify(value)}`);
 		this.propertyNode.props_goodluck.active = value.cur === 0;
 		this.propertyNode.props_bottom_score.node.active = value.cur > 0;
 
 		new StepNumber(value.pre, value.cur, (num) => {
 			if (this.node && this.node.isValid) {
-				const value = Number(num.toFixed(2));
+				const value = Number(num);
 				this.propertyNode.props_bottom_score.string = value.formatAmountWithCommas();
 			}
 		}).set(config.normalRollOption.numberRollerTime).start();

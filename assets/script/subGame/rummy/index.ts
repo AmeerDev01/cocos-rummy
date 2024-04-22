@@ -10,10 +10,12 @@ import { SoundPathDefine } from "./sourceDefine/soundDefine";
 import dominoStore from './store';
 import { global, lang } from "../../hall";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
-import { SubGameRunState } from "../../hall/config";
 import { getStore } from "../../hall/store";
 import TestViewModel from "./viewModel/TestViewModel";
 import RoomChooseViewModel from "./viewModel/RoomChooseViewModel";
+import { initData } from "./store/action/game";
+import { SubGameRunState } from "../../hallType";
+import WebSocketStarter from "../../common/WebSocketStarter";
 
 let sourceManageMap: Array<SourceManage> = []
 export let bundleDomino: AssetManager.Bundle = null
@@ -22,6 +24,7 @@ export const sourceManageSeletor = (bundleName: string = bundlePkgName) => sourc
 export let rummyRoomChoseView: RoomChooseViewModel;
 let initTimeoutId = 0;
 let loaderviweModel: LoaderPanelViewModel;
+let testViewModel: TestViewModel;
 
 export const startUp = (rootNode: Node) => {
   const dispatch = getStore().dispatch
@@ -52,16 +55,18 @@ export const startUp = (rootNode: Node) => {
           }, 10000);
 
           const socketHandle = () => {
-            initTimeoutId && window.clearTimeout(initTimeoutId);
-            loaderviweModel.unMount().then(() => {
-              global.hallDispatch(setSubGameRunState(SubGameRunState.RUN))
+            global.hallDispatch(setSubGameRunState(SubGameRunState.RUN))
 
-              rummyRoomChoseView = new RoomChooseViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.ROOM_CHOOSE).source).appendTo(rootNode).connect()
+            rummyRoomChoseView = new RoomChooseViewModel(() => {
+              loaderviweModel.unMount();
+              initTimeoutId && window.clearTimeout(initTimeoutId);
+            }).mountView(sourceManageSeletor().getFile(PrefabPathDefine.ROOM_CHOOSE).source).appendTo(rootNode).connect()
 
-              if (config.isTest) {
-                new TestViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.TEST).source).appendTo(rootNode).connect()
-              }
-            })
+            loaderviweModel.viewNode.setSiblingIndex(loaderviweModel.viewNode.parent.children.length)
+
+            if (config.isTest) {
+              testViewModel = new TestViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.TEST).source).appendTo(rootNode).connect()
+            }
           }
 
           if (config.isTest) {
@@ -78,10 +83,13 @@ export const startUp = (rootNode: Node) => {
 }
 
 export const stopGame = () => {
-  // log("stopGame", initTimeoutId);
   initTimeoutId && window.clearTimeout(initTimeoutId);
-  
+
+  WebSocketStarter.Instance().eventListener.removeById(bundlePkgName);
+
   loaderviweModel && loaderviweModel.unMount();
+  testViewModel && testViewModel.unMount();
+  rummyRoomChoseView && rummyRoomChoseView.unMount();
   rummy_Audio && rummy_Audio.remove();
   removeInstance();
 }

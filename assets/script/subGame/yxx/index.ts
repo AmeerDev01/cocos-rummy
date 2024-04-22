@@ -13,7 +13,8 @@ import TestViewModel from "./viewModel/TestViewModel";
 import { getStore } from "../../hall/store";
 import { addToastAction, setSubGameRunState } from "../../hall/store/actions/baseBoard";
 import { global, lang } from "../../hall";
-import { SubGameRunState, subGameList } from "../../hall/config";
+import { subGameList } from "../../hall/config";
+import { SubGameRunState } from "../../hallType";
 
 
 let sourceManageMap: Array<SourceManage> = [];

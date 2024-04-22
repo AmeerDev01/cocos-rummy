@@ -1149,7 +1149,7 @@
       "__id__": 46
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 48
@@ -1169,7 +1169,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 1000,
+      "x": 617,
       "y": 325,
       "z": 0
     },
@@ -1341,7 +1341,7 @@
     "_alignFlags": 32,
     "_target": null,
     "_left": 0,
-    "_right": -364,
+    "_right": 19,
     "_top": 19,
     "_bottom": 0,
     "_horizontalCenter": 0,

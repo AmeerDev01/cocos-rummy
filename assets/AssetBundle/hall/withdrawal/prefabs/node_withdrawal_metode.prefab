@@ -40,19 +40,22 @@
       },
       {
         "__id__": 150
+      },
+      {
+        "__id__": 172
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 172
+        "__id__": 178
       },
       {
-        "__id__": 174
+        "__id__": 180
       }
     ],
     "_prefab": {
-      "__id__": 176
+      "__id__": 182
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -1151,7 +1154,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 1.3890000000000668,
-      "y": -52,
+      "y": -7,
       "z": 0
     },
     "_lrot": {
@@ -2383,7 +2386,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 602,
-      "height": 97
+      "height": 7
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2565,8 +2568,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 355.577,
-      "y": 169.204,
+      "x": 353,
+      "y": 233,
       "z": 0
     },
     "_lrot": {
@@ -2611,7 +2614,7 @@
     "_anchorPoint": {
       "__type__": "cc.Vec2",
       "x": 0.5,
-      "y": 0.5
+      "y": 1
     },
     "_id": ""
   },
@@ -2764,8 +2767,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -3.508,
-      "y": -183.322,
+      "x": -4,
+      "y": -190,
       "z": 0
     },
     "_lrot": {
@@ -3933,6 +3936,139 @@
     "nestedPrefabInstanceRoots": null
   },
   {
+    "__type__": "cc.Node",
+    "_name": "note_label",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 173
+      },
+      {
+        "__id__": 175
+      }
+    ],
+    "_prefab": {
+      "__id__": 177
+    },
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": -39.61,
+      "y": -146.266,
+      "z": 0
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_mobility": 0,
+    "_layer": 33554432,
+    "_euler": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.UITransform",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 172
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 174
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 518.48,
+      "height": 50.4
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "77PiBC/7pC1pT7sK9KrKjx"
+  },
+  {
+    "__type__": "cc.Label",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 172
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 176
+    },
+    "_customMaterial": null,
+    "_srcBlendFactor": 2,
+    "_dstBlendFactor": 4,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 235,
+      "g": 147,
+      "b": 52,
+      "a": 179
+    },
+    "_string": "Note：Please contact customer service if you want to change bank cards",
+    "_horizontalAlign": 1,
+    "_verticalAlign": 1,
+    "_actualFontSize": 16,
+    "_fontSize": 16,
+    "_fontFamily": "Arial",
+    "_lineHeight": 40,
+    "_overflow": 0,
+    "_enableWrapText": true,
+    "_font": null,
+    "_isSystemFontUsed": true,
+    "_spacingX": 0,
+    "_isItalic": false,
+    "_isBold": false,
+    "_isUnderline": false,
+    "_underlineHeight": 2,
+    "_cacheMode": 0,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "6aYtzi2/pBc5kRhpl/Toou"
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__id__": 0
+    },
+    "fileId": "43izIXEytNuYcONwkYQDSx",
+    "instance": null,
+    "targetOverrides": null,
+    "nestedPrefabInstanceRoots": null
+  },
+  {
     "__type__": "cc.UITransform",
     "_name": "",
     "_objFlags": 0,
@@ -3941,7 +4077,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 173
+      "__id__": 179
     },
     "_contentSize": {
       "__type__": "cc.Size",
@@ -3968,7 +4104,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 175
+      "__id__": 181
     },
     "_customMaterial": null,
     "_srcBlendFactor": 2,

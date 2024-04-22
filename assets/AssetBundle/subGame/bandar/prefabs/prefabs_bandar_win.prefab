@@ -611,12 +611,12 @@
     "playOnLoad": true,
     "_clips": [
       {
-        "__uuid__": "0efb909b-feac-43fc-bdff-f13c79a573ae",
+        "__uuid__": "8aad068a-0ad9-4a90-9a3b-f44d5f150d79",
         "__expectedType__": "cc.AnimationClip"
       }
     ],
     "_defaultClip": {
-      "__uuid__": "0efb909b-feac-43fc-bdff-f13c79a573ae",
+      "__uuid__": "8aad068a-0ad9-4a90-9a3b-f44d5f150d79",
       "__expectedType__": "cc.AnimationClip"
     },
     "_id": ""

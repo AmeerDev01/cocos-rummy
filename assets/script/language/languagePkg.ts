@@ -1,5 +1,3 @@
-import { LanguageItem } from "./Internationalization"
-
 
 // export type LanguagePkg = {
 //   moduleName2: {
@@ -212,6 +210,11 @@ const languagePkg = {
       zh: '您还有未完成的游戏，请继续',
       en: 'You still have unfinished games, continue.',
       ida: 'Anda masih memiliki permainan yang belumselesai, lanjutkan'
+    },
+    GameDownLoadDone: {
+      zh: '游戏{gameName}下载完成，请轻击开始',
+      en: 'Game has been downloaded, please tap to start.',
+      ida: 'Game telah diunduh, ketuk untuk memulai'
     }
 
   },
@@ -530,7 +533,7 @@ const languagePkg = {
     },
     flllowWaterNoLevel: {
       zh: '抱歉，你的投注额未达到提现标准！',
-      en: 'Sorry, your wager did not meet the withdrawal criteria!',
+      en: 'Sorry,Your wagering did not meet the withdrawal audit!',
       ida: 'Maaf, taruhan Anda tidak memenuhi kriteria penarikan!'
     },
     GotoServiceModify: {

@@ -63,6 +63,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 	private taskScheduler = new TaskScheduler();
 	public sendBet: SendBet = null;
 	private betId: number = 0;
+	public isMe:boolean //是否当前用户下注
 	start() {}
 
 	protected propertyNode = {
@@ -119,6 +120,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 			// this.amountArr.push(this.sendBet);	
 			return
 		  };
+		  this.isMe = false;
 		  this.flyChip(value.cur)
 		}
 		if (key === 'cancelBetData') {
@@ -294,6 +296,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 		const betData = initBetData(this.props.myInfo.index, this.props.myInfo.memberId, betType, this.props.selectChip);
 		betData.isMyBet = true;//当前用户是否下注
 		this.betLoading = true;
+		this.isMe = true ;
 		this.sendBet = {
 			roomId: gameCacheData.roomId,
             memberId: this.props.myInfo.memberId,
@@ -338,7 +341,9 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 			const uiTransform = this.node.getComponent(UITransform);
 			const startPosition = this.getBetStartPosition(betData);
 			chipNode.setWorldPosition(uiTransform.convertToWorldSpaceAR(startPosition));
-			tween(chipNode).to(0.3, { position: endPosition , angle:-radom,},{easing: 'quintOut'}).start();
+			tween(chipNode).to(0.5, { position: endPosition, angle: -radom, }, { easing: 'quintOut' }).call(() => {
+				viewModel && ((viewModel.comp.getPropertyNode().props_ChipTail as Node).active = false);
+			}).start();
 			// if (!isWinRateBet && betData.index === config.gameOption.winRateMaxIndex) {
 			if (betData.index === config.gameOption.winRateMaxIndex) {
 				//判定是否是未展示星星的区域数组 若未展示，返回区域下标 否（即已展示） 返回-1
@@ -450,7 +455,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 
     /** 创造对应选取的金币  */
 	private createChip(chipValue: number, parent: Node): ChipViewModel {
-		return new ChipViewModel().mountView(sourceManageSelector().getFile(PrefabPathDefine.MAIN_CHIP).source).appendTo(parent).connect().setProps({ value: chipValue });
+		return new ChipViewModel().mountView(sourceManageSelector().getFile(PrefabPathDefine.MAIN_CHIP).source).appendTo(parent).connect().setProps({ value: chipValue, isMe:this.isMe });
 	}
 
 	/** 获得下注筹码飞的开始坐标 */
@@ -639,7 +644,7 @@ export class Bandar_betArea extends BaseComponent<IState, IProps, IEvent> {
 
 	private  copyBetInfo(betInfos: BetInfo[], parent: Node, odds: number): BetInfo[] {
 		const arr: BetInfo[] = [];
-
+		this.isMe = false;
 		new Array(odds).fill(0).forEach(v => {
 			betInfos.forEach(betInfo => {
 				arr.push({

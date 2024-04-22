@@ -189,7 +189,7 @@ export class StarlightV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 	private startStepNumber(label: Label, start, end, done) {
 		this.stepNumber = new StepNumber(start, end, (num) => {
 			if (this.node && this.node.isValid) {
-				label.string = Number(num.toFixed(2)).formatAmountWithCommas();
+				label.string = Number(num).formatAmountWithCommas();
 			}
 		}, () => this.node && this.node.isValid && done());
 		this.stepNumber.set(0.5).start();

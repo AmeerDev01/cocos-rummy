@@ -5,7 +5,7 @@ import { PrefabPathDefine } from "./sourceDefine/prefabDefine";
 import LoaderPanelViewModel from "../../common/viewModel/LoaderPanelViewModel";
 import SourceManage from "../../base/SourceManage";
 import BandarQiuQiuFileMap from './sourceDefine';
-import { SubGameRunState, config, subGameList } from "../../hall/config";
+import { config, subGameList } from "../../hall/config";
 import dtConfig from "./config";
 import socketConnect from "./socketConnect";
 import GameBoardViewModel from "./viewModel/BandarQiuQiuGameBoardViewModel";
@@ -15,6 +15,7 @@ import { SoundPathDefine } from "./sourceDefine/soundDefine";
 import UseSetOption, { setActiveAudio } from "../../utils/UseSetOption";
 import { global } from "../../hall";
 import { setSubGameRunState } from "../../hall/store/actions/baseBoard";
+import { SubGameRunState } from "../../hallType";
 
 let sourceManageMap: Array<SourceManage> = []
 export let bundleCommon: AssetManager.Bundle = null

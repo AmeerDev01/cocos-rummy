@@ -1,4 +1,4 @@
-import { Node, instantiate, sys } from "cc"
+import { Node, Prefab, instantiate, sys } from "cc"
 import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { Fruit777_BoxPanel, IProps, IEvent } from "../components/Fruit777_BoxPanel"
 import { Fruit777_JackPot, IState as JPIState, IProps as JPIprops, IEvent as JPIEvent } from "../components/Fruit777_JackPot"
@@ -26,14 +26,15 @@ class BoxPanelViewModel extends ViewModel<Fruit777_BoxPanel, IProps, IEvent> {
   }
   public openWaitingBoxId: number = -1
   private jackpot: BaseViewModel<Fruit777_JackPot, JPIState, JPIprops, JPIEvent>
-  protected begin() {
+  protected async begin() {
     fruit777_Audio.stop()
     fruit777_Audio.play(SoundPathDefine.BG_MUSIC_1, true)
     this.dispatch(setRollRoundEnd(false))
     // console.log('SUBGAME_TIMES')
     this.dispatch(changeProfit(dataTransfer(DataKeyType.FREE_GAME_AMOUNT)))
     this.dispatch(updateSubGameTimes(dataTransfer(DataKeyType.SUBGAME_TIMES)))
-    this.jackpot = new BaseViewModel<Fruit777_JackPot, JPIState, JPIprops, JPIEvent>('Fruit777_JackPot').mountView(sourceManageSeletor().getFile(PrefabPathDefine.JACK_POT).source).appendTo(this.viewNode)
+    this.jackpot = new BaseViewModel<Fruit777_JackPot, JPIState, JPIprops, JPIEvent>('Fruit777_JackPot')
+      .mountView((await sourceManageSeletor().getFileAsync(PrefabPathDefine._JACK_POT, Prefab)).source).appendTo(this.viewNode)
     fruit777WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LAUNCHER_BET, "box", (data, error) => {
       if (!error) {
         // console.log('box', data)

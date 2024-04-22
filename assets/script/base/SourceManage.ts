@@ -1,5 +1,4 @@
 import { Asset, AssetManager, Label, __private, assetManager, instantiate, log } from "cc"
-import { DEV } from "cc/env"
 export interface ISourceFile {
   bundlePkgName: string,
   path: string,

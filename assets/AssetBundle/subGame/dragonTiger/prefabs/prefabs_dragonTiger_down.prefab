@@ -850,7 +850,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -60,
+      "y": -37,
       "z": 0
     },
     "_lrot": {
@@ -894,8 +894,8 @@
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
+      "x": 0.5050650721069293,
+      "y": 0.0022777640975129277
     },
     "_id": ""
   },
@@ -938,7 +938,7 @@
     },
     "_premultipliedAlpha": false,
     "defaultSkin": "default",
-    "defaultAnimation": "animation",
+    "defaultAnimation": "",
     "_enableBatch": false,
     "_sockets": [],
     "_debugMesh": false,
@@ -2103,8 +2103,8 @@
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
+      "x": 0.5050650721069293,
+      "y": 0.0022777640975129277
     },
     "_id": ""
   },
@@ -2146,7 +2146,7 @@
       "__expectedType__": "sp.SkeletonData"
     },
     "_premultipliedAlpha": false,
-    "defaultSkin": "default",
+    "defaultSkin": "",
     "defaultAnimation": "",
     "_enableBatch": false,
     "_sockets": [],
@@ -3312,8 +3312,8 @@
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
+      "x": 0.5050650721069293,
+      "y": 0.0022777640975129277
     },
     "_id": ""
   },
@@ -3355,7 +3355,7 @@
       "__expectedType__": "sp.SkeletonData"
     },
     "_premultipliedAlpha": false,
-    "defaultSkin": "default",
+    "defaultSkin": "",
     "defaultAnimation": "",
     "_enableBatch": false,
     "_sockets": [],
@@ -4521,8 +4521,8 @@
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
+      "x": 0.5050650721069293,
+      "y": 0.0022777640975129277
     },
     "_id": ""
   },
@@ -4564,7 +4564,7 @@
       "__expectedType__": "sp.SkeletonData"
     },
     "_premultipliedAlpha": false,
-    "defaultSkin": "default",
+    "defaultSkin": "",
     "defaultAnimation": "",
     "_enableBatch": false,
     "_sockets": [],
@@ -5730,8 +5730,8 @@
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
+      "x": 0.5050650721069293,
+      "y": 0.0022777640975129277
     },
     "_id": ""
   },
@@ -5773,7 +5773,7 @@
       "__expectedType__": "sp.SkeletonData"
     },
     "_premultipliedAlpha": false,
-    "defaultSkin": "default",
+    "defaultSkin": "",
     "defaultAnimation": "",
     "_enableBatch": false,
     "_sockets": [],
@@ -6939,8 +6939,8 @@
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
+      "x": 0.5050650721069293,
+      "y": 0.0022777640975129277
     },
     "_id": ""
   },
@@ -6982,7 +6982,7 @@
       "__expectedType__": "sp.SkeletonData"
     },
     "_premultipliedAlpha": false,
-    "defaultSkin": "default",
+    "defaultSkin": "",
     "defaultAnimation": "",
     "_enableBatch": false,
     "_sockets": [],
@@ -7437,7 +7437,7 @@
         "__id__": 359
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 371

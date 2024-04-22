@@ -6,8 +6,15 @@
   "files": [],
   "subMetas": {},
   "userData": {
-    "compressionType": {},
-    "isRemoteBundle": {},
+    "compressionType": {
+      "web-desktop": "merge_all_json",
+      "android": "merge_all_json",
+      "web-mobile": "merge_all_json",
+      "wechatgame": "zip"
+    },
+    "isRemoteBundle": {
+      "wechatgame": true
+    },
     "bundleName": "fruit777",
     "isBundle": true
   }

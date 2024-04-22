@@ -413,7 +413,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -130,
+      "y": -176,
       "z": 0
     },
     "_lrot": {
@@ -461,7 +461,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 13,
+      "x": 0,
       "y": 0,
       "z": 0
     },
@@ -501,7 +501,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 137.54,
+      "width": 107.51,
       "height": 37.8
     },
     "_anchorPoint": {
@@ -531,9 +531,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 252,
-      "g": 173,
-      "b": 61,
+      "r": 255,
+      "g": 236,
+      "b": 157,
       "a": 255
     },
     "_string": "",
@@ -544,7 +544,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 30,
     "_overflow": 2,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": null,
     "_isSystemFontUsed": true,
     "_spacingX": 0,
@@ -708,7 +708,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "b08e168d-648a-4863-914a-5a4f23bbc496@f9941",
+      "__uuid__": "382b8811-2864-4aee-b26b-9d3bdff62ab6@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 1,
@@ -776,7 +776,7 @@
       "a": 255
     },
     "_normalSprite": {
-      "__uuid__": "b08e168d-648a-4863-914a-5a4f23bbc496@f9941",
+      "__uuid__": "382b8811-2864-4aee-b26b-9d3bdff62ab6@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_hoverSprite": null,
@@ -962,8 +962,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -2,
-      "y": -34,
+      "x": -4,
+      "y": -28,
       "z": 0
     },
     "_lrot": {

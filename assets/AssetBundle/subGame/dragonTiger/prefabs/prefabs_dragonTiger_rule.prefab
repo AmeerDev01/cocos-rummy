@@ -4199,7 +4199,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 50.6,
+      "width": 36.14,
       "height": 30.24
     },
     "_anchorPoint": {
@@ -4234,7 +4234,7 @@
       "b": 19,
       "a": 255
     },
-    "_string": "1:12",
+    "_string": "1:8",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 26,

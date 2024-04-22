@@ -4,7 +4,7 @@
 
   /* Add your custom configuration here. */
   "compilerOptions": {
-    "module": "es6",
+    "module": "esnext",
     "strict": false,
     // "lib": ["es2018"],
     "allowSyntheticDefaultImports": true

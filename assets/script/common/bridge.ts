@@ -44,6 +44,19 @@ export type EventData = {
     value: any,
     eventParams?: EventData[]
 }
+/**adjust的web事件配置 */
+export const adjustWebEventConfig = {
+    register: '',
+    login: '',
+    /**首次充值 */
+    firstPurchase: '',
+    /**重复充值 */
+    purchase: '',
+    /**首次拉取充值 */
+    firstPullPurchase: '',
+    /**拉取充值 */
+    pullPurchase: '',
+}
 
 /**
  * 发送震动
@@ -62,7 +75,7 @@ export const loginEvents = (uid: string) => {
         loginAppsflyerEvents(uid);
         loginAdjustEvents(uid);
     } else {
-        callAndroid(WebEventType.LOGIN, '');
+        callAndroid(WebEventType.LOGIN, adjustWebEventConfig.login, uid);
         facebookWebEveht(WebEventType.LOGIN, uid);
     }
 }
@@ -134,7 +147,7 @@ export const registerAppsflyerEvents = (uid: string, pwd: string) => {
         // adjust注册事件
         registerAdjustEvents(uid, pwd);
     } else {
-        callAndroid(WebEventType.REGISTER, '');
+        callAndroid(WebEventType.REGISTER, adjustWebEventConfig.register, uid);
         facebookWebEveht(WebEventType.REGISTER, uid);
     }
 }
@@ -168,7 +181,7 @@ export const registerAdjustEvents = (uid: string, pwd: string) => {
  * @param currency 货币类型
  * @param first 是否首次
  */
-export const purchaseAppsflyerEvents = (revenue: string, currency: string, first: boolean) => {
+export const purchaseAppsflyerEvents = (revenue: string, currency: string, first: boolean, id: string) => {
     currency && (currency = currency.toUpperCase());
     if (NATIVE && Number(revenue) > 0) {
         const data: EventData = {
@@ -197,15 +210,16 @@ export const purchaseAppsflyerEvents = (revenue: string, currency: string, first
 
         native.bridge.sendToNative(BridgeCode.IN_APP_EVENTS, JSON.stringify(data));
         //adjust充值事件
-        purchaseAdjustEvents(revenue, currency, first);
+        purchaseAdjustEvents(revenue, currency, first, id);
     } else {
-        callAndroid(first ? WebEventType.FIRST_PURCHASE : WebEventType.PURCHASE, '');
+        const eventToken = first ? adjustWebEventConfig.firstPurchase : adjustWebEventConfig.purchase;
+        callAndroid(first ? WebEventType.FIRST_PURCHASE : WebEventType.PURCHASE, eventToken, revenue, currency, id);
         facebookWebEveht(first ? WebEventType.FIRST_PURCHASE : WebEventType.PURCHASE, revenue, currency);
     }
 }
 
 /**充值成功发送事件 */
-export const purchaseAdjustEvents = (revenue: string, currency: string, first: boolean) => {
+export const purchaseAdjustEvents = (revenue: string, currency: string, first: boolean, id: string) => {
     if (NATIVE && Number(revenue) > 0) {
         const data: EventData = {
             type: EventChannel.ADJUST,
@@ -221,7 +235,7 @@ export const purchaseAdjustEvents = (revenue: string, currency: string, first: b
         })
         data.eventParams.push({
             name: 'orderId',
-            value: getUUID(),
+            value: id,
             type: '',
         })
 
@@ -230,18 +244,19 @@ export const purchaseAdjustEvents = (revenue: string, currency: string, first: b
 }
 
 /**拉取充值事件 */
-export const pullPurchaseEvents = (revenue: string, currency: string, first: boolean) => {
+export const pullPurchaseEvents = (revenue: string, currency: string, first: boolean, id: string) => {
     if (NATIVE && Number(revenue) > 0) {
-        pullPurchaseAppsflyerEvents(revenue, currency, first);
-        pullPurchaseAdjustEvents(revenue, currency, first);
+        pullPurchaseAppsflyerEvents(revenue, currency, first, id);
+        pullPurchaseAdjustEvents(revenue, currency, first, id);
     } else {
-        callAndroid(first ? WebEventType.FIRST_PULL_PURCHASE : WebEventType.PULL_PURCHASE, '');
+        const eventToken = first ? adjustWebEventConfig.firstPullPurchase : adjustWebEventConfig.pullPurchase;
+        callAndroid(first ? WebEventType.FIRST_PULL_PURCHASE : WebEventType.PULL_PURCHASE, eventToken, revenue, currency, id);
         facebookWebEveht(first ? WebEventType.FIRST_PULL_PURCHASE : WebEventType.PULL_PURCHASE, revenue, currency);
     }
 }
 
 /**appsflyer拉取充值事件 */
-const pullPurchaseAppsflyerEvents = (revenue: string, currency: string, first: boolean) => {
+const pullPurchaseAppsflyerEvents = (revenue: string, currency: string, first: boolean, id: string) => {
     const data: EventData = {
         type: EventChannel.APPS_FLYER,
         // name: 'purchase',
@@ -275,7 +290,7 @@ const pullPurchaseAppsflyerEvents = (revenue: string, currency: string, first: b
  * @param currency 
  * @param first 
  */
-const pullPurchaseAdjustEvents = (revenue: string, currency: string, first: boolean) => {
+const pullPurchaseAdjustEvents = (revenue: string, currency: string, first: boolean, id: string) => {
     if (NATIVE && Number(revenue) > 0) {
         const data: EventData = {
             type: EventChannel.ADJUST,
@@ -291,7 +306,7 @@ const pullPurchaseAdjustEvents = (revenue: string, currency: string, first: bool
         })
         data.eventParams.push({
             name: 'orderId',
-            value: getUUID(),
+            value: id,
             type: '',
         })
 
@@ -394,17 +409,15 @@ export const showNativeSplash = () => {
     }
 }
 
-export const callAndroid = (type, eventToken) => {
+export const callAndroid = (type, eventToken, revenue?: string, currency?: string, id?: string) => {
     if (NATIVE) {
         return;
     }
-    if (typeof Android !== 'undefined' && Android !== null) {
-        Android.adjustEvent(type, eventToken);
-        // document.getElementById("ddd").innerHTML = '执行成功，类型：' + type;
-        console.log('执行成功，类型：' + type);
+    if (typeof window.Android !== 'undefined' && window.Android !== null) {
+        window.Android.adjustEvent(type, eventToken);
+        console.log(`Executed successfully, event type: ${type}, eventToken: ${eventToken}`);
     } else {
-        // document.getElementById("ddd").innerHTML = "Android界面不可用";
-        console.log('Android界面不可用');
+        console.log('The Android interface is unavailable');
     }
 }
 
@@ -419,19 +432,19 @@ export const facebookWebEveht = (type, ...values) => {
         return;
     }
 
-    if (typeof fbq !== 'undefined' && fbq !== null) {
+    if (typeof window.fbq !== 'undefined' && window.fbq !== null) {
         if (type === WebEventType.REGISTER) {
-            fbq('track', 'CompleteRegistration');
+            window.fbq('track', 'CompleteRegistration');
         } else if (type === WebEventType.LOGIN) {
-            fbq('track', 'Login');
+            window.fbq('track', 'Login');
         } else if (type === WebEventType.FIRST_PURCHASE) {
-            fbq('track', 'Purchase', { currency: values[1], value: values[0] });
+            window.fbq('track', 'Purchase', { currency: values[1], value: values[0] });
         } else if (type === WebEventType.PURCHASE) {
-            fbq('track', 'Purchase_success', { currency: values[1], value: values[0] });
+            window.fbq('track', 'Purchase_success', { currency: values[1], value: values[0] });
         } else if (type === WebEventType.FIRST_PULL_PURCHASE) {
-            fbq('track', 'InitiateCheckout', { currency: values[1], value: values[0] });
+            window.fbq('track', 'InitiateCheckout', { currency: values[1], value: values[0] });
         } else if (type === WebEventType.PULL_PURCHASE) {
-            fbq('track', 'InitiateCheckout_success', { currency: values[1], value: values[0] });
+            window.fbq('track', 'InitiateCheckout_success', { currency: values[1], value: values[0] });
         }
         // document.getElementById("ddd").innerHTML = '执行成功，类型：' + type;
         console.log('fbq 执行成功，类型：' + type);
