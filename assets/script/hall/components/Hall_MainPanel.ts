@@ -495,6 +495,8 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		})
 		this.propertyNode.props_indicator_toggle.active = false;
 		fetcher.send(ApiUrl.GAME_SWIPE, {}, "get", {}).then((data: Array<SwipeData>) => {
+				console.log(data);
+				
 			if (!data || (data && !Array.isArray(data))) {
 				global.hallDispatch(addToastAction({ content: lang.write(k => k.BaseBoardModule.DataException, {}, { placeStr: "数据异常" }), type: ToastType.ERROR, forceLandscape: false }))
 				return
@@ -512,7 +514,8 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 					if (this.propertyNode && index + 1 === data.length) {
 						this.propertyNode.props_page_template.active = false
 						// this.scrollPageView()
-
+						console.error(asset);
+						
 						if (this.swiperDatas.length > 0) {
 							this.addPageViewNode(this.swiperDatas.length - 1);
 							if (this.swiperDatas.length > 1) {
