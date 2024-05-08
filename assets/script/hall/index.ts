@@ -68,7 +68,9 @@ export const startUp = (rootNode: Node) => {
               baseBoardView = new BaseBoardViewModel().mountView(sourceManageSeletor("hall").getSourceFile(HallPrefabPathDefine.BASE_BOARD)).appendTo(rootNode)
               baseBoardView.connect()
               // playBgMusic(baseBoardView)
-              getPackageName() !== 'web' && hallAudio.play(SoundPathDefine.MAIN_BGM, true)
+              // getPackageName() !== 'web' && hallAudio.play(SoundPathDefine.MAIN_BGM, true)
+              hallAudio.play(SoundPathDefine.BTU_CLICK, true)
+              hallAudio.play(SoundPathDefine.MAIN_BGM, true)
               initHallGlobal()
             })
           }

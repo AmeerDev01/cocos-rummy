@@ -95,6 +95,10 @@ export class Hall_SubGameGate extends BaseComponent<IState, IProps, IEvent> {
 	private async renderGateIcon(gameId: number) {
 		// 实例化界面
 		if (gameId) {
+			if (gameId == 20) {
+				//老鼠游戏没上
+				return
+			}
 			const hallGameGate: HallGameGateType = subGameList.find(i => i.gameId === gameId)
 			if (!hallGameGate) {
 				return
