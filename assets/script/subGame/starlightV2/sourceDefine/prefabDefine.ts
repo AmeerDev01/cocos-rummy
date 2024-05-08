@@ -3,7 +3,7 @@ import { loopFiles } from "../../../base/SourceManage"
 
 export enum PrefabPathDefine {
   LOAING_PANEL = "prefabs/prefab_starlight_loading",
-  GAME_BOARD = "prefabs/prefab_starlight_gameBoard",
+  // GAME_BOARD = "prefabs/prefab_starlight_gameBoard",
   MAIN_GAME = "prefabs/prefab_starlight_bg_main",
   HEADER = "prefabs/prefab_starlight_header_new",
   FOOTER = "prefabs/prefab_starlight_down_new",
