@@ -13,6 +13,7 @@ import { ToastType, addToastAction } from "./store/actions/baseBoard"
 import BandarStartUp from "../subGame/bandar/StartUp"
 import StarlightV2StartUp from "../subGame/starlightV2/StarlightV2_StartUp"
 import ThorV2StartUp from "../subGame/thorV2/ThorV2_StartUp"
+import crashV2_StartUp from "../subGame/crashV2/crashV2_StartUp"
 // import QiuQiuStartUp from "../subGame/qiuqiu/QiuQiuStartUp"
 // import BandarQiuQiuStartUp from "../subGame/bandarQiuQiu/StartUp"
 // import FishStartUp from "../subGame/fish/StartUp"
@@ -399,7 +400,7 @@ export let subGameList: Array<HallGameGateType> = [
     enableRemote: false,
     status: GameState.OFF_LINE,
     isVertical: false,
-    startUpHandler: (boardPanel) => { }
+    startUpHandler: (boardPanel) => crashV2_StartUp(boardPanel as Node)
   },
   {
     gameId: 6,

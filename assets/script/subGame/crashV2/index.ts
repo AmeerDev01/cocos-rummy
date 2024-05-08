@@ -9,7 +9,7 @@ import { AudioMgr } from "../../utils/AudioMgr";
 import { setActiveAudio } from "../../utils/UseSetOption";
 import config from "./config";
 import socketConnect, { removeInstance } from "./socketConnect";
-import DragonV2FileMap, { bundlePkgName } from './sourceDefine';
+import CrashV2FileMap, { bundlePkgName } from './sourceDefine';
 import { PrefabPathDefine } from "./sourceDefine/prefabDefine";
 import { SoundPathDefine } from "./sourceDefine/soundDefine";
 import fruitStore, { getStore } from './store';
@@ -20,7 +20,7 @@ import CrashV2HeaderViewModel from "./viewModel/crashV2HeaderViewModel";
 import CrashV2rightPanelViewModel from "./viewModel/crashV2rightPanelViewModel";
 import CrashV2_bottom_actionBarViewModel from "./viewModel/crashV2_bottom_actionBarViewModel";
 let sourceManageMap: Array<SourceManage> = []
-export let bundleDragonv2: AssetManager.Bundle = null
+export let bundleCrashv2: AssetManager.Bundle = null
 export let mainViewModel: CrashV2MainViewModel;
 export let HeaderViewModel: CrashV2HeaderViewModel;
 export let rightPanelViewModel: CrashV2rightPanelViewModel;
@@ -39,8 +39,8 @@ let initTimeoutId = 0;
 export const startUp = (rootNode: Node) => {
   fruitStore.configureStore()
   assetManager.loadBundle(bundlePkgName, (err, bundle) => {
-    bundleDragonv2 = bundle
-    bundleDragonv2.load(PrefabPathDefine.LOAING_PANEL, Prefab, (progress, total) => {
+    bundleCrashv2 = bundle
+    bundleCrashv2.load(PrefabPathDefine.LOAING_PANEL, Prefab, (progress, total) => {
       global.hallDispatch(setSubGameRunState(SubGameRunState.LOADING))
       global.setSubGameGate(config.gameId, (progress / total))
     }, (err, prefab) => {
@@ -96,7 +96,7 @@ export const startUp = (rootNode: Node) => {
       }).setProps({
         versionStr: `md5: ${subGameList.find(i => i.gameId === config.gameId).md5}`
       })
-      loaderviweModel.comp.startLoad([bundle], [...DragonV2FileMap])
+      loaderviweModel.comp.startLoad([bundle], [...CrashV2FileMap])
     })
   })
 }
