@@ -228,7 +228,8 @@ class EgyptV2MainViewModel extends ViewModel<EgyptV2_Main, IProps, IEvent> {
     }
 
     if (this.comp.props.gameTypeInfo.viewGameType === GameType.MAIN) {
-      this.dispatch(updateGold(this.comp.props.gold - betAmount));
+      let result = this.comp.props.gold.sub(this.comp.props.gold, betAmount)
+      this.dispatch(updateGold(result));
     }
 
     cacheData.sendBetTime = Date.now();

@@ -255,7 +255,9 @@ class DragonV2MainViewModel extends ViewModel<Dragon_Main, IProps, IEvent> {
     }
 
     if (this.comp.props.gameTypeInfo.viewGameType === GameType.MAIN) {
-      this.dispatch(updateGold(this.comp.props.gold - betAmount));
+      let result:number
+      result = result.sub(this.comp.props.gold, betAmount)
+      this.dispatch(updateGold(result));
     }
 
     cacheData.rollerLaunchResult = null;
