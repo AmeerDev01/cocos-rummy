@@ -30,6 +30,26 @@ declare global {
      * 将数字转换为非四舍五入的小数点保留位
      */
     toFixedFix(fractionDigits?: number): number
+
+    /**
+     * 数字严格计算加法
+     */
+    add(num1: number, num2: number):number
+
+    /**
+     * 数字严格计算减法
+     */
+    sub(num1: number, num2: number):number
+
+    /**
+     * 数字严格计算乘法
+     */
+    mul(num1: number, num2: number):number
+
+    /**
+     * 数字严格计算除法
+     */
+    div(num1: number, num2: number):number
   }
 
   interface String {

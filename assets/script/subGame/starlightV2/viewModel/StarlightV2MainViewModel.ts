@@ -235,7 +235,8 @@ class StarlightV2MainViewModel extends ViewModel<StarlightV2_Main, IProps, IEven
     this.dispatch(updateManualSpeedStatus(false));
 
     if (this.comp.props.gameTypeInfo.viewGameType === GameType.MAIN) {
-      this.dispatch(updateGold(this.comp.props.gold - betAmount));
+      let result = this.comp.props.gold.sub(this.comp.props.gold, betAmount)
+      this.dispatch(updateGold(result));
     }
 
     cacheData.sendBetTime = Date.now();

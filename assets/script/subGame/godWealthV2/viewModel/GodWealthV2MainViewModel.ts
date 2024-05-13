@@ -260,7 +260,8 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
     }
 
     if (this.gameTypeInfo.viewGameType === GameType.MAIN) {
-      this.dispatch(updateGold(this.comp.props.gold - betAmount));
+      let result = this.comp.props.gold.sub(this.comp.props.gold, betAmount)
+      this.dispatch(updateGold(result));
       // let moneyLabel = mainViewModel.headerViewModel.comp.getMoenyLabelNode();
       // const stepNumber = new StepNumber(Number(moneyLabel.string.replace(/,/g, "")), this.comp.props.gold - betAmount, (num) => {
       //   if (this.viewNode && this.viewNode.isValid) {
