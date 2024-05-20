@@ -145,6 +145,14 @@ export default class WebSocketStarter extends Singleton {
           const [messageId, operation, host, sktCode, gameIdStr, length, dataBody] = ev.data.toString().split('|')
           const gameId: number = +gameIdStr
           let data = dataBody
+          if (operation !== SKT_OPERATION.HEART) {
+            // try {
+            //   let tempData = JSON.parse(dataBody)
+            //   console.error(`返回请求···········游戏id:${gameId},host:${host},随机信息id:${messageId},具体操作:${operation},传参:`,tempData)
+            // } catch(e) {
+            //   console.log('skt json data error', dataBody, e)
+            // }
+          }
           if (operation === SKT_OPERATION.HEART) {
             this.heart_beatList = []
             this.eventListener.dispath(EVEVT_TYPE.HEART_BEAT, {})
@@ -359,6 +367,7 @@ export class SktMessager<SKT_TYPE> {
       this.ws.send(`${this.messageId}|${this.operation}`)
     } else {
       // const data = this.operation === SKT_OPERATION.ENCRYPT ? AES.encode(JSON.stringify(this.payLoad)) : JSON.stringify(this.payLoad)
+      // console.error(`发送请求········游戏id:${this.gameId},host:${this.host},随机信息id:${this.messageId},具体操作:${this.operation},传参:`,this.payLoad || '')
       const data = JSON.stringify(this.payLoad || '')
       this.ws.send(`${this.messageId}|${this.operation}|${this.host}|${this.sktCode}|${this.gameId}|${data.length}|${data}`)
       this.sendTime = Date.now()
