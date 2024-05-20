@@ -100,12 +100,17 @@ export class Fruit777_RollerIcon extends BaseComponent<IState, IProps, IEvent> {
 					iconNodeSprite.active = !isActive
 					if (this.iconNodeSkeleton_copy) {
 						this.iconNodeSkeleton_copy.destroy()
+						this.iconNodeSkeleton_copy = null
 					} else {
 						this.iconNodeSkeleton_copy = this.propertyNode.props_iconWrap.getChildByName("iconNode_skeleton_copy")
 					}
 				} else {
 					sourceManageSeletor().getFileAsync(this.props.iconData.uiData.skeleton, sp.SkeletonData).then(file => {
 						iconNodeSprite.active = !isActive
+						if (this.iconNodeSkeleton_copy) {
+							this.iconNodeSkeleton_copy.destroy()
+							this.iconNodeSkeleton_copy = null
+						}
 						this.iconNodeSkeleton_copy = instantiate(iconNodeSkeleton)
 						this.iconNodeSkeleton_copy.parent = this.node
 						this.iconNodeSkeleton_copy.active = true
