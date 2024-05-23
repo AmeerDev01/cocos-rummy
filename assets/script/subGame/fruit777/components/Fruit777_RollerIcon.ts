@@ -93,13 +93,14 @@ export class Fruit777_RollerIcon extends BaseComponent<IState, IProps, IEvent> {
 			this.propertyNode.props_focusBorder.active = isActive
 
 			if (!this.props.iconData.LargeIcon) {
-				
+
 				// iconNodeSkeleton.active = isActive
 
 				if (this.props.iconEffect === IconEffectType.NONE) {
 					iconNodeSprite.active = !isActive
 					if (this.iconNodeSkeleton_copy) {
 						this.iconNodeSkeleton_copy.destroy()
+						this.iconNodeSkeleton_copy = null
 					} else {
 						this.iconNodeSkeleton_copy = this.propertyNode.props_iconWrap.getChildByName("iconNode_skeleton_copy")
 					}
@@ -160,7 +161,21 @@ export class Fruit777_RollerIcon extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	update(deltaTime: number) {
-
+		// 滚动逻辑与众不同，只能直接删了重合没有被销毁的特效
+		let curPos = this.node.getPosition()
+		if (curPos.y >= 0 || curPos.y <= -460) {
+			if (this.iconNodeSkeleton_copy) {
+				this.iconNodeSkeleton_copy.active = false
+				this.iconNodeSkeleton_copy.removeFromParent()
+				this.iconNodeSkeleton_copy.destroy()
+				this.iconNodeSkeleton_copy = null
+			}
+			this.node.children.forEach(node => {
+				if (node.name == "iconNode_skeleton_copy") {
+					node.active = false
+				}
+			})
+		}
 	}
 }
 

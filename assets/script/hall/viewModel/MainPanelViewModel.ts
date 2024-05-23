@@ -27,7 +27,7 @@ import { Hall_GiftBag, IState as GBState, IProps as GBProps, IEvent as GBEvent, 
 import { config } from "../config";
 import { Hall_Upgrade, IState as UGIState, IProps as UGIProps, IEvent as UGIEvent } from "../components/Hall_Upgrade";
 import { Hall_ChangePassword, IState as CPIState, IProps as CPIProps, IEvent as CPIEvent } from "../components/Hall_ChangePassword";
-import { Hall_ReliefPanel, IState as RPIState, IProps as RPIProps, IEvent as RPIEvent } from "../components/Hall_ReliefPanel";
+import { Hall_ReliefPanel, IState as RPIState, IProps as RPIProps, IEvent as RPIEvent } from "../components/Hall_reliefPanel";
 import { BuyType } from "../components/Hall_ShopPanel";
 import { Hall_WinningBox, IState as WBState, IProps as WBProps, IEvent as WBEvent, WinningType } from "../components/Hall_WinningBox";
 import { Hall_AppDownLoadGuide, IState as ALState, IProps as ALProps, IEvent as ALEvent } from "../components/Hall_AppDownLoadGuide";
