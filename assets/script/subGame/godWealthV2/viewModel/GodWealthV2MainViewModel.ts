@@ -20,7 +20,7 @@ import GodWealthV2HeaderViewModel from "./GodWealthV2HeaderViewModel"
 import GodWealthV2RollerPanelViewModel from "./GodWealthV2RollerPanelViewModel"
 import GodWealthV2RollerViewModel from "./GodWealthV2RollerViewModel"
 import { GodWealthV2_helpPanel, IState as FIState, IProps as FIProps, IEvent as FIEvent } from "../components/GodWealthV2_helpPanel"
-import { Vec3 } from "cc"
+import { Vec3, sys } from "cc"
 import BaseViewModel from "../../../hall/viewModel/BaseViewModel"
 import { EffectType } from "../../../utils/NodeIOEffect"
 import StepNumber from "../../../utils/StepNumber"
@@ -337,7 +337,13 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
     let godWealthV2DialogWinViewModel = new GodWealthV2DialogWinViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.DIALOG_WIN).source)
       .appendTo(this.viewNode).connect();
     // console.log("this.comp.props.autoLauncherInfo",this.comp.props.autoLauncherInfo);
-
+    if (sys.os === sys.OS.ANDROID) {
+      console.error("godWealthV2DialogWinViewModel.setProps",JSON.stringify({
+        autoLauncherInfo: this.comp.props.autoLauncherInfo,
+        dialogInfo: dialogInfo,
+        gameTypeInfo: this.comp.props.gameTypeInfo,
+      }))
+    }
     godWealthV2DialogWinViewModel.setProps({
       autoLauncherInfo: this.comp.props.autoLauncherInfo,
       dialogInfo: dialogInfo,

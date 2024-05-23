@@ -7,16 +7,17 @@ import Fruit777StartUp from "../subGame/fruit777/StartUp"
 import GodWealth2StartUp from "../subGame/godWealthV2/GodWealthV2_StartUp"
 import GxfcV2StartUp from "../subGame/gxfcV2/GxfcV2_StartUp"
 import Phoenix2StartUp from "../subGame/phoenixV2/PhoenixV2_StartUp"
-import YxxStartUp from "../subGame/yxx/StartUp"
+import YXXStartUp from "../subGame/yxx/StartUp"
+import DFDCStartUp from "../subGame/dfdc/StartUp"
 import { ToastType, addToastAction } from "./store/actions/baseBoard"
-// import DominoStartUp from "../subGame/domino/StartUp"
+import DominoStartUp from "../subGame/domino/StartUp"
 import BandarStartUp from "../subGame/bandar/StartUp"
 import StarlightV2StartUp from "../subGame/starlightV2/StarlightV2_StartUp"
 import ThorV2StartUp from "../subGame/thorV2/ThorV2_StartUp"
 import crashV2_StartUp from "../subGame/crashV2/crashV2_StartUp"
-// import QiuQiuStartUp from "../subGame/qiuqiu/QiuQiuStartUp"
-// import BandarQiuQiuStartUp from "../subGame/bandarQiuQiu/StartUp"
-// import FishStartUp from "../subGame/fish/StartUp"
+import QiuQiuStartUp from "../subGame/qiuqiu/QiuQiuStartUp"
+import BandarQiuQiuStartUp from "../subGame/bandarQiuQiu/StartUp"
+import FishStartUp from "../subGame/fish/StartUp"
 import { NATIVE } from 'cc/env'
 import WebSocketStarter, { SKT_HOST, WebSocketDriver } from "../common/WebSocketStarter"
 import { getPackageName } from "../common/bridge"
@@ -212,13 +213,13 @@ export const initConfig = (): Promise<{
         }
       })
       // isError && getStore().dispatch(addToastAction({ content: "游戏map配置数据错误~" }))
-      /*
-      const gameQueue = {
-        domino: [],
-        slots: [[6], [8, 7], [10, 9], [3, 0]],
-        other: [[12], [11, 5]],
-      }
-      */
+
+      // const gameQueue = {
+      //   domino: [[2]],
+      //   slots: [[6], [14, 15], [8, 7], [10, 9], [3, 18]],
+      //   other: [[12],[17], [11, 5], [4, 13], [16, 19]],
+      // }
+
       const gameQueue = JSON.parse(data.gameSort)
       subGameGateQueue.forEach(i => {
         i.typeName === SubGameType.Domino && (i.queue = gameQueue.domino)
@@ -331,7 +332,7 @@ export let subGameList: Array<HallGameGateType> = [
   },
   {
     gameId: 1,
-    gameName: "双子星",
+    gameName: "双子星",   //没做
     gameHost: SKT_HOST.SLOTS,
     fileNameSmall: SkeletalPathDefine._GEMINI_GATE,
     fileNameLarge: SkeletalPathDefine._GEMINI_GATE,
@@ -357,7 +358,7 @@ export let subGameList: Array<HallGameGateType> = [
     status: GameState.OFF_LINE,
     isVertical: false,
     startUpPrefabPathName: "",
-    startUpHandler: (boardPanel) => { }
+    startUpHandler: (boardPanel) => DominoStartUp(boardPanel as Node)
   },
   {
     gameId: 3,
@@ -386,7 +387,7 @@ export let subGameList: Array<HallGameGateType> = [
     enableRemote: false,
     status: GameState.OFF_LINE,
     isVertical: false,
-    startUpHandler: (boardPanel) => { }
+    startUpHandler: (boardPanel) => QiuQiuStartUp(boardPanel as Node)
   },
   {
     gameId: 5,
@@ -484,7 +485,7 @@ export let subGameList: Array<HallGameGateType> = [
     enableRemote: false,
     status: GameState.OFF_LINE,
     isVertical: false,
-    startUpHandler: (boardPanel) => YxxStartUp(boardPanel as Node)
+    startUpHandler: (boardPanel) => YXXStartUp(boardPanel as Node)
   },
   {
     gameId: 12,
@@ -554,7 +555,7 @@ export let subGameList: Array<HallGameGateType> = [
     enableRemote: false,
     status: GameState.OFF_LINE,
     isVertical: false,
-    startUpHandler: (boardPanel) => { }
+    startUpHandler: (boardPanel) => BandarQiuQiuStartUp(boardPanel as Node)
   },
   {
     gameId: 17,
@@ -568,7 +569,7 @@ export let subGameList: Array<HallGameGateType> = [
     enableRemote: false,
     status: GameState.OFF_LINE,
     isVertical: false,
-    startUpHandler: (boardPanel) => { }
+    startUpHandler: (boardPanel) => FishStartUp(boardPanel as Node)
   },
   {
     gameId: 18,
@@ -583,7 +584,7 @@ export let subGameList: Array<HallGameGateType> = [
     status: GameState.OFF_LINE,
     isVertical: false,
     isDepend: true,
-    startUpHandler: (boardPanel) => { }
+    startUpHandler: (boardPanel) => DFDCStartUp(boardPanel as Node)
   },
   {
     gameId: 19,
@@ -601,7 +602,7 @@ export let subGameList: Array<HallGameGateType> = [
   },
   {
     gameId: 20,
-    gameName: "FortuneMouse",
+    gameName: "FortuneMouse",   //没做
     gameHost: SKT_HOST.SLOTS,
     fileNameSmall: SkeletalPathDefine._FORTUNET_TIGER_S,
     fileNameLarge: SkeletalPathDefine._FORTUNET_TIGER_L,

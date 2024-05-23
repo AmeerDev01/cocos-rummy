@@ -3,9 +3,10 @@ import WebSocketToDo from "../../common/WebSocketToDo"
 import { listenerFactoy } from "../../common/listenerFactoy"
 import { initConfig, subGameList } from "../../hall/config"
 import config from "./config"
-import { addToastAction, setLoadingAction } from "../../hall/store/actions/baseBoard"
+import { ToastType, addToastAction, setLoadingAction } from "../../hall/store/actions/baseBoard"
 import store, { getStore } from "./store"
-import { lang } from "../../hall"
+import { global, lang } from "../../hall"
+import { SKT_OPERATION, WebSocketDriver } from "../../common/WebSocketStarter"
 
 export enum SKT_MAG_TYPE {
   /**认证 */
@@ -48,48 +49,114 @@ export enum SKT_MAG_TYPE {
   ERROR_MSG = "105201",
 }
 
-export const sktMsgListener = listenerFactoy<SKT_MAG_TYPE>()
-export let sktInstance: WebSocketToDo<SKT_MAG_TYPE> = null
+export let fishWebSocketDriver: WebSocketDriver<SKT_MAG_TYPE> = null
 export default () => {
-  const dispatch = getStore().dispatch
   return new Promise((resolve, reject) => {
-    if (sktInstance) {
-      resolve(sktInstance)
-    } else {
-      sktInstance = new WebSocketToDo<SKT_MAG_TYPE>()
-      !config.isTest && initConfig().then(() => {
-        let gameIdTmp = config.gameId;
-        let wsUrl = config.testConfig.wsUrl;
-        if (!config.testConfig.wsUrl) {
-          const { gameId, websocketUrl } = subGameList.find(i => i.gameId === config.gameId)
-          wsUrl = websocketUrl;
-          gameIdTmp = gameId;
+    initConfig().then(() => {
+      const { gameId, gameHost } = subGameList.find(i => i.gameId === config.gameId)
+      window.HALL_GLOBAL.wsInstance.initSocket().then(() => {
+        fishWebSocketDriver = new WebSocketDriver<SKT_MAG_TYPE>(gameId, gameHost)
+        fishWebSocketDriver.filterData = (data, source) => {
+          if (source.operation === SKT_OPERATION.RECOVER) {
+            gameLogin()
+            return
+          }
+          if (data.success) {
+            return {
+              data: data.data,
+              error: undefined
+            }
+          } else {
+            let error = ''
+            if (data.success === undefined) {
+              //数据格式错误
+              error = 'data format error'
+              console.error('data format error', data)
+            } else {
+              error = data.reason || 'error'
+              console.error(data.reason)
+            }
+            global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.SocketDataError, {}, { placeStr: "服务数据错误" }), type: ToastType.ERROR }))
+            return {
+              data: '', error
+            }
+          }
         }
-        sktInstance.init(config.sktCode, gameIdTmp, wsUrl, {
-          onMessage: (code, data, error: string) => {
-            sktMsgListener.dispath(code, data, error)
-          },
-          onDataFail: (data: any) => {
-            dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDateFail, {}, { placeStr: "连接失败" }) }))
-          },
-          onAnthFail: () => {
-            dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "Auth Faild" }) }))
-          },
-          onDisconnect: (data: any) => {
-            dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDisconnect, {}, { placeStr: "socket disconnect" }) }))
-          },
-          onReConnect: () => true
-        })
-        sktInstance.initSocket().then(() => {
-          resolve(sktInstance)
-        })
+        resolve(fishWebSocketDriver)
       })
+      // window.HALL_GLOBAL.wsInstance.eventListener.add(EVEVT_TYPE.RECONNECT_SUCCESS, 'fruit777', () => {
+        
+      // })
+    }).catch((e) => {
+      reject(e)
+    })
+  })
+}
+
+export const gameLogin = () => {
+  const msgObj = fishWebSocketDriver.loginGame(SKT_MAG_TYPE.JOIN_ROOM)
+  msgObj.bindReceiveHandler((message) => {
+    if (!message.data.success) {
+      // global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "认证失败" }) })
+      global.closeSubGame({ confirmContent: message.data.reason })
     }
+  })
+  //超时
+  msgObj.bindTimeoutHandler(() => {
+    global.closeSubGame({ confirmContent: lang.write(k => k.WebSocketModule.SocketMsgTimeOut, {}, { placeStr: "对不起，网络超时" }) })
+    return false
   })
 }
 
 export const removeInstance = () => {
-  sktMsgListener && sktMsgListener.removeAll()
-  sktInstance && sktInstance.close()
-  sktInstance = null
+  fishWebSocketDriver && fishWebSocketDriver.logoutGame(SKT_MAG_TYPE.QUIT_ROOM)
+  window.HALL_GLOBAL.wsInstance.eventListener.removeById('fish')
 }
+
+// export const sktMsgListener = listenerFactoy<SKT_MAG_TYPE>()
+// export let sktInstance: WebSocketToDo<SKT_MAG_TYPE> = null
+// export default () => {
+//   const dispatch = getStore().dispatch
+//   return new Promise((resolve, reject) => {
+//     if (sktInstance) {
+//       resolve(sktInstance)
+//     } else {
+//       sktInstance = new WebSocketToDo<SKT_MAG_TYPE>()
+//       !config.isTest && initConfig().then(() => {
+//         let gameIdTmp = config.gameId;
+//         let wsUrl = config.testConfig.wsUrl;
+//         if (!config.testConfig.wsUrl) {
+//           const { gameId, websocketUrl } = subGameList.find(i => i.gameId === config.gameId)
+//           wsUrl = websocketUrl;
+//           gameIdTmp = gameId;
+//           // wsUrl = "ws://192.168.110.244:10018/ws";
+//           // gameIdTmp = 17;
+//         }
+//         sktInstance.init(config.sktCode, gameIdTmp, wsUrl, {
+//           onMessage: (code, data, error: string) => {
+//             sktMsgListener.dispath(code, data, error)
+//           },
+//           onDataFail: (data: any) => {
+//             dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDateFail, {}, { placeStr: "连接失败" }) }))
+//           },
+//           onAnthFail: () => {
+//             dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "Auth Faild" }) }))
+//           },
+//           onDisconnect: (data: any) => {
+//             dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDisconnect, {}, { placeStr: "socket disconnect" }) }))
+//           },
+//           onReConnect: () => true
+//         })
+//         sktInstance.initSocket().then(() => {
+//           resolve(sktInstance)
+//         })
+//       })
+//     }
+//   })
+// }
+
+// export const removeInstance = () => {
+//   sktMsgListener && sktMsgListener.removeAll()
+//   sktInstance && sktInstance.close()
+//   sktInstance = null
+// }

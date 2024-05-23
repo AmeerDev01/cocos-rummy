@@ -1,4 +1,4 @@
-import { Node, Prefab, Component, assetManager, instantiate, find, tween, UIOpacity, BlockInputEvents } from "cc"
+import { Node, Prefab, Component, assetManager, instantiate, find, tween, UIOpacity, BlockInputEvents, sys } from "cc"
 import { getStore } from "../hall/store"
 import { BaseComponent } from "./BaseComponent";
 import { EffectType, EnterOption, getEffectByType } from "../utils/NodeIOEffect";
@@ -143,7 +143,11 @@ abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
             this.unMountCallBack()
             reslove(true)
           } catch (e) {
-            console.error(e)
+            if (sys.os === sys.OS.ANDROID) {
+              console.error("ViewModel:",JSON.stringify(e))
+            } else {
+              console.error(e)
+            }
             reslove(true)
           }
         }

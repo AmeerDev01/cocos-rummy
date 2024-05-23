@@ -352,7 +352,8 @@ export const verifyBetResultData = (data: RollerLaunchResult) => {
 /**计算下注金额 */
 export const calBetAmount = (positionId: number) => {
   const amountInfo = config.betSwitcher[0].amount.find(v => v.positionId === positionId);
-  return config.betAmount * amountInfo.value;
+  let result = config.betAmount.mul(config.betAmount, amountInfo.value)
+  return result;
 }
 
 /**

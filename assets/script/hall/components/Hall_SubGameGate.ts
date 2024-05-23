@@ -99,6 +99,9 @@ export class Hall_SubGameGate extends BaseComponent<IState, IProps, IEvent> {
 				//老鼠游戏没上
 				return
 			}
+			// subGameList.forEach(i => {
+			// 	i.status = GameState.WORKING
+			// })
 			const hallGameGate: HallGameGateType = subGameList.find(i => i.gameId === gameId)
 			if (!hallGameGate) {
 				return

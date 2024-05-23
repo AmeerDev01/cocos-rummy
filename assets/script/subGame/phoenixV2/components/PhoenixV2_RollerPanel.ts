@@ -271,9 +271,10 @@ export class PhoenixV2_RollerPanel extends BaseComponent<IState, IProps, IEvent>
 				const yuanBaoMagnification = rollerLaunchResult && rollerLaunchResult.dl.si[0].otherGameAttributesVo.yuanBaoMagnification;
 				this.updateWinloss(rollerLaunchResult,yuanBaoAmount);
 				// 元宝中奖框
+				const totalRewards = rollerLaunchResult && rollerLaunchResult.dl.si[0].totalRewards
 				mainViewModel.showDialogWin({
 					dialogType: DialogType.YUAN_BAO_WIN,
-					params: [yuanBaoAmount,yuanBaoMagnification],
+					params: [/*yuanBaoAmount,*/totalRewards,yuanBaoMagnification],	//测试非要这么改
 				},() => yuanBaoDialogCallBack())
 			})
 		} else {

@@ -3,7 +3,7 @@ import ViewModel, { StoreInject } from "../../../base/ViewModel"
 import { global, lang } from "../../../hall"
 import { Fish_RoomChoose, IEvent, IProps } from "../components/Fish_RoomChoose"
 import config from "../config"
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect"
+import { SKT_MAG_TYPE, fishWebSocketDriver } from "../socketConnect"
 import { getStore } from "../store"
 import { StateType } from "../store/reducer"
 import { EnterGameVo, RoomInfo } from "../type"
@@ -15,7 +15,7 @@ class RoomChooseViewModel extends ViewModel<Fish_RoomChoose, IProps, IEvent> {
     super('Fish_RoomChoose')
   }
   protected begin() {
-    sktMsgListener.addOnce(SKT_MAG_TYPE.AUTH, config.name, (data: EnterGameVo, error) => {
+    fishWebSocketDriver.sktMsgListener.addOnce(SKT_MAG_TYPE.AUTH, config.name, (data: EnterGameVo, error) => {
       if (error) {
         global.closeSubGame({
           confirmContent: lang.write(k => k.InitGameModule.GameBoardInit)
@@ -30,11 +30,11 @@ class RoomChooseViewModel extends ViewModel<Fish_RoomChoose, IProps, IEvent> {
 
     if (config.testConfig.wsUrl) {
       const token = sys.localStorage.getItem("token");
-      sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
+      fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.AUTH, {
         token
       })
     } else if (!config.isTest) {
-      sktInstance.sendSktMessage(SKT_MAG_TYPE.AUTH, {
+      fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.AUTH, {
         token: sys.localStorage.getItem("token"),
         gameId: config.gameId
       })
@@ -44,7 +44,7 @@ class RoomChooseViewModel extends ViewModel<Fish_RoomChoose, IProps, IEvent> {
       enterRoom: (roomInfo: RoomInfo) => {
         if (config.isTest) {
         } else {
-          sktInstance.sendSktMessage(SKT_MAG_TYPE.JOIN_ROOM, {
+          fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.JOIN_ROOM, {
             roomId: roomInfo.roomId
           })
         }

@@ -5,7 +5,7 @@ import { BulletManager } from "../../../common/fish/BulletManager";
 import { FishManager } from "../../../common/fish/FishManager";
 import { Fish_Room, IEvent, IProps } from "../components/Fish_Room"
 import config from "../config";
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect";
+import { SKT_MAG_TYPE, fishWebSocketDriver } from "../socketConnect";
 import { getStore } from "../store"
 import { StateType } from "../store/reducer"
 import { BatteryChangeVo, ChangeBatterySkinVo, ChipsChangeVo, EnterRoomVo, FireVo, FishDieInfo, FishInfo, HitFishVo, LockVo, MemInfo, OtherJoinRoomVo, Player, ProduceFishVo, ReadyVo, ResScenceVo, SeatInfo } from "../type";
@@ -62,59 +62,59 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
   private unListenerSocket() {
     console.log("unListenerSocket ============= ", this.isListenerWs);
     if (!this.isListenerWs) return;
-    sktMsgListener.remove(SKT_MAG_TYPE.GENERATE_FISH, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.SEND_BULLET, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.HIT_FISH, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.LOCK, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.CANCEL_LOCK, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.CHANGE_BATTERY, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.CHIPS_CHANGE, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.CHANGE_SCENCE, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.CHANGE_BATTERY_SKIN, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.REQ_SCENCE, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.OTHER_JOIN_ROOM, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.LEAVE_ROOM, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.EXIT_TABLE, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.GENERATE_FISH, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.SEND_BULLET, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.HIT_FISH, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.LOCK, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.CANCEL_LOCK, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.CHANGE_BATTERY, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.CHIPS_CHANGE, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.CHANGE_SCENCE, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.CHANGE_BATTERY_SKIN, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.REQ_SCENCE, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.OTHER_JOIN_ROOM, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.LEAVE_ROOM, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.EXIT_TABLE, config.name)
   }
 
   private listenerSocket() {
-    sktMsgListener.add(SKT_MAG_TYPE.GENERATE_FISH, config.name, (data: ProduceFishVo) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.GENERATE_FISH, config.name, (data: ProduceFishVo) => {
       this.addFish(data.fishs)
     })
-    sktMsgListener.add(SKT_MAG_TYPE.SEND_BULLET, config.name, (data: FireVo) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.SEND_BULLET, config.name, (data: FireVo) => {
       this.runSendBullet(data.playerId, data.angle, data.bulletId);
     })
-    sktMsgListener.add(SKT_MAG_TYPE.HIT_FISH, config.name, (data: HitFishVo) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.HIT_FISH, config.name, (data: HitFishVo) => {
       this.fishLstDeath(data.playerId, data.dies)
     })
-    sktMsgListener.add(SKT_MAG_TYPE.LOCK, config.name, (data: LockVo) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LOCK, config.name, (data: LockVo) => {
       this.lockFish(data.playerId, data.fishId);
     })
-    sktMsgListener.add(SKT_MAG_TYPE.CANCEL_LOCK, config.name, (data: LockVo) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.CANCEL_LOCK, config.name, (data: LockVo) => {
       this.unLockFish(data.playerId);
     })
-    sktMsgListener.add(SKT_MAG_TYPE.CHANGE_BATTERY, config.name, (data: BatteryChangeVo) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.CHANGE_BATTERY, config.name, (data: BatteryChangeVo) => {
       this.setBatteryBeishu(data.battery.playerId, data.battery.score, true, data.battery.power > 0)
     })
-    sktMsgListener.add(SKT_MAG_TYPE.CHIPS_CHANGE, config.name, (data: ChipsChangeVo) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.CHIPS_CHANGE, config.name, (data: ChipsChangeVo) => {
       this.updateScore(data.playerId, data.chips);
     })
-    sktMsgListener.add(SKT_MAG_TYPE.CHANGE_SCENCE, config.name, (data) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.CHANGE_SCENCE, config.name, (data) => {
       this.backgroundSceneManager.cutBackgroundScene(data.scene);
     })
-    sktMsgListener.add(SKT_MAG_TYPE.CHANGE_BATTERY_SKIN, config.name, (data: ChangeBatterySkinVo) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.CHANGE_BATTERY_SKIN, config.name, (data: ChangeBatterySkinVo) => {
       this.cutBattery(data.playerId, data.skin);
     })
-    sktMsgListener.add(SKT_MAG_TYPE.REQ_SCENCE, config.name, (data: ResScenceVo) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.REQ_SCENCE, config.name, (data: ResScenceVo) => {
       this.enterScene(data)
     })
-    sktMsgListener.add(SKT_MAG_TYPE.OTHER_JOIN_ROOM, config.name, (data: OtherJoinRoomVo) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.OTHER_JOIN_ROOM, config.name, (data: OtherJoinRoomVo) => {
       this.otherJoinRoom(data);
     })
-    sktMsgListener.add(SKT_MAG_TYPE.LEAVE_ROOM, config.name, (data) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.LEAVE_ROOM, config.name, (data) => {
       this.levelRoom(data.playerId);
     })
-    sktMsgListener.add(SKT_MAG_TYPE.EXIT_TABLE, config.name, (data) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.EXIT_TABLE, config.name, (data) => {
       this.levelRoom(data.playerId);
     })
     this.isListenerWs = true;
@@ -305,12 +305,12 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
       this.is_use_rotation = false;
     }
 
-    !config.isTest && sktInstance.sendSktMessage(SKT_MAG_TYPE.REQ_SCENCE, {});
+    !config.isTest && fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.REQ_SCENCE, {});
     // if (this.stage === 1) {
     // } else {
     //   this.backgroundSceneManager.cutBackgroundScene(1);
     //   if (this.seats.find(v => v.playerId + '' === config.selfUserId).ready !== 0) {
-    //     sktInstance.sendSktMessage(SKT_MAG_TYPE.READY, {});
+    //     fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.READY, {});
     //   }
     // }
   }
@@ -376,7 +376,7 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
     this.comp.hideSideBoard();
     this.viewNode.active = false;
 
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.EXIT_TABLE, {});
+    fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.EXIT_TABLE, {});
     this.backgroundSceneManager.quitRoom();
     this.batteryManager.removeAllBattery();
   }
@@ -410,19 +410,19 @@ class RoomViewModel extends ViewModel<Fish_Room, IProps, IEvent> {
   }
 
   private send_yrby_ReqFire(msg) {
-    !config.isTest && sktInstance.sendSktMessage(SKT_MAG_TYPE.SEND_BULLET, msg);
+    !config.isTest && fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.SEND_BULLET, msg);
   }
 
   private send_yrby_ReqLock(msg) {
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.LOCK, msg);
+    fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.LOCK, msg);
   }
 
   private send_yrby_ReqCancelLock(msg) {
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.CANCEL_LOCK, msg);
+    fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.CANCEL_LOCK, msg);
   }
 
   private send_yrby_ReqSwitchBattery(msg) {
-    sktInstance.sendSktMessage(SKT_MAG_TYPE.CHANGE_BATTERY, msg);
+    fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.CHANGE_BATTERY, msg);
   }
 
   public connect() {

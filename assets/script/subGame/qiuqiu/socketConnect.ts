@@ -50,9 +50,11 @@ export default () => {
         let gameIdTmp = config.gameId;
         let wsUrl = config.testConfig.wsUrl;
         if (!config.testConfig.wsUrl) {
-          const { gameId, websocketUrl } = subGameList.find(i => i.gameId === config.gameId)
-          wsUrl = websocketUrl;
-          gameIdTmp = gameId;
+          // const { gameId, websocketUrl } = subGameList.find(i => i.gameId === config.gameId)
+          // wsUrl = websocketUrl;
+          // gameIdTmp = gameId;
+          wsUrl = "ws://192.168.110.243:10016/ws";
+          gameIdTmp = 4;
         }
         sktInstance.init(config.sktCode, gameIdTmp, wsUrl, {
           onMessage: (code, data) => {
@@ -60,7 +62,7 @@ export default () => {
           },
           onDataFail: (data: any) => {
             dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDateFail, {}, { placeStr: "连接失败" }) }))
-            dispatch(setLoadingAction({ isShow: false }))
+            dispatch(setLoadingAction({ isShow: false, flagId: "" }))
           },
           onAnthFail: () => {
             dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "Auth Faild" }) }))

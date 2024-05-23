@@ -124,7 +124,11 @@ export abstract class BaseComponent<IState, IProps, IEvent> extends Component {
           try {
             self.useProps(key as keyof IProps, { pre: oldValue, cur: value })
           } catch (e) {
-            console.error(e)
+            if (sys.os === sys.OS.ANDROID) {
+              console.error("BaseComponent",JSON.stringify(e))
+            } else {
+              console.error(e)
+            }
           }
         }
         return true

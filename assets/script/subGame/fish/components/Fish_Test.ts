@@ -4,7 +4,7 @@ import { mainViewModel } from '../index';
 import { fishBackgroundConfig } from '../config/ByBackgroundConfig';
 import { fishConfig } from '../config/ByFishConfig';
 import { Shake } from '../../../utils/Shake';
-import { SKT_MAG_TYPE, sktMsgListener } from '../socketConnect';
+import { SKT_MAG_TYPE, fishWebSocketDriver } from '../socketConnect';
 import { EnterGameVo, EnterRoomVo } from '../type';
 import config from '../config';
 import { fishCommondConfig } from '../config/ByCommonConfig';
@@ -99,7 +99,7 @@ export class Fish_Test extends BaseComponent<IState, IProps, IEvent> {
 					}
 				]
 			}
-			sktMsgListener.dispath(SKT_MAG_TYPE.JOIN_ROOM, enterRoomVo);
+			fishWebSocketDriver.sktMsgListener.dispath(SKT_MAG_TYPE.JOIN_ROOM, enterRoomVo);
 
 			const scence = {
 				/**场景id */
@@ -128,7 +128,7 @@ export class Fish_Test extends BaseComponent<IState, IProps, IEvent> {
 			}
 
 			window.setTimeout(() => {
-				sktMsgListener.dispath(SKT_MAG_TYPE.REQ_SCENCE, scence);
+				fishWebSocketDriver.sktMsgListener.dispath(SKT_MAG_TYPE.REQ_SCENCE, scence);
 			}, 100)
 		})
 		this.propertyNode.props_change_bg.on(Node.EventType.TOUCH_END, () => {

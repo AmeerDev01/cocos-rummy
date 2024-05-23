@@ -20,7 +20,9 @@ export class Fish_RoomChoose extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	protected propertyNode = {
-		props_room: new Node(),
+		props_room_1: new Node(),
+		props_room_2: new Node(),
+		props_room_3: new Node(),
 		props_exit_game: new Node(),
 	}
 	public props: IProps = {
@@ -38,7 +40,7 @@ export class Fish_RoomChoose extends BaseComponent<IState, IProps, IEvent> {
 	}
 
 	protected bindEvent(): void {
-		this.propertyNode.props_room.on(Node.EventType.TOUCH_END, () => {
+		this.propertyNode.props_room_1.on(Node.EventType.TOUCH_END, () => {
 			this.events.enterRoom(this.props.roomInfos[3])
 		})
 		this.propertyNode.props_exit_game.on(Node.EventType.TOUCH_END, () => {

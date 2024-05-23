@@ -44,7 +44,7 @@ import { fishMusicEffectConfig } from "../config/ByMusicEffectConfig";
 import { fishBgmConfig } from "../config/ByBgmConfig";
 import RoomChooseViewModel from "./RoomChooseViewModel";
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine";
-import { SKT_MAG_TYPE, sktInstance, sktMsgListener } from "../socketConnect";
+import { SKT_MAG_TYPE, fishWebSocketDriver } from "../socketConnect";
 import config from "../config";
 import RoomViewModel from "./RoomViewModel";
 import { EnterRoomVo, ErrorMsgVo } from "../type";
@@ -285,7 +285,7 @@ class MainViewModel extends ViewModel<Fish_Main, IProps, IEvent> {
 
   private initUI() {
     this.send_yrby_ReqHit = (msg) => {
-      !config.isTest && sktInstance.sendSktMessage(SKT_MAG_TYPE.HIT_FISH, msg);
+      !config.isTest && fishWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.HIT_FISH, msg);
     }
   }
 
@@ -406,14 +406,14 @@ class MainViewModel extends ViewModel<Fish_Main, IProps, IEvent> {
   }
 
   private listenerSocket() {
-    sktMsgListener.add(SKT_MAG_TYPE.JOIN_ROOM, config.name, (data: EnterRoomVo, error: string) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.JOIN_ROOM, config.name, (data: EnterRoomVo, error: string) => {
       // data.members.forEach(v=>{
       //   this.roomViewModel.enterRoom('1', v)
       // })
       // this.backgroundSceneManager.cutBackgroundScene(0);
       this.roomViewModel.enterRoom(data)
     })
-    sktMsgListener.add(SKT_MAG_TYPE.ERROR_MSG, config.name, (data: ErrorMsgVo, error: string) => {
+    fishWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.ERROR_MSG, config.name, (data: ErrorMsgVo, error: string) => {
       if (data.msgId === 32) {
         global.hallDispatch(addToastAction({ content: '余额低于下限', type: ToastType.NORMAL }))
       } else if (data.msgId === 33) {
@@ -425,8 +425,8 @@ class MainViewModel extends ViewModel<Fish_Main, IProps, IEvent> {
   }
 
   private unListenerSocket() {
-    sktMsgListener.remove(SKT_MAG_TYPE.JOIN_ROOM, config.name)
-    sktMsgListener.remove(SKT_MAG_TYPE.ERROR_MSG, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.JOIN_ROOM, config.name)
+    fishWebSocketDriver.sktMsgListener.remove(SKT_MAG_TYPE.ERROR_MSG, config.name)
   }
 
   public connect() {

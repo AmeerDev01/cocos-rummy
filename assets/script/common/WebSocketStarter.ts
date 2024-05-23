@@ -370,6 +370,7 @@ export class SktMessager<SKT_TYPE> {
       // console.error(`发送请求········游戏id:${this.gameId},host:${this.host},随机信息id:${this.messageId},具体操作:${this.operation},传参:`,this.payLoad || '')
       const data = JSON.stringify(this.payLoad || '')
       this.ws.send(`${this.messageId}|${this.operation}|${this.host}|${this.sktCode}|${this.gameId}|${data.length}|${data}`)
+      // console.error(`${this.messageId}|${this.operation}|${this.host}|${this.sktCode}|${this.gameId}|${data.length}|${data}`)
       this.sendTime = Date.now()
       timeOut && window.setTimeout(() => {
         if (this && !this.receiveData && this.timeoutHandler) {

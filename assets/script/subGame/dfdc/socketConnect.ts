@@ -33,15 +33,15 @@ export default () => {
     } else {
       sktInstance = new WebSocketToDo<SKT_MAG_TYPE>()
       initConfig().then(() => {
-        const { gameId, websocketUrl } = subGameList.find(i => i.gameId === config.gameId)
-        sktInstance.init(config.sktCode, gameId, websocketUrl, {
-          // sktInstance.init(config.sktCode, 13, "ws://192.168.110.243:18004/ws", {
+        // const { gameId, websocketUrl } = subGameList.find(i => i.gameId === config.gameId)
+        // sktInstance.init(config.sktCode, gameId, websocketUrl, {
+          sktInstance.init(config.sktCode, 13, "ws://192.168.110.243:18004/ws", {
           onMessage: (code, data, error) => {
             sktMsgListener.dispath(code, data || undefined, error)
           },
           onDataFail: (data: any) => {
             dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectDateFail, {}, { placeStr: "连接失败" }) }))
-            dispatch(setLoadingAction({ isShow: false }))
+            dispatch(setLoadingAction({ isShow: false, flagId: "" }))
           },
           onAnthFail: () => {
             dispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.socketConnectAuthFaild, {}, { placeStr: "Auth Faild" }) }))

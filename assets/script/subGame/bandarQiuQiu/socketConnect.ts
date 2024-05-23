@@ -53,9 +53,9 @@ export default () => {
     } else {
       sktInstance = new WebSocketToDo<SKT_MAG_TYPE>()
       initConfig().then(() => {
-        const { gameId, websocketUrl } = subGameList.find(i => i.gameId === config.gameId)
-        sktInstance.init(config.sktCode, gameId, websocketUrl, {
-          // sktInstance.init(config.sktCode, 16, "ws://192.168.110.243:18005/ws", {
+        // const { gameId, websocketUrl } = subGameList.find(i => i.gameId === config.gameId)
+        // sktInstance.init(config.sktCode, gameId, websocketUrl, {
+          sktInstance.init(config.sktCode, 16, "ws://192.168.110.243:18005/ws", {
           onMessage: (code, data, error) => {
             sktMsgListener.dispath(code, data || undefined, error)
           },

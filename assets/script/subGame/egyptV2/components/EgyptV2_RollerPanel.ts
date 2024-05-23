@@ -395,7 +395,8 @@ export class EgyptV2_RollerPanel extends BaseComponent<IState, IProps, IEvent> {
 		egyptv2_Audio.playOneShot(SoundPathDefine.sunGodNum)
 		tween(cloneNode).to(beetleFlyTime, { position: endPos }).call(() => {
 			cloneNode.destroy();
-			sunGoldIcon.setAmount(sunGoldIcon.getAmount() + egyptV2Icon.getAmount());
+			let result = sunGoldIcon.getAmount().add(sunGoldIcon.getAmount(), egyptV2Icon.getAmount())
+			sunGoldIcon.setAmount(result);
 			index++;
 			if (index >= nodes.length) {
 				done && done();
