@@ -143,11 +143,7 @@ abstract class ViewModel<C extends BaseComponent<any, P, E>, P, E> {
             this.unMountCallBack()
             reslove(true)
           } catch (e) {
-            if (sys.os === sys.OS.ANDROID) {
-              console.error("ViewModel:",JSON.stringify(e))
-            } else {
-              console.error(e)
-            }
+            console.error(e)
             reslove(true)
           }
         }

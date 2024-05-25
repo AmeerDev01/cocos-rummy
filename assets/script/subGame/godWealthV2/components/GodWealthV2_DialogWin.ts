@@ -107,9 +107,6 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 
 
 	protected useProps(key: keyof IProps, value: { pre: any, cur: any }) {
-		if (sys.os === sys.OS.ANDROID) {
-			console.error("GodWealthV2_DialogWin", JSON.stringify(key), JSON.stringify(value))
-		}
 		if (this.node && this.node.isValid) {
 
 			if (key === 'dialogInfo') {
@@ -117,43 +114,31 @@ export class GodWealthV2_DialogWin extends BaseComponent<IState, IProps, IEvent>
 
 				if (value.cur) {
 					this.node.active = true;
+					//安卓端动画有问题，暂时先都用jackpot
+					let lbl_des = this.propertyNode.props_jackpot.getChildByName("lbl_des").getComponent(Label)
 					if (this.props.dialogInfo.dialogType === DialogType.FREE_GAME_ENTRY) {
-						if (sys.os === sys.OS.ANDROID) {
-							console.error("showFreeEntry", JSON.stringify(this.props.dialogInfo))
-						}
 						this.showFreeEntry();
 					} else if (this.props.dialogInfo.dialogType === DialogType.BAO_HE_GAME_ENTRY) {
-						if (sys.os === sys.OS.ANDROID) {
-							console.error("showBaoHeEntry", JSON.stringify(this.props.dialogInfo))
-						}
 						this.showBaoHeEntry();
 					} else if (this.props.dialogInfo.dialogType === DialogType.BIG_WIN) {
-						if (sys.os === sys.OS.ANDROID) {
-							console.error("showBigWin", JSON.stringify(this.props.dialogInfo))
-						}
-						this.showBigWin();
+						// this.showBigWin();
+						this.showJackpot();
+						lbl_des.string = "BIG_WIN"
 					} else if (this.props.dialogInfo.dialogType === DialogType.JACKPOT) {
-						this.showBigWin();
+						this.showJackpot();
+						lbl_des.string = "JACKPOT"
 					} else if (this.props.dialogInfo.dialogType === DialogType.MEGA_WIN) {
-						if (sys.os === sys.OS.ANDROID) {
-							console.error("showMegaWin", JSON.stringify(this.props.dialogInfo))
-						}
-						this.showMegaWin();
+						// this.showMegaWin();
+						this.showJackpot();
+						lbl_des.string = "MEGA_WIN"
 					} else if (this.props.dialogInfo.dialogType === DialogType.SUPER_WIN) {
-						if (sys.os === sys.OS.ANDROID) {
-							console.error("showSuperWin", JSON.stringify(this.props.dialogInfo))
-						}
-						this.showSuperWin();
+						// this.showSuperWin();
+						this.showJackpot();
+						lbl_des.string = "SUPER_WIN"
 					} else if (this.props.dialogInfo.dialogType === DialogType.FREE_GAME_SETTLEMENT) {
 						// console.log("this.props.dialogInfo.dialogType",this.props.dialogInfo.dialogType);
-						if (sys.os === sys.OS.ANDROID) {
-							console.error("showFreeSettlement", JSON.stringify(this.props.dialogInfo))
-						}
 						this.showFreeSettlement();
 					} else if (this.props.dialogInfo.dialogType === DialogType.BAO_HE_GAME_SETTLEMENT) {
-						if (sys.os === sys.OS.ANDROID) {
-							console.error("showBaoHeSettlement", JSON.stringify(this.props.dialogInfo))
-						}
 						this.showBaoHeSettlement();
 					}
 				} else {

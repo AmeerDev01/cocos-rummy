@@ -495,38 +495,30 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		})
 		this.propertyNode.props_indicator_toggle.active = false;
 		fetcher.send(ApiUrl.GAME_SWIPE, {}, "get", {}).then((data: Array<SwipeData>) => {
-				console.log(data);
-				
+
 			if (!data || (data && !Array.isArray(data))) {
 				global.hallDispatch(addToastAction({ content: lang.write(k => k.BaseBoardModule.DataException, {}, { placeStr: "数据异常" }), type: ToastType.ERROR, forceLandscape: false }))
 				return
 			}
-			data.forEach((item, index) => {
+			data.forEach((item) => {
 				assetManager.loadRemote(item.swiperUrl, (err, asset: ImageAsset) => {
 					if (this.propertyNode && !err) {
 						const sp = SpriteFrame.createWithImage(asset);
 						item.sp = sp;
 						this.swiperDatas.push(item);
+						if (this.swiperDatas.length === data.length && this.swiperDatas.length > 1) {
+							this.propertyNode.props_page_template.active = false
+							this.addPageViewNode(this.swiperDatas.length - 1);
+							this.swiperDatas.forEach((v, i) => {
+								this.addPageViewNode(i);
+								this.createIndicatorToggle(v);
+							})
+							this.addPageViewNode(0);
+							this.swipeTimeScoll();
+						}
 					}
 					if (err) {
 						global.hallDispatch(addToastAction({ content: lang.write(k => k.HallModule.LoadFaild, {}, { placeStr: "加载资源失败" }), type: ToastType.ERROR, forceLandscape: false }))
-					}
-					if (this.propertyNode && index + 1 === data.length) {
-						this.propertyNode.props_page_template.active = false
-						// this.scrollPageView()
-						console.error(asset);
-						
-						if (this.swiperDatas.length > 0) {
-							this.addPageViewNode(this.swiperDatas.length - 1);
-							if (this.swiperDatas.length > 1) {
-								this.swiperDatas.forEach((v, i) => {
-									this.addPageViewNode(i);
-									this.createIndicatorToggle(v);
-								})
-								this.addPageViewNode(0);
-								this.swipeTimeScoll();
-							}
-						}
 					}
 				})
 			})

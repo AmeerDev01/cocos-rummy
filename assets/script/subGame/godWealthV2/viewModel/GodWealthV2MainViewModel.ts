@@ -337,13 +337,6 @@ class GodWealthV2MainViewModel extends ViewModel<GodWealthV2_Main, IProps, IEven
     let godWealthV2DialogWinViewModel = new GodWealthV2DialogWinViewModel().mountView(sourceManageSeletor().getFile(PrefabPathDefine.DIALOG_WIN).source)
       .appendTo(this.viewNode).connect();
     // console.log("this.comp.props.autoLauncherInfo",this.comp.props.autoLauncherInfo);
-    if (sys.os === sys.OS.ANDROID) {
-      console.error("godWealthV2DialogWinViewModel.setProps",JSON.stringify({
-        autoLauncherInfo: this.comp.props.autoLauncherInfo,
-        dialogInfo: dialogInfo,
-        gameTypeInfo: this.comp.props.gameTypeInfo,
-      }))
-    }
     godWealthV2DialogWinViewModel.setProps({
       autoLauncherInfo: this.comp.props.autoLauncherInfo,
       dialogInfo: dialogInfo,

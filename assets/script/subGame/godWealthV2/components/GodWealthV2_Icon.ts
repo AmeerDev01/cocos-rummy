@@ -131,7 +131,11 @@ export class GodWealthV2Icon {
 
     const skeletonData = sourceManageSeletor().getFile(this.iconConfig.skeletonName).source;
     this.skeleton.skeletonData = skeletonData;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
+      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    } else {
+      this.skeleton.clearTracks()
+    }
     this.sprite.spriteFrame = sourceManageSeletor().getFile(this.iconConfig.fileName).source;
 
   }
@@ -154,7 +158,11 @@ export class GodWealthV2Icon {
     }
 
     this.faceNode.active = false;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[1], loop);
+    if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
+      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], loop);
+    } else {
+      this.skeleton.clearTracks()
+    }
     if (!loop && this.iconConfig.id === IconId.SCATTER) {// && mainViewModel.rollerPanelViewModel.comp.isAllEnd
 
       this.faceAnimationNode.getComponent(sp.Skeleton).timeScale = 2.5;
@@ -181,7 +189,11 @@ export class GodWealthV2Icon {
 
     this.amountNode.setSiblingIndex(this.node.children.length);
 
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[1], true);
+    if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
+      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], true);
+    } else {
+      this.skeleton.clearTracks()
+    }
   }
 
   public pauseWin() {
@@ -190,7 +202,11 @@ export class GodWealthV2Icon {
       this.skeleton.clearTracks()
     }
     // this.skeleton.clearTracks()
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
+      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    } else {
+      this.skeleton.clearTracks()
+    }
   }
 
   /**隐藏普通中奖 */
@@ -200,7 +216,11 @@ export class GodWealthV2Icon {
     this.borderNode.active = false;
     this.borderNode.removeFromParent();
     this.faceNode.active = true;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
+      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    } else {
+      this.skeleton.clearTracks()
+    }
   }
 
   /**隐藏宝盒中奖 */
@@ -210,7 +230,11 @@ export class GodWealthV2Icon {
     this.borderNode2.active = false;
     this.borderNode2.removeFromParent();
     this.faceNode.active = true;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
+      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    } else {
+      this.skeleton.clearTracks()
+    }
   }
 
   /**是否使用 */

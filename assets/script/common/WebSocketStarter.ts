@@ -145,14 +145,6 @@ export default class WebSocketStarter extends Singleton {
           const [messageId, operation, host, sktCode, gameIdStr, length, dataBody] = ev.data.toString().split('|')
           const gameId: number = +gameIdStr
           let data = dataBody
-          if (operation !== SKT_OPERATION.HEART) {
-            // try {
-            //   let tempData = JSON.parse(dataBody)
-            //   console.error(`返回请求···········游戏id:${gameId},host:${host},随机信息id:${messageId},具体操作:${operation},传参:`,tempData)
-            // } catch(e) {
-            //   console.log('skt json data error', dataBody, e)
-            // }
-          }
           if (operation === SKT_OPERATION.HEART) {
             this.heart_beatList = []
             this.eventListener.dispath(EVEVT_TYPE.HEART_BEAT, {})
@@ -163,6 +155,7 @@ export default class WebSocketStarter extends Singleton {
             // operation === SKT_OPERATION.ENCRYPT && (data = AES.decode(data))
             try {
               data = JSON.parse(dataBody)
+              // console.error(`返回请求···········游戏id:${gameId},host:${host},随机信息id:${messageId},具体操作:${operation},传参:`,data)
             } catch (e) {
               console.log('skt json data error', dataBody, e)
               // this.eventListener.dispath(EVEVT_TYPE.MESSAGE, { messageId, operation, host, sktCode, gameId: +gameId, length: +length, data: dataBody })
