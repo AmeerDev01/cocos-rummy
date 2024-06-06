@@ -168,7 +168,6 @@ export class GameHandleZCH extends Component {
     }
     /**收到投注消息 */
     onBetS_C() {
-        console.error("收到投注消息")
         let isFree = BaseGameDataMgeZCH.Instance.getCurrIsFreeGame();
         let isFirst = BaseGameDataMgeZCH.Instance.getFirstFree();
         if (isFree || isFirst) {
@@ -221,7 +220,6 @@ export class GameHandleZCH extends Component {
     }
     /**显示中将金币  0初始化1转动时2转轴结束时3加金币*/
     onShowCurrWin(data: { type: number }) {
-        console.error("0初始化1转动时2转轴", data.type)
         if (data.type == 0) {
             this.ndWinGold.getComponent(LabTweenNumZCH).showLab(0, false);
             this.ndWinGold.getComponent(Label).string = "GOOD LUCK";
@@ -316,7 +314,6 @@ export class GameHandleZCH extends Component {
      * 3 点击 stop
     */
     setSpinBtn(type: number) {
-        console.error("设置按钮状态", type)
 
         this.currSpinType = type;
         this.ndSpin1.active = false;
@@ -349,7 +346,6 @@ export class GameHandleZCH extends Component {
             this.ndNull.active = false;
         }
         BaseSoundMgeZCH.Instance.playSound(GameConfigZCH.soundData.btn, false);
-        console.error("点击菜单---------", this.togMenu.isChecked)
     }
     /**点击空白按钮 */
     onTouchNull() {
@@ -433,7 +429,6 @@ export class GameHandleZCH extends Component {
     }
     /**点击退出按钮 */
     onTouchExitGame() {
-        console.error("点击退出---")
         BaseSoundMgeZCH.Instance.playSound(GameConfigZCH.soundData.btn, false);
         BaseSocketZCH.Instance.exitGame();
         // BaseSocketZCH.Instance.release();
@@ -539,7 +534,6 @@ export class GameHandleZCH extends Component {
     }
     /**显示玩家金币 */
     showGold(gold: number, gold2: number, isTween: boolean, piaoZi: boolean) {
-        console.error("显示玩家金币", gold)
         this.ndGold.getComponent(LabTweenNumZCH).showLab(gold, isTween, 1.5);
         if (piaoZi) {
             let nd = instantiate(this.ndGold);

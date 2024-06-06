@@ -113,7 +113,6 @@ export class GameLoadingZCH extends Component {
         this.progress.progress = num / 100;
     }
     bet() {
-        console.error("点击下注")
         BaseSocketZCH.Instance.sendMsg({ positionId: 1 })
     }
     exitGame() {

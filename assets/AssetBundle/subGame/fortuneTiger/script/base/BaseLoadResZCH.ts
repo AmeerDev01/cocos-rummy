@@ -118,7 +118,6 @@ export class BaseLoadResZCH extends Component {
         }
         this._gameBundle = null;
         BaseLoadResZCH._baseLoadResZCH = null;
-        console.error("子游戏资源释放---", GameConfigZCH.gameInitData.bundleName)
     }
 }
 

@@ -158,7 +158,6 @@ export class BaseGameDataMgeZCH {
             }
             this.gameBetData.winLines.push(winLin);
         }
-        console.error(data);
 
         BaseEventZCH.Instance.emit(GameConfigZCH.wsReceive.bet);
     }
@@ -340,7 +339,6 @@ export class BaseGameDataMgeZCH {
                 }
                 list.push(list1);
             }
-            console.error(this.gameBetData.prizeList, this.freeIconList, list);
             return list;
         }
         return this.gameBetData.prizeList;

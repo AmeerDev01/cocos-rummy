@@ -128,7 +128,10 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 			}
 		})
 		hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.WINNING_BOX, "main", (data: WinningType, error) => {
-			if (error) return
+			if (error) {
+				console.error(error)
+				return
+			}
 			this.winningBoxVM && this.winningBoxVM.comp.pushWinningData(data, (this.comp.props.subGameInfo && this.comp.props.subGameInfo.isVertical))
 		})
 

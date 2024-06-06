@@ -100,7 +100,7 @@ export class Hall_BankPanel extends BaseComponent<IState, IProps, IEvent> {
 
 	protected initState() {
 		return {
-			showModel: ShowModelType.VERIFY
+			showModel: ShowModelType.SET_PWD
 		}
 	}
 
@@ -118,6 +118,8 @@ export class Hall_BankPanel extends BaseComponent<IState, IProps, IEvent> {
 					this.setState({ showModel: ShowModelType.MAIN_PANEL })
 					if (isToadyAutoLogin) {
 						setCookie('autoSafeLogin', 'true', 1)
+					} else {
+						setCookie('autoSafeLogin', 'true', 0)
 					}
 				})
 			})
@@ -185,6 +187,8 @@ export class Hall_BankPanel extends BaseComponent<IState, IProps, IEvent> {
 			} else {
 				if (getCookie("autoSafeLogin")) {
 					this.setState({ showModel: ShowModelType.MAIN_PANEL })
+				} else {
+					this.setState({ showModel: ShowModelType.VERIFY })
 				}
 			}
 		})

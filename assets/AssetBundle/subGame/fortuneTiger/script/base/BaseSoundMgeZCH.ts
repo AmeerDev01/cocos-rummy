@@ -44,12 +44,10 @@ export class BaseSoundMgeZCH extends Component {
         this.bgAudio = null;
         this.audioList = [];
         this.currList = [];
-        console.error("销毁---声音")
       
         BaseSoundMgeZCH._gameSoun = null;
     }
     init(node: Node) {
-        console.error("初始化---声音")
         if (!this.bgAudio) {
             let nd1: Node = new Node();
             this.bgAudio = nd1.addComponent(AudioSource);
@@ -61,7 +59,6 @@ export class BaseSoundMgeZCH extends Component {
     }
     /**监听 背景音乐设置开关 */
     onBgOpen(data) {
-        console.error("监听 背景音乐设置开关", data);
         this.soundData.musicOpen = data.open;
         this.setMusicOpen(data.open);
     }
@@ -86,7 +83,6 @@ export class BaseSoundMgeZCH extends Component {
         url = this.resUrl + url;
         BaseLoadResZCH.Instance.loadAudio(url, (err, ass: AudioClip) => {
             if (ass) {
-                console.error("播放声音----", url)
                 this.bgAudio.clip = ass;
                 this.bgAudio.loop = true;
                 this.bgAudio.playOnAwake = true;
@@ -178,7 +174,6 @@ export class BaseSoundMgeZCH extends Component {
         let url = this.resUrl + name;
         BaseLoadResZCH.Instance.loadAudio(url, (err, ass: AudioClip) => {
             if (ass) {
-                console.error("播放声音----", url)
                 if (this.soundData.soundOpen) {
                     let audio = this.getAudio();
                     audio.clip = ass;

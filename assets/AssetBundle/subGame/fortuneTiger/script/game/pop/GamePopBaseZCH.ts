@@ -21,7 +21,6 @@ export class GamePopBaseZCH extends Component {
     /**显示弹窗 */
     showPop(nd: Node, name: string, cd?: () => void) {
         this.showName = name;
-        console.error("添加节点-------", name)
         Tween.stopAllByTarget(this.ndPop);
         let opacity = this.ndPopBg.getComponent(UIOpacity);
         Tween.stopAllByTarget(opacity);

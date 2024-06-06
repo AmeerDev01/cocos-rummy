@@ -207,7 +207,6 @@ export class GameSpineMgeZCH extends Component {
     }
     /**播放wild 停止动画 */
     showWildSpine() {
-        console.error("播放wild")
         this.spineNum = 0;
         let list = BaseGameDataMgeZCH.Instance.getWildSpine();
         for (let i = 0; i < list.length; ++i) {
@@ -261,7 +260,6 @@ export class GameSpineMgeZCH extends Component {
                     if (!isLastFree) {
                         // this.showSpinOne(0);
                     }
-                    console.error("播放所有动画")
                     this.showBigWin();
                 }
             });

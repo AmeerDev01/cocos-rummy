@@ -89,7 +89,6 @@ export class TigerSpineZCH extends Component {
     }
     /**播放老虎动画 */
     showTiger(name: string, loop: boolean, cd: Function) {
-        console.error("播放老虎动画", name)
 
         this.currName = name;
         this.spTiger.setAnimation(0, name, loop);

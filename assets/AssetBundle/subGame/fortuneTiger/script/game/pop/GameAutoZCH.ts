@@ -49,7 +49,6 @@ export class GameAutoZCH extends Component {
             if (list[i].isChecked) {
                 this.closePop();
                 BaseEventZCH.Instance.emit(GameConfigZCH.publicEventName.autoBet, { index: i, num: this.autoList[i] });
-                console.error("点击了--", i)
                 return;
             }
         }

@@ -123,6 +123,7 @@ export class Hall_MailBox extends BaseComponent<IState, IProps, IEvent> {
 		this.propertyNode.props_btn_mail_delete.on(Node.EventType.TOUCH_END, () => {
 			ModalBox.Instance().show({ content: lang.write(k => k.HallModule.SureDeleteMail, {}, { placeStr: "您确定要删除此消息吗？" }), type: "Confirm" }, () => {
 				this.nowChooseMailItemIndex = this.state.chooseMailItemIndex - 1;
+				if (this.nowChooseMailItemIndex < 0) this.nowChooseMailItemIndex = 0;
 				this.events.onDeleteHandler(this.list[this.state.chooseMailItemIndex]).then(() => {
 					this.propertyNode.props_ToggleGroup_mail_left.children[this.state.chooseMailItemIndex].destroy()
 					this.list.splice(this.state.chooseMailItemIndex, 1);

@@ -1,4 +1,4 @@
-import { tween, Node, math, NodeEventType, view, ToggleContainer, EventHandler, Vec3, assetManager, ImageAsset, SpriteFrame, Texture2D, sp, log, sys, native, ScrollView, UITransform, instantiate } from "cc";
+import { tween, Node, math, NodeEventType, view, ToggleContainer, EventHandler, Vec3, assetManager, ImageAsset, SpriteFrame, Texture2D, sp, log, sys, native, ScrollView, UITransform, instantiate, screen } from "cc";
 import Fingerprint2 from "fingerprintjs2"
 import { BridgeCode, EventType } from "../common/bridge";
 import { createCopier } from "./fastCopy";
@@ -65,7 +65,7 @@ export const setByScreenScale = (target?: Node) => {
   //原配比
   const resSize = view.getDesignResolutionSize()
   const resRatio = resSize.width / resSize.height
-  const curSize = view.getFrameSize().width / view.getFrameSize().height
+  const curSize = screen.windowSize.width / screen.windowSize.height
   const result = resRatio / curSize
   // target.setScale(result, result)
   target && target.setScale(0.5, 0.5)

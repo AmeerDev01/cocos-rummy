@@ -61,7 +61,6 @@ export class GameRollZCH extends Component {
         this.isStop = false;
         this.isTouchStop = false;
         this.moveY = 36;
-        console.error("初始化显示")
     }
     showAllIcon() {
         for (let i = 0; i < this.iconGroup.children.length; ++i) {

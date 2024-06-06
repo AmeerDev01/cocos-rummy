@@ -27,7 +27,6 @@ export class GameShowZCH extends Component {
         if (name == "iconSpineEnd" || name == "iconSpineIng" || name == "showIocnSpr") {
 
         } else {
-            console.error("事件----》", name, "----", data)
         }
         switch (name) {
             case GameConfigZCH.gameEventName.setIconPos: {

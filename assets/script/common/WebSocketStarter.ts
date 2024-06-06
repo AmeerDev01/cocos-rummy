@@ -155,7 +155,7 @@ export default class WebSocketStarter extends Singleton {
             // operation === SKT_OPERATION.ENCRYPT && (data = AES.decode(data))
             try {
               data = JSON.parse(dataBody)
-              // console.error(`返回请求···········游戏id:${gameId},host:${host},随机信息id:${messageId},具体操作:${operation},传参:`,data)
+              console.log(`socket返回请求···········游戏id:${gameId},host:${host},随机信息id:${messageId},具体操作:${operation},参数:`,data)
             } catch (e) {
               console.log('skt json data error', dataBody, e)
               // this.eventListener.dispath(EVEVT_TYPE.MESSAGE, { messageId, operation, host, sktCode, gameId: +gameId, length: +length, data: dataBody })
@@ -360,10 +360,9 @@ export class SktMessager<SKT_TYPE> {
       this.ws.send(`${this.messageId}|${this.operation}`)
     } else {
       // const data = this.operation === SKT_OPERATION.ENCRYPT ? AES.encode(JSON.stringify(this.payLoad)) : JSON.stringify(this.payLoad)
-      // console.error(`发送请求········游戏id:${this.gameId},host:${this.host},随机信息id:${this.messageId},具体操作:${this.operation},传参:`,this.payLoad || '')
       const data = JSON.stringify(this.payLoad || '')
       this.ws.send(`${this.messageId}|${this.operation}|${this.host}|${this.sktCode}|${this.gameId}|${data.length}|${data}`)
-      // console.error(`${this.messageId}|${this.operation}|${this.host}|${this.sktCode}|${this.gameId}|${data.length}|${data}`)
+      console.log(`socket发送请求···········${this.messageId}|${this.operation}|${this.host}|${this.sktCode}|${this.gameId}|${data.length}|${data}`)
       this.sendTime = Date.now()
       timeOut && window.setTimeout(() => {
         if (this && !this.receiveData && this.timeoutHandler) {

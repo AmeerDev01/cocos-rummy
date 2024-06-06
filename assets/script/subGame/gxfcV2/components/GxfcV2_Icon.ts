@@ -106,7 +106,7 @@ export class GxfcV2Icon {
       // }
       const skeletonData = sourceManageSeletor().getFile(this.iconConfig.skeletonName).source;
       this.skeleton.skeletonData = skeletonData;
-      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+      this.skeleton.clearTracks()
       this.sprite.spriteFrame = sourceManageSeletor().getFile(this.iconConfig.fileName).source;
       !this.isPoolObject && this.destory();
     }
@@ -161,7 +161,11 @@ export class GxfcV2Icon {
 
     const skeletonData = sourceManageSeletor().getFile(this.iconConfig.skeletonName).source;
     this.skeleton.skeletonData = skeletonData;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
+      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    } else {
+      this.skeleton.clearTracks()
+    }
     this.sprite.spriteFrame = sourceManageSeletor().getFile(this.iconConfig.fileName).source;
 
   }
@@ -301,7 +305,11 @@ export class GxfcV2Icon {
     this.borderNode.removeFromParent();
 
     this.faceNode.active = true;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
+      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    } else {
+      this.skeleton.clearTracks()
+    }
 
     this.jinFaSkeleton.setAnimation(0, "static", false);
     this.jinFaFaceAnimationNode.active = false;
@@ -318,7 +326,11 @@ export class GxfcV2Icon {
     //   this.sprite.spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.icon_jinfa).source;
     //   this.skeleton.setAnimation(0, "static", false);
     // }
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
+      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    } else {
+      this.skeleton.clearTracks()
+    }
     if (this.jinFaFaceAnimationNode.active) {
       this.jinFaFaceAnimationNode.active = false;
       this.jinFaFaceNode.active = true;

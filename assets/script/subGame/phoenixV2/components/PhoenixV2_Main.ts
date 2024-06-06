@@ -208,7 +208,7 @@ export class PhoenixV2_Main extends BaseComponent<IState, IProps, IEvent> {
 		// console.log("key", key, "value", value);
 		if (this.node && this.node.isValid) {
 			if (key === 'betDropDownlist') {
-				this.showOrHideBetDropDownlist(value.cur)
+				// this.showOrHideBetDropDownlist(value.cur)
 			} else if (key === 'subGameAnimationPlayInfo') {
 				if (value.cur) {
 					this.createFlyBg();

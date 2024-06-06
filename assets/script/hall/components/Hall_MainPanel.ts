@@ -31,6 +31,7 @@ type SwipeData = {
 	jump: boolean,
 	sp: SpriteFrame,
 	toggle: Toggle,
+	sortId: number
 }
 
 export interface IState {
@@ -494,19 +495,21 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 			chooseTabName: ToggleTabName.ALL
 		})
 		this.propertyNode.props_indicator_toggle.active = false;
-		fetcher.send(ApiUrl.GAME_SWIPE, {}, "get", {}).then((data: Array<SwipeData>) => {
+		fetcher.send(ApiUrl.GAME_SWIPE, {}, "get", {}).then((data:any) => {
 
 			if (!data || (data && !Array.isArray(data))) {
 				global.hallDispatch(addToastAction({ content: lang.write(k => k.BaseBoardModule.DataException, {}, { placeStr: "数据异常" }), type: ToastType.ERROR, forceLandscape: false }))
 				return
 			}
-			data.forEach((item) => {
+			data.forEach((item, i) => {
 				assetManager.loadRemote(item.swiperUrl, (err, asset: ImageAsset) => {
 					if (this.propertyNode && !err) {
+						item.sortId = i
 						const sp = SpriteFrame.createWithImage(asset);
 						item.sp = sp;
 						this.swiperDatas.push(item);
 						if (this.swiperDatas.length === data.length && this.swiperDatas.length > 1) {
+							this.swiperDatas.sort((a, b) => a.sortId - b.sortId)
 							this.propertyNode.props_page_template.active = false
 							this.addPageViewNode(this.swiperDatas.length - 1);
 							this.swiperDatas.forEach((v, i) => {

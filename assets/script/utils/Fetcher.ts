@@ -38,13 +38,14 @@ export default class Fetcher<T> {
   private dispatch: redux.Dispatch
   private baseUrl: string
 
-  send(url: T, sendData: object = {}, method: 'post' | 'get' | 'delete' = 'post', headers?: {}, option?: {
+  send(url: string, sendData: object = {}, method: 'post' | 'get' | 'delete' = 'post', headers?: {}, option?: {
     isLoading?: boolean,
     dataVerify?: DataVerify,
     verifySampleData?: { [key: string]: any },
     /**是否防抖，默认值为true */
     isThrottler?: boolean,
   }): Promise<any> {
+    console.log(`http发送请求····url:${url},method:${method},sendData:`,sendData)
     return new Promise((reslove, reject) => {
       const param = {
         method,
@@ -71,6 +72,7 @@ export default class Fetcher<T> {
           this.dispatch(setLoadingAction({ isShow: false, flagId: url.toString() }))
           if (response.status === 200) {
             response.json().then(({ data, code, status, message }) => {
+              console.log(`http返回请求····code:${code},status:${status},message:${message},data:`,[data][0])
               if (status === "SUCCESS") {
                 let isDataPass = true
                 if (_option.dataVerify === DataVerify.ARRAY) {

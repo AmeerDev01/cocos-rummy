@@ -36,7 +36,7 @@ export class PhoenixV2Icon {
     this.node = instantiate(sourceManageSeletor().getFile(PrefabPathDefine.ICON).source);
     this.node.getComponent(UITransform).width = config.normalRollOption.singleRollerWidth;
     this.node.getComponent(UITransform).height = config.normalRollOption.singleRollerHeight;
-    
+
     this.iconComponent = this.node.addComponent(IconComponent)
 
     this.faceNode = getNodeByNameDeep("face", this.node);
@@ -63,7 +63,7 @@ export class PhoenixV2Icon {
 
   private listenerSkeletonEvent() {
     this.skeleton.setCompleteListener(() => {
-      this.iconComponent.scheduleOnce(()=>{
+      this.iconComponent.scheduleOnce(() => {
         if (this.node.isValid && this.callback) {
           this.callback && this.callback();
           this.callback = null;
@@ -137,12 +137,16 @@ export class PhoenixV2Icon {
 
     const skeletonData = sourceManageSeletor().getFile(this.iconConfig.skeletonName).source;
     this.skeleton.skeletonData = skeletonData;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
+      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    } else {
+      this.skeleton.clearTracks()
+    }
     // if (this.iconConfig.id === 12) {
-      
+
     //   console.log("this.iconConfig.fileName",this.iconConfig.fileName,this.iconConfig.skeletonName);
     // }
-    
+
     this.sprite.spriteFrame = sourceManageSeletor().getFile(this.iconConfig.fileName).source;
 
   }
@@ -156,7 +160,7 @@ export class PhoenixV2Icon {
     parentNode.addChild(this.faceAnimationNode)
     this.faceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
     // if (!this.faceAnimationNode.active) {
-      // this.faceAnimationNode.active = true;
+    // this.faceAnimationNode.active = true;
     //   if (!this.faceAnimationNode.parent) {
     //     parentNode.addChild(this.faceAnimationNode)
     //     this.faceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
@@ -186,7 +190,7 @@ export class PhoenixV2Icon {
         this.faceAnimationNode.active = false;
       }).playAnimation()
     } else {
-      
+
       this.skeleton.setAnimation(0, this.iconConfig.animationArr[1], loop);
     }
 
@@ -194,7 +198,7 @@ export class PhoenixV2Icon {
   }
 
   /**播放scatter进入小游戏动画 */
-  public playScatterWin(parentNode: Node, done, loop: boolean = false) {
+  public playScatterWin(parentNode: Node, loop: boolean = false) {
     const offset = new Vec3(this.iconConfig.distance[0], this.iconConfig.distance[1]);
     if (!this.faceAnimationNode.active) {
       this.faceAnimationNode.active = true;
@@ -279,7 +283,7 @@ export class PhoenixV2Icon {
     this.faceNode.active = true;
     this.yinBiNode.active = false;
     this.yinBiNode.removeFromParent();
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    this.skeleton.clearTracks()
     this.Particle2D && (this.Particle2D.active = false);
   }
 

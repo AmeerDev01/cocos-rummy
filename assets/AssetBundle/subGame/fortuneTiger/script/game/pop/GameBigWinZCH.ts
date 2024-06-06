@@ -74,7 +74,6 @@ export class GameBigWinZCH extends Component {
     }
     /**播放跑分 */
     showWinLab() {
-        console.error("播放跑分", this.winGold)
         Tween.stopAllByTarget(this);
         this.bwType = 2;
         this.ndWin.active = true;
@@ -101,7 +100,6 @@ export class GameBigWinZCH extends Component {
         this.ndWin.getComponent(LabTweenNumZCH).showLab(0);
         let winT = BaseGameDataMgeZCH.Instance.getBigWinType();
         this.winGold = BaseGameDataMgeZCH.Instance.getAllWin();
-        console.error(this.winGold)
         let num = 0;
         if (winT == bigWinType.bigWin) {
             num = 0;

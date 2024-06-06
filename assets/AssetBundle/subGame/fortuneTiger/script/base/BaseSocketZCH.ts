@@ -48,7 +48,6 @@ export class BaseSocketZCH {
 
         let gameid = GameConfigZCH.gameInitData.gameID;
         let gameHost: any = GameConfigZCH.gameInitData.gameHost;
-        console.error("初始化网络组件", gameid, gameHost)
         window.HALL_GLOBAL.wsInstance.initSocket().then(() => {
             // game.on(Game.EVENT_HIDE, () => {//游戏切入后台
             //     WebSocketStarter.Instance().ws.close();
@@ -57,7 +56,6 @@ export class BaseSocketZCH {
             //     WebSocketStarter.Instance().reConnect();
             // })
             this.ws_driver = new WebSocketDriver<MSG_TYPE>(gameid, gameHost);
-            console.error("WebSocketDriver-----")
             this.gameLogin();
             this.ws_driver.filterData = (data, source) => {
 
@@ -106,7 +104,6 @@ export class BaseSocketZCH {
     /**登录 */
     gameLogin() {
         const msgObj = this.ws_driver.loginGame(MSG_TYPE.LOGIN);
-        console.error("发送登录---", msgObj)
 
         // //超时
         msgObj.bindTimeoutHandler(() => {
@@ -133,7 +130,6 @@ export class BaseSocketZCH {
     }
     /**网络消息回复 */
     onWS_reply(data: MessageBody) {
-        console.error("网络消息回复", data)
         if (data.operation == SKT_OPERATION.LOGIN) {
             this.onLogin(data.data);
         } else if (data.sktCode == MSG_TYPE.LAUNCHER_BET) {
@@ -161,14 +157,12 @@ export class BaseSocketZCH {
             data.tableId = this.tableId;
             data.gameId = GameConfigZCH.gameInitData.gameID;
             data.memberId = this.playerID;
-            console.error("发送数据", data)
             this.ws_driver.sendSktMessage(MSG_TYPE.LAUNCHER_BET, data);
             this.timeoutHandle();
         }
     }
     /** 超时处理*/
     timeoutHandle() {
-        console.error("超时--------")
         tween(this).delay(this.times).call(() => {
             this.exitGameRelease();
             window.HALL_GLOBAL.closeSubGame({ confirmContent: window.HALL_GLOBAL.lang.write(k => k.WebSocketModule.SocketMsgTimeOut, {}, { placeStr: "数据超时---" }) })
