@@ -12,6 +12,7 @@ import { getIsTest } from '../../config/GameConfig';
 const { ccclass, property } = _decorator;
 
 enum ShowModelType {
+	NONE = -1,
 	VERIFY,
 	MAIN_PANEL,
 	SET_PWD
@@ -100,9 +101,11 @@ export class Hall_BankPanel extends BaseComponent<IState, IProps, IEvent> {
 
 	protected initState() {
 		return {
-			showModel: ShowModelType.SET_PWD
+			showModel: ShowModelType.NONE
 		}
 	}
+
+	private needCloseForce: boolean = false
 
 	protected bindEvent(): void {
 		/**关闭验证界面 */
@@ -134,7 +137,11 @@ export class Hall_BankPanel extends BaseComponent<IState, IProps, IEvent> {
 		})
 		/**关闭修改密码框 */
 		this.propertyNode.props_btn_close_set.on(Node.EventType.TOUCH_END, () => {
-			this.setState({ showModel: ShowModelType.VERIFY })
+			if (this.needCloseForce) {
+				this.events.onClosePanel()
+			} else {
+				this.setState({ showModel: ShowModelType.VERIFY })
+			}
 		})
 		/**确认修改密码 */
 		this.propertyNode.props_set_btn_sure.on(Node.EventType.TOUCH_END, () => {
@@ -142,6 +149,7 @@ export class Hall_BankPanel extends BaseComponent<IState, IProps, IEvent> {
 			const str2 = this.propertyNode.props_intput_bank_set_pwd.getComponent(EditBox).string
 			new InputValidator().begin().isNotEmpty(str).isCharLength([6, 12], str2).done(() => {
 				this.events.setBankPassword(str, str2).then(() => {
+					this.needCloseForce = false
 					this.setState({ showModel: ShowModelType.VERIFY })
 				})
 			})
@@ -183,8 +191,10 @@ export class Hall_BankPanel extends BaseComponent<IState, IProps, IEvent> {
 		this.events.isMustSetPwd().then((result) => {
 			if (!this) return
 			if (result) {
+				this.needCloseForce = true
 				this.setState({ showModel: ShowModelType.SET_PWD })
 			} else {
+				this.needCloseForce = false
 				if (getCookie("autoSafeLogin")) {
 					this.setState({ showModel: ShowModelType.MAIN_PANEL })
 				} else {

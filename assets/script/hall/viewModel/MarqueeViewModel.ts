@@ -22,6 +22,7 @@ class MarqueeViewModel extends ViewModel<Common_Marquee, IProps, IEvent> {
       !error && this.setProps({
         addInfoQueue: data
       })
+      console.log("跑马灯推送.......", data)
     })
   }
 

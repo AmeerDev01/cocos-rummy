@@ -112,6 +112,7 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 			}
 		})
 		hallWebSocketDriver.sktMsgListener.addOnce(SKT_MAG_TYPE.LOG_EXIT, "log", (data, error) => {
+			console.log("强制退出推送.......")
 			if (!error && this.comp.props && this.comp.props.subGameInfo) {
 				global.closeSubGame({
 					confirmContent: lang.write(k => k.BaseBoardModule.BaseBoardLogin, {}, { placeStr: '抱歉，您的登录信息变更，已自动退出~' })
@@ -132,6 +133,7 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 				console.error(error)
 				return
 			}
+			console.log("中奖广播推送.......", data)
 			this.winningBoxVM && this.winningBoxVM.comp.pushWinningData(data, (this.comp.props.subGameInfo && this.comp.props.subGameInfo.isVertical))
 		})
 
@@ -151,7 +153,10 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 		})
 
 		hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.NEW_MAIL, "main", (data, error) => {
-			if (error) return
+			if (error) {
+				console.error(error)
+			}
+			console.log("邮箱新消息推送.......", data)
 			this.dispatch(updateMailStatus(data))
 		})
 

@@ -533,6 +533,8 @@ export class Hall_MainPanel extends BaseComponent<IState, IProps, IEvent> {
 		this.updateBackground()
 		new MarqueeViewModel().mountView(sourceManageSeletor("common").getFile(PrefabPathDefineCommon.MARQUEE_INSERT).source).appendTo(this.propertyNode.props_Marquee_node).connect()
 		// new MarqueeViewModel().mountView(sourceManageSeletor("common").getFile(CommonPrefabPathDefine.MARQUEE).source, "Common_Marquee").appendTo(this.propertyNode.props_marquee)
+
+		this.propertyNode.props_btn_left.active = false
 	}
 
 	private initGateModelView(scrollViewContent: Node, gamesIds: number[]) {

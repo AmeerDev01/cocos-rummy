@@ -102,7 +102,7 @@ export class Common_Marquee extends BaseComponent<IState, IProps, IEvent> {
 			// 	return `<color=#${color}>${content}</color>`;
 			// })
 			const cocosString = this.convertHtmlToCustomFormat(decodeURI(fristItem.content))
-			console.log(decodeURI(fristItem.content), cocosString)
+			// console.log(decodeURI(fristItem.content), cocosString)
 			// itemNode.getComponent(RichText).string = cocosString
 			itemNode.getComponent(Label).string = decodeURI(fristItem.content)
 			!this.props.isInSubGame && (itemNode.active = true)

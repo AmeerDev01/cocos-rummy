@@ -165,6 +165,10 @@ export class Hall_VipMain extends BaseComponent<IState, IProps, IEvent> {
 				if (userVipLevel > 10) {
 					this.propertyNode.props_ScrollView_vip.getComponent(ScrollView).scrollToRight();
 				}
+			} else {
+				if (userVipLevel === 0) {
+					this.updateRemindtextInfo(v);
+				}
 			}
 			
 

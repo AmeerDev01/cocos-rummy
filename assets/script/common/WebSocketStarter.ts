@@ -155,7 +155,11 @@ export default class WebSocketStarter extends Singleton {
             // operation === SKT_OPERATION.ENCRYPT && (data = AES.decode(data))
             try {
               data = JSON.parse(dataBody)
-              console.log(`socket返回请求···········游戏id:${gameId},host:${host},随机信息id:${messageId},具体操作:${operation},参数:`,data)
+              if (gameId === 0) {
+                console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 大厅|socket···返回请求${sktCode}|${operation},参数:`, data)
+              } else {
+                console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 游戏${gameId}|socket···返回请求${sktCode}|${operation},参数:`, data)
+              }
             } catch (e) {
               console.log('skt json data error', dataBody, e)
               // this.eventListener.dispath(EVEVT_TYPE.MESSAGE, { messageId, operation, host, sktCode, gameId: +gameId, length: +length, data: dataBody })
@@ -248,7 +252,7 @@ export class WebSocketDriver<SKT_TYPE> {
       } else {
         if (messageBody.host === this.host && messageBody.gameId === this.gameId) {
           const { data, error } = this.filterData(messageBody.data, messageBody)
-          DEV && this.gameId > 0 && console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 收到${this.gameId}--${messageBody.sktCode}消息`, data)
+          // DEV && this.gameId > 0 && console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 收到${this.gameId}--${messageBody.sktCode}消息`, data)
           this.sktMsgListener.dispath(messageBody.sktCode as SKT_TYPE, data, error)
         }
       }
@@ -271,7 +275,7 @@ export class WebSocketDriver<SKT_TYPE> {
       timeOut?: number,
     }) {
     const _option = Object.assign({ isLoading: false, operation: SKT_OPERATION.GENERAL, timeOut: 3000 }, option || {})
-    DEV && this.gameId > 0 && console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 发送${this.gameId}--${sktCode}消息`, payLoad)
+    // DEV && this.gameId > 0 && console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 发送${this.gameId}--${sktCode}消息`, payLoad)
     const sktMessager = new SktMessager(WebSocketStarter.Instance().ws, _option.operation, payLoad, this.gameId, sktCode, this.host)
     // this.messagerMap[sktMessager.messageId] = sktMessager
     _option.isLoading && global.hallDispatch(setLoadingAction({ isShow: true, isAllowCloseLoading: false, flagId: sktMessager.messageId }))
@@ -362,7 +366,11 @@ export class SktMessager<SKT_TYPE> {
       // const data = this.operation === SKT_OPERATION.ENCRYPT ? AES.encode(JSON.stringify(this.payLoad)) : JSON.stringify(this.payLoad)
       const data = JSON.stringify(this.payLoad || '')
       this.ws.send(`${this.messageId}|${this.operation}|${this.host}|${this.sktCode}|${this.gameId}|${data.length}|${data}`)
-      console.log(`socket发送请求···········${this.messageId}|${this.operation}|${this.host}|${this.sktCode}|${this.gameId}|${data.length}|${data}`)
+      if (this.gameId === 0) {
+        console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 大厅|socket···发送请求${this.sktCode}|${this.operation},参数:`, this.payLoad)
+      } else {
+        console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 游戏${this.gameId}|socket···发送请求${this.sktCode}|${this.operation},参数:`, this.payLoad)
+      }
       this.sendTime = Date.now()
       timeOut && window.setTimeout(() => {
         if (this && !this.receiveData && this.timeoutHandler) {
