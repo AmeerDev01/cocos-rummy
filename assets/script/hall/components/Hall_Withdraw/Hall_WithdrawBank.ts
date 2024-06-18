@@ -91,7 +91,7 @@ export class Hall_WithdrawBank extends BaseComponent<IState, IProps, IEvent> {
 				childNode.active = true
 				childNode.getChildByName("Label_num1").getComponent(Label).string = `${item.limitDown}-${item.limitUp}`
 				childNode.getChildByName("Label_bank_name").getComponent(Label).string = item.name
-				assetManager.loadRemote(item.iconMax, (err, asset: ImageAsset) => {
+				item.iconMax && assetManager.loadRemote(item.iconMax, (err, asset: ImageAsset) => {
 					if (this.propertyNode && !err) {
 						childNode.getChildByName("icon").getComponent(Sprite).spriteFrame = SpriteFrame.createWithImage(asset)
 					}

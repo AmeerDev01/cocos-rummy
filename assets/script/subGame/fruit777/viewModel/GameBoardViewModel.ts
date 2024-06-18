@@ -76,7 +76,7 @@ class GameBoardViewModel extends ViewModel<Fruit777_GameBoard, IProps, IEvent> {
       this.dispatch(updateJackpotAmount(data))
     })
     fruit777WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.BALANCE_UPDATE, "fruit777_board", (data) => {
-      // this.dispatch(updateBalance(data))
+      this.dispatch(updateBalance(data))
     })
     fruit777WebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.VACATETHEROOM, "fruit777_board", (data) => {
       global.closeSubGame({ confirmContent: lang.write(k => k.UpdateModule.GameNotice, {}, { placeStr: "对不起，系统维护中，请稍后再尝试登录" }) })

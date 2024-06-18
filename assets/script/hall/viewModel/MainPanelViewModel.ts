@@ -70,9 +70,11 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 			if (error) return
 			this.dispatch(setMemberInfo({ ...data }))
 			// this.dispatch(setLoadingAction({ isShow: false }))
-			if (this.lastUserGlod !== this.comp.props.memberAssetGoldPieces) {
-				this.openReliefPanel()
-				this.lastUserGlod = this.comp.props.memberAssetGoldPieces
+			if (data.benefit > 0) {
+				if (this.lastUserGlod !== this.comp.props.memberAssetGoldPieces) {
+					this.openReliefPanel(data.benefit)
+					this.lastUserGlod = this.comp.props.memberAssetGoldPieces
+				}
 			}
 			// !this.isCheckPop && fetcher.send(ApiUrl.POP_UPS, {}, "get").then((rsp: { [key: string]: PopType }) => {
 
@@ -137,7 +139,7 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 			this.winningBoxVM && this.winningBoxVM.comp.pushWinningData(data, (this.comp.props.subGameInfo && this.comp.props.subGameInfo.isVertical))
 		})
 
-		hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.VIP_CHANGE, "log", (data, error) => {
+		hallWebSocketDriver.sktMsgListener.add(SKT_MAG_TYPE.VIP_CHANGE, "main", (data, error) => {
 			if (error) return
 			this.openVipUp();
 			this.dispatch(setVip(data.inceptionVipLevel, data.vipLevelExperience));
@@ -473,22 +475,28 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 			new ShareHelpViewModel().mountView(file.source).appendTo(nodeWrap || this.parentNode, { effectType: EffectType.EFFECT1, isModal: true }).connect()
 		})
 	}
+	private isOpenBenefit: boolean = false
 	/**打开救济金面板 */
-	public openReliefPanel() {
-		if (config.relief > this.comp.props.memberAssetGoldPieces) {
-			fetcher.send(ApiUrl.BENEFIT, undefined, undefined, undefined, { isLoading: false }).then(async (data) => {
-				if (data !== -1) {
-					const reLiefPanel = new BaseViewModel<Hall_ReliefPanel, RPIState, RPIProps, RPIEvent>('Hall_ReliefPanel').mountView(
-						(await sourceManageSeletor().getFileAsync(PrefabPathDefine._HELL_RE_LIEF, Prefab)).source)
-						.appendTo(this.parentNode, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({
-							onClosePanel: () => {
+	public async openReliefPanel(benefit: number) {
+		// if (config.relief > this.comp.props.memberAssetGoldPieces) {
+		if (!this.isOpenBenefit) {
+			const reLiefPanel = new BaseViewModel<Hall_ReliefPanel, RPIState, RPIProps, RPIEvent>('Hall_ReliefPanel').mountView(
+				(await sourceManageSeletor().getFileAsync(PrefabPathDefine._HELL_RE_LIEF, Prefab)).source)
+				.appendTo(this.parentNode, { effectType: EffectType.EFFECT1, isModal: true }).setEvent({
+					onClosePanel: () => {
+						fetcher.send(ApiUrl.BENEFIT, undefined, undefined, undefined, { isLoading: false }).then(async (data) => {
+							if (data) {
+								this.dispatch(setMemberInfo({ ...data }))
 								reLiefPanel.unMount(EffectType.EFFECT2)
+								this.isOpenBenefit = false
 							}
-						}).setProps({ amount: data })
-				}
-			}).catch(() => {
-			})
+						}).catch(() => {
+						})
+					}
+				}).setProps({ amount: benefit })
+			this.isOpenBenefit = true
 		}
+		// }
 	}
 	/**是否游客验证 */
 	public isTouristPass() {

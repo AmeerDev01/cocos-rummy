@@ -205,7 +205,7 @@ export class Hall_VipMain extends BaseComponent<IState, IProps, IEvent> {
 					locateInitPosition.y));
 			}
 		}).start();
-	} xx
+	}
 
 	private updateBarLevelLabel(vipLevel: number) {
 		let levels = [];
