@@ -357,7 +357,7 @@ export class Hall_Baseboard extends BaseComponent<IState, IProps, IEvent> {
 		this.dispatch(setLoadingAction({ isShow: true, flagId: 'closeGame' }))
 		// this.propertyNode.props_offloading.active = true
 		// this.propertyNode.props_offloading.getComponent(sp.Skeleton).animation = 'animation'
-		baseBoardView.mainPanelViewModel.openReliefPanel()
+		// baseBoardView.mainPanelViewModel.openReliefPanel()
 		this.scheduleOnce(() => {
 			this.propertyNode.props_subGameBoard.destroyAllChildren()
 			BundleSplit.releaseBundle(gameId)

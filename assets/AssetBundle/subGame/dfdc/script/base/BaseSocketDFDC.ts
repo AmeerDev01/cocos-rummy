@@ -164,7 +164,7 @@ export class BaseSocketDFDC {
             BaseGameDataMgeDFDC.Instance.setGameRollData(data.data.data.dl.si[0]);
             Tween.stopAllByTarget(this);
         } else if (data.sktCode == MSG_TYPE.BALANCE_UPDATE) {
-            // BaseGameDataMgeDFDC.Instance.setMyGold(data);
+            BaseGameDataMgeDFDC.Instance.setMyGold({ gold: data.data.data });
         } else if (data.sktCode == MSG_TYPE.VACATETHEROOM) {
             window.HALL_GLOBAL.closeSubGame({ confirmContent: window.HALL_GLOBAL.lang.write(k => k.UpdateModule.GameNotice, {}, { placeStr: "对不起，系统维护中，请稍后再尝试登录" }) })
         }

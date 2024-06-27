@@ -16,7 +16,7 @@ export enum SKT_MAG_TYPE {
   /**更新金币 */
   BALANCE_UPDATE = "10",
   /**清退房间 */
-  VACATETHEROOM = "3"
+  VACATETHEROOM = "4"
 }
 
 export let fruit777WebSocketDriver: WebSocketDriver<SKT_MAG_TYPE> = null

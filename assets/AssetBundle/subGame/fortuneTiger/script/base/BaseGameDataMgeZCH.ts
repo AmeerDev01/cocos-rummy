@@ -162,7 +162,11 @@ export class BaseGameDataMgeZCH {
         BaseEventZCH.Instance.emit(GameConfigZCH.wsReceive.bet);
     }
 
-
+    /**玩家金币变化 */
+    setMyGold(data: any) {
+        this.gameBetData.gold = data.gold;
+        BaseEventZCH.Instance.emit(GameConfigZCH.publicEventName.goldChange);
+    }
     /**获取玩家金币 */
     getMyGold(): number {
         return this.gameBetData.gold;

@@ -182,7 +182,7 @@ export class Hall_VipMain extends BaseComponent<IState, IProps, IEvent> {
 	/**更新等级进度条 */
 	private updateLevelBar() {
 		const maxVipLevel = vipMap.length;
-		const userTotalRechange = this.getUserTotalRechange();
+		const userTotalRechange = Number(this.getUserTotalRechange());
 		const vipLevel = this.props.memberInfo.vipLevel;
 
 		const vipLevelExperience = this.props.memberInfo.vipLevelExperience
@@ -205,7 +205,7 @@ export class Hall_VipMain extends BaseComponent<IState, IProps, IEvent> {
 					locateInitPosition.y));
 			}
 		}).start();
-	} xx
+	}
 
 	private updateBarLevelLabel(vipLevel: number) {
 		let levels = [];

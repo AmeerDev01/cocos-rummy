@@ -93,7 +93,7 @@ export class Hall_WithdrawBankBind extends BaseComponent<IState, IProps, IEvent>
 			this.propertyNode.props_nomor_EditBox.string = value.cur.accountNumber || ""
 			this.propertyNode.props_EditBox_name.string = value.cur.realName || ""
 
-			assetManager.loadRemote(this.props.hadChooseBankChannl.iconMax, (err, asset: ImageAsset) => {
+			this.props.hadChooseBankChannl.iconMax && assetManager.loadRemote(this.props.hadChooseBankChannl.iconMax, (err, asset: ImageAsset) => {
 				if (this.propertyNode && !err) {
 					this.propertyNode.props_icon_reken.getComponent(Sprite).spriteFrame = SpriteFrame.createWithImage(asset)
 				}
