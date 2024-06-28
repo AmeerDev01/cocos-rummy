@@ -1668,7 +1668,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 1,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 163,
+      "g": 103,
+      "b": 70,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -1685,14 +1694,6 @@
     "__prefab": {
       "__id__": 67
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 163,
-      "g": 103,
-      "b": 70,
-      "a": 255
-    },
-    "_width": 1,
     "_id": ""
   },
   {
@@ -2233,7 +2234,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 1,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 163,
+      "g": 103,
+      "b": 70,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -2250,14 +2260,6 @@
     "__prefab": {
       "__id__": 91
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 163,
-      "g": 103,
-      "b": 70,
-      "a": 255
-    },
-    "_width": 1,
     "_id": ""
   },
   {
@@ -2798,7 +2800,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 1,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 163,
+      "g": 103,
+      "b": 70,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -2815,14 +2826,6 @@
     "__prefab": {
       "__id__": 115
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 163,
-      "g": 103,
-      "b": 70,
-      "a": 255
-    },
-    "_width": 1,
     "_id": ""
   },
   {
@@ -3363,7 +3366,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 1,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 163,
+      "g": 103,
+      "b": 70,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -3380,14 +3392,6 @@
     "__prefab": {
       "__id__": 139
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 163,
-      "g": 103,
-      "b": 70,
-      "a": 255
-    },
-    "_width": 1,
     "_id": ""
   },
   {
@@ -3928,7 +3932,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 1,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 163,
+      "g": 103,
+      "b": 70,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -3945,14 +3958,6 @@
     "__prefab": {
       "__id__": 163
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 163,
-      "g": 103,
-      "b": 70,
-      "a": 255
-    },
-    "_width": 1,
     "_id": ""
   },
   {
@@ -8178,7 +8183,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 1,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 27,
+      "g": 107,
+      "b": 110,
+      "a": 138
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -8195,14 +8209,6 @@
     "__prefab": {
       "__id__": 346
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 27,
-      "g": 107,
-      "b": 110,
-      "a": 138
-    },
-    "_width": 1,
     "_id": ""
   },
   {
@@ -9155,7 +9161,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 1,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 27,
+      "g": 107,
+      "b": 110,
+      "a": 138
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -9172,14 +9187,6 @@
     "__prefab": {
       "__id__": 390
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 27,
-      "g": 107,
-      "b": 110,
-      "a": 138
-    },
-    "_width": 1,
     "_id": ""
   },
   {

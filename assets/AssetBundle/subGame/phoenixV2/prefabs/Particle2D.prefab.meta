@@ -1,1 +1,13 @@
-{"ver":"1.1.43","importer":"prefab","imported":true,"uuid":"028a32bd-91d7-4967-bc2f-0f672eebb20d","files":[".json"],"subMetas":{},"userData":{"syncNodeName":"Particle2D"}}
+{
+  "ver": "1.1.50",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "028a32bd-91d7-4967-bc2f-0f672eebb20d",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "Particle2D"
+  }
+}

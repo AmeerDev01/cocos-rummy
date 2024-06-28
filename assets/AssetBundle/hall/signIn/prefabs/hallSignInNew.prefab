@@ -1492,7 +1492,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 182,
+      "g": 111,
+      "b": 4,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -1509,14 +1518,6 @@
     "__prefab": {
       "__id__": 61
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 182,
-      "g": 111,
-      "b": 4,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -2780,7 +2781,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 182,
+      "g": 111,
+      "b": 4,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -2797,14 +2807,6 @@
     "__prefab": {
       "__id__": 119
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 182,
-      "g": 111,
-      "b": 4,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -4201,7 +4203,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 182,
+      "g": 111,
+      "b": 4,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -4218,14 +4229,6 @@
     "__prefab": {
       "__id__": 183
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 182,
-      "g": 111,
-      "b": 4,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -5486,7 +5489,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 182,
+      "g": 111,
+      "b": 4,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -5503,14 +5515,6 @@
     "__prefab": {
       "__id__": 241
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 182,
-      "g": 111,
-      "b": 4,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -6771,7 +6775,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 182,
+      "g": 111,
+      "b": 4,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -6788,14 +6801,6 @@
     "__prefab": {
       "__id__": 299
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 182,
-      "g": 111,
-      "b": 4,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -8056,7 +8061,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 182,
+      "g": 111,
+      "b": 4,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -8073,14 +8087,6 @@
     "__prefab": {
       "__id__": 357
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 182,
-      "g": 111,
-      "b": 4,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -9341,7 +9347,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 182,
+      "g": 111,
+      "b": 4,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -9358,14 +9373,6 @@
     "__prefab": {
       "__id__": 415
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 182,
-      "g": 111,
-      "b": 4,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {

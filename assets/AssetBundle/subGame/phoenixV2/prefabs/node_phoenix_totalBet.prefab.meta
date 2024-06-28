@@ -1,1 +1,13 @@
-{"ver":"1.1.43","importer":"prefab","imported":true,"uuid":"e4679665-8927-4bf4-8039-3546cf2c6995","files":[".json"],"subMetas":{},"userData":{"syncNodeName":"node_phoenix_totalBet"}}
+{
+  "ver": "1.1.50",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "e4679665-8927-4bf4-8039-3546cf2c6995",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "node_phoenix_totalBet"
+  }
+}

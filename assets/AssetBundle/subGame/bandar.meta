@@ -1,14 +1,13 @@
 {
-  "ver": "1.1.0",
+  "ver": "1.2.0",
   "importer": "directory",
   "imported": true,
   "uuid": "e4f9a862-1c2e-49e7-bbf5-78975b721b26",
   "files": [],
   "subMetas": {},
   "userData": {
-    "compressionType": {},
-    "isRemoteBundle": {},
     "isBundle": true,
-    "bundleName": "bandar"
+    "bundleName": "bandar",
+    "bundleConfigID": "auto_41KbwZt41G8YLrp4Nb7muk"
   }
 }

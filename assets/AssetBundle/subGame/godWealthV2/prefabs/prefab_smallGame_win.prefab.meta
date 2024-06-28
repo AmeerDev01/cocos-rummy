@@ -1,1 +1,13 @@
-{"ver":"1.1.43","importer":"prefab","imported":true,"uuid":"6cb9bd4d-0209-4981-b6f7-d561d02d52c1","files":[".json"],"subMetas":{},"userData":{"syncNodeName":"prefab_smallGame_win"}}
+{
+  "ver": "1.1.50",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "6cb9bd4d-0209-4981-b6f7-d561d02d52c1",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "prefab_smallGame_win"
+  }
+}

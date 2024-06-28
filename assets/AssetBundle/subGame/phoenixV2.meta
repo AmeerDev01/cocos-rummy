@@ -1,14 +1,13 @@
 {
-  "ver": "1.1.0",
+  "ver": "1.2.0",
   "importer": "directory",
   "imported": true,
   "uuid": "accea902-31ad-458a-bb8d-abfd7f2459f8",
   "files": [],
   "subMetas": {},
   "userData": {
-    "compressionType": {},
-    "isRemoteBundle": {},
     "isBundle": true,
-    "bundleName": "phoenixV2"
+    "bundleName": "phoenixV2",
+    "bundleConfigID": "auto_5bTDdOgHhCdqD3HjODU7hl"
   }
 }

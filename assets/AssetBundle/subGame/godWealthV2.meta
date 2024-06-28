@@ -1,14 +1,13 @@
 {
-  "ver": "1.1.0",
+  "ver": "1.2.0",
   "importer": "directory",
   "imported": true,
   "uuid": "7dd1b881-f9cd-4e09-857a-1d73d8ce519c",
   "files": [],
   "subMetas": {},
   "userData": {
-    "compressionType": {},
-    "isRemoteBundle": {},
     "isBundle": true,
-    "bundleName": "godWealthV2"
+    "bundleName": "godWealthV2",
+    "bundleConfigID": "auto_c3G8lvCRhPdLH7MlCEL82r"
   }
 }

@@ -1,21 +1,13 @@
 {
-  "ver": "1.1.0",
+  "ver": "1.2.0",
   "importer": "directory",
   "imported": true,
   "uuid": "3cd95799-6a6a-467f-954e-540a66cb750f",
   "files": [],
   "subMetas": {},
   "userData": {
-    "compressionType": {
-      "web-desktop": "merge_all_json",
-      "android": "merge_all_json",
-      "web-mobile": "merge_all_json",
-      "wechatgame": "zip"
-    },
-    "isRemoteBundle": {
-      "wechatgame": true
-    },
     "bundleName": "fruit777",
-    "isBundle": true
+    "isBundle": true,
+    "bundleConfigID": "auto_af2oR3P8RM9L2DDOVnHonN"
   }
 }

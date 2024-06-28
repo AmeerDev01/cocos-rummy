@@ -1,1 +1,13 @@
-{"ver":"1.1.43","importer":"prefab","imported":true,"uuid":"cc8edb3e-c0cb-4c73-9c23-ba3abbb1cfaf","files":[".json"],"subMetas":{},"userData":{"syncNodeName":"dialogWin"}}
+{
+  "ver": "1.1.50",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "cc8edb3e-c0cb-4c73-9c23-ba3abbb1cfaf",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "dialogWin"
+  }
+}

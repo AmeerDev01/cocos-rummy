@@ -1,14 +1,13 @@
 {
-  "ver": "1.1.0",
+  "ver": "1.2.0",
   "importer": "directory",
   "imported": true,
   "uuid": "6c70c2bd-7e59-4cbf-b565-db318b50f9bc",
   "files": [],
   "subMetas": {},
   "userData": {
-    "compressionType": {},
-    "isRemoteBundle": {},
     "bundleName": "hall",
-    "isBundle": true
+    "isBundle": true,
+    "bundleConfigID": "auto_4dy3xCcWNOCIBkzlvHdDZq"
   }
 }

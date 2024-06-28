@@ -7591,7 +7591,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 3,
+      "g": 70,
+      "b": 35,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -7608,14 +7617,6 @@
     "__prefab": {
       "__id__": 358
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 3,
-      "g": 70,
-      "b": 35,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -7864,7 +7865,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 1,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 3,
+      "g": 70,
+      "b": 35,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -7881,14 +7891,6 @@
     "__prefab": {
       "__id__": 368
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 3,
-      "g": 70,
-      "b": 35,
-      "a": 255
-    },
-    "_width": 1,
     "_id": ""
   },
   {
@@ -8025,7 +8027,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 1,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 3,
+      "g": 70,
+      "b": 35,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -8042,14 +8053,6 @@
     "__prefab": {
       "__id__": 376
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 3,
-      "g": 70,
-      "b": 35,
-      "a": 255
-    },
-    "_width": 1,
     "_id": ""
   },
   {
@@ -8186,7 +8189,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 1,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 3,
+      "g": 70,
+      "b": 35,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -8203,14 +8215,6 @@
     "__prefab": {
       "__id__": 384
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 3,
-      "g": 70,
-      "b": 35,
-      "a": 255
-    },
-    "_width": 1,
     "_id": ""
   },
   {

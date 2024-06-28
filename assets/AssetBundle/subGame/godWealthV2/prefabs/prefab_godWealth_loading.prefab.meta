@@ -1,1 +1,13 @@
-{"ver":"1.1.43","importer":"prefab","imported":true,"uuid":"362c4473-f580-4444-923a-a4061ca2f46c","files":[".json"],"subMetas":{},"userData":{"syncNodeName":"prefab_godWealth_loading"}}
+{
+  "ver": "1.1.50",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "362c4473-f580-4444-923a-a4061ca2f46c",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "prefab_godWealth_loading"
+  }
+}

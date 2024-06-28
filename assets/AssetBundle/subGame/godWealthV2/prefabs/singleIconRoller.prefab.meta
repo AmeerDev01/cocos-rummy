@@ -1,1 +1,13 @@
-{"ver":"1.1.43","importer":"prefab","imported":true,"uuid":"d6699e3d-64e9-4536-a480-bd8e74852572","files":[".json"],"subMetas":{},"userData":{"syncNodeName":"singleIconRoller"}}
+{
+  "ver": "1.1.50",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "d6699e3d-64e9-4536-a480-bd8e74852572",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "singleIconRoller"
+  }
+}

@@ -1,1 +1,13 @@
-{"ver":"1.1.43","importer":"prefab","imported":true,"uuid":"a2bab405-9199-4436-a8d0-055f19144c0f","files":[".json"],"subMetas":{},"userData":{"syncNodeName":"prefab_resultSmall"}}
+{
+  "ver": "1.1.50",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "a2bab405-9199-4436-a8d0-055f19144c0f",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "prefab_resultSmall"
+  }
+}

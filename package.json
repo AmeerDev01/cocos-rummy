@@ -2,7 +2,7 @@
   "name": "cocos-freamwork",
   "uuid": "12e30c93-6530-4450-9bc7-8990bfc80d7f",
   "creator": {
-    "version": "3.7.4"
+    "version": "3.8.3"
   },
   "dependencies": {
     "crypto-ts": "^1.0.2",

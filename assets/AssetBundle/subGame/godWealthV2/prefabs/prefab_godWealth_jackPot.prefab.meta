@@ -1,1 +1,13 @@
-{"ver":"1.1.43","importer":"prefab","imported":true,"uuid":"8a42b9b2-1562-47f7-891b-dfa6fedc6bc3","files":[".json"],"subMetas":{},"userData":{"syncNodeName":"prefab_godWealth_jackPot"}}
+{
+  "ver": "1.1.50",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "8a42b9b2-1562-47f7-891b-dfa6fedc6bc3",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "prefab_godWealth_jackPot"
+  }
+}

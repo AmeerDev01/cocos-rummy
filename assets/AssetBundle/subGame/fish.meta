@@ -1,14 +1,13 @@
 {
-  "ver": "1.1.0",
+  "ver": "1.2.0",
   "importer": "directory",
   "imported": true,
   "uuid": "4841dc2e-e2fc-446e-936b-d0eddf38e8f2",
   "files": [],
   "subMetas": {},
   "userData": {
-    "compressionType": {},
-    "isRemoteBundle": {},
     "isBundle": true,
-    "bundleName": "fish"
+    "bundleName": "fish",
+    "bundleConfigID": "auto_13fWo/aZJM340OgbKaGCYa"
   }
 }

@@ -1,14 +1,13 @@
 {
-  "ver": "1.1.0",
+  "ver": "1.2.0",
   "importer": "directory",
   "imported": true,
   "uuid": "01a4e09e-752a-423a-ba6a-582bd48e7ee3",
   "files": [],
   "subMetas": {},
   "userData": {
-    "compressionType": {},
-    "isRemoteBundle": {},
     "isBundle": true,
-    "bundleName": "egyptV2"
+    "bundleName": "egyptV2",
+    "bundleConfigID": "auto_30zFVo9zBLELctVRN39Obn"
   }
 }
