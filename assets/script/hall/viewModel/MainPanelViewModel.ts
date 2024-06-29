@@ -71,10 +71,10 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 			this.dispatch(setMemberInfo({ ...data }))
 			// this.dispatch(setLoadingAction({ isShow: false }))
 			if (data.benefit > 0) {
-				if (this.lastUserGlod !== this.comp.props.memberAssetGoldPieces) {
-					this.openReliefPanel(data.benefit)
-					this.lastUserGlod = this.comp.props.memberAssetGoldPieces
-				}
+				// if (this.lastUserGlod !== this.comp.props.memberAssetGoldPieces) {
+				this.openReliefPanel(data.benefit)
+				// this.lastUserGlod = this.comp.props.memberAssetGoldPieces
+				// }
 			}
 			// !this.isCheckPop && fetcher.send(ApiUrl.POP_UPS, {}, "get").then((rsp: { [key: string]: PopType }) => {
 
