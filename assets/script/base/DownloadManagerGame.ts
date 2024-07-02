@@ -69,6 +69,9 @@ export class DownloadManagerGame {
 	private MakeDefaultManifest(): string {
 		//let moduleRoot = config.gameBundleUrl + this.currentModule + "/";
 		let moduleRoot = `${config.gameBundleUrl}/subGame/compressed/${this.currentModule}/`;
+		if(sys.os === sys.OS.IOS||sys.os === sys.OS.OSX ){
+			moduleRoot = `${config.gameBundleUrl}/iosSubGame/compressed/${this.currentModule}/`;
+		}
 		let manifestString = JSON.stringify({
 			version: '0.0.0',
 			packageUrl: moduleRoot,

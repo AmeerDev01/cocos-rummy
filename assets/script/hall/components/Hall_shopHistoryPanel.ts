@@ -170,7 +170,7 @@ export class Hall_shopHistoryPanel extends BaseComponent<IState, IProps, IEvent>
         historyItem.getChildByName("props_btn_copy").on(Node.EventType.TOUCH_END, () => {
             hallAudio.playOneShot(SoundPathDefine.BTU_CLICK)
             if (NATIVE) {
-                if (sys.os === sys.OS.ANDROID) {
+                if (sys.os === sys.OS.ANDROID||sys.os === sys.OS.IOS) {
                     native.bridge.sendToNative(BridgeCode.COPY_CLIPBOARD, v.orderNo);
                 }
             } else {

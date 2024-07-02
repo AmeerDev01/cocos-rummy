@@ -144,7 +144,7 @@ export class Share_Info extends BaseComponent<IState, IProps, IEvent> {
   }
   private copiedToClipboard(text) { //统一复制
     if (sys.isNative) {
-      if (sys.os === sys.OS.ANDROID) {
+      if (sys.os === sys.OS.ANDROID||sys.os === sys.OS.IOS) {
         native.bridge.sendToNative(BridgeCode.COPY_CLIPBOARD, text);
         global.hallDispatch(addToastAction({ content: lang.write(k => k.MainPaneModule.ShareCopy, {}, { placeStr: "已复制内容到剪切板" }) }))
       }

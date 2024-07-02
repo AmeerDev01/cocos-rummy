@@ -1,4 +1,4 @@
-import { native } from "cc";
+import { native ,sys} from "cc";
 import { NATIVE } from "cc/env";
 import UseSetOption from "../utils/UseSetOption";
 import { getUUID } from "../utils/tool";
@@ -360,7 +360,11 @@ export const getAppVersionName = () => {
 }
 
 export const getPackageName = () => {
+    if(sys.os === sys.OS.OSX )return 'development';
     if (NATIVE && native.reflection) {
+        if(sys.os === sys.OS.IOS ){
+            return native.reflection.callStaticMethod("AppDelegate", "getPackageCode:","")
+        }    
         return native.reflection.callStaticMethod("com.cocos.game.AppActivity", 'getPackageCode', '()Ljava/lang/String;')
     }
     return 'web';
@@ -397,6 +401,7 @@ export const getRedirectUrl = (apkUrl: string) => {
 
 export const hideNativeSplash = () => {
     if (NATIVE && native.reflection) {
+        if(sys.os === sys.OS.IOS )return;
         native.reflection.callStaticMethod("com.cocos.game.AppActivity", 'hideSplash',
             '()V')
     }
@@ -404,6 +409,7 @@ export const hideNativeSplash = () => {
 
 export const showNativeSplash = () => {
     if (NATIVE && native.reflection) {
+        if(sys.os === sys.OS.IOS )return;
         native.reflection.callStaticMethod("com.cocos.game.AppActivity", 'showSpl',
             '()V')
     }

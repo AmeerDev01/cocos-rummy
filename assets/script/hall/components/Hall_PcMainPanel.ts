@@ -358,7 +358,7 @@ export class Hall_PcMainPanel extends BaseComponent<IState, IProps, IEvent> {
 
 	private copyTextToClipboard(text: string, share: number = 0) {
 		if (NATIVE) {
-			if (sys.os === sys.OS.ANDROID) {
+			if (sys.os === sys.OS.ANDROID||sys.os === sys.OS.IOS) {
 				native.bridge.sendToNative(BridgeCode.COPY_CLIPBOARD, text);
 			}
 		} else {

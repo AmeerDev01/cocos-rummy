@@ -58,6 +58,11 @@ export class Common_HotUpdate extends Component {
 					this.initGame()
 				}
 			}
+			if(sys.os === sys.OS.OSX ){
+				GameConfig.appLocalVersion = 'V1.0.1'
+				this.initGame();
+				return;
+			}
 			getAppVersionName()
 		} else {
 			sys.isMobile && screen.requestFullScreen();
@@ -80,10 +85,22 @@ export class Common_HotUpdate extends Component {
 	}
 
 	initGame() {
+		console.log("initGame~")
 		initConfig().then((_config) => {
 			/**修改热更地址 */
-			_config.hotUpdateUrl && this.handleManifestFile(_config.hotUpdateUrl)
-
+			if(sys.os === sys.OS.IOS||sys.os === sys.OS.OSX){
+				let remoteUrl = _config.hotUpdateUrl;
+				if(remoteUrl){
+					remoteUrl=remoteUrl.replace('appHotUpdate','static')
+					remoteUrl = `${remoteUrl}/iosHotUpdate/`;
+					this.handleManifestFile(remoteUrl);
+				}
+				//this.init()
+				this.enterGame()
+				return;
+			}else{
+				_config.hotUpdateUrl && this.handleManifestFile(_config.hotUpdateUrl)
+			}
 			this.getPackageInfo().then((content) => {
 				//有限判断AB面开启状态
 				if (content && content.abState) {

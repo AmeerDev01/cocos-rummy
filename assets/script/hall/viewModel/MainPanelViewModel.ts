@@ -228,7 +228,7 @@ class MainPanelViewModel extends ViewModel<Hall_MainPanel, IProps, IEvent> {
 			},
 		})
 		const isGuide = (sys.os === sys.OS.ANDROID && getPackageName() === 'web')
-			|| (sys.os === sys.OS.IOS && !window.navigator['standalone'])
+			|| (sys.os === sys.OS.IOS && !window.navigator['standalone']&&!NATIVE)
 			|| sys.os === sys.OS.OSX
 			|| sys.os === sys.OS.WINDOWS
 		if (isGuide) {
