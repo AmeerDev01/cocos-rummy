@@ -154,54 +154,22 @@ static ICallback icallback = ^void (NSString* _arg0, NSString* _arg1){
     NSString *app_BundleId = [infoDictionary objectForKey:@"AppSideUUID"];
     return app_BundleId;
 }
-
-// 获取pid
-+ (NSString *)getPidFromInfoPlist {
-    NSString *pid = @"";
-    NSDictionary *infoDic = [NSBundle mainBundle].infoDictionary;
-    NSString *deviceId = infoDic[@"kDeviceUUID"];
-    NSArray *arr = [deviceId componentsSeparatedByString:@"||"];
-    
-    if (arr.count > 1) {
-        pid = arr[1];
-    }
-    return pid;
-}
 //唤醒某个app
 +(void)jumpToApp:(NSString*)str
 {
-    NSURL* url = [NSURL URLWithString:str];
-    BOOL canOpen =[[UIApplication sharedApplication] canOpenURL:url];
-    NSLog(@"########........  jumpToApp  %@  ",str);
-    if(canOpen)
-    {
-        [[UIApplication sharedApplication] openURL:url];
-    }
-    else
-    {
-        NSLog(@"######.......  dakaiweixinshibai   ");
-    }
+    UIApplication *application = [UIApplication sharedApplication];
+    NSURL *URL = [NSURL URLWithString:str];
+    [application openURL:URL options:@{} completionHandler:^(BOOL success) {
+        if (success) {
+             NSLog(@"Opened url");
+        }
+    }];
 }
 //保存图片到相册
 +(void)photoTo:(NSString*)path
 {
     UIImage* img = [UIImage imageWithContentsOfFile:path];
     UIImageWriteToSavedPhotosAlbum(img,self,NULL,NULL);
-}
-// 分享line
-+(void)shareToLine:(NSString *)imgPath {
-    NSLog(@"imgpath == %@",imgPath);
-    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    NSData *data = [NSData dataWithContentsOfFile:imgPath];
-    UIImage *image = [UIImage imageWithData:data];
-    [pasteboard setData:UIImageJPEGRepresentation(image, 1.0) forPasteboardType:@"public.jpeg"];
-    NSString *contentType =@"image";
-    NSString *contentKey = [pasteboard.name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *urlString = [NSString stringWithFormat:@"line://msg/%@/%@",contentType, contentKey];
-    NSURL *url = [NSURL URLWithString:urlString];
-    if ([[UIApplication sharedApplication] canOpenURL:url]) {
-        [[UIApplication sharedApplication] openURL:url];
-    }
 }
 //判断app是否安装过
 +(bool)checkInstallApp:(NSString*)str{
@@ -215,21 +183,6 @@ static ICallback icallback = ^void (NSString* _arg0, NSString* _arg1){
         return NO;
     }
 }
-//唤醒某个app
--(void)jumpToApp:(NSString*)str
-{
-    NSURL* url = [NSURL URLWithString:str];
-    BOOL canOpen =[[UIApplication sharedApplication] canOpenURL:url];
-    NSLog(@"########........  jumpToApp  %@  ",str);
-    if(canOpen)
-    {
-        [[UIApplication sharedApplication] openURL:url];
-    }
-    else
-    {
-        NSLog(@"######.......  dakaiweixinshibai   ");
-    }
-}
 //复制图片
 +(void)copyImage:(NSString*)path
 {
@@ -238,6 +191,9 @@ static ICallback icallback = ^void (NSString* _arg0, NSString* _arg1){
     past.image = img;
     NSLog(@"######.........  copyImage path  %@ ",path);
 }
+
+
+
 //fox end
 
 @end
