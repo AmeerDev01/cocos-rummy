@@ -1,4 +1,4 @@
-import { _decorator, Button, Component, instantiate, Label, math, Node, Sprite, SpriteFrame, sys, Toggle, Tween, tween, UIOpacity, UITransform } from 'cc';
+import { _decorator, Button, Component, instantiate, Label, math, Node, Sprite, SpriteFrame, sys, Toggle, Tween, tween, UIOpacity, UITransform, director } from 'cc';
 import { BaseGameDataMgeDFDC } from '../../base/BaseGameDataMgeDFDC';
 import { BaseEventDFDC } from '../../base/BaseEventDFDC';
 import { GameConfigDFDC } from '../../config/GameConfigDFDC';
@@ -114,8 +114,8 @@ export class GameHandleDFDC extends Component {
     }
     protected start(): void {
         this.togMenu.isChecked = false;
-        this.ndGold.getComponent(LabTweenNumDFDC).setNumLength(3);
-        this.ndWinGold.getComponent(LabTweenNumDFDC).setNumLength(3);
+        this.ndGold.getComponent(LabTweenNumDFDC).setNumLength(2);
+        this.ndWinGold.getComponent(LabTweenNumDFDC).setNumLength(2);
         // let list = BaseGameDataMgeDFDC.Instance.getBetList();
         // this.labBet.string = list[0] * GameConfigDFDC.gameInitData.betMultiple + "";
     }
@@ -564,7 +564,9 @@ export class GameHandleDFDC extends Component {
             if (bet > gold) {
                 this.onTouchAuto2();
                 this.showGoldTips();
-                window.HALL_GLOBAL.addToast(window.HALL_GLOBAL.lang.write(k => k.palyingModule.RechangeGlod, {}, { placeStr: "对不起，您的金币不足，请充值！" }))
+                window.HALL_GLOBAL.addToast(window.HALL_GLOBAL.lang.write(k => k.palyingModule.RechangeGlod, {}, { placeStr: "对不起，您的金币不足，请充值！" }), {
+                    forceLandscape: false
+                })
                 if (isShop) {
                     BaseEventDFDC.Instance.emit(GameConfigDFDC.gamePopShow.showShop);
                 }
