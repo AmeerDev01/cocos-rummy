@@ -25,7 +25,7 @@ import { SKT_MAG_TYPE, hallWebSocketDriver } from './socketConnect';
 import { TaskSchedulerDefault } from '../utils/TaskScheduler';
 import { ToastPosition, ToastType, addToastAction, setLoadingAction, setSubGameRunState } from './store/actions/baseBoard';
 import { SubGameRunState } from '../hallType';
-
+import { NATIVE } from 'cc/env';
 let sourceManageMap: Array<SourceManage> = []
 let rootNodeWrap: Node
 export let baseBoardView: BaseBoardViewModel
@@ -44,7 +44,7 @@ export const startUp = (rootNode: Node) => {
   hallStore.configureStore()
   BundleSplit.init()
   /**调试期间为了便于读懂信息，默认中文 */
-  lang.use(getIsTest() ? LanguageItemType.ZH : defaultLanguageType[config.country].language)
+  lang.use(getIsTest()&&!NATIVE? LanguageItemType.ZH : defaultLanguageType[config.country].language)
   // BuryPoint.Instance().init()
   fetcher = new Fetcher<ApiUrl>(config.httpBaseUrl)
   // const LOADER_PANEL = "prefabs/loaderPanel"

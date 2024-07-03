@@ -48,7 +48,7 @@ export class Common_HotUpdate extends Component {
 		console.warn("envKsy", GameConfig.envKey)
 	}
 	protected onLoad(): void {
-		lang.use(getIsTest() ? LanguageItemType.ZH : LanguageItemType.EN)
+		lang.use(getIsTest()&&!NATIVE? LanguageItemType.ZH : LanguageItemType.EN)
 		if (NATIVE) {
 			this._storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : "/") + 'remote-asset')
 			hideNativeSplash();
@@ -59,6 +59,7 @@ export class Common_HotUpdate extends Component {
 				}
 			}
 			if(sys.os === sys.OS.OSX ){
+				lang.use(LanguageItemType.EN)
 				GameConfig.appLocalVersion = 'V1.0.1'
 				this.initGame();
 				return;
@@ -85,18 +86,20 @@ export class Common_HotUpdate extends Component {
 	}
 
 	initGame() {
-		console.log("initGame~")
 		initConfig().then((_config) => {
 			/**修改热更地址 */
-			if(sys.os === sys.OS.IOS||sys.os === sys.OS.OSX){
+			if(sys.os === sys.OS.OSX ){
+				this.enterGame();
+				return;
+			}
+			if(sys.os === sys.OS.IOS){
 				let remoteUrl = _config.hotUpdateUrl;
 				if(remoteUrl){
 					remoteUrl=remoteUrl.replace('appHotUpdate','static')
-					remoteUrl = `${remoteUrl}/iosHotUpdate/`;
+					remoteUrl = `${remoteUrl}/iosHotUpdate/Version1/`;
 					this.handleManifestFile(remoteUrl);
 				}
-				//this.init()
-				this.enterGame()
+				this.init()
 				return;
 			}else{
 				_config.hotUpdateUrl && this.handleManifestFile(_config.hotUpdateUrl)
@@ -192,7 +195,6 @@ export class Common_HotUpdate extends Component {
 		const hotInstance = new Hot(this.logLabel)
 		// this.loadingLab.string = TextCfg.getTextUi(5012);
 		// this._nodes["spr_loading"].getComponent(Label).string = TextCfg.getTextUi(5018);
-
 		let options = new HotOptions();
 		options.OnVersionInfo = (data) => {
 			console.log('OnVersionInfo', JSON.stringify(data || {}))

@@ -1,4 +1,4 @@
-import { Node } from "cc"
+import { Node ,sys} from "cc"
 import { getGameMapConfig, getIsTest } from "../config/GameConfig"
 import DragonTigerStartUp from "../subGame/dragonTiger/StartUp"
 import dragonV2_StartUp from "../subGame/dragonV2/dragonV2_StartUp"
@@ -184,7 +184,7 @@ export const initConfig = (): Promise<{
       /**-------------------确认data需要具备appVersion字段---------------------- */
       // config.appOnlineVersion = 'V1.0.1'//data['appVersion']
       generateUniqueId().then((str: string) => {
-        !NATIVE && deviceInfo.setUniqueId(str)
+        (!NATIVE||sys.os === sys.OS.OSX) && deviceInfo.setUniqueId(str)
       })
       // let isError = false
       const pkgCode = getPackageName()
