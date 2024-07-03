@@ -1570,7 +1570,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 23,
+      "g": 145,
+      "b": 46,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -1587,14 +1596,6 @@
     "__prefab": {
       "__id__": 63
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 23,
-      "g": 145,
-      "b": 46,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -2638,7 +2639,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 23,
+      "g": 145,
+      "b": 46,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -2655,14 +2665,6 @@
     "__prefab": {
       "__id__": 111
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 23,
-      "g": 145,
-      "b": 46,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -3901,7 +3903,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 23,
+      "g": 120,
+      "b": 144,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -3918,14 +3929,6 @@
     "__prefab": {
       "__id__": 167
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 23,
-      "g": 120,
-      "b": 144,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -4969,7 +4972,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 23,
+      "g": 120,
+      "b": 144,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -4986,14 +4998,6 @@
     "__prefab": {
       "__id__": 215
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 23,
-      "g": 120,
-      "b": 144,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -6093,7 +6097,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 23,
+      "g": 120,
+      "b": 144,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -6110,14 +6123,6 @@
     "__prefab": {
       "__id__": 265
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 23,
-      "g": 120,
-      "b": 144,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {
@@ -7161,7 +7166,16 @@
     "_isUnderline": false,
     "_underlineHeight": 2,
     "_cacheMode": 0,
-    "_id": ""
+    "_id": "",
+    "_enableOutline": true,
+    "_outlineWidth": 2,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 23,
+      "g": 120,
+      "b": 144,
+      "a": 255
+    }
   },
   {
     "__type__": "cc.CompPrefabInfo",
@@ -7178,14 +7192,6 @@
     "__prefab": {
       "__id__": 313
     },
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 23,
-      "g": 120,
-      "b": 144,
-      "a": 255
-    },
-    "_width": 2,
     "_id": ""
   },
   {

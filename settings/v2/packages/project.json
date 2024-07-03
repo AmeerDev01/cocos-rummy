@@ -1,5 +1,5 @@
 {
-  "__version__": "1.0.4",
+  "__version__": "1.0.6",
   "general": {
     "designResolution": {
       "width": 1334,
@@ -12,5 +12,8 @@
   "custom_joint_texture_layouts": [],
   "physics": {
     "allowSleep": true
+  },
+  "script": {
+    "preserveSymlinks": true
   }
 }

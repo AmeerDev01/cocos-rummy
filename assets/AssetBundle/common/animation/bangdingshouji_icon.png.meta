@@ -1,5 +1,5 @@
 {
-  "ver": "1.0.25",
+  "ver": "1.0.27",
   "importer": "image",
   "imported": true,
   "uuid": "51a13b0b-8e66-4e96-a93d-fdbf8ec32e51",
@@ -8,6 +8,30 @@
     ".png"
   ],
   "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "51a13b0b-8e66-4e96-a93d-fdbf8ec32e51@6c48a",
+      "displayName": "bangdingshouji_icon",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "51a13b0b-8e66-4e96-a93d-fdbf8ec32e51",
+        "visible": false
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
     "f9941": {
       "importer": "sprite-frame",
       "uuid": "51a13b0b-8e66-4e96-a93d-fdbf8ec32e51@f9941",
@@ -99,36 +123,12 @@
         ".json"
       ],
       "subMetas": {}
-    },
-    "6c48a": {
-      "importer": "texture",
-      "uuid": "51a13b0b-8e66-4e96-a93d-fdbf8ec32e51@6c48a",
-      "displayName": "bangdingshouji_icon",
-      "id": "6c48a",
-      "name": "texture",
-      "userData": {
-        "wrapModeS": "repeat",
-        "wrapModeT": "repeat",
-        "minfilter": "linear",
-        "magfilter": "linear",
-        "mipfilter": "none",
-        "anisotropy": 0,
-        "isUuid": true,
-        "imageUuidOrDatabaseUri": "51a13b0b-8e66-4e96-a93d-fdbf8ec32e51",
-        "visible": false
-      },
-      "ver": "1.0.22",
-      "imported": true,
-      "files": [
-        ".json"
-      ],
-      "subMetas": {}
     }
   },
   "userData": {
     "fixAlphaTransparencyArtifacts": true,
     "hasAlpha": true,
     "type": "sprite-frame",
-    "redirect": "51a13b0b-8e66-4e96-a93d-fdbf8ec32e51@f9941"
+    "redirect": "51a13b0b-8e66-4e96-a93d-fdbf8ec32e51@6c48a"
   }
 }
