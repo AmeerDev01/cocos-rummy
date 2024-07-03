@@ -1,0 +1,50 @@
+{
+"skeleton": {
+	"hash": "eNl8IE5wlSqL/ToblZ0VKyhkAOY",
+	"spine": "3.8.99",
+	"x": -17,
+	"y": -17,
+	"width": 40,
+	"height": 40,
+	"images": "E:/新版UI/平台/大厅new/动画/源文件/hongdian",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "190", "bone": "root", "attachment": "190" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"190": {
+				"190": { "width": 40, "height": 40 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"190": {
+				"color": [
+					{ "color": "ffffffff", "curve": 0.25, "c3": 0.75 },
+					{ "time": 0.6667, "color": "ffffffaf", "curve": 0.25, "c3": 0.75 },
+					{ "time": 1.3333, "color": "ffffffff" }
+				]
+			}
+		},
+		"bones": {
+			"root": {
+				"scale": [
+					{ "curve": 0.25, "c3": 0.75 },
+					{ "time": 0.6667, "x": 0.8, "y": 0.8, "curve": 0.284, "c3": 0.75 },
+					{ "time": 1.3333 }
+				]
+			}
+		}
+	}
+}
+}

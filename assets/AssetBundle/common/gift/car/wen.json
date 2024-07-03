@@ -1,0 +1,69 @@
+{
+"skeleton": {
+	"hash": "NOleAjjVHRfO4ssyi+YjWkKgCuE",
+	"spine": "3.8.99",
+	"x": -118,
+	"y": -85,
+	"width": 236,
+	"height": 170,
+	"images": "D:/nie/nie/表情/吻/1",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "1", "bone": "root", "attachment": "wen_0015_16" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"1": {
+				"wen_0001_2": { "width": 236, "height": 170 },
+				"wen_0002_3": { "width": 236, "height": 170 },
+				"wen_0003_4": { "width": 236, "height": 170 },
+				"wen_0004_5": { "width": 236, "height": 170 },
+				"wen_0005_6": { "width": 236, "height": 170 },
+				"wen_0006_7": { "width": 236, "height": 170 },
+				"wen_0007_8": { "width": 236, "height": 170 },
+				"wen_0008_9": { "width": 236, "height": 170 },
+				"wen_0009_10": { "width": 236, "height": 170 },
+				"wen_0010_11": { "width": 236, "height": 170 },
+				"wen_0011_12": { "width": 236, "height": 170 },
+				"wen_0012_13": { "width": 236, "height": 170 },
+				"wen_0013_14": { "width": 236, "height": 170 },
+				"wen_0014_15": { "width": 236, "height": 170 },
+				"wen_0015_16": { "width": 236, "height": 170 },
+				"wen_0000_1": { "width": 236, "height": 170 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"1": {
+				"attachment": [
+					{ "name": "wen_0000_1" },
+					{ "time": 0.0667, "name": "wen_0001_2" },
+					{ "time": 0.1333, "name": "wen_0002_3" },
+					{ "time": 0.2, "name": "wen_0003_4" },
+					{ "time": 0.2667, "name": "wen_0004_5" },
+					{ "time": 0.3333, "name": "wen_0005_6" },
+					{ "time": 0.4, "name": "wen_0006_7" },
+					{ "time": 0.4667, "name": "wen_0007_8" },
+					{ "time": 0.5333, "name": "wen_0008_9" },
+					{ "time": 0.6, "name": "wen_0009_10" },
+					{ "time": 0.6667, "name": "wen_0010_11" },
+					{ "time": 0.7333, "name": "wen_0011_12" },
+					{ "time": 0.8, "name": "wen_0012_13" },
+					{ "time": 0.8667, "name": "wen_0013_14" },
+					{ "time": 0.9333, "name": "wen_0014_15" },
+					{ "time": 1, "name": "wen_0015_16" }
+				]
+			}
+		}
+	}
+}
+}

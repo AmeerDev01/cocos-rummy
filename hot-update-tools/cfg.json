@@ -1,0 +1,28 @@
+{
+    "version": "1.0.02",
+    "serverRootDir": "https://hot.supfutce.com/appHotUpdate",
+    "resourceRootDir": "/Users/geliang/web/dibai/hall/build/web-mobile",
+    "genManifestDir": "",
+    "localServerPath": "",
+    "hotAddressArray": [
+        {
+            "label": "http://54.251.66.82:8001a",
+            "value": "http://54.251.66.82:8001a"
+        },
+        {
+            "label": "http://",
+            "value": "http://"
+        },
+        {
+            "label": "http://54.251.66.82:8009/appHotUpdate",
+            "value": "http://54.251.66.82:8009/appHotUpdate"
+        },
+        {
+            "label": "https://hot.supfutce.com/appHotUpdate",
+            "value": "https://hot.supfutce.com/appHotUpdate"
+        }
+    ],
+    "buildTime": null,
+    "genTime": null,
+    "genVersion": null
+}

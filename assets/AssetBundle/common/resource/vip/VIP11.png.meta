@@ -1,0 +1,134 @@
+{
+  "ver": "1.0.25",
+  "importer": "image",
+  "imported": true,
+  "uuid": "cba42cb4-5edc-441f-a1fc-69270a27debd",
+  "files": [
+    ".json",
+    ".png"
+  ],
+  "subMetas": {
+    "f9941": {
+      "importer": "sprite-frame",
+      "uuid": "cba42cb4-5edc-441f-a1fc-69270a27debd@f9941",
+      "displayName": "VIP11",
+      "id": "f9941",
+      "name": "spriteFrame",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "trimX": 0,
+        "trimY": 0,
+        "width": 62,
+        "height": 17,
+        "rawWidth": 62,
+        "rawHeight": 17,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [
+            -31,
+            -8.5,
+            0,
+            31,
+            -8.5,
+            0,
+            -31,
+            8.5,
+            0,
+            31,
+            8.5,
+            0
+          ],
+          "indexes": [
+            0,
+            1,
+            2,
+            2,
+            1,
+            3
+          ],
+          "uv": [
+            0,
+            17,
+            62,
+            17,
+            0,
+            0,
+            62,
+            0
+          ],
+          "nuv": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            1,
+            1
+          ],
+          "minPos": [
+            -31,
+            -8.5,
+            0
+          ],
+          "maxPos": [
+            31,
+            8.5,
+            0
+          ]
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "cba42cb4-5edc-441f-a1fc-69270a27debd@6c48a",
+        "atlasUuid": ""
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "cba42cb4-5edc-441f-a1fc-69270a27debd@6c48a",
+      "displayName": "VIP11",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "cba42cb4-5edc-441f-a1fc-69270a27debd",
+        "visible": false
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "fixAlphaTransparencyArtifacts": true,
+    "hasAlpha": true,
+    "type": "sprite-frame",
+    "redirect": "cba42cb4-5edc-441f-a1fc-69270a27debd@f9941"
+  }
+}

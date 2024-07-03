@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "815024240862",
+    "project_id": "hugewin777india-60f18",
+    "storage_bucket": "hugewin777india-60f18.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:815024240862:android:b0ae49b5d46c7917fc6a4f",
+        "android_client_info": {
+          "package_name": "cocos.com.hugeWin777.india"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhdzd7FTqmsoFDyrpxKWWqHR5uBthGDyk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

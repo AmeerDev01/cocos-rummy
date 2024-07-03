@@ -1,0 +1,1 @@
+sh ./merge-subgame3.sh cocos.com.hugeWin.dev dev

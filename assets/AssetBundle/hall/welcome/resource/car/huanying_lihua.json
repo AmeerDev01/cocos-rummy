@@ -1,0 +1,243 @@
+{
+"skeleton": {
+	"hash": "Lyy8h3qQcrGI1zkacqaPXRa+MBI",
+	"spine": "3.8.99",
+	"x": -500,
+	"y": -132,
+	"width": 956,
+	"height": 440,
+	"images": "E:/新版UI/平台/大厅new/动画/源文件/欢迎烟花",
+	"audio": ""
+},
+"bones": [
+	{ "name": "root", "x": -332, "y": 132 },
+	{ "name": "骨骼", "parent": "root", "x": -9, "y": 43 },
+	{ "name": "骨骼2", "parent": "root", "x": 568, "y": 37 },
+	{ "name": "骨骼3", "parent": "root", "x": 688, "y": -164 },
+	{ "name": "骨骼4", "parent": "root", "x": 93, "y": 76 },
+	{ "name": "骨骼6", "parent": "root", "x": 675, "y": 27 },
+	{ "name": "骨骼5", "parent": "root", "x": -68, "y": -68 }
+],
+"slots": [
+	{ "name": "aa", "bone": "骨骼", "attachment": "image 1" },
+	{ "name": "aa5", "bone": "骨骼5", "attachment": "image 1" },
+	{ "name": "aa6", "bone": "骨骼6", "attachment": "image 1" },
+	{ "name": "aa4", "bone": "骨骼4", "attachment": "image 1" },
+	{ "name": "aa3", "bone": "骨骼3", "attachment": "image 1" },
+	{ "name": "aa2", "bone": "骨骼2", "attachment": "image 1" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"aa": {
+				"image 1": { "width": 200, "height": 200 },
+				"image 3": { "width": 200, "height": 200 },
+				"image 5": { "width": 200, "height": 200 },
+				"image 7": { "width": 200, "height": 200 },
+				"image 9": { "width": 200, "height": 200 },
+				"image 11": { "width": 200, "height": 200 },
+				"image 13": { "width": 200, "height": 200 },
+				"image 15": { "width": 200, "height": 200 },
+				"image 17": { "width": 200, "height": 200 },
+				"image 19": { "width": 200, "height": 200 },
+				"image 21": { "width": 200, "height": 200 },
+				"image 23": { "width": 200, "height": 200 },
+				"image 25": { "width": 200, "height": 200 }
+			},
+			"aa2": {
+				"image 1": { "width": 200, "height": 200 },
+				"image 3": { "width": 200, "height": 200 },
+				"image 5": { "width": 200, "height": 200 },
+				"image 7": { "width": 200, "height": 200 },
+				"image 9": { "width": 200, "height": 200 },
+				"image 11": { "width": 200, "height": 200 },
+				"image 13": { "width": 200, "height": 200 },
+				"image 15": { "width": 200, "height": 200 },
+				"image 17": { "width": 200, "height": 200 },
+				"image 19": { "width": 200, "height": 200 },
+				"image 21": { "width": 200, "height": 200 },
+				"image 23": { "width": 200, "height": 200 },
+				"image 25": { "width": 200, "height": 200 }
+			},
+			"aa3": {
+				"image 1": { "width": 200, "height": 200 },
+				"image 3": { "width": 200, "height": 200 },
+				"image 5": { "width": 200, "height": 200 },
+				"image 7": { "width": 200, "height": 200 },
+				"image 9": { "width": 200, "height": 200 },
+				"image 11": { "width": 200, "height": 200 },
+				"image 13": { "width": 200, "height": 200 },
+				"image 15": { "width": 200, "height": 200 },
+				"image 17": { "width": 200, "height": 200 },
+				"image 19": { "width": 200, "height": 200 },
+				"image 21": { "width": 200, "height": 200 },
+				"image 23": { "width": 200, "height": 200 },
+				"image 25": { "width": 200, "height": 200 }
+			},
+			"aa4": {
+				"image 1": { "width": 200, "height": 200 },
+				"image 3": { "width": 200, "height": 200 },
+				"image 5": { "width": 200, "height": 200 },
+				"image 7": { "width": 200, "height": 200 },
+				"image 9": { "width": 200, "height": 200 },
+				"image 11": { "width": 200, "height": 200 },
+				"image 13": { "width": 200, "height": 200 },
+				"image 15": { "width": 200, "height": 200 },
+				"image 17": { "width": 200, "height": 200 },
+				"image 19": { "width": 200, "height": 200 },
+				"image 21": { "width": 200, "height": 200 },
+				"image 23": { "width": 200, "height": 200 },
+				"image 25": { "width": 200, "height": 200 }
+			},
+			"aa5": {
+				"image 1": { "width": 200, "height": 200 },
+				"image 3": { "width": 200, "height": 200 },
+				"image 5": { "width": 200, "height": 200 },
+				"image 7": { "width": 200, "height": 200 },
+				"image 9": { "width": 200, "height": 200 },
+				"image 11": { "width": 200, "height": 200 },
+				"image 13": { "width": 200, "height": 200 },
+				"image 15": { "width": 200, "height": 200 },
+				"image 17": { "width": 200, "height": 200 },
+				"image 19": { "width": 200, "height": 200 },
+				"image 21": { "width": 200, "height": 200 },
+				"image 23": { "width": 200, "height": 200 },
+				"image 25": { "width": 200, "height": 200 }
+			},
+			"aa6": {
+				"image 1": { "width": 200, "height": 200 },
+				"image 3": { "width": 200, "height": 200 },
+				"image 5": { "width": 200, "height": 200 },
+				"image 7": { "width": 200, "height": 200 },
+				"image 9": { "width": 200, "height": 200 },
+				"image 11": { "width": 200, "height": 200 },
+				"image 13": { "width": 200, "height": 200 },
+				"image 15": { "width": 200, "height": 200 },
+				"image 17": { "width": 200, "height": 200 },
+				"image 19": { "width": 200, "height": 200 },
+				"image 21": { "width": 200, "height": 200 },
+				"image 23": { "width": 200, "height": 200 },
+				"image 25": { "width": 200, "height": 200 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"aa": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 0.3333, "name": "image 1" },
+					{ "time": 0.3667, "name": "image 3" },
+					{ "time": 0.4, "name": "image 5" },
+					{ "time": 0.4333, "name": "image 7" },
+					{ "time": 0.4667, "name": "image 9" },
+					{ "time": 0.5, "name": "image 11" },
+					{ "time": 0.5333, "name": "image 13" },
+					{ "time": 0.5667, "name": "image 15" },
+					{ "time": 0.6, "name": "image 17" },
+					{ "time": 0.6333, "name": "image 19" },
+					{ "time": 0.6667, "name": "image 21" },
+					{ "time": 0.7, "name": "image 23" },
+					{ "time": 0.7333, "name": "image 25" },
+					{ "time": 0.7667, "name": null }
+				]
+			},
+			"aa2": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 0.6667, "name": "image 1" },
+					{ "time": 0.7, "name": "image 3" },
+					{ "time": 0.7333, "name": "image 5" },
+					{ "time": 0.7667, "name": "image 7" },
+					{ "time": 0.8, "name": "image 9" },
+					{ "time": 0.8333, "name": "image 11" },
+					{ "time": 0.8667, "name": "image 13" },
+					{ "time": 0.9, "name": "image 15" },
+					{ "time": 0.9333, "name": "image 17" },
+					{ "time": 0.9667, "name": "image 19" },
+					{ "time": 1, "name": "image 21" },
+					{ "time": 1.0333, "name": "image 23" },
+					{ "time": 1.0667, "name": "image 25" },
+					{ "time": 1.1, "name": null }
+				]
+			},
+			"aa3": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 0.5, "name": "image 1" },
+					{ "time": 0.5333, "name": "image 3" },
+					{ "time": 0.5667, "name": "image 5" },
+					{ "time": 0.6, "name": "image 7" },
+					{ "time": 0.6333, "name": "image 9" },
+					{ "time": 0.6667, "name": "image 11" },
+					{ "time": 0.7, "name": "image 13" },
+					{ "time": 0.7333, "name": "image 15" },
+					{ "time": 0.7667, "name": "image 17" },
+					{ "time": 0.8, "name": "image 19" },
+					{ "time": 0.8333, "name": "image 21" },
+					{ "time": 0.8667, "name": "image 23" },
+					{ "time": 0.9, "name": "image 25" },
+					{ "time": 0.9333, "name": null }
+				]
+			},
+			"aa4": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 0.3, "name": "image 1" },
+					{ "time": 0.3333, "name": "image 3" },
+					{ "time": 0.3667, "name": "image 5" },
+					{ "time": 0.4, "name": "image 7" },
+					{ "time": 0.4333, "name": "image 9" },
+					{ "time": 0.4667, "name": "image 11" },
+					{ "time": 0.5, "name": "image 13" },
+					{ "time": 0.5333, "name": "image 15" },
+					{ "time": 0.5667, "name": "image 17" },
+					{ "time": 0.6, "name": "image 19" },
+					{ "time": 0.6333, "name": "image 21" },
+					{ "time": 0.6667, "name": "image 23" },
+					{ "time": 0.7, "name": "image 25" }
+				]
+			},
+			"aa5": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 0.1667, "name": "image 1" },
+					{ "time": 0.2, "name": "image 3" },
+					{ "time": 0.2333, "name": "image 5" },
+					{ "time": 0.2667, "name": "image 7" },
+					{ "time": 0.3, "name": "image 9" },
+					{ "time": 0.3333, "name": "image 11" },
+					{ "time": 0.3667, "name": "image 13" },
+					{ "time": 0.4, "name": "image 15" },
+					{ "time": 0.4333, "name": "image 17" },
+					{ "time": 0.4667, "name": "image 19" },
+					{ "time": 0.5, "name": "image 21" },
+					{ "time": 0.5333, "name": "image 23" },
+					{ "time": 0.5667, "name": "image 25" },
+					{ "time": 0.6, "name": null }
+				]
+			},
+			"aa6": {
+				"attachment": [
+					{ "time": 0.0333, "name": "image 3" },
+					{ "time": 0.0667, "name": "image 5" },
+					{ "time": 0.1, "name": "image 7" },
+					{ "time": 0.1333, "name": "image 9" },
+					{ "time": 0.1667, "name": "image 11" },
+					{ "time": 0.2, "name": "image 13" },
+					{ "time": 0.2333, "name": "image 15" },
+					{ "time": 0.2667, "name": "image 17" },
+					{ "time": 0.3, "name": "image 19" },
+					{ "time": 0.3333, "name": "image 21" },
+					{ "time": 0.3667, "name": "image 23" },
+					{ "time": 0.4, "name": "image 25" },
+					{ "time": 0.4333, "name": null }
+				]
+			}
+		}
+	}
+}
+}
