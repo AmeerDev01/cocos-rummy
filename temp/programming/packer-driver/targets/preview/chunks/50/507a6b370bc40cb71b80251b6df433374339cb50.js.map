@@ -1,1 +1,0 @@
-{"version":3,"sources":["file:///Users/geliang/web/dibai/hall/assets/script/subGame/Crash/const/Crash_BaseConst.ts"],"names":["LANG"],"mappings":";;;;;;;;;;;;;;sBACYA,I,0BAAAA,I;AAAAA,QAAAA,I,CAAAA,I;AAAAA,QAAAA,I,CAAAA,I;eAAAA,I","sourcesContent":["\r\nexport enum LANG {\r\n    EN = 0,\r\n    ZH = 1,\r\n}\r\n"]}

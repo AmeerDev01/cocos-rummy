@@ -1,1 +1,0 @@
-{"version":3,"sources":["file:///Users/geliang/web/dibai/hall/assets/script/subGame/Crash/net/Crash_NetDef.ts"],"names":["MsgCode"],"mappings":";;;;;;;;;;;;;;yBAEYA,O,0BAAAA,O;AAAAA,QAAAA,O,CAAAA,O;eAAAA,O","sourcesContent":["\r\n\r\nexport enum MsgCode {\r\n    OK = 200,\r\n}\r\n\r\nexport interface RspData {\r\n    code: MsgCode,\r\n    msg: string,\r\n    data: any\r\n}"]}

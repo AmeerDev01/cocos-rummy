@@ -1,1 +1,0 @@
-sh ./merge-subgame3.sh cocos.com.hugeWin777 pro
