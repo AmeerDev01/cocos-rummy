@@ -193,7 +193,7 @@ export class ThorV2Icon {
 
     const skeletonData = sourceManageSeletor().getFile(this.iconConfig.skeletonName).source;
     this.skeleton.skeletonData = skeletonData;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    //this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
     this.sprite.spriteFrame = sourceManageSeletor().getFile(this.iconConfig.fileName).source;
 
   }
@@ -217,6 +217,7 @@ export class ThorV2Icon {
     this.faceNode.active = false;
     // this.skeleton.paused = false;
     this.skeleton.timeScale = timeScale;
+    this.faceAnimationNode.active = true;
     this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], loop);
   }
 
@@ -304,7 +305,7 @@ export class ThorV2Icon {
   private showFaceAnimationNode(parentNode: Node) {
     const offset = new Vec3(this.iconConfig.distance[0], this.iconConfig.distance[1]);
     this.faceAnimationNode.active = true;
-    parentNode.addChild(this.faceAnimationNode)
+    //parentNode.addChild(this.faceAnimationNode)
     this.faceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
   }
 

@@ -135,11 +135,11 @@ export class EgyptV2Icon {
 
   private buildIcon() {
     this.faceAnimationNode.active = false;
-    this.faceAnimationNode.removeFromParent();
+    //this.faceAnimationNode.removeFromParent();
 
     const skeletonData = sourceManageSeletor().getFile(this.iconConfig.skeletonName).source;
     this.skeleton.skeletonData = skeletonData;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    ///this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
     this.sprite.spriteFrame = sourceManageSeletor().getFile(this.iconConfig.fileName).source;
 
   }
@@ -147,15 +147,11 @@ export class EgyptV2Icon {
   /**播放普通中奖 */
   public playWin(parentNode: Node, isBorder: boolean = true, loop: boolean = true) {
     const offset = new Vec3(this.iconConfig.distance[0], this.iconConfig.distance[1]);
-    if (!this.faceAnimationNode.active) {
-      this.faceAnimationNode.active = true;
-      // console.log("playWin ", this.iconConfig.id, " parent " + this.faceAnimationNode.parent);
-      if (!this.faceAnimationNode.parent) {
-        parentNode.addChild(this.faceAnimationNode)
-        this.faceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
-      }
+    this.faceAnimationNode.active = true;
+    if (!this.faceAnimationNode.parent) {
+      parentNode.addChild(this.faceAnimationNode)
     }
-
+    this.faceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
     if (isBorder && !this.borderNode.active) {
       this.borderNode.active = true;
       if (!this.borderNode.parent) {
@@ -192,12 +188,13 @@ export class EgyptV2Icon {
     this.borderNode.removeFromParent();
 
     this.faceNode.active = true;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    //this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
   }
 
   public pauseWin() {
     this.borderNode.active = false;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    this.faceAnimationNode.active = false;
+    //this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
   }
 
   /**是否使用 */

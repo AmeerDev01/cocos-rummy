@@ -193,12 +193,12 @@ export class StarlightV2Icon {
 
     const skeletonData = sourceManageSeletor().getFile(this.iconConfig.skeletonName).source;
     this.skeleton.skeletonData = skeletonData;
-    this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+    //this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
     if (this.iconConfig.skin) {
-      this.skeleton.setSkin(this.iconConfig.skin);
+        this.skeleton.setSkin(this.iconConfig.skin);
     }
     this.sprite.spriteFrame = sourceManageSeletor().getFile(this.iconConfig.fileName).source;
-
+     
   }
 
   public setSkeletonOverCallback(skeletonOverCallback) {
@@ -314,7 +314,7 @@ export class StarlightV2Icon {
   private showFaceAnimationNode(parentNode: Node) {
     const offset = new Vec3(this.iconConfig.distance[0], this.iconConfig.distance[1]);
     this.faceAnimationNode.active = true;
-    parentNode.addChild(this.faceAnimationNode)
+   // parentNode.addChild(this.faceAnimationNode)
     this.faceAnimationNode.setWorldPosition(this.node.worldPosition.clone().add(offset));
   }
 
