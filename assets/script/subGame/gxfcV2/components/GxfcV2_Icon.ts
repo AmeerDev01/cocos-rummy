@@ -154,7 +154,7 @@ export class GxfcV2Icon {
 
   private buildIcon() {
     this.faceAnimationNode.active = false;
-    this.faceAnimationNode.removeFromParent();
+    //this.faceAnimationNode.removeFromParent();
 
     this.jinFaFaceAnimationNode.active = false;
     this.jinFaFaceAnimationNode.removeFromParent();
@@ -162,7 +162,7 @@ export class GxfcV2Icon {
     const skeletonData = sourceManageSeletor().getFile(this.iconConfig.skeletonName).source;
     this.skeleton.skeletonData = skeletonData;
     if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
-      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+      //this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
     } else {
       this.skeleton.clearTracks()
     }
@@ -300,18 +300,18 @@ export class GxfcV2Icon {
   /**隐藏普通中奖 */
   public hideWin() {
     this.faceAnimationNode.active = false;
-    this.faceAnimationNode.removeFromParent();
+    //this.faceAnimationNode.removeFromParent();
     this.borderNode.active = false;
     this.borderNode.removeFromParent();
 
     this.faceNode.active = true;
     if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
-      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+      //this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
     } else {
       this.skeleton.clearTracks()
     }
 
-    this.jinFaSkeleton.setAnimation(0, "static", false);
+    //this.jinFaSkeleton.setAnimation(0, "static", false);
     this.jinFaFaceAnimationNode.active = false;
     this.jinFaFaceNode.active = false;
   }
@@ -326,8 +326,9 @@ export class GxfcV2Icon {
     //   this.sprite.spriteFrame = sourceManageSeletor().getFile(SpriteFramePathDefine.icon_jinfa).source;
     //   this.skeleton.setAnimation(0, "static", false);
     // }
+    this.faceAnimationNode.active = false;
     if (this.iconConfig && this.iconConfig.animationArr[0] !== " ") {
-      this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
+      //this.skeleton.setAnimation(0, this.iconConfig.animationArr[0], false);
     } else {
       this.skeleton.clearTracks()
     }
@@ -335,7 +336,7 @@ export class GxfcV2Icon {
       this.jinFaFaceAnimationNode.active = false;
       this.jinFaFaceNode.active = true;
     }
-    this.jinFaSkeleton.setAnimation(0, "static", false);
+    //this.jinFaSkeleton.setAnimation(0, "static", false);
   }
 
   public changeToJinWild() {
