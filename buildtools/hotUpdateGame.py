@@ -28,7 +28,7 @@ GlobalArgs = parser.parse_args()
 #工作目录
 PRJ_WORK_PATH     =GlobalArgs.PRJ_WORK_PATH
 BUILD_NUMBER      =GlobalArgs.BUILD_NUMBER
-HOT_BUILD_NUMBER      = int(BUILD_NUMBER) + 10
+HOT_BUILD_NUMBER      = int(BUILD_NUMBER) + 50
 
 BASE_HOT_PATH           ="HotUpdateGames"
 BASE_HOT_SUBGAME        ="iosSubGame"
