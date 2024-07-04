@@ -1,0 +1,81 @@
+{
+  "name": "cocos-freamwork",
+  "server": "",
+  "platform": "ios",
+  "buildPath": "project://build",
+  "debug": false,
+  "md5Cache": false,
+  "skipCompressTexture": false,
+  "sourceMaps": false,
+  "overwriteProjectSettings": {
+    "macroConfig": {
+      "cleanupImageCache": "inherit-project-setting"
+    },
+    "includeModules": {
+      "physics": "inherit-project-setting",
+      "physics-2d": "inherit-project-setting",
+      "gfx-webgl2": "off"
+    }
+  },
+  "nativeCodeBundleMode": "asmjs",
+  "polyfills": {
+    "asyncFunctions": false
+  },
+  "experimentalEraseModules": false,
+  "startSceneAssetBundle": false,
+  "bundleConfigs": [],
+  "useBuiltinServer": false,
+  "mainBundleIsRemote": false,
+  "mainBundleCompressionType": "merge_dep",
+  "useSplashScreen": true,
+  "bundleCommonChunk": false,
+  "packAutoAtlas": true,
+  "startScene": "5522c3e7-8946-4e1b-9411-431571b27564",
+  "outputName": "ios",
+  "taskName": "ios",
+  "scenes": [
+    {
+      "url": "db://assets/AssetBundle/sence/hall.scene",
+      "uuid": "5522c3e7-8946-4e1b-9411-431571b27564"
+    }
+  ],
+  "wasmCompressionMode": false,
+  "packages": {
+    "ios": {
+      "executableName": "",
+      "packageName": "com.running.pan",
+      "renderBackEnd": {
+        "metal": true
+      },
+      "skipUpdateXcodeProject": false,
+      "orientation": {
+        "portrait": false,
+        "upsideDown": false,
+        "landscapeRight": true,
+        "landscapeLeft": true
+      },
+      "osTarget": {
+        "iphoneos": false,
+        "simulator": true
+      },
+      "targetVersion": "12.0",
+      "__version__": "1.0.1",
+      "developerTeam": "B8W28RBAF7_9EE6395E6D33CF02CAA78B02433A50546762C55A"
+    },
+    "native": {
+      "encrypted": false,
+      "xxteaKey": "cdEv5S2XVC37ztP+",
+      "compressZip": false,
+      "JobSystem": "none",
+      "__version__": "1.0.2"
+    },
+    "cocos-service": {
+      "configID": "f122e4",
+      "services": [],
+      "__version__": "3.0.7"
+    }
+  },
+  "__version__": "1.3.8",
+  "buildMode": "normal",
+  "logDest": "project://temp/builder/log/ios6-29-2024 19-23.log"
+}
