@@ -50,6 +50,7 @@ export class Common_HotUpdate extends Component {
 	protected onLoad(): void {
 		lang.use(getIsTest()&&!NATIVE? LanguageItemType.ZH : LanguageItemType.EN)
 		if (NATIVE) {
+			console.log("大厅热更新测试代码生效");
 			this._storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : "/") + 'remote-asset')
 			hideNativeSplash();
 			native.bridge.onNative = (arg0: string, arg1: string) => {
