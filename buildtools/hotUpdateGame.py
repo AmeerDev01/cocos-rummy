@@ -59,7 +59,7 @@ def hotUpdateZip(inPath,outPath):
 		os.remove(outPath)
 	zip_ya(inPath,outPath)
 
-folder_names = ['dfdc','starlight','phoenixV2','gxfcV2','godWealthV2','fortuneTiger', 'dragonTiger','fruit777','dragonV2','egyptV2']
+folder_names = ['dfdc','thorV2','starlight','phoenixV2','gxfcV2','godWealthV2','fortuneTiger', 'dragonTiger','fruit777','dragonV2','egyptV2']
 
 # 遍历文件夹的第一层文件和文件夹
 def traverse_first_level(folder_path):
