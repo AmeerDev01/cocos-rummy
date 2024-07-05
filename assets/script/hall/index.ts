@@ -73,8 +73,9 @@ export const startUp = (rootNode: Node) => {
   BundleSplit.init();
   /**调试期间为了便于读懂信息，默认中文 */
   lang.use(
+    //! Hindi
     getIsTest() && !NATIVE
-      ? LanguageItemType.ZH
+      ? LanguageItemType.HI
       : defaultLanguageType[config.country].language
   );
   // BuryPoint.Instance().init()

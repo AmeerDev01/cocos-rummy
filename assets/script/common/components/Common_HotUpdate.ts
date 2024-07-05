@@ -74,9 +74,8 @@ export class Common_HotUpdate extends Component {
     console.warn("envKsy", GameConfig.envKey);
   }
   protected onLoad(): void {
-    lang.use(
-      getIsTest() && !NATIVE ? LanguageItemType.ZH : LanguageItemType.EN
-    );
+    //! Hindi
+    lang.use(LanguageItemType.HI);
     if (NATIVE) {
       console.log("大厅热更新测试代码生效666");
       this._storagePath =
@@ -90,7 +89,8 @@ export class Common_HotUpdate extends Component {
         }
       };
       if (sys.os === sys.OS.OSX) {
-        lang.use(LanguageItemType.EN);
+        //! Hindi
+        lang.use(LanguageItemType.HI);
         GameConfig.appLocalVersion = "V1.0.1";
         this.initGame();
         return;
