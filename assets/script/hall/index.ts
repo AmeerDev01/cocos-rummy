@@ -74,9 +74,10 @@ export const startUp = (rootNode: Node) => {
   /**调试期间为了便于读懂信息，默认中文 */
   lang.use(
     //! Hindi
-    getIsTest() && !NATIVE
-      ? LanguageItemType.HI
-      : defaultLanguageType[config.country].language
+    LanguageItemType.HI
+    // getIsTest() && !NATIVE
+    //   ? LanguageItemType.ZH
+    //   : defaultLanguageType[config.country].language
   );
   // BuryPoint.Instance().init()
   fetcher = new Fetcher<ApiUrl>(config.httpBaseUrl);
