@@ -1,6 +1,6 @@
 import { Node, sys } from "cc";
 import { getGameMapConfig, getIsTest } from "./gameConfig";
-import GodWealth2StartUp from "../subGame/godWealthV2/GodWealthV2_StartUp";
+import GodWealth2StartUp from "../subGame/godWealthV2/gowInit";
 import { ToastType, addToastAction } from "../hall/store/actions/baseBoard";
 import { NATIVE } from "cc/env";
 import WebSocketStarter, { SKT_HOST } from "../common/WebSocketStarter";
