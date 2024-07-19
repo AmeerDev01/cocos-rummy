@@ -1,31 +1,46 @@
-import { Node, find } from "cc"
-import ViewModel, { StoreInject } from "../../../base/ViewModel"
-import { GodWealthV2_Footer, IEvent, IProps } from "../components/GodWealthV2_Footer"
-import { getStore } from "../store"
-import { StateType } from "../store/reducer"
-import BaseViewModel from "../../../hall/viewModel/BaseViewModel"
-import { GodWealthV2_helpPanel, IState as FIState, IProps as  FIProps, IEvent as FIEvent } from "../components/GodWealthV2_helpPanel"
-import { sourceManageSeletor } from "../index"
-import { PrefabPathDefine } from "../sourceDefine/prefabDefine"
-import { EffectType } from "../../../utils/NodeIOEffect"
+import { Node } from "cc";
+import ViewModel, { StoreInject } from "../../../base/ViewModel";
+import {
+  GodWealthV2_Footer,
+  IEvent,
+  IProps
+} from "../components/GodWealthV2_Footer";
+import { getStore } from "../store";
+import { StateType } from "../store/reducer";
+import BaseViewModel from "../../../hall/viewModel/BaseViewModel";
+import {
+  GodWealthV2_helpPanel,
+  IState as FIState,
+  IProps as FIProps,
+  IEvent as FIEvent
+} from "../components/GodWealthV2_helpPanel";
 
 @StoreInject(getStore())
-class GodWealthV2FooterViewModel extends ViewModel<GodWealthV2_Footer, IProps, IEvent> {
-  public helpPanelPanel: BaseViewModel<GodWealthV2_helpPanel, FIState, FIProps, FIEvent>
+class GodWealthV2FooterViewModel extends ViewModel<
+  GodWealthV2_Footer,
+  IProps,
+  IEvent
+> {
+  public helpPanelPanel: BaseViewModel<
+    GodWealthV2_helpPanel,
+    FIState,
+    FIProps,
+    FIEvent
+  >;
 
   constructor() {
-    super('GodWealthV2_Footer')
+    super("GodWealthV2_Footer");
   }
 
-  protected begin() {
-
-  }
+  protected begin() {}
 
   public mountViewNode(viewNode: Node) {
     this.viewNode = viewNode;
-    this.viewNode.addComponent(this.componentStr)
-    this.comp = this.viewNode.getComponent(this.componentStr) as GodWealthV2_Footer
-    return this
+    this.viewNode.addComponent(this.componentStr);
+    this.comp = this.viewNode.getComponent(
+      this.componentStr
+    ) as GodWealthV2_Footer;
+    return this;
   }
 
   public connect() {
@@ -37,14 +52,11 @@ class GodWealthV2FooterViewModel extends ViewModel<GodWealthV2_Footer, IProps, I
         betDropDownlist: state.game.betDropDownlist,
         positionId: state.game.positionId,
         winloss: state.game.winloss,
-        gameTypeInfo: state.game.gameTypeInfo,
-        
-      }
-    })
-    return this
+        gameTypeInfo: state.game.gameTypeInfo
+      };
+    });
+    return this;
   }
-
-
 }
 
-export default GodWealthV2FooterViewModel
+export default GodWealthV2FooterViewModel;

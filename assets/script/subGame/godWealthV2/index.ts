@@ -30,10 +30,8 @@ export const sourceManageSeletor = (bundleName: string = bundlePkgName) =>
   sourceManageMap.find((i) => i.bundle.name === bundleName);
 
 export enum NORMAL_MAG_TYPE {
-  /**切换游戏，特效中间触发 */
   CHANGE_GAME
 }
-/**用于一般逻辑的监听器 */
 export const msgListener = listenerFactoy<NORMAL_MAG_TYPE>();
 let initTimeoutId = 0;
 export const startUp = (rootNode: Node) => {
@@ -64,7 +62,6 @@ export const startUp = (rootNode: Node) => {
               );
               setActiveAudio(godWealthV2_Audio);
 
-              // 默认给10秒进入游戏超时处理，有时候socket连接成功之后，服务器没有发送进入房间 消息，导致卡住
               initTimeoutId = window.setTimeout(() => {
                 global.closeSubGame({
                   confirmContent: lang.write(
@@ -84,7 +81,6 @@ export const startUp = (rootNode: Node) => {
                 );
               }, 10000);
 
-              // 卸载游戏方法
               const destoryGame = (
                 loaderviweModel: LoaderPanelViewModel,
                 timeId: number
@@ -114,7 +110,7 @@ export const startUp = (rootNode: Node) => {
                     )
                     .appendTo(rootNode)
                     .connect();
-                  // 调整loader层级到最上层，让主界面初始化完成后才卸载
+
                   loaderviweModel.viewNode.isValid &&
                     loaderviweModel.viewNode.setSiblingIndex(
                       loaderviweModel.viewNode.parent.children.length
@@ -135,7 +131,6 @@ export const startUp = (rootNode: Node) => {
 };
 
 export const stopGame = () => {
-  // log("stopGame", initTimeoutId);
   getStore().dispatch(resetStore(0));
   getStore().dispatch(initRoller(0));
 

@@ -1,16 +1,16 @@
-import prefabDefine from './prefabDefine'
-import skeletalDefine from './skeletalDefine'
-import spriteDefine from './spriteDefine'
-import soundDefine from './soundDefine'
-import { ISourceFile } from '../../../base/SourceManage'
+import prefabDefine from "./prefabDefine";
+import skeletalDefine from "./skeletalDefine";
+import spriteDefine from "./spriteDefine";
+import soundDefine from "./soundDefine";
+import { ISourceFile } from "../../../base/SourceManage";
 
-export const bundlePkgName = "godWealthV2"
+export const bundlePkgName = "godWealthV2";
 
 const fileMap: ISourceFile[] = [
   ...prefabDefine(bundlePkgName),
   ...skeletalDefine(bundlePkgName),
   ...spriteDefine(bundlePkgName),
   ...soundDefine(bundlePkgName)
-]
+];
 
-export default fileMap
+export default fileMap;
