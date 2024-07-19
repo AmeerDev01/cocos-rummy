@@ -6,8 +6,7 @@ import { global, lang } from "../../hall";
 import WebSocketStarter, {
   WebSocketDriver
 } from "../../common/WebSocketStarter";
-import { SKT_OPERATION } from "../../common/allEnums";
-import { SKT_MAG_TYPE } from "../../common/allEnums";
+import { SKT_OPERATION, SKT_MAG_TYPE } from "../../common/allEnums";
 
 export default () => {
   return new Promise((resolve, reject) => {
@@ -36,18 +35,23 @@ export default () => {
               } else {
                 let error = "";
                 if (data.success === undefined) {
-                  error = "data format error";
-                  console.error("data format error", data);
+                  error = "godWealthWebSocketDriver1: data format error";
+                  console.error(error, data);
                 } else {
-                  error = data.reason || "error";
-                  console.error(data.reason);
+                  error = `godWealthWebSocketDriver2: ${
+                    data.reason || "error"
+                  }`;
+                  console.error(error);
                 }
                 global.hallDispatch(
                   addToastAction({
                     content: lang.write(
                       (k) => k.WebSocketModule.SocketDataError,
                       {},
-                      { placeStr: "服务数据错误" }
+                      {
+                        placeStr:
+                          "godWealthWebSocketDriver3: Service data error"
+                      }
                     ),
                     type: ToastType.ERROR
                   })
@@ -81,7 +85,9 @@ export const godWealthGameLogin = () => {
       confirmContent: lang.write(
         (k) => k.WebSocketModule.ConfigGameFaild,
         {},
-        { placeStr: "对不起，连接游戏失败" }
+        {
+          placeStr: "godWealthGameLogin4: Sorry, failed to connect to the game"
+        }
       )
     });
     return false;

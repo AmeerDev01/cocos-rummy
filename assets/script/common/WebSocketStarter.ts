@@ -186,6 +186,7 @@ export default class WebSocketStarter extends Singleton {
       }
     });
   }
+
   public reConnect(force: boolean = false) {
     if (!force && this.isReconnecting) {
       this.isReconnecting = false;
@@ -348,7 +349,6 @@ export class WebSocketDriver<SKT_TYPE> {
     return sktMessager;
   }
 }
-
 export class SktMessager<SKT_TYPE> {
   constructor(
     ws: WebSocket,

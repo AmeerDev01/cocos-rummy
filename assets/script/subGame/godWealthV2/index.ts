@@ -93,6 +93,7 @@ function _startGameAfterLoad(_sourceManageMap: SourceManage[], rootNode: Node) {
     .then(() => {
       getStore().dispatch(resetStore(0));
       getStore().dispatch(initRoller(0));
+
       mainViewModel = new GodWealthV2MainViewModel(() => {
         destoryGame(loaderviweModel, initTimeoutId);
       })
