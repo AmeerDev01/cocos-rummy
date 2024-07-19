@@ -1,16 +1,16 @@
 import { Node, sys } from "cc";
-import { getGameMapConfig, getIsTest } from "../config/GameConfig";
+import { getGameMapConfig, getIsTest } from "./gameConfig";
 import GodWealth2StartUp from "../subGame/godWealthV2/GodWealthV2_StartUp";
-import { ToastType, addToastAction } from "./store/actions/baseBoard";
+import { ToastType, addToastAction } from "../hall/store/actions/baseBoard";
 import { NATIVE } from "cc/env";
 import WebSocketStarter, { SKT_HOST } from "../common/WebSocketStarter";
 import { getPackageName } from "../common/bridge";
 import { lang } from "../hall";
 import { Country } from "../language/languagePkg";
 import { generateUniqueId } from "../utils/tool";
-import { SkeletalPathDefine } from "./sourceDefine/skeletalDefine";
-import { SpriteFramePathDefine } from "./sourceDefine/spriteDefine";
-import { getStore } from "./store";
+import { SkeletalPathDefine } from "../hall/sourceDefine/skeletalDefine";
+import { SpriteFramePathDefine } from "../hall/sourceDefine/spriteDefine";
+import { getStore } from "../hall/store";
 import { SubGameRunState } from "../hallType";
 import {
   GameState,
@@ -92,7 +92,6 @@ export const initConfig = (): Promise<{
             subGame.newMark = result.isNew || false;
             subGame.vipMark = result.vip || 0;
             subGame.status = result.status;
-          } else {
           }
         });
         const gameQueue = JSON.parse(data.gameSort);
@@ -122,7 +121,7 @@ export const initConfig = (): Promise<{
           })
         );
         console.error(`请求游戏map配置错误：${e}`);
-        reject(e);
+        reject(new Error(`请求游戏map配置错误：${e}`));
       });
   });
 };
@@ -174,7 +173,7 @@ export const config = {
   gameConfig
 };
 
-export let subGameList: Array<HallGameGateType> = [
+export const subGameList: Array<HallGameGateType> = [
   {
     gameId: 6,
     gameName: "财神",

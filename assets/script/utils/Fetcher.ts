@@ -1,39 +1,39 @@
-import {default as redux} from "redux";
+import { default as redux } from "redux";
 import {
   ToastType,
   addToastAction,
-  setLoadingAction,
+  setLoadingAction
 } from "../hall/store/actions/baseBoard";
-import {Prefab, sys} from "cc";
+import { Prefab, sys } from "cc";
 import {
   baseBoardView,
   global,
   hallAudio,
   lang,
-  sourceManageSeletor,
+  sourceManageSeletor
 } from "../hall";
-import {SoundPathDefine} from "../hall/sourceDefine/soundDefine";
-import {getStore} from "../hall/store";
+import { SoundPathDefine } from "../hall/sourceDefine/soundDefine";
+import { getStore } from "../hall/store";
 import Throttler from "./Throttler";
-import {sendNativeVibrate} from "../common/bridge";
+import { sendNativeVibrate } from "../common/bridge";
 import {
   Hall_ProhibitPanel,
   IState as HPState,
   IProps as HPProps,
-  IEvent as HPEvent,
+  IEvent as HPEvent
 } from "../hall/components/login_v2/Hall_ProhibitPanel";
 import BaseViewModel from "../common/viewModel/BaseViewModel";
-import {PrefabPathDefine} from "../hall/sourceDefine/prefabDefine";
-import {EffectType} from "./NodeIOEffect";
-import {defaultLanguageType} from "../language/languagePkg";
-import {config} from "../hall/config";
+import { PrefabPathDefine } from "../hall/sourceDefine/prefabDefine";
+import { EffectType } from "./NodeIOEffect";
+import { defaultLanguageType } from "../language/languagePkg";
+import { config } from "../config/config";
 
 export enum DataVerify {
   ANY,
   ARRAY,
   OBJECT,
   STRING,
-  CUSTOME,
+  CUSTOME
 }
 
 export const SampleData = {
@@ -41,7 +41,7 @@ export const SampleData = {
   STRING: "",
   ARRAY: [],
   BOOLEAN: true,
-  OBJECT: {},
+  OBJECT: {}
 };
 
 export default class Fetcher<T> {
@@ -60,7 +60,7 @@ export default class Fetcher<T> {
     option?: {
       isLoading?: boolean;
       dataVerify?: DataVerify;
-      verifySampleData?: {[key: string]: any};
+      verifySampleData?: { [key: string]: any };
       /**是否防抖，默认值为true */
       isThrottler?: boolean;
     }
@@ -78,10 +78,10 @@ export default class Fetcher<T> {
             Token: sys.localStorage.getItem("token") || "",
             //! commented because server doesn't support Hindi
             // 'Content-Language': defaultLanguageType[config.country].langName
-            "Content-Language": "English",
+            "Content-Language": "English"
           },
           headers
-        ),
+        )
       };
       const _option = Object.assign(
         {},
@@ -90,7 +90,7 @@ export default class Fetcher<T> {
           /**如果dataVerify = DataVerify.CUSTOME，verifySampleData(样本数据)必须赋值 */
           dataVerify: DataVerify.ANY,
           verifySampleData: null,
-          isThrottler: true,
+          isThrottler: true
         },
         option
       );
@@ -101,17 +101,17 @@ export default class Fetcher<T> {
       const _fetch = () => {
         _option.isLoading &&
           this.dispatch(
-            setLoadingAction({isShow: true, flagId: url.toString()})
+            setLoadingAction({ isShow: true, flagId: url.toString() })
           );
         fetch(this.baseUrl + url, param)
           .then((response) => {
             this.dispatch(
-              setLoadingAction({isShow: false, flagId: url.toString()})
+              setLoadingAction({ isShow: false, flagId: url.toString() })
             );
             if (response.status === 200) {
               response
                 .json()
-                .then(({data, code, status, message}) => {
+                .then(({ data, code, status, message }) => {
                   console.log(
                     `http返回请求····code:${code},status:${status},message:${message},data:`,
                     [data][0]
@@ -139,7 +139,7 @@ export default class Fetcher<T> {
                       this.dispatch(
                         setLoadingAction({
                           isShow: false,
-                          flagId: url.toString(),
+                          flagId: url.toString()
                         })
                       );
                       this.dispatch(
@@ -147,10 +147,10 @@ export default class Fetcher<T> {
                           content: lang.write(
                             (k) => k.InitGameModule.FetcherFaild,
                             {},
-                            {placeStr: "json数据解析失败"}
+                            { placeStr: "json数据解析失败" }
                           ),
                           type: ToastType.ERROR,
-                          forceLandscape: false,
+                          forceLandscape: false
                         })
                       );
                       reject("数据格式异常:" + url);
@@ -160,7 +160,10 @@ export default class Fetcher<T> {
                   } else if (code === "BIZ-5101") {
                     //跳转至登录页
                     this.dispatch(
-                      setLoadingAction({isShow: false, flagId: url.toString()})
+                      setLoadingAction({
+                        isShow: false,
+                        flagId: url.toString()
+                      })
                     );
                     if (baseBoardView.mainPanelViewModel) {
                       baseBoardView.mainPanelViewModel.logOut(false);
@@ -181,11 +184,11 @@ export default class Fetcher<T> {
                           .mountView(fileSource.source)
                           .setEvent({
                             onCloseHandle: () =>
-                              prohibitViewModel.unMount(EffectType.EFFECT1),
+                              prohibitViewModel.unMount(EffectType.EFFECT1)
                           })
                           .appendTo(baseBoardView.viewNode, {
                             effectType: EffectType.EFFECT2,
-                            isModal: true,
+                            isModal: true
                           });
                       });
                   } else {
@@ -193,11 +196,14 @@ export default class Fetcher<T> {
                       addToastAction({
                         content: message,
                         type: ToastType.ERROR,
-                        forceLandscape: false,
+                        forceLandscape: false
                       })
                     );
                     this.dispatch(
-                      setLoadingAction({isShow: false, flagId: url.toString()})
+                      setLoadingAction({
+                        isShow: false,
+                        flagId: url.toString()
+                      })
                     );
                     reject(message);
                   }
@@ -208,14 +214,14 @@ export default class Fetcher<T> {
                       content: lang.write(
                         (k) => k.InitGameModule.FetcherFaild,
                         {},
-                        {placeStr: "json数据解析失败"}
+                        { placeStr: "json数据解析失败" }
                       ),
                       type: ToastType.ERROR,
-                      forceLandscape: false,
+                      forceLandscape: false
                     })
                   );
                   this.dispatch(
-                    setLoadingAction({isShow: false, flagId: url.toString()})
+                    setLoadingAction({ isShow: false, flagId: url.toString() })
                   );
                   // console.log("json数据解析失败", response)
                   hallAudio.play(SoundPathDefine.ERROR);
@@ -226,11 +232,11 @@ export default class Fetcher<T> {
                 addToastAction({
                   content: response.status.toString(),
                   type: ToastType.ERROR,
-                  forceLandscape: false,
+                  forceLandscape: false
                 })
               );
               this.dispatch(
-                setLoadingAction({isShow: false, flagId: url.toString()})
+                setLoadingAction({ isShow: false, flagId: url.toString() })
               );
               hallAudio.play(SoundPathDefine.ERROR);
               reject(response);
@@ -242,11 +248,11 @@ export default class Fetcher<T> {
               addToastAction({
                 content: e.toString(),
                 type: ToastType.ERROR,
-                forceLandscape: false,
+                forceLandscape: false
               })
             );
             this.dispatch(
-              setLoadingAction({isShow: false, flagId: url.toString()})
+              setLoadingAction({ isShow: false, flagId: url.toString() })
             );
             hallAudio.play(SoundPathDefine.ERROR);
             reject(e);
@@ -261,8 +267,8 @@ export default class Fetcher<T> {
               content: lang.write(
                 (k) => k.PersonCenterModule.PersonCenterSumbit,
                 {},
-                {placeStr: "操作过于频繁，请稍等~"}
-              ),
+                { placeStr: "操作过于频繁，请稍等~" }
+              )
             })
           );
         }).then((isPass) => {

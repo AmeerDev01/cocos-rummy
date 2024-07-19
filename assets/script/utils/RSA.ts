@@ -1,6 +1,5 @@
-import JSEncrypt from 'jsencrypt'
-import { keyPem } from '../config/GameConfig';
-
+import JSEncrypt from "jsencrypt";
+import { keyPem } from "../config/gameConfig";
 
 // var encrypt = new JSEncrypt();
 // encrypt.setPublicKey(`-----BEGIN PUBLIC KEY-----${keyPem.key_2048.publicStr}-----END PUBLIC KEY-----`);
@@ -15,21 +14,25 @@ import { keyPem } from '../config/GameConfig';
 /**
  * 使用私钥解密数据
  * @param dataToEncrypt 要解密的数据
- * @returns 
+ * @returns
  */
 export const encodeRSA = (dataToEncrypt: string) => {
-  const encrypt = new JSEncrypt()
-  encrypt.setPublicKey(`-----BEGIN PUBLIC KEY-----${keyPem.key1.publicStr}-----END PUBLIC KEY-----`)
-  return encrypt.encrypt(dataToEncrypt)
-}
+  const encrypt = new JSEncrypt();
+  encrypt.setPublicKey(
+    `-----BEGIN PUBLIC KEY-----${keyPem.key1.publicStr}-----END PUBLIC KEY-----`
+  );
+  return encrypt.encrypt(dataToEncrypt);
+};
 
 /**
  * 使用公钥加密数据
  * @param dataToDecrypt 要解密的数据
- * @returns 
+ * @returns
  */
 export const decodeRSA = (dataToDecrypt: string) => {
-  const decrypt = new JSEncrypt()
-  decrypt.setPrivateKey(`-----BEGIN PRIVATE KEY-----${keyPem.key1.privateStr}-----END PRIVATE KEY-----`)
-  return decrypt.decrypt(dataToDecrypt)
-}
+  const decrypt = new JSEncrypt();
+  decrypt.setPrivateKey(
+    `-----BEGIN PRIVATE KEY-----${keyPem.key1.privateStr}-----END PRIVATE KEY-----`
+  );
+  return decrypt.decrypt(dataToDecrypt);
+};

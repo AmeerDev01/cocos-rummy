@@ -1,3 +1,5 @@
 hall scene is entry
 
-Common_HotUpdate is first loading
+Common_HotUpdate  >>>
+
+initGame >>> initConfig >>> enterGame

@@ -4,7 +4,7 @@ import {
   config as hallConfig,
   subGameList,
   config
-} from "./config";
+} from "../config/config";
 import { HallGameGateType } from "../common/allTypes";
 import {
   ToastType,

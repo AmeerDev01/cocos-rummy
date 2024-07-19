@@ -42,7 +42,7 @@ import { SoundPathDefine } from "../sourceDefine/soundDefine";
 import { getPackageName, sendNativeVibrate } from "../../common/bridge";
 import WebSocketStarter from "../../common/WebSocketStarter";
 import { LanguageItemType } from "../../language/languagePkg";
-import { getEnvKey, getIsTest, isH5 } from "../../config/GameConfig";
+import { getEnvKey, getIsTest, isH5 } from "../../config/gameConfig";
 import { SubGameRunState } from "../../hallType";
 import ModalBox from "../../common/ModalBox";
 

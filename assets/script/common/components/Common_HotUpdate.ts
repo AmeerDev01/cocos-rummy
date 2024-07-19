@@ -1,51 +1,41 @@
 import {
   _decorator,
   Asset,
-  assetManager,
   Component,
   director,
-  dynamicAtlasManager,
   game,
   Label,
-  log,
-  macro,
   native,
   Node,
   ProgressBar,
   screen,
-  sys,
-  view,
+  sys
 } from "cc";
-import Hot, {HotOptions} from "../../utils/HotUpdate";
+import Hot, { HotOptions } from "../../utils/HotUpdate";
 import App from "../../App";
-import {GameConfig, getIsTest} from "../../config/GameConfig";
-import {config, initConfig} from "../../hall/config";
-import {fetcher, lang} from "../../hall";
-import {NATIVE} from "cc/env";
+import { GameConfig } from "../../config/gameConfig";
+import { config, initConfig } from "../../config/config";
+import { lang } from "../../hall";
+import { NATIVE } from "cc/env";
 import {
   BridgeCode,
-  nativeDownloadApk,
   getAppVersionName,
   getPackageName,
   hideNativeSplash,
-  installApk,
-  getRedirectUrl,
-  showNativeSplash,
+  showNativeSplash
 } from "../bridge";
-import {LanguageItemType} from "../../language/languagePkg";
-import {ApiUrl} from "../../hall/apiUrl";
-const {ccclass, property} = _decorator;
+import { LanguageItemType } from "../../language/languagePkg";
+import { ApiUrl } from "../../hall/apiUrl";
+const { ccclass, property } = _decorator;
 
-// macro.CLEANUP_IMAGE_CACHE = false;
-// dynamicAtlasManager.enabled = true;
 @ccclass("Common_HotUpdate")
 export class Common_HotUpdate extends Component {
   @property(ProgressBar)
   updateProgress: ProgressBar = null;
 
-  @property({displayName: "project.manifest", type: Asset})
+  @property({ displayName: "project.manifest", type: Asset })
   manifest: Asset = null;
-  @property({displayName: "project.versionManifest", type: Asset})
+  @property({ displayName: "project.versionManifest", type: Asset })
   versionManifest: Asset = null;
 
   @property(Label)
@@ -64,20 +54,22 @@ export class Common_HotUpdate extends Component {
   updateContent: Label = null;
   private versionInfo = {
     local: "",
-    server: "",
+    server: ""
   };
 
   private _storagePath: string;
   private localProjectManifest: native.Manifest;
+
+  //!
+
   start() {
-    window["pageDone"] && window["pageDone"]();
+    window["pageDone"]?.();
     console.warn("envKsy", GameConfig.envKey);
   }
+
   protected onLoad(): void {
-    //! Hindi
     lang.use(LanguageItemType.HI);
     if (NATIVE) {
-      console.log("大厅热更新测试代码生效666");
       this._storagePath =
         (native.fileUtils ? native.fileUtils.getWritablePath() : "/") +
         "remote-asset";
@@ -89,7 +81,6 @@ export class Common_HotUpdate extends Component {
         }
       };
       if (sys.os === sys.OS.OSX) {
-        //! Hindi
         lang.use(LanguageItemType.HI);
         GameConfig.appLocalVersion = "V1.0.1";
         this.initGame();
@@ -102,7 +93,6 @@ export class Common_HotUpdate extends Component {
     }
   }
 
-  /**版本号判断 */
   shouldUpdate(oldVersion, newVersion) {
     const trnsfer = (version: string) => {
       const arr = version.split(".");
@@ -119,7 +109,8 @@ export class Common_HotUpdate extends Component {
   initGame() {
     initConfig()
       .then((_config) => {
-        /**修改热更地址 */
+        this.enterGame();
+        return;
         if (sys.os === sys.OS.OSX) {
           this.enterGame();
           return;
@@ -137,12 +128,10 @@ export class Common_HotUpdate extends Component {
           _config.hotUpdateUrl && this.handleManifestFile(_config.hotUpdateUrl);
         }
         this.getPackageInfo().then((content) => {
-          //有限判断AB面开启状态
           if (content && content.abState) {
             director.loadScene("game");
           } else {
             let isApkUpdate = NATIVE;
-            // 要 isApkUpdate 为false，才表示设置了该值，返回一个undefined也要更新包
             if (NATIVE && content && content.isApkUpdate === false) {
               isApkUpdate = false;
             }
@@ -153,15 +142,16 @@ export class Common_HotUpdate extends Component {
                 config.appOnlineVersion
               )
             ) {
-              //弹出更新提示
               this.initConfirm(
                 [
                   lang.write(
                     (k) => k.UpdateModule.GameConfig,
-                    {version: config.appOnlineVersion},
-                    {placeStr: `请更新App至最新版(${config.appOnlineVersion})`}
+                    { version: config.appOnlineVersion },
+                    {
+                      placeStr: `请更新App至最新版(${config.appOnlineVersion})`
+                    }
                   ),
-                  config.upgradeDesc,
+                  config.upgradeDesc
                 ],
                 () => {
                   sys.openURL(
@@ -169,21 +159,6 @@ export class Common_HotUpdate extends Component {
                       config.appOnlineVersion
                     }`
                   );
-                  // window.setTimeout(() => {
-                  // 	native.bridge.onNative = (arg0: string, arg1: string) => {
-                  // 		if (BridgeCode.DOWNLOAD_APK === arg0) {
-                  // 			if ('failed' === arg1) {
-                  // 				this.initConfirm([lang.write(k => k.UpdateModule.RestartProgram), config.upgradeDesc], () => {
-                  // 					this.downloadApkHandle(`${config.appDumpUrl}?ap=${getPackageName()}&version=${config.appOnlineVersion}`, config.appOnlineVersion)
-                  // 				}, () => {
-                  // 					game.end()
-                  // 				})
-                  // 			}
-                  // 		}
-                  // 	}
-
-                  // 	this.downloadApkHandle(config.appDumpUrl, config.appOnlineVersion)
-                  // }, 10)
                 },
                 () => {
                   if (config.forceUpgrade) {
@@ -208,23 +183,16 @@ export class Common_HotUpdate extends Component {
               showNativeSplash();
               return true;
             },
-            () => {
-              // sys.openURL('https://hugewin777d.com/')
-            }
+            () => {}
           );
         }
       });
   }
 
-  update(deltaTime: number) {}
-
   private enterGame() {
     this.updateProgress.progress = 0;
     window.setTimeout(() => {
       App.Instance().start();
-      // effect1(this.node).out().then(() => {
-      // 	App.Instance().start()
-      // })
     }, 500);
   }
 
@@ -253,49 +221,34 @@ export class Common_HotUpdate extends Component {
         } else if (cancle && !cancle()) {
           this.updateConfirm.active = false;
         }
-        // game.end()
       });
   }
 
   private init() {
     const hotInstance = new Hot(this.logLabel);
-    // this.loadingLab.string = TextCfg.getTextUi(5012);
-    // this._nodes["spr_loading"].getComponent(Label).string = TextCfg.getTextUi(5018);
     let options = new HotOptions();
     options.OnVersionInfo = (data) => {
       console.log("OnVersionInfo", JSON.stringify(data || {}));
-      let {local, server} = data || {};
+      let { local, server } = data || {};
       this.versionInfo = data || {};
       this.versionLabel.string = lang.write(
         (k) => k.UpdateModule.VersionLabel,
-        {localVersion: local, serverVersion: server},
-        {placeStr: `本地版本:v${local}, 线上版本:v${server}`}
+        { localVersion: local, serverVersion: server },
+        { placeStr: `本地版本:v${local}, 线上版本:v${server}` }
       );
-
-      // if (local > server) {
-      // 	let storagePath = ((native.fileUtils ? native.fileUtils.getWritablePath() : '/') + 'remote-asset');
-      // 	native.fileUtils.removeDirectory(storagePath)
-      // 	this.versionLabel.string += ' &Cache clear'
-      // 	console.log('Cache clear')
-      // }
     };
     options.OnUpdateProgress = (event: jsb.EventAssetsManager) => {
-      let bytes = event.getDownloadedBytes() + "/" + event.getTotalBytes();
-      let files = event.getDownloadedFiles() + "/" + event.getTotalFiles();
-
       let file = event.getPercentByFile().toFixed(2);
-      let byte = event.getPercent().toFixed(2);
       let msg = event.getMessage();
 
-      // console.log('[update]: 进度=' + file);
       this.updateProgress.progress = parseFloat(file);
       this.tipsLabel.string = lang.write(
         (k) => k.UpdateModule.UpdateProgress,
-        {time: (parseFloat(file) * 100).toFixed(0)},
+        { time: (parseFloat(file) * 100).toFixed(0) },
         {
           placeStr: `正在更新中,请耐心等待（${(parseFloat(file) * 100).toFixed(
             0
-          )}%）...`,
+          )}%）...`
         }
       );
       console.log(msg);
@@ -305,9 +258,9 @@ export class Common_HotUpdate extends Component {
         [
           lang.write(
             (k) => k.UpdateModule.OnNeedToUpdate,
-            {version: this.versionInfo.local + "→" + this.versionInfo.server},
-            {placeStr: `检测到新版本，确认自动开始更新`}
-          ),
+            { version: this.versionInfo.local + "→" + this.versionInfo.server },
+            { placeStr: `检测到新版本，确认自动开始更新` }
+          )
         ],
         () => {
           hotInstance.hotUpdate();
@@ -322,12 +275,12 @@ export class Common_HotUpdate extends Component {
       this.logLabel.string += lang.write(
         (k) => k.UpdateModule.DetectCompleted,
         {},
-        {placeStr: `检测完成，即将进入游戏>>`}
+        { placeStr: `检测完成，即将进入游戏>>` }
       );
       this.tipsLabel.string = lang.write(
         (k) => k.UpdateModule.DetectComplete,
         {},
-        {placeStr: `检测完成，即将进入游戏`}
+        { placeStr: `检测完成，即将进入游戏` }
       );
       // 不需要更新，直接进入游戏
       this.enterGame();
@@ -342,15 +295,15 @@ export class Common_HotUpdate extends Component {
       this.tipsLabel.string = lang.write(
         (k) => k.UpdateModule.UpdateFail,
         {},
-        {placeStr: `更新失败`}
+        { placeStr: `更新失败` }
       );
       this.initConfirm(
         [
           lang.write(
             (k) => k.UpdateModule.RestartProgram,
             {},
-            {placeStr: `更新失败，是否要重启程序？`}
-          ),
+            { placeStr: `更新失败，是否要重启程序？` }
+          )
         ],
         () => {
           game.restart();
@@ -368,12 +321,12 @@ export class Common_HotUpdate extends Component {
         this.logLabel.string += lang.write(
           (k) => k.UpdateModule.ClientCheck,
           {},
-          {placeStr: `客户端开始检查>>`}
+          { placeStr: `客户端开始检查>>` }
         );
         this.tipsLabel.string = lang.write(
           (k) => k.UpdateModule.CheckUpdatedPkg,
           {},
-          {placeStr: `检查更新包...`}
+          { placeStr: `检查更新包...` }
         );
         if (this.manifest) {
           hotInstance.init(
@@ -388,7 +341,7 @@ export class Common_HotUpdate extends Component {
       this.tipsLabel.string = lang.write(
         (k) => k.UpdateModule.isNative,
         {},
-        {placeStr: `非native版本不检查更新，即将进入游戏`}
+        { placeStr: `非native版本不检查更新，即将进入游戏` }
       );
       this.enterGame();
     }
@@ -455,56 +408,6 @@ export class Common_HotUpdate extends Component {
     return afterVersionString;
   }
 
-  private downloadApkHandle(appDumpUrl: string, appOnlineVersion: string) {
-    const filePath =
-      (native.fileUtils ? native.fileUtils.getWritablePath() : "/") +
-      "apkfiles/HugeWin-" +
-      appOnlineVersion +
-      ".apk";
-
-    let downloader = new native.Downloader();
-    //下载失败回调
-    downloader.onError = (
-      task: native.DownloadTask,
-      errorCode: number,
-      errorCodeInternal: number,
-      errorStr: string
-    ) => {
-      console.log("downloader --------- " + errorStr);
-    };
-
-    //进度回调
-    downloader.onProgress = (
-      task,
-      bytesReceived,
-      totalBytesReceived,
-      totalBytesExpected
-    ) => {
-      let progress: number = totalBytesReceived / totalBytesExpected; //已经下载的字节数 / 需要下载的总字节数
-      this.updateProgress.progress = progress;
-      // this.getProgress(progress);
-      let bKReceived: string = (totalBytesReceived / 1024).toFixed(1);
-      let totalReceived: string = (totalBytesExpected / 1024).toFixed(1);
-      // var strProgress: string = "Download APK:" + bKReceived + "kb / " + totalReceived + "kb";
-      var strProgress: string = `Download Version ${appOnlineVersion}: ${bKReceived}kb / ${totalReceived}kb`;
-      this.tipsLabel.string = strProgress;
-    };
-    //下载成功回调
-    downloader.onSuccess = (task) => {
-      // this.updateLabel.string = "Download success!";
-      installApk(filePath); //下载成功，执行安装apk操作
-    };
-
-    const url = getRedirectUrl(appDumpUrl);
-    downloader.createDownloadTask(url, filePath);
-
-    // const apkName = appDumpUrl.substring(appDumpUrl.lastIndexOf("/") + 1);
-    // nativeDownloadApk(appDumpUrl, "HugeWin" + appOnlineVersion, "Please be patient while downloading");
-    // this.updateProgress.node.active = false;
-    // this.tipsLabel.string = `Version ${appOnlineVersion} is being downloading...`;
-  }
-
-  /**获得包信息 */
   private getPackageInfo() {
     return new Promise<any>((reslove, reject) => {
       const packageName = getPackageName();
@@ -512,14 +415,6 @@ export class Common_HotUpdate extends Component {
         reslove(undefined);
         return;
       }
-      // const tip = () => {
-      // 	//弹出更新提示
-      // 	this.initConfirm([lang.write(k => k.UpdateModule.GameConfig), config.upgradeDesc], () => {
-      // 	}, () => {
-      // 		game.end()
-      // 	})
-      // }
-
       const url =
         config.httpBaseUrl + ApiUrl.CHANNEL_PACKAGE + "?number=" + packageName;
       fetch(url)

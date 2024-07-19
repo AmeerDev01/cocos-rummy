@@ -1,6 +1,6 @@
 import { AssetManager, assetManager, log, native, resources } from "cc";
 import { EDITOR, NATIVE } from "cc/env";
-import { config, subGameList } from "../hall/config";
+import { config, subGameList } from "../config/config";
 import { HallGameGateType } from "../common/allTypes";
 
 function createBundle(

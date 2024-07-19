@@ -8,10 +8,10 @@ import {
   setLoadingAction,
   setSocketConnectStatus
 } from "../hall/store/actions/baseBoard";
-import { config, subGameList } from "../hall/config";
+import { config, subGameList } from "../config/config";
 import { HallGameGateType } from "./allTypes";
 import { log, sys } from "cc";
-import { getIsTest } from "../config/GameConfig";
+import { getIsTest } from "../config/gameConfig";
 import { DEV } from "cc/env";
 
 export enum SKT_OPERATION {

@@ -18,7 +18,7 @@ import {
   UITransform
 } from "cc";
 import { BaseComponent } from "../../base/BaseComponent";
-import { config, subGameList } from "../config";
+import { config, subGameList } from "../../config/config";
 import { HallGameGateType } from "../../common/allTypes";
 import {
   baseBoardView,
@@ -42,7 +42,7 @@ import { lang } from "../index";
 import { NATIVE } from "cc/env";
 import { getPackageName } from "../../common/bridge";
 import { SubGameRunState } from "../../hallType";
-import { getIsTest, isH5 } from "../../config/GameConfig";
+import { getIsTest, isH5 } from "../../config/gameConfig";
 import { DownloadManagerGame } from "../../base/DownloadManagerGame";
 import { GameState } from "../../common/allTypes";
 const { ccclass, property } = _decorator;

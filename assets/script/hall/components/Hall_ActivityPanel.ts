@@ -19,7 +19,7 @@ import {
   hallAudio,
   sourceManageSeletor
 } from "../index";
-import { subGameList } from "../config";
+import { subGameList } from "../../config/config";
 import { HallGameGateType } from "../../common/allTypes";
 import {
   addToastAction,

@@ -4,7 +4,7 @@ import { BuyType } from "./hall/components/Hall_ShopPanel";
 import { GameType, UserInfo } from "./common/viewModel/GiftUserViewModel";
 import Internationalization from "./language/Internationalization";
 import languagePkg, { defaultLanguageType } from "./language/languagePkg";
-import { config } from "./hall/config";
+import { config } from "./config/config";
 import { HallGameGateType } from "./common/allTypes";
 import WebSocketStarter from "./common/WebSocketStarter";
 import { ToastPosition, ToastType } from "./hall/store/actions/baseBoard";

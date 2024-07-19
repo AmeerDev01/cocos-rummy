@@ -21,7 +21,7 @@ import socketConnect, {
 import WebSocketStarter from "../../common/WebSocketStarter";
 import { EffectType } from "../../utils/NodeIOEffect";
 import MainPanelViewModel from "./MainPanelViewModel";
-import { config, deviceInfo, subGameList } from "../config";
+import { config, deviceInfo, subGameList } from "../../config/config";
 import { HallGameGateType } from "../../common/allTypes";
 import { ApiUrl } from "../apiUrl";
 import { resetMemberInfo } from "../store/actions/memberInfo";

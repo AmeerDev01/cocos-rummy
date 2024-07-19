@@ -1,4 +1,4 @@
-import hallStore, {getStore} from "./store";
+import hallStore, { getStore } from "./store";
 import {
   Asset,
   AssetManager,
@@ -14,46 +14,46 @@ import {
   assetManager,
   director,
   find,
-  instantiate,
+  instantiate
 } from "cc";
 import SourceManage from "../base/SourceManage";
 import BundleSplit from "../utils/BundleSplit";
-import {PrefabPathDefine as HallPrefabPathDefine} from "../hall/sourceDefine/prefabDefine";
-import {SoundPathDefine} from "../hall/sourceDefine/soundDefine";
-import {SoundPathDefine as CommonSoundPathDefine} from "../common/sourceDefine/soundDefine";
+import { PrefabPathDefine as HallPrefabPathDefine } from "../hall/sourceDefine/prefabDefine";
+import { SoundPathDefine } from "../hall/sourceDefine/soundDefine";
+import { SoundPathDefine as CommonSoundPathDefine } from "../common/sourceDefine/soundDefine";
 import hallFileMap from "./sourceDefine";
 import commonFileMap from "../common/sourceDefine";
 import LoaderPanelViewModel from "../common/viewModel/LoaderPanelViewModel";
 import BaseBoardViewModel from "./viewModel/BaseBoardViewModel";
-import {AudioMgr} from "../utils/AudioMgr";
-import {AnyAction} from "redux";
+import { AudioMgr } from "../utils/AudioMgr";
+import { AnyAction } from "redux";
 import Fetcher from "../utils/Fetcher";
-import {ApiUrl} from "./apiUrl";
-import {config} from "./config";
+import { ApiUrl } from "./apiUrl";
+import { config } from "../config/config";
 import Internationalization from "../language/Internationalization";
 import languagePkg, {
   LanguageItemType,
-  defaultLanguageType,
+  defaultLanguageType
 } from "../language/languagePkg";
-import {GameConfig, getIsTest} from "../config/GameConfig";
-import {BuyType} from "./components/Hall_ShopPanel";
+import { GameConfig, getIsTest } from "../config/gameConfig";
+import { BuyType } from "./components/Hall_ShopPanel";
 import ModalBox from "../common/ModalBox";
 import GiftUserViewModel, {
   GameType,
-  UserInfo,
+  UserInfo
 } from "../common/viewModel/GiftUserViewModel";
-import {getPackageName} from "../common/bridge";
-import {SKT_MAG_TYPE, hallWebSocketDriver} from "./socketConnect";
-import {TaskSchedulerDefault} from "../utils/TaskScheduler";
+import { getPackageName } from "../common/bridge";
+import { SKT_MAG_TYPE, hallWebSocketDriver } from "./socketConnect";
+import { TaskSchedulerDefault } from "../utils/TaskScheduler";
 import {
   ToastPosition,
   ToastType,
   addToastAction,
   setLoadingAction,
-  setSubGameRunState,
+  setSubGameRunState
 } from "./store/actions/baseBoard";
-import {SubGameRunState} from "../hallType";
-import {NATIVE} from "cc/env";
+import { SubGameRunState } from "../hallType";
+import { NATIVE } from "cc/env";
 let sourceManageMap: Array<SourceManage> = [];
 let rootNodeWrap: Node;
 export let baseBoardView: BaseBoardViewModel;
@@ -98,7 +98,7 @@ export const startUp = (rootNode: Node) => {
             .mountView(prefab)
             .appendTo(rootNode)
             .setProps({
-              loadBarType: 2,
+              loadBarType: 2
             })
             .setEvent({
               onLoadDone: (_sourceManageMap) => {
@@ -126,10 +126,10 @@ export const startUp = (rootNode: Node) => {
                   hallAudio.play(SoundPathDefine.MAIN_BGM, true);
                   initHallGlobal();
                 });
-              },
+              }
             })
             .setProps({
-              versionStr: GameConfig.appLocalVersion,
+              versionStr: GameConfig.appLocalVersion
             });
           //开始加载大厅和通用的资源
           loaderviweModel.comp.startLoad(
@@ -181,7 +181,7 @@ const initHallGlobal = () => {
         isPre: false,
         confirmContent: "",
         confirmDoneAfterFn: () => {},
-        confirmDoneBeforeFn: () => {},
+        confirmDoneBeforeFn: () => {}
       },
       option || {}
     );
@@ -193,7 +193,7 @@ const initHallGlobal = () => {
         _option.confirmContent !== ModalBox.Instance().contentStr
       ) {
         ModalBox.Instance().show(
-          {content: _option.confirmContent, type: "Prompt"},
+          { content: _option.confirmContent, type: "Prompt" },
           () => {
             _option.confirmDoneBeforeFn();
             baseBoardView.comp && baseBoardView.comp.closeSubGame();
@@ -207,7 +207,7 @@ const initHallGlobal = () => {
     }
     TaskSchedulerDefault().stopQueue(false);
     hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, "", {
-      isLoading: false,
+      isLoading: false
     });
   };
   window.HALL_GLOBAL.openShop = (buyType?: BuyType) => {
@@ -286,7 +286,7 @@ const initHallGlobal = () => {
     isAllowCloseLoading?: boolean
   ) => {
     getStore().dispatch(
-      setLoadingAction({isShow, flagId, isAllowCloseLoading})
+      setLoadingAction({ isShow, flagId, isAllowCloseLoading })
     );
   };
   window.HALL_GLOBAL.addToast = (
@@ -302,7 +302,7 @@ const initHallGlobal = () => {
         content,
         type: option?.type,
         position: option?.position,
-        forceLandscape: option?.forceLandscape,
+        forceLandscape: option?.forceLandscape
       })
     );
   };
@@ -339,7 +339,7 @@ export const global = {
         isPre: false,
         confirmContent: "",
         confirmDoneAfterFn: () => {},
-        confirmDoneBeforeFn: () => {},
+        confirmDoneBeforeFn: () => {}
       },
       option || {}
     );
@@ -351,7 +351,7 @@ export const global = {
         _option.confirmContent !== ModalBox.Instance().contentStr
       ) {
         ModalBox.Instance().show(
-          {content: _option.confirmContent, type: "Prompt"},
+          { content: _option.confirmContent, type: "Prompt" },
           () => {
             _option.confirmDoneBeforeFn();
             baseBoardView.comp && baseBoardView.comp.closeSubGame();
@@ -365,7 +365,7 @@ export const global = {
     }
     TaskSchedulerDefault().stopQueue(false);
     hallWebSocketDriver.sendSktMessage(SKT_MAG_TYPE.MEMBER_INFO, "", {
-      isLoading: false,
+      isLoading: false
     });
   },
   /**打开商城 */
@@ -436,5 +436,5 @@ export const global = {
         value
       );
     }
-  },
+  }
 };

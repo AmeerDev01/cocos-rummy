@@ -23,7 +23,7 @@ import {
   Vec3
 } from "cc";
 import { BaseComponent } from "../../base/BaseComponent";
-import { config, subGameGateQueue, subGameList } from "../config";
+import { config, subGameGateQueue, subGameList } from "../../config/config";
 import { GateQueueType } from "../../common/allTypes";
 import { SubGameType } from "../../common/allEnums";
 import { HallGameGateType } from "../../common/allTypes";
@@ -58,7 +58,7 @@ import ModalBox from "../../common/ModalBox";
 import { getPackageName } from "../../common/bridge";
 import { DataVerify } from "../../utils/Fetcher";
 import StepNumber from "../../utils/StepNumber";
-import { isH5 } from "../../config/GameConfig";
+import { isH5 } from "../../config/gameConfig";
 
 const { ccclass, property } = _decorator;
 

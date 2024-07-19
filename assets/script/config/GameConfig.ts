@@ -16,11 +16,11 @@ export const getGameMapConfig = (
             .then((jsonStr) => {
               reslove(JSON.parse(jsonStr.trim()));
             })
-            .catch((e) => reject(e));
+            .catch((e) => reject(new Error(`error${e}`)));
         } else {
           const _urlIndex = urlIndex + 1;
           if (_urlIndex === GameConfig.gameConfigUrl.length) {
-            reject("config_error");
+            reject(new Error(`error gameConfigUrl`));
           } else {
             reslove(getGameMapConfig(_urlIndex));
           }
@@ -29,7 +29,7 @@ export const getGameMapConfig = (
       .catch((e) => {
         const _urlIndex = urlIndex + 1;
         if (_urlIndex === GameConfig.gameConfigUrl.length) {
-          reject("config_error");
+          reject(new Error(`config error`));
         } else {
           reslove(getGameMapConfig(_urlIndex));
         }
