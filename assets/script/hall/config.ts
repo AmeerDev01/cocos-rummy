@@ -11,108 +11,15 @@ import { generateUniqueId } from "../utils/tool";
 import { SkeletalPathDefine } from "./sourceDefine/skeletalDefine";
 import { SpriteFramePathDefine } from "./sourceDefine/spriteDefine";
 import { getStore } from "./store";
-import { GameState, SubGameRunState } from "../hallType";
+import { SubGameRunState } from "../hallType";
+import {
+  GameState,
+  GateQueueType,
+  HallGameGateType,
+  SubGameConfigType
+} from "../common/allTypes";
+import { SubGameType } from "../common/allEnums";
 
-export type SubGameConfigType = {
-  id: number;
-  name: string;
-  ws: string;
-  agreement: string;
-  md5: string;
-  isHot?: boolean;
-  isNew?: boolean;
-  vip: number;
-  status: GameState;
-};
-
-let gameConfig: SubGameConfigType[] = [];
-
-// let webUniqueId: string = ''
-export type HallGameGateType = {
-  /**游戏名称 */
-  gameId: number;
-  /**游戏名字，仅用于识别 */
-  gameName: string;
-  /**host */
-  gameHost: SKT_HOST;
-  // /**游戏服务器 */
-  // gameServer: string,
-  /**小主图文件 */
-  fileNameSmall: string;
-  /**大主图文件 */
-  fileNameLarge: string;
-  /**图片名字 */
-  nameSprite: string[];
-  /**bundle名称 */
-  bundleName: string;
-  md5: string;
-  // websocketUrl: string,
-  /**是否使用远程包 */
-  enableRemote: boolean;
-  /**运行状态 */
-  runState?: SubGameRunState;
-  /**加载进度 */
-  loadProgress?: number;
-  /**热度标识 */
-  hotMark?: boolean;
-  /**新上标识 */
-  newMark?: boolean;
-  /**vip标识 */
-  vipMark?: number;
-  /**状态。-1：下架；0：正常；1：维护；2：即将开放 */
-  status: GameState;
-  /**是否獨立游戲 */
-  isDepend?: boolean;
-  /**子游戏的启动prefab路径名称 */
-  startUpPrefabPathName?: string;
-  /**是否是竖屏游戏 */
-  isVertical?: boolean;
-  startUpHandler: (boardPanel: Node) => any;
-};
-export enum SubGameType {
-  All,
-  Slot,
-  Domino,
-  Other
-}
-
-export type GateQueueType = {
-  typeName: SubGameType;
-  toggleName: string;
-  queue: Array<Array<number>>;
-};
-
-export type GameConfigType = {
-  appDumpUrl: string;
-  appleAppDumpUrl: string;
-  appOnlineVersion: string;
-  upgradeDesc: string;
-  forceUpgrade: boolean;
-  bankHelpUrl: string;
-  buryPoint: boolean;
-  gameBundleUrl: string;
-  /**热更主地址 */
-  hotUpdateUrl: string;
-  httpBaseUrl: string;
-  socketBaseUrl: string;
-  goldRecordUrl: string;
-  maintenanceStatus: boolean;
-  isCheckHotUpdate: boolean;
-  shareUrl: string;
-  agentPageUrl: string;
-  customerUrl: string;
-  customerOutUrl: string;
-  relief: number;
-  gameSort: string;
-  backwaterHelpUrl: string;
-  faceSwitch: boolean;
-  fristLogin: {
-    main: boolean;
-  };
-  wsList: Array<SubGameConfigType>;
-  country: Country;
-};
-/**拉取最新的配置文件 */
 export const initConfig = (): Promise<{
   appOnlineVersion: string;
   upgradeDesc: string;
@@ -138,11 +45,9 @@ export const initConfig = (): Promise<{
 }> => {
   return new Promise((resolve, reject) => {
     !window.HALL_GLOBAL && (window.HALL_GLOBAL = {} as any);
-    /**游戏单独运行的时候，防止getWsInstance为空 */
     window.HALL_GLOBAL.wsInstance = WebSocketStarter.Instance();
     getGameMapConfig()
       .then((data) => {
-        // console.log("游戏map配置读取完成~",data)
         config.gameConfig = data.wsList;
         config.appDumpUrl = data.appDumpUrl;
         config.appOnlineVersion = data.appOnlineVersion;
@@ -153,11 +58,9 @@ export const initConfig = (): Promise<{
         config.httpBaseUrl = data.httpBaseUrl;
         config.websocketUrl = data.socketBaseUrl;
         config.goldRecordUrl = data.goldRecordUrl;
-        config.maintenanceStatus =
-          data.maintenanceStatus === undefined ? false : data.maintenanceStatus;
+        config.maintenanceStatus = data.maintenanceStatus ?? false;
         config.appleAppDumpUrl = data.appleAppDumpUrl;
-        config.isCheckHotUpdate =
-          data.isCheckHotUpdate === undefined ? true : data.isCheckHotUpdate;
+        config.isCheckHotUpdate = data.isCheckHotUpdate ?? true;
         config.agentPageUrl = data.agentPageUrl;
         config.shareUrl = data.shareUrl;
         config.customerUrl = data.customerUrl;
@@ -165,21 +68,16 @@ export const initConfig = (): Promise<{
         config.upgradeDesc = data.upgradeDesc;
         config.forceUpgrade = data.forceUpgrade;
         config.backwaterHelpUrl = data.backwaterHelpUrl;
-        config.faceSwitch =
-          data.faceSwitch === undefined ? true : data.faceSwitch;
+        config.faceSwitch = data.faceSwitch ?? true;
         config.country = data.country || Country.CHINA;
         data.relief !== undefined && (config.relief = data.relief);
-        /**-------------------确认data需要具备appVersion字段---------------------- */
-        // config.appOnlineVersion = 'V1.0.1'//data['appVersion']
         generateUniqueId().then((str: string) => {
           (!NATIVE || sys.os === sys.OS.OSX) && deviceInfo.setUniqueId(str);
         });
-        // let isError = false
         const pkgCode = getPackageName();
         subGameList.forEach((subGame) => {
           if (subGame.gameId > 0 && !getIsTest()) {
-            //web模式不请求远程游戏，直接本地请求(因为远程包是android的)
-            subGame.enableRemote = pkgCode === "web" ? false : true;
+            subGame.enableRemote = pkgCode !== "web";
           }
           subGame.loadProgress = 0;
           subGame.hotMark = false;
@@ -190,31 +88,19 @@ export const initConfig = (): Promise<{
           const result = data.wsList.find((i) => i.id === subGame.gameId);
           if (result) {
             subGame.md5 = result.md5;
-            // subGame.websocketUrl = result.ws
             subGame.hotMark = result.isHot || false;
             subGame.newMark = result.isNew || false;
             subGame.vipMark = result.vip || 0;
             subGame.status = result.status;
           } else {
-            // isError = true
-            // console.error(`远程配置中未找到游戏“${subGame.gameName}”的信息`)
           }
         });
-        // isError && getStore().dispatch(addToastAction({ content: "游戏map配置数据错误~" }))
-
-        // const gameQueue = {
-        //   domino: [[2]],
-        //   slots: [[6], [14, 15], [8, 7], [10, 9], [3, 18]],
-        //   other: [[12],[17], [11, 5], [4, 13], [16, 19]],
-        // }
-
         const gameQueue = JSON.parse(data.gameSort);
         subGameGateQueue.forEach((i) => {
           i.typeName === SubGameType.Domino && (i.queue = gameQueue.domino);
           i.typeName === SubGameType.Slot && (i.queue = gameQueue.slots);
           i.typeName === SubGameType.Other && (i.queue = gameQueue.other);
         });
-        // 将游戏类别组揉在一起放到All里面
         subGameGateQueue.find((i) => i.typeName === SubGameType.All).queue =
           subGameGateQueue
             .filter((i) => i.typeName !== SubGameType.All)
@@ -241,10 +127,12 @@ export const initConfig = (): Promise<{
   });
 };
 
+//! values
+
+let gameConfig: SubGameConfigType[] = [];
+
 export const deviceInfo = {
-  /**设备唯一id */
   thisUniqueId: "",
-  // uniqueId: !NATIVE ? navigator.userAgent + navigator.platform + navigator.appVersion + navigator.vendor : '',
   setUniqueId: (uniqueId) => {
     deviceInfo.thisUniqueId = uniqueId;
   },
@@ -253,70 +141,39 @@ export const deviceInfo = {
   }
 };
 
-/**这些配置都会被配置文件替换掉 */
 export const config = {
   gameId: 0,
   gameHost: SKT_HOST.HALL,
   gameServer: "HALL",
-  /**用于存放请求到的线上版本号，如果此值与appLocalVersion不一致时，会禁止登录并提示更新App */
   appOnlineVersion: "V1.0.0",
-  /**更新说明 */
   upgradeDesc: "",
-  /**是否强制更新 */
   forceUpgrade: true,
-  /**子游戏远程资源地址 */
   gameBundleUrl: "http://54.251.66.82:8008",
-  /**热更主地址 */
   hotUpdateUrl: "",
-  /**http请求主域名 */
   httpBaseUrl: "http://api.rummycdn.com",
-  // httpBaseUrl: "http://192.168.110.35:10000",
-  // httpBaseUrl: "http://47.129.15.199:10000",
-
-  /**websocket请求主域名 */
   websocketUrl: "ws://192.168.110.248:10000/socket",
-  // websocketUrl: "ws://192.168.110.35:10000/socket",
-  // websocketUrl: "ws://47.129.15.199:10000/socket",
-
-  /**分享url */
   shareUrl: "http://hugewin777.com",
-  /**代理分享数据url */
   agentPageUrl: "http://hugewin777.com",
-  /**金币日志 */
   goldRecordUrl: "",
-  /**银行充值说明页 */
   bankHelpUrl: "http://54.251.66.82:8009/appHotUpdate",
-  /**客服主链接 */
   customerUrl: "",
-  /**客服浏览器链接 */
   customerOutUrl: "",
-  /**是否打开埋点开关 */
   buryPoint: true,
-  /**救济金触发线 */
   relief: 1000,
-  /**跳转打开应用市场的链接 */
   appDumpUrl:
     "https://play.google.com/store/apps/details?id=com.google.android.googlequicksearchbox&hl=zh&gl=US",
-  /**返水说明的页面url */
   backwaterHelpUrl: "",
-  /**是否出现更新公告 */
   maintenanceStatus: false,
-  /**是否检测更新 */
   isCheckHotUpdate: true,
-  /**是否激活AB面（pkgCode='miMarket的时候才生效'） */
   faceSwitch: true,
-  /**苹果的描述文件地址 */
   appleAppDumpUrl: "",
-  /**是否首次登录 */
   fristLogin: {
     main: false
   },
-  /**国家 */
   country: Country.CHINA,
   gameConfig
 };
 
-/**游戏信息 */
 export let subGameList: Array<HallGameGateType> = [
   {
     gameId: 6,
@@ -336,38 +193,27 @@ export let subGameList: Array<HallGameGateType> = [
     startUpHandler: (boardPanel) => GodWealth2StartUp(boardPanel as Node)
   }
 ];
-/** 大厅的游戏入口排列信息 */
+
 export const subGameGateQueue: Array<GateQueueType> = [
   {
     typeName: SubGameType.All,
     toggleName: "all",
-    queue: [
-      // 调整成自动配置，这里不赋值了
-      // [6], [8, 7], [10, 9], [3, 0], [12], [11, 5]
-    ]
+    queue: []
   },
   {
     typeName: SubGameType.Domino,
     toggleName: "domino",
-    queue: [
-      // 调整成自动配置，这里不赋值了
-    ]
+    queue: []
   },
   {
     typeName: SubGameType.Slot,
     toggleName: "slots",
-    queue: [
-      // 调整成自动配置，这里不赋值了
-      // [6], [8, 7], [10, 9], [3, 0]
-    ]
+    queue: []
   },
   {
     typeName: SubGameType.Other,
     toggleName: "other",
-    queue: [
-      // 调整成自动配置，这里不赋值了
-      // [12], [11, 5]
-    ]
+    queue: []
   }
 ];
 

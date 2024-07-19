@@ -1,5 +1,10 @@
 export enum SubGameRunState {
-  CLOSE, INIT, LOADING, READY, CANCEL, RUN
+  CLOSE,
+  INIT,
+  LOADING,
+  READY,
+  CANCEL,
+  RUN
 }
 
 /**大厅的事件类型 */
@@ -14,15 +19,4 @@ export enum HallEventType {
   NEW_MARGUEE,
   /**关闭游戏 */
   CLOSE_GAME
-}
-
-export enum GameState {
-  /**正常运行中 */
-  WORKING = 0,
-  /**维护 */
-  MAINTENANCE = 1,
-  /**即将开放 */
-  COME_SOON = 2,
-  /**下架 */
-  OFF_LINE = 9,
 }

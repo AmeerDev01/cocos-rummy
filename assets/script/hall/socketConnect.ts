@@ -1,14 +1,29 @@
-import { default as redux } from "redux"
-import { initConfig, config as hallConfig, subGameList, config, HallGameGateType } from "./config"
-import { ToastType, addToastAction, setLoadingAction, setSocketConnectStatus } from "./store/actions/baseBoard"
-import { listenerFactoy } from "../common/listenerFactoy"
-import { getStore } from "./store"
-import { baseBoardView, global } from "./index"
-import { lang } from "./index"
-import { sys } from "cc"
-import WebSocketStarter, { EVEVT_TYPE, SKT_OPERATION, WebSocketDriver } from "../common/WebSocketStarter"
-import ModalBox from "../common/ModalBox"
-import { Task, TaskSchedulerDefault } from "../utils/TaskScheduler"
+import { default as redux } from "redux";
+import {
+  initConfig,
+  config as hallConfig,
+  subGameList,
+  config
+} from "./config";
+import { HallGameGateType } from "../common/allTypes";
+import {
+  ToastType,
+  addToastAction,
+  setLoadingAction,
+  setSocketConnectStatus
+} from "./store/actions/baseBoard";
+import { listenerFactoy } from "../common/listenerFactoy";
+import { getStore } from "./store";
+import { baseBoardView, global } from "./index";
+import { lang } from "./index";
+import { sys } from "cc";
+import WebSocketStarter, {
+  EVEVT_TYPE,
+  SKT_OPERATION,
+  WebSocketDriver
+} from "../common/WebSocketStarter";
+import ModalBox from "../common/ModalBox";
+import { Task, TaskSchedulerDefault } from "../utils/TaskScheduler";
 
 export enum SKT_MAG_TYPE {
   /**强制退出 */
@@ -59,86 +74,163 @@ export enum SKT_MAG_TYPE {
 
 // export const sktMsgListener = listenerFactoy<SKT_MAG_TYPE>()
 // export let sktInstance: WebSocketToDo<SKT_MAG_TYPE> = null
-export let hallWebSocketDriver: WebSocketDriver<SKT_MAG_TYPE> = new WebSocketDriver<SKT_MAG_TYPE>(config.gameId, config.gameHost)
+export let hallWebSocketDriver: WebSocketDriver<SKT_MAG_TYPE> =
+  new WebSocketDriver<SKT_MAG_TYPE>(config.gameId, config.gameHost);
 hallWebSocketDriver.filterData = (data, source) => {
   if (source.operation === SKT_OPERATION.RECOVER && baseBoardView) {
     if (!baseBoardView.comp.props.openGameInfo) {
-      const hallGameGate: HallGameGateType = subGameList.find(i => i.gameId === source.gameId)
+      const hallGameGate: HallGameGateType = subGameList.find(
+        (i) => i.gameId === source.gameId
+      );
       if (hallGameGate) {
         const openResetConfirm = (callback?: Function) => {
           window.setTimeout(() => {
-            ModalBox.Instance().show({ content: lang.write(k => k.HallModule.UnfinishedGames, { game: hallGameGate.gameName }, { placeStr: "您还有未完成的游戏，请继续" }), type: "Prompt" }, () => {
-              try {
-                const gateViewModel = baseBoardView.mainPanelViewModel.comp.gateViewModelList.find(vm => vm.comp.props.gamesIds.indexOf(hallGameGate.gameId) !== -1)
-                if (gateViewModel && gateViewModel.comp) {
-                  gateViewModel.comp.openGateGame(hallGameGate.gameId)
-                } else {
-                  global.hallDispatch(addToastAction({ content: `gameId error:${source.gameId}`, type: ToastType.ERROR, forceLandscape: false }))
+            ModalBox.Instance().show(
+              {
+                content: lang.write(
+                  (k) => k.HallModule.UnfinishedGames,
+                  { game: hallGameGate.gameName },
+                  { placeStr: "您还有未完成的游戏，请继续" }
+                ),
+                type: "Prompt"
+              },
+              () => {
+                try {
+                  const gateViewModel =
+                    baseBoardView.mainPanelViewModel.comp.gateViewModelList.find(
+                      (vm) =>
+                        vm.comp.props.gamesIds.indexOf(hallGameGate.gameId) !==
+                        -1
+                    );
+                  if (gateViewModel && gateViewModel.comp) {
+                    gateViewModel.comp.openGateGame(hallGameGate.gameId);
+                  } else {
+                    global.hallDispatch(
+                      addToastAction({
+                        content: `gameId error:${source.gameId}`,
+                        type: ToastType.ERROR,
+                        forceLandscape: false
+                      })
+                    );
+                  }
+                } catch (e) {
+                  global.hallDispatch(
+                    addToastAction({
+                      content: e,
+                      type: ToastType.ERROR,
+                      forceLandscape: false
+                    })
+                  );
                 }
-              } catch (e) {
-                global.hallDispatch(addToastAction({ content: e, type: ToastType.ERROR, forceLandscape: false }))
+                callback && callback();
+                return true;
               }
-              callback && callback()
-              return true
-            })
-          }, 1000)
-        }
-        if (baseBoardView.mainPanelViewModel && baseBoardView.mainPanelViewModel.isBeginPop) {
+            );
+          }, 1000);
+        };
+        if (
+          baseBoardView.mainPanelViewModel &&
+          baseBoardView.mainPanelViewModel.isBeginPop
+        ) {
           //已经开始弹窗了
-          TaskSchedulerDefault().joinQueue(new Task((done) => {
-            openResetConfirm(done)
-          }))
+          TaskSchedulerDefault().joinQueue(
+            new Task((done) => {
+              openResetConfirm(done);
+            })
+          );
         } else {
           //还没开始弹窗，那弹个der，直接弹恢复游戏的弹窗
-          baseBoardView.mainPanelViewModel && (baseBoardView.mainPanelViewModel.isBeginPop = true)
-          openResetConfirm()
+          baseBoardView.mainPanelViewModel &&
+            (baseBoardView.mainPanelViewModel.isBeginPop = true);
+          openResetConfirm();
         }
       }
     } else {
       //游戏中，需要游戏自行LOGIN
     }
-    return
+    return;
   }
-  if (data.code === '200') {
+  if (data.code === "200") {
     return {
       data: data.data,
       error: undefined
-    }
+    };
   } else {
-    console.error(data, source)
-    global.hallDispatch(addToastAction({ content: `${data.message}[${data.code}]`, type: ToastType.ERROR, forceLandscape: false }))
+    console.error(data, source);
+    global.hallDispatch(
+      addToastAction({
+        content: `${data.message}[${data.code}]`,
+        type: ToastType.ERROR,
+        forceLandscape: false
+      })
+    );
     return {
-      data: '', error: data.message
-    }
+      data: "",
+      error: data.message
+    };
   }
-}
+};
 export default () => {
   return new Promise((resolve, reject) => {
-    initConfig().then((config) => {
-      WebSocketStarter.Instance().initSocket().then(() => {
-        const wss = WebSocketStarter.Instance()
-        wss.eventListener.add(EVEVT_TYPE.HEART_BEAT, '', () => {
-          if (!wss.isConnect || wss.isReconnecting) {
-            global.hallDispatch(setSocketConnectStatus({ isConnect: true, remainRetryCount: wss.maxReconnectTime }))
-          }
-        })
-        wss.eventListener.add(EVEVT_TYPE.DISCONNECT, '', () => {
-          global.hallDispatch(setSocketConnectStatus({ isConnect: false, remainRetryCount: wss.remainRetryCount }))
-        })
-        wss.eventListener.add(EVEVT_TYPE.OPEN, '', () => {
-          global.hallDispatch(setSocketConnectStatus({ isConnect: true, remainRetryCount: wss.maxReconnectTime }))
-        })
-        wss.eventListener.add(EVEVT_TYPE.WARN, '', () => {
-          global.hallDispatch(addToastAction({ content: lang.write(k => k.WebSocketModule.NetworkInstability, {}, { placeStr: "网络不稳定" }), type: ToastType.ERROR, forceLandscape: false }))
-        })
-        wss.eventListener.add(EVEVT_TYPE.RECONNECT, '', (remainRetryCount) => {
-          global.hallDispatch(setSocketConnectStatus({ isConnect: false, remainRetryCount }))
-        })
-        resolve(hallWebSocketDriver)
+    initConfig()
+      .then((config) => {
+        WebSocketStarter.Instance()
+          .initSocket()
+          .then(() => {
+            const wss = WebSocketStarter.Instance();
+            wss.eventListener.add(EVEVT_TYPE.HEART_BEAT, "", () => {
+              if (!wss.isConnect || wss.isReconnecting) {
+                global.hallDispatch(
+                  setSocketConnectStatus({
+                    isConnect: true,
+                    remainRetryCount: wss.maxReconnectTime
+                  })
+                );
+              }
+            });
+            wss.eventListener.add(EVEVT_TYPE.DISCONNECT, "", () => {
+              global.hallDispatch(
+                setSocketConnectStatus({
+                  isConnect: false,
+                  remainRetryCount: wss.remainRetryCount
+                })
+              );
+            });
+            wss.eventListener.add(EVEVT_TYPE.OPEN, "", () => {
+              global.hallDispatch(
+                setSocketConnectStatus({
+                  isConnect: true,
+                  remainRetryCount: wss.maxReconnectTime
+                })
+              );
+            });
+            wss.eventListener.add(EVEVT_TYPE.WARN, "", () => {
+              global.hallDispatch(
+                addToastAction({
+                  content: lang.write(
+                    (k) => k.WebSocketModule.NetworkInstability,
+                    {},
+                    { placeStr: "网络不稳定" }
+                  ),
+                  type: ToastType.ERROR,
+                  forceLandscape: false
+                })
+              );
+            });
+            wss.eventListener.add(
+              EVEVT_TYPE.RECONNECT,
+              "",
+              (remainRetryCount) => {
+                global.hallDispatch(
+                  setSocketConnectStatus({ isConnect: false, remainRetryCount })
+                );
+              }
+            );
+            resolve(hallWebSocketDriver);
+          });
       })
-    }).catch((e) => {
-      reject(e)
-    })
-  })
-}
-
+      .catch((e) => {
+        reject(e);
+      });
+  });
+};

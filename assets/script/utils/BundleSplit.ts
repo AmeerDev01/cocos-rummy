@@ -1,67 +1,87 @@
 import { AssetManager, assetManager, log, native, resources } from "cc";
 import { EDITOR, NATIVE } from "cc/env";
-import { HallGameGateType, config, subGameList } from "../hall/config"
+import { config, subGameList } from "../hall/config";
+import { HallGameGateType } from "../common/allTypes";
 
-function createBundle(id: string, data: any, options: Record<string, any>, onComplete: ((err: Error | null, data?: AssetManager.Bundle | null) => void)) {
+function createBundle(
+  id: string,
+  data: any,
+  options: Record<string, any>,
+  onComplete: (err: Error | null, data?: AssetManager.Bundle | null) => void
+) {
   let bundle = assetManager.bundles.get(data.name);
   if (!bundle) {
-    bundle = data.name === AssetManager.BuiltinBundleName.RESOURCES ? resources : new AssetManager.Bundle();
+    bundle =
+      data.name === AssetManager.BuiltinBundleName.RESOURCES
+        ? resources
+        : new AssetManager.Bundle();
     data.base = data.base || `${id}/`;
     bundle.init(data);
   }
-  if (!EDITOR && subGameList.map(i => i.bundleName).indexOf(bundle.name) !== -1) {
+  if (
+    !EDITOR &&
+    subGameList.map((i) => i.bundleName).indexOf(bundle.name) !== -1
+  ) {
     // if (!EDITOR && bundle.name !== bundleName) {
     try {
-      import(`virtual:///prerequisite-imports/${bundle.name}`).then(() => {
-        onComplete(null, bundle);
-      }).catch(() => {
-        onComplete(null, bundle);
-      });
+      import(`virtual:///prerequisite-imports/${bundle.name}`)
+        .then(() => {
+          onComplete(null, bundle);
+        })
+        .catch(() => {
+          onComplete(null, bundle);
+        });
     } catch (e) {
       onComplete(null, bundle);
     }
-
   } else {
     onComplete(null, bundle);
   }
 }
-const gameBundle: { [key: string]: AssetManager.Bundle } = {}
+const gameBundle: { [key: string]: AssetManager.Bundle } = {};
 export default {
   init: () => {
-    assetManager.factory.register("bundle", createBundle)
+    assetManager.factory.register("bundle", createBundle);
   },
   /**获取游戏的AB包，Native情况下，调用此函数时，应该确保本地已经下载了子游戏的AB包 */
-  getSubGameAssetsBundle: (subGameInfo: HallGameGateType, progressFn: (curr: number, total: number) => void): Promise<AssetManager.Bundle> => {
+  getSubGameAssetsBundle: (
+    subGameInfo: HallGameGateType,
+    progressFn: (curr: number, total: number) => void
+  ): Promise<AssetManager.Bundle> => {
     return new Promise((reslove, reject) => {
-      const gemeConfig = subGameList.find(i => i.gameId === subGameInfo.gameId)
+      const gemeConfig = subGameList.find(
+        (i) => i.gameId === subGameInfo.gameId
+      );
       const option = {
         onFileProgress: (n, t) => {
-          progressFn(n, t)
+          progressFn(n, t);
         }
-      }
+      };
       // gemeConfig.enableRemote && (option["version"] = gemeConfig.md5)
       // const url = gemeConfig.enableRemote ? `${config.gameBundleUrl}/subGame/${subGameInfo.bundleName}` : subGameInfo.bundleName
-      let path = subGameInfo.bundleName
+      let path = subGameInfo.bundleName;
       if (NATIVE) {
-        path = native.fileUtils.getWritablePath() + "remote/" + subGameInfo.bundleName
+        path =
+          native.fileUtils.getWritablePath() +
+          "remote/" +
+          subGameInfo.bundleName;
       }
       const loadGame = () => {
-        assetManager.loadBundle(path, option,
-          (err1, _bundle) => {
-            if (!err1) {
-              gameBundle[subGameInfo.bundleName] = _bundle
-              window.setTimeout(() => {
-                reslove(_bundle)
-              }, 500)
-              // this.node.getChildByName("Label").getComponent(Label).string = "done"
-            } else {
-              console.error(err1)
-              reject(err1)
-              // this.node.getChildByName("Label").getComponent(Label).string = err1.message
-            }
-          })
-      }
-      loadGame()
+        assetManager.loadBundle(path, option, (err1, _bundle) => {
+          if (!err1) {
+            gameBundle[subGameInfo.bundleName] = _bundle;
+            window.setTimeout(() => {
+              reslove(_bundle);
+            }, 500);
+            // this.node.getChildByName("Label").getComponent(Label).string = "done"
+          } else {
+            console.error(err1);
+            reject(err1);
+            // this.node.getChildByName("Label").getComponent(Label).string = err1.message
+          }
+        });
+      };
+      loadGame();
       // if (!getIsTest() && getPackageName() === 'web' && window['installBundle']) {
       //   // (document.querySelector("#loading2") as any).style.display = 'block'
       //   window['installBundle'](subGameInfo.bundleName)
@@ -75,12 +95,12 @@ export default {
       // } else {
       //   loadGame()
       // }
-    })
+    });
   },
   releaseBundle: (gameId: number) => {
-    const gemeConfig = subGameList.find(i => i.gameId === gameId)
-    gameBundle[gemeConfig.bundleName].releaseAll()
-  },
+    const gemeConfig = subGameList.find((i) => i.gameId === gameId);
+    gameBundle[gemeConfig.bundleName].releaseAll();
+  }
   // loadBundel(subGameInfo: HallGameGateType, progressFn: (curr: number, total: number) => void): Promise<AssetManager.Bundle> {
   //   const option = {
   //     onFileProgress: (n, t) => {
@@ -106,7 +126,7 @@ export default {
   //       })
   //   })
   // },
-  
+
   // getRemoteSubGameVersion(subGameInfo: HallGameGateType): Promise<any> {
   //   return new Promise<any>((reslove, reject) => {
   //     const url = `${config.gameBundleUrl}/subGame/compressed/${subGameInfo.bundleName}/version.manifest`
@@ -138,8 +158,7 @@ export default {
   //   const result = CompareVersion(nativeVersion, content.version);
   //   return result
   // }
-}
-
+};
 
 // function GetModulePath(module: string) {
 //   let path = native.fileUtils.getWritablePath() + "remote/" + module + "/project.manifest";
