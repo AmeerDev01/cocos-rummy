@@ -28,3 +28,5 @@ assets/project.manifest
 assets/version.manifest
 HotUpdateHall/
 HotUpdateGames/
+
+package-lock.json
