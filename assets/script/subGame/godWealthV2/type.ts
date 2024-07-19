@@ -40,9 +40,6 @@ export type RollerType = {
   direction: DirectionType;
 };
 
-/**
- * 滑动状态
- */
 export enum RollerStatus {
   RUNNING,
   ENDING,
@@ -107,9 +104,6 @@ export enum AutoLauncherType {
   TIME_10 = "t10"
 }
 
-/**
- * 自动运行数据
- */
 export type AutoLauncherInfo = {
   autoLauncherType: AutoLauncherType;
   totalCount: number;

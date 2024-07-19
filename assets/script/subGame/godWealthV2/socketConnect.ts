@@ -18,11 +18,7 @@ export enum SKT_MAG_TYPE {
   REFRESHCOINS = "10"
 }
 
-export const sktMsgListener = listenerFactoy<SKT_MAG_TYPE>();
-
-export let godWealthWebSocketDriver: WebSocketDriver<SKT_MAG_TYPE> = null;
 export default () => {
-  const dispatch = getStore().dispatch;
   return new Promise((resolve, reject) => {
     initConfig()
       .then(() => {
@@ -76,7 +72,7 @@ export default () => {
           });
       })
       .catch((e) => {
-        reject(e);
+        reject(new Error(e));
       });
   });
 };
@@ -102,6 +98,9 @@ export const godWealthGameLogin = () => {
 };
 
 export const removeInstance = () => {
-  godWealthWebSocketDriver &&
-    godWealthWebSocketDriver.logoutGame(SKT_MAG_TYPE.EXIT);
+  godWealthWebSocketDriver?.logoutGame(SKT_MAG_TYPE.EXIT);
 };
+
+export const sktMsgListener = listenerFactoy<SKT_MAG_TYPE>();
+
+export let godWealthWebSocketDriver: WebSocketDriver<SKT_MAG_TYPE> = null;
