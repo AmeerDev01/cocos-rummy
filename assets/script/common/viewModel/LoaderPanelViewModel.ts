@@ -1,4 +1,3 @@
-import { Node } from "cc";
 import ViewModel from "../../base/ViewModel";
 import {
   Common_LoaderPanel,
@@ -6,7 +5,6 @@ import {
   IEvent
 } from "../components/Common_LoaderPanel";
 import SourceManage from "../../base/SourceManage";
-import { config } from "../../config/config";
 
 class LoaderPanelViewModel extends ViewModel<
   Common_LoaderPanel,

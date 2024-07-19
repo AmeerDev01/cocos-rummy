@@ -2,21 +2,12 @@ import { listenerFactoy } from "../../common/listenerFactoy";
 import { initConfig, subGameList } from "../../config/config";
 import config from "./config";
 import { ToastType, addToastAction } from "../../hall/store/actions/baseBoard";
-import { getStore } from "./store";
 import { global, lang } from "../../hall";
 import WebSocketStarter, {
-  SKT_OPERATION,
   WebSocketDriver
 } from "../../common/WebSocketStarter";
-
-export enum SKT_MAG_TYPE {
-  LOGIN = "1",
-  LAUNCH = "2",
-  EXIT = "3",
-  JACKPOT = "8",
-  JACKPOT_TOTAL = "7",
-  REFRESHCOINS = "10"
-}
+import { SKT_OPERATION } from "../../common/allEnums";
+import { SKT_MAG_TYPE } from "../../common/allEnums";
 
 export default () => {
   return new Promise((resolve, reject) => {

@@ -1,7 +1,7 @@
 import { SubGameRunState } from "../hallType";
 import { Country } from "../language/languagePkg";
-import { SubGameType } from "./allEnums";
-import { SKT_HOST } from "./WebSocketStarter";
+import { SKT_OPERATION, SubGameType } from "./allEnums";
+import { SKT_HOST } from "./allEnums";
 import { Node } from "cc";
 
 export type GameConfigType = {
@@ -77,4 +77,13 @@ export type GateQueueType = {
   typeName: SubGameType;
   toggleName: string;
   queue: Array<Array<number>>;
+};
+export type MessageBody = {
+  messageId: string;
+  operation: SKT_OPERATION;
+  host: SKT_HOST;
+  sktCode: any;
+  gameId: number;
+  length: number;
+  data: any;
 };

@@ -17,11 +17,9 @@ import { getStore } from "./store";
 import { baseBoardView, global } from "./index";
 import { lang } from "./index";
 import { sys } from "cc";
-import WebSocketStarter, {
-  EVEVT_TYPE,
-  SKT_OPERATION,
-  WebSocketDriver
-} from "../common/WebSocketStarter";
+import WebSocketStarter, { WebSocketDriver } from "../common/WebSocketStarter";
+import { EVEVT_TYPE } from "../common/allEnums";
+import { SKT_OPERATION } from "../common/allEnums";
 import ModalBox from "../common/ModalBox";
 import { Task, TaskSchedulerDefault } from "../utils/TaskScheduler";
 

@@ -10,11 +10,8 @@ import {
 } from "../components/GodWealthV2_Main";
 import config from "../config";
 import { cacheData, clearCacheData } from "../dataTransfer";
-import {
-  SKT_MAG_TYPE,
-  godWealthGameLogin,
-  godWealthWebSocketDriver
-} from "../socketConnect";
+import { godWealthGameLogin, godWealthWebSocketDriver } from "../socketConnect";
+import { SKT_MAG_TYPE } from "../../../common/allEnums";
 import { bundlePkgName } from "../sourceDefine";
 import { PrefabPathDefine } from "../sourceDefine/prefabDefine";
 import { getStore } from "../store";

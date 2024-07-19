@@ -1,112 +1,56 @@
+import { sys } from "cc";
 import Singleton from "../utils/Singleton";
 import SktListener from "./SktListener";
-import AES from "../utils/encryption";
-import { baseBoardView, global, lang } from "../hall";
+import { global, lang } from "../hall";
 import {
   ToastType,
   addToastAction,
-  setLoadingAction,
-  setSocketConnectStatus
+  setLoadingAction
 } from "../hall/store/actions/baseBoard";
-import { config, subGameList } from "../config/config";
-import { HallGameGateType } from "./allTypes";
-import { log, sys } from "cc";
-import { getIsTest } from "../config/gameConfig";
-import { DEV } from "cc/env";
+import { config } from "../config/config";
+import { MessageBody } from "./allTypes";
+import { EVEVT_TYPE, SKT_HOST, SKT_OPERATION } from "./allEnums";
 
-export enum SKT_OPERATION {
-  GENERAL = "GENERAL", //非加密操作
-  ENCRYPT = "ENCRYPT", //加密操作
-  LOGIN = "LOGIN", //登录房间
-  LOGOUT = "LOGOUT", //登出房间
-  HEART = "HEART", //心跳
-  INTERACTION = "INTERACTION", //交互指令
-  /**服务端推的错误消息 */
-  ERROR = "ERROR",
-  /**恢复到游戏 */
-  RECOVER = "RECOVER"
-}
-
-export enum SKT_HOST {
-  HALL = "HALL",
-  SLOTS = "SLOTS",
-  MULTI = "MULTI",
-  BATTLE = "BATTLE"
-}
-export type MessageBody = {
-  messageId: string;
-  operation: SKT_OPERATION;
-  host: SKT_HOST;
-  sktCode: any;
-  gameId: number;
-  length: number;
-  data: any;
-};
-
-export enum EVEVT_TYPE {
-  /**建立连接成功 */
-  OPEN,
-  /**建立连接失败 */
-  CONNECT_ERROR,
-  /**返回的数据错误 */
-  DATA_ERROR,
-  /**警告 */
-  WARN,
-  /**断线 */
-  DISCONNECT,
-  /**开始重连 */
-  RECONNECT,
-  /**重连成功 */
-  RECONNECT_SUCCESS,
-  /**收到消息 */
-  MESSAGE,
-  /**心跳 */
-  HEART_BEAT
-}
-const msgMap: { [key: number]: SktMessager<any> } = {};
-/**专门为单一socket、多类型而设计 */
 export default class WebSocketStarter extends Singleton {
   public ws: WebSocket;
   public isConnect: boolean = false;
-  /**循环连接timer */
   public connectTimer: number = 0;
   public heartBeatTimer: number = 0;
   private websocketUrl: string;
   private heart_beatList: Array<SktMessager<unknown>> = [];
   public eventListener = new SktListener<EVEVT_TYPE>();
-  /**最大重连次数 */
   public maxReconnectTime: number = 5;
-  /**剩余重试次数 */
   public remainRetryCount: number = 0;
   public isReconnecting: boolean = false;
   private isAllowReconnect: boolean = true;
   private reconnectTimeOutTimer: number = 0;
-  /**socket是否已经出发open，用于判断在promise中，如果socket已经open之后，将不会再调用reject */
   private isSocketOpen: boolean = false;
+
   public initSocket(websocketUrl?: string) {
     this.websocketUrl =
       websocketUrl ||
       config.websocketUrl + `?Token=${sys.localStorage.getItem("token")}`;
+
     this.reconnectTimeOutTimer &&
       window.clearTimeout(this.reconnectTimeOutTimer);
+
     return new Promise((resolve, reject) => {
       this.isSocketOpen = false;
       if (this.ws && WebSocket.OPEN == this.ws.readyState) {
         resolve(true);
       } else {
-        /**当连接建立成功后，这个函数就会被调用 */
         this.ws = new WebSocket(this.websocketUrl);
         this.ws.onopen = (event) => {
-          console.log("WebSocket has connected");
-          // log("WebSocket has connected")
+          console.log("01: WebSocket has connected");
+
           this.isAllowReconnect = true;
           this.isConnect = true;
           let count = 1;
           this.reconnectTimeOutTimer &&
             window.clearTimeout(this.reconnectTimeOutTimer);
           this.connectTimer && window.clearInterval(this.connectTimer);
+
           this.connectTimer = window.setInterval(() => {
-            // console.log('readyState', this.ws.readyState)
             if (this.ws && this.ws.readyState === 1) {
               this.isSocketOpen = true;
               this.heartBeatTimer && window.clearInterval(this.heartBeatTimer);
@@ -114,6 +58,7 @@ export default class WebSocketStarter extends Singleton {
               this.isConnect = true;
               this.isReconnecting = false;
               this.remainRetryCount = this.maxReconnectTime;
+
               this.heartBeatTimer = window.setInterval(() => {
                 const heart_beat = new SktMessager<unknown>(
                   this.ws,
@@ -124,7 +69,6 @@ export default class WebSocketStarter extends Singleton {
                 this.heart_beatList.push(heart_beat);
                 heart_beat.send();
                 if (this.heart_beatList.length === 2) {
-                  //如果发起心跳的时候，还有未收到回复的心跳，就要预警
                   this.eventListener.dispath(
                     EVEVT_TYPE.WARN,
                     "no heart beat reply"
@@ -133,7 +77,7 @@ export default class WebSocketStarter extends Singleton {
                   if (this.ws) {
                     this.ws.close();
                     window.clearInterval(this.heartBeatTimer);
-                    console.log("心跳超时断开");
+                    console.log("02: Heartbeat timeout disconnection");
                     this.reConnect();
                   }
                 }
@@ -145,20 +89,19 @@ export default class WebSocketStarter extends Singleton {
               count++;
               if (count === 20) {
                 window.clearInterval(this.connectTimer);
-                console.log("重连超时");
+                console.log("03: Reconnection timeout");
                 this.ws && this.ws.close();
-                !this.isSocketOpen && reject("time out");
+                !this.isSocketOpen && reject(new Error("04: Timeout"));
               }
             }
           }, 200);
         };
         this.ws.onerror = (event) => {
-          console.log("连接错误");
+          console.log("05: Connection error");
           this.connectTimer && window.clearInterval(this.connectTimer);
           this.onDisconnect();
         };
         this.ws.onmessage = (ev) => {
-          //先解析
           const [
             messageId,
             operation,
@@ -177,28 +120,18 @@ export default class WebSocketStarter extends Singleton {
             this.eventListener.dispath(EVEVT_TYPE.DATA_ERROR, dataBody);
           } else {
             data = dataBody;
-            // operation === SKT_OPERATION.ENCRYPT && (data = AES.decode(data))
+
             try {
               data = JSON.parse(dataBody);
               if (gameId === 0) {
-                console.log(
-                  `${new Date().toLocaleString("en-US", {
-                    timeZone: "Asia/Shanghai"
-                  })} 大厅|socket···返回请求${sktCode}|${operation},参数:`,
-                  data
-                );
+                console.log(`↓↓↓: Socket[${sktCode}] [${operation}[`);
               } else {
                 console.log(
-                  `${new Date().toLocaleString("en-US", {
-                    timeZone: "Asia/Shanghai"
-                  })} 游戏${gameId}|socket···返回请求${sktCode}|${operation},参数:`,
-                  data
+                  `↓↓↓[${gameId}]: Socket[${sktCode}] [${operation}[`
                 );
               }
             } catch (e) {
-              console.log("skt json data error", dataBody, e);
-              // this.eventListener.dispath(EVEVT_TYPE.MESSAGE, { messageId, operation, host, sktCode, gameId: +gameId, length: +length, data: dataBody })
-              // this.eventListener.dispath(EVEVT_TYPE.DATA_ERROR, dataBody)
+              console.log("08: Socket json data error", dataBody, e);
             }
             try {
               this.eventListener.dispath(EVEVT_TYPE.MESSAGE, {
@@ -217,7 +150,7 @@ export default class WebSocketStarter extends Singleton {
                     lang.write(
                       (k) => k.WebSocketModule.ErrorGeneral,
                       {},
-                      { placeStr: "服务数据错误" }
+                      { placeStr: "09: Service data error" }
                     ) + `[${sktCode}]:${e}`,
                   type: ToastType.ERROR,
                   forceLandscape: false
@@ -244,7 +177,7 @@ export default class WebSocketStarter extends Singleton {
         this.ws.onclose = () => {
           this.isConnect = false;
           this.connectTimer && window.clearInterval(this.connectTimer);
-          console.log("连接已关闭");
+          console.log("10: Connection closed");
           this.isAllowReconnect && this.onDisconnect();
         };
         this.reconnectTimeOutTimer = window.setTimeout(() => {
@@ -253,54 +186,54 @@ export default class WebSocketStarter extends Singleton {
       }
     });
   }
-  /**发起重连 */
   public reConnect(force: boolean = false) {
     if (!force && this.isReconnecting) {
       this.isReconnecting = false;
-      console.log("重连取消", this);
+      console.log("11: Reconnection Canceled", this);
       return;
     }
     this.isReconnecting = true;
     this.isConnect = false;
     if (this.remainRetryCount <= 0) {
-      console.log("次数达上限");
+      console.log("12: Retry has reached limit");
       this.isReconnecting = false;
     } else {
       this.remainRetryCount--;
-      console.log("发起重连", this.remainRetryCount);
+      console.log(`13: Initiate reconnection ${this.remainRetryCount}`);
       this.eventListener.dispath(EVEVT_TYPE.RECONNECT, this.remainRetryCount);
       this.ws = null;
-      // 500ms后重试
+
       window.setTimeout(() => {
-        console.log("500ms后重试");
+        console.log("14: Retry after 500ms");
         this.initSocket()
           .then((e) => {
-            console.log("连接成功！！");
+            console.log("15: Connection SUCCESSFULL!");
             this.isReconnecting = false;
             this.eventListener.dispath(EVEVT_TYPE.RECONNECT_SUCCESS, {});
           })
           .catch((e) => {
-            console.log("重连失败");
+            console.log("16: Reconnection failed");
             this.isReconnecting = false;
             this.reConnect(true);
           });
       }, 1000);
     }
   }
+
   private onDisconnect(message?: string) {
-    console.log("通知断连");
+    console.log("17: Disconnected");
     this.isConnect = false;
     this.eventListener.dispath(EVEVT_TYPE.DISCONNECT, message);
     this.reConnect();
   }
+
   public exit() {
-    console.log("连接退出");
+    console.log("18: Exit");
     this.isAllowReconnect = false;
     window.clearInterval(this.heartBeatTimer);
     this.ws && this.ws.close();
   }
 }
-/**websocket的实际驱动类 */
 export class WebSocketDriver<SKT_TYPE> {
   constructor(gameId: number, host: SKT_HOST) {
     this.gameId = gameId;
@@ -309,13 +242,12 @@ export class WebSocketDriver<SKT_TYPE> {
       (Math.random() * Math.pow(10, 10)).toString()
     ).toString();
     this.sktMsgListener = new SktListener<SKT_TYPE>();
-    //每个Driver都会监听一个全局的message事件，然后在这里判读分流
+
     WebSocketStarter.Instance().eventListener.add(
       EVEVT_TYPE.MESSAGE,
       this.driverId,
       (messageBody: MessageBody) => {
         if (messageBody.operation === SKT_OPERATION.ERROR) {
-          //消息出现业务错误
           this.sktMsgListener.dispath(
             messageBody.sktCode as SKT_TYPE,
             {},
@@ -332,7 +264,7 @@ export class WebSocketDriver<SKT_TYPE> {
               messageBody.data,
               messageBody
             );
-            // DEV && this.gameId > 0 && console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 收到${this.gameId}--${messageBody.sktCode}消息`, data)
+
             this.sktMsgListener.dispath(
               messageBody.sktCode as SKT_TYPE,
               data,
@@ -347,7 +279,7 @@ export class WebSocketDriver<SKT_TYPE> {
   public gameId: number;
   public server: string;
   public host: SKT_HOST;
-  // public messagerMap: { [key: number]: SktMessager<SKT_TYPE> }
+
   public sktMsgListener: SktListener<SKT_TYPE> = null;
   public filterData(data: any, source: MessageBody): { data: any; error: any } {
     return { data, error: undefined };
@@ -358,15 +290,16 @@ export class WebSocketDriver<SKT_TYPE> {
     option?: {
       isLoading?: boolean;
       operation?: SKT_OPERATION;
-      /**超时时间，大于这个时间未收到回复，将会调用超时函数 */
       timeOut?: number;
     }
   ) {
-    const _option = Object.assign(
-      { isLoading: false, operation: SKT_OPERATION.GENERAL, timeOut: 3000 },
-      option || {}
-    );
-    // DEV && this.gameId > 0 && console.log(`${new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })} 发送${this.gameId}--${sktCode}消息`, payLoad)
+    const _option = {
+      isLoading: false,
+      operation: SKT_OPERATION.GENERAL,
+      timeOut: 3000,
+      ...(option || {})
+    };
+
     const sktMessager = new SktMessager(
       WebSocketStarter.Instance().ws,
       _option.operation,
@@ -375,7 +308,7 @@ export class WebSocketDriver<SKT_TYPE> {
       sktCode,
       this.host
     );
-    // this.messagerMap[sktMessager.messageId] = sktMessager
+
     _option.isLoading &&
       global.hallDispatch(
         setLoadingAction({
@@ -397,9 +330,7 @@ export class WebSocketDriver<SKT_TYPE> {
       this.host
     );
     sktMessager.send(3000);
-    sktMessager.bindReceiveHandler((message) => {
-      //收到反馈消息的回调
-    });
+    sktMessager.bindReceiveHandler((message) => {});
     return sktMessager;
   }
   public logoutGame(logoutMethod: string) {
@@ -447,38 +378,25 @@ export class SktMessager<SKT_TYPE> {
   private receiveData: MessageBody = null;
   private sendTime: number = 0;
   private receiveTime: number = 0;
-  /**响应的样本数据 */
   private verifySampleData: { [key: string]: any };
-  /**返回false，或者不调用bindTimeoutHandler函数，收到回复后将自动删除此message */
   private timeoutHandler: () => boolean;
   private receiveHandler: (
     receiveData: MessageBody,
     isPassDataVerify?: boolean
   ) => void;
-  /**生成信息ID */
   private generateMessageId() {
     const readom = parseInt((Math.random() * Math.pow(10, 10)).toString());
     return Date.now() + readom;
   }
-  /**
-   * 设置超时的时间函数
-   * @param handler 返回false会自动清除消息
-   */
+
   public bindTimeoutHandler(handler: () => boolean) {
     this.timeoutHandler = handler;
   }
-  /**
-   * 设置校验数据
-   * @param sampleData 校验的样本数据
-   */
+
   public setSampleData(sampleData: { [key: string]: any }) {
     this.verifySampleData = sampleData;
   }
-  /**
-   * 绑定回复消息的回调函数
-   * @param handler 回调函数(若传入了samplaData，函数会给出是否通过数据验证isPassDataVerify，若不传samplaData则isPassDataVerify将默认回传true)
-   * @param sampleData 如果要验证数据，此处要传入样本数据
-   */
+
   public bindReceiveHandler(
     handler: (receiveData: MessageBody, isPassDataVerify?: boolean) => void,
     sampleData?: { [key: string]: any }
@@ -486,44 +404,34 @@ export class SktMessager<SKT_TYPE> {
     this.verifySampleData = sampleData;
     this.receiveHandler = handler;
   }
+
   public send(timeOut: number = 0) {
     if (!this.ws || (this.ws && this.ws.readyState !== 1)) {
-      console.warn("websocket unconnected, send cancel!");
+      console.log("19: Websocket unconnected, send cancel!");
       return false;
     }
-    this.payLoad = this.payLoad;
     if (this.operation === SKT_OPERATION.HEART) {
       this.ws.send(`${this.messageId}|${this.operation}`);
     } else {
-      // const data = this.operation === SKT_OPERATION.ENCRYPT ? AES.encode(JSON.stringify(this.payLoad)) : JSON.stringify(this.payLoad)
       const data = JSON.stringify(this.payLoad || "");
       this.ws.send(
         `${this.messageId}|${this.operation}|${this.host}|${this.sktCode}|${this.gameId}|${data.length}|${data}`
       );
       if (this.gameId === 0) {
-        console.log(
-          `${new Date().toLocaleString("en-US", {
-            timeZone: "Asia/Shanghai"
-          })} 大厅|socket···发送请求${this.sktCode}|${this.operation},参数:`,
-          this.payLoad
-        );
+        console.log(`↑↑↑: Socket[${this.sktCode}] [${this.operation}]`);
       } else {
         console.log(
-          `${new Date().toLocaleString("en-US", {
-            timeZone: "Asia/Shanghai"
-          })} 游戏${this.gameId}|socket···发送请求${this.sktCode}|${
-            this.operation
-          },参数:`,
-          this.payLoad
+          `↑↑↑[${this.gameId}]: Socket[${this.sktCode}] [${this.operation}]`
         );
       }
       this.sendTime = Date.now();
       timeOut &&
         window.setTimeout(() => {
           if (this && !this.receiveData && this.timeoutHandler) {
-            console.warn(
-              "The corresponding message was not received：" + this.messageId
+            console.log(
+              `22: The corresponding message was not received：${this.messageId}`
             );
+
             if (!this.timeoutHandler()) {
               delete msgMap[this.messageId];
             }
@@ -534,6 +442,7 @@ export class SktMessager<SKT_TYPE> {
     this.status = "SENDED";
     return true;
   }
+
   public receive(receiveData: MessageBody) {
     if (receiveData.messageId === this.messageId) {
       this.receiveData = receiveData;
@@ -544,9 +453,8 @@ export class SktMessager<SKT_TYPE> {
         this.verifySampleData &&
         !validateJson(this.verifySampleData, receiveData.data || {})
       ) {
-        console.warn(
-          "The socket response data did not pass validation",
-          receiveData
+        console.log(
+          `23: The socket response data did not pass validation：${receiveData}`
         );
         isPassDataVerify = false;
       }
@@ -558,31 +466,22 @@ export class SktMessager<SKT_TYPE> {
   }
 }
 
-/**
- * 用于验证数据是否非法
- * @param sampleData 样本数据
- * @param data 被验证的数据
- * @param isCheckUnexpected 是否检查多余的字段
- * @returns
- */
 export const validateJson = (
   sampleData: Object,
   data: Object,
   isCheckUnexpected: boolean = true
 ) => {
-  // 检查是否为对象
   if (typeof data !== "object" || data === null || data === undefined) {
     return false;
   }
-  // 遍历样本数据的字段
+
   for (const key in sampleData) {
     if (sampleData.hasOwnProperty(key)) {
-      // 检查字段是否存在
       if (!(key in data)) {
-        console.error(`Missing field: ${key}`);
+        console.log(`24: Missing field: ${key}`);
         return false;
       }
-      // 检查字段的数据格式，这里假设样本数据中定义了数据格式
+
       const expectedType = typeof sampleData[key];
       const actualType = typeof data[key];
       if (
@@ -590,21 +489,21 @@ export const validateJson = (
         Array.isArray(sampleData[key]) &&
         !Array.isArray(data[key])
       ) {
-        console.error(
-          `Invalid data type for field ${key}. Expected ${expectedType}, got ${actualType}`
+        console.log(
+          `25: Invalid data type for field ${key}. Expected ${expectedType}, got ${actualType}`
         );
         return false;
       }
     }
   }
   if (isCheckUnexpected) {
-    // 遍历传入数据的字段，检查是否多余
     for (const key in data) {
       if (data.hasOwnProperty(key) && !(key in sampleData)) {
-        console.warn(`Unexpected field: ${key}`);
-        // 如果需要禁止多余的字段，可以返回false
+        console.log(`26: Unexpected field: ${key}`);
       }
     }
   }
   return true;
 };
+
+const msgMap: { [key: number]: SktMessager<any> } = {};
