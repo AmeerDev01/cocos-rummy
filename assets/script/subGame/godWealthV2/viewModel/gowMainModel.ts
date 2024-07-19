@@ -58,11 +58,7 @@ import { SoundPathDefine } from "../sourceDefine/soundDefine";
 import { SktMessager } from "../../../common/WebSocketStarter";
 
 @StoreInject(getStore())
-class GodWealthV2MainViewModel extends ViewModel<
-  GodWealthV2_Main,
-  IProps,
-  IEvent
-> {
+class GowMainModel extends ViewModel<GodWealthV2_Main, IProps, IEvent> {
   private initCallback;
   private gameTypeInfo;
   constructor(initCallback) {
@@ -506,4 +502,4 @@ class GodWealthV2MainViewModel extends ViewModel<
   }
 }
 
-export default GodWealthV2MainViewModel;
+export default GowMainModel;

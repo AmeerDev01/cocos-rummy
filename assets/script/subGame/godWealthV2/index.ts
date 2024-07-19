@@ -16,7 +16,7 @@ import godWealthV2FileMap, { bundlePkgName } from "./sourceDefine";
 import { PrefabPathDefine } from "./sourceDefine/prefabDefine";
 import { SoundPathDefine } from "./sourceDefine/soundDefine";
 import store, { getStore } from "./store";
-import GodWealthV2MainViewModel from "./viewModel/GodWealthV2MainViewModel";
+import GowMainModel from "./viewModel/gowMainModel";
 import { resetStore } from "./store/actions/game";
 import { initRoller } from "./store/actions/roller";
 import { SubGameRunState } from "../../hallType";
@@ -94,7 +94,7 @@ function _startGameAfterLoad(_sourceManageMap: SourceManage[], rootNode: Node) {
       getStore().dispatch(resetStore(0));
       getStore().dispatch(initRoller(0));
 
-      mainViewModel = new GodWealthV2MainViewModel(() => {
+      mainViewModel = new GowMainModel(() => {
         destoryGame(loaderviweModel, initTimeoutId);
       })
         .mountView(
@@ -129,7 +129,7 @@ const destoryGame = (loaderviweModel: LoaderPanelViewModel, timeId: number) => {
 
 let sourceManageMap: Array<SourceManage> = [];
 export let bundleGodWealthV2: AssetManager.Bundle = null;
-export let mainViewModel: GodWealthV2MainViewModel;
+export let mainViewModel: GowMainModel;
 export let godWealthV2_Audio: AudioMgr<SoundPathDefine>;
 let loaderviweModel: LoaderPanelViewModel;
 export const sourceManageSeletor = (bundleName: string = bundlePkgName) =>
